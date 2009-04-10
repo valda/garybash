@@ -1614,7 +1614,7 @@ class SaveList(List):
                 self.list.SetStringItem(itemDex, colDex, value)
         #--Image
         status = fileInfo.getStatus()
-        on = fileName.cext == '.ess'
+        on = fileName.cext == '.fos'
         self.list.SetItemImage(itemDex,self.checkboxes.Get(status,on))
         #--Selection State
         if fileName in selected:
@@ -4782,7 +4782,7 @@ class File_RevertToBackup:
             dest = fileInfo.dir.join(fileName)
             backup.copyTo(dest)
             fileInfo.setmtime()
-            if fileInfo.isEss(): #--Handle CoSave (.pluggy and .obse) files.
+            if fileInfo.isEss(): #--Handle CoSave (.pluggy and .fose) files.
                 bosh.CoSaves(backup).copy(dest)
             try:
                 self.window.data.refreshFile(fileName)
@@ -8578,9 +8578,9 @@ class Master_Disable(Link):
 #------------------------------------------------------------------------------
 class App_Button(Link):
     """Launch an application."""
-    obseButtons = []
+    foseButtons = []
 
-    def __init__(self,exePathArgs,image,tip,obseTip=None,obseArg=None):
+    def __init__(self,exePathArgs,image,tip,foseTip=None,foseArg=None):
         """Initialize
         exePathArgs (string): exePath
         exePathArgs (tuple): (exePath,*exeArgs)"""
@@ -8594,9 +8594,9 @@ class App_Button(Link):
             self.exeArgs = tuple()
         self.image = image
         self.tip = tip
-        #--OBSE stuff
-        self.obseTip = obseTip
-        self.obseArg = obseArg
+        #--FOSE stuff
+        self.foseTip = foseTip
+        self.foseArg = foseArg
     
     def IsPresent(self):
         return self.exePath.exists()
@@ -8605,18 +8605,18 @@ class App_Button(Link):
         if self.IsPresent(): 
             self.gButton = bitmapButton(window,self.image.GetBitmap(),style=style,
                 onClick=self.Execute,tip=self.tip)
-            if self.obseArg != None: 
-                App_Button.obseButtons.append(self)
+            if self.foseArg != None: 
+                App_Button.foseButtons.append(self)
             return self.gButton
         else:
             return None
 
     def Execute(self,event,extraArgs=None):
-        exeObse = bosh.dirs['app'].join('obse_loader.exe')
+        exeFose = bosh.dirs['app'].join('fose_loader.exe')
         exeArgs = self.exeArgs
-        if self.obseArg != None and settings.get('bash.obse.on',False) and exeObse.exists():
-            exePath = exeObse
-            if self.obseArg != '': exeArgs += (self.obseArg,)
+        if self.foseArg != None and settings.get('bash.fose.on',False) and exeFose.exists():
+            exePath = exeFose
+            if self.foseArg != '': exeArgs += (self.foseArg,)
         else:
             exePath = self.exePath
         exeArgs = (exePath.stail,)+exeArgs
@@ -8673,8 +8673,8 @@ class Fallout3_Button(App_Button):
             bashFrame.Close()
 
 #------------------------------------------------------------------------------
-class Obse_Button(Link):
-    """Obse on/off state button."""
+class Fose_Button(Link):
+    """Fose on/off state button."""
     def __init__(self):
         Link.__init__(self)
         self.gButton = None
@@ -8683,21 +8683,21 @@ class Obse_Button(Link):
         """Sets state related info. If newState != none, sets to new state first. 
         For convenience, returns state when done."""
         if state == None: #--Default
-            state = settings.get('bash.obse.on',False)
+            state = settings.get('bash.fose.on',False)
         elif state == -1: #--Invert
-            state = not settings.get('bash.obse.on',False)
-        settings['bash.obse.on'] = state
+            state = not settings.get('bash.fose.on',False)
+        settings['bash.fose.on'] = state
         image = images[('checkbox.green.off','checkbox.green.on')[state]]
-        tip = (_("OBSE Disabled"),_("OBSE Enabled"))[state]
+        tip = (_("FOSE Disabled"),_("FOSE Enabled"))[state]
         self.gButton.SetBitmapLabel(image.GetBitmap())
         self.gButton.SetToolTip(tooltip(tip))
-        tipAttr = ('tip','obseTip')[state]
-        for button in App_Button.obseButtons:
+        tipAttr = ('tip','foseTip')[state]
+        for button in App_Button.foseButtons:
             button.gButton.SetToolTip(tooltip(getattr(button,tipAttr,'')))
 
     def GetBitmapButton(self,window,style=0):
-        exeObse = bosh.dirs['app'].join('obse_loader.exe')
-        if exeObse.exists(): 
+        exeFose = bosh.dirs['app'].join('fose_loader.exe')
+        if exeFose.exists(): 
             bitmap = images['checkbox.green.off'].GetBitmap()
             self.gButton = bitmapButton(window,bitmap,style=style,onClick=self.Execute)
             self.gButton.SetSize((16,16))
@@ -8863,21 +8863,21 @@ def InitStatusBar():
     """Initialize status bar links."""
     #--Bash Status/LinkBar
     #BashStatusBar.buttons.append(App_Fallout3())
-    BashStatusBar.buttons.append(Obse_Button())
+    BashStatusBar.buttons.append(Fose_Button())
     BashStatusBar.buttons.append(AutoQuit_Button())
     BashStatusBar.buttons.append( 
         Fallout3_Button(
             bosh.dirs['app'].join('Fallout3.exe'),
             Image(r'images/fallout3.png'),
             _("Launch Fallout3"),
-            _("Launch Fallout3 + OBSE"),
+            _("Launch Fallout3 + FOSE"),
             ''))
     BashStatusBar.buttons.append( 
         App_Button(
             bosh.dirs['app'].join('TESConstructionSet.exe'),
             Image(r'images/tescs.png'),
             _("Launch TESCS"),
-            _("Launch TESCS + OBSE"),
+            _("Launch TESCS + FOSE"),
             '-editor'))
     BashStatusBar.buttons.append( 
         App_Button(

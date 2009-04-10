@@ -98,6 +98,8 @@ settingDefaults = {
     'bosh.modInfos.resetMTimes':True,
     }
 
+recHeaderSize = 24
+
 # Errors ----------------------------------------------------------------------
 #------------------------------------------------------------------------------
 class FileError(BoltError):
@@ -453,7 +455,7 @@ class ModReader:
 
     def unpackRecHeader(self):
         """Unpack a record header."""
-        (type,size,uint0,uint1,uint2,uint3) = self.unpack('4s5I',24,'REC_HEAD')
+        (type,size,uint0,uint1,uint2,uint3) = self.unpack('4s5I',recHeaderSize,'REC_HEAD')
         #--Bad?
         if type not in bush.recordTypes:
             raise ModError(self.inName,_('Bad header type: ')+type)
@@ -566,13 +568,13 @@ class ModWriter:
         #if not ModWriter.reValidType.match(type): raise _('Invalid type: ') + `type`
         if formid != None: self.out.write(struct.pack('=4sHI',type,4,formid))
 
-    def writeGroup(self,size,label,groupType,stamp):
+    def writeGroup(self,size,label,groupType,stamp,stamp2):
         if type(label) is str:
-            self.pack('=4sI4sII','GRUP',size,label,groupType,stamp)
+            self.pack('=4sI4sIII','GRUP',size,label,groupType,stamp,stamp2)
         elif type(label) is tuple:
-            self.pack('=4sIhhII','GRUP',size,label[1],label[0],groupType,stamp)
+            self.pack('=4sIhhIII','GRUP',size,label[1],label[0],groupType,stamp,stamp2)
         else:
-            self.pack('=4s4I','GRUP',size,label,groupType,stamp)
+            self.pack('=4s4II','GRUP',size,label,groupType,stamp,stamp2)
 
 
 # Mod Record Elements ---------------------------------------------------------
@@ -1099,8 +1101,8 @@ class MelConditions(MelStructs):
 
     def loadData(self,record,ins,type,size,readId):
         """Reads data from ins into record attribute."""
-        if type == 'CTDA' and size != 24: 
-            raise ModSizeError(ins.inName,readId,24,size,True)
+        if type == 'CTDA' and size != recHeaderSize: 
+            raise ModSizeError(ins.inName,readId,recHeaderSize,size,True)
         if type == 'CTDT' and size != 20: 
             raise ModSizeError(ins.inName,readId,20,size,True)
         target = MelObject()
@@ -2846,7 +2848,8 @@ class MreRace(MelRecord):
             MelGroup.__init__(self,attr,
                 MelString('MODL','path'),
                 MelBase('MODB','modb'),
-                MelBase('ICON','icon'),)
+                MelBase('ICON','icon'),
+                MelStruct('MODD','B',('modd',0)))
             self.index = index
 
         def dumpData(self,record,out):
@@ -2913,13 +2916,15 @@ class MreRace(MelRecord):
         MelStructs('XNAM','Ii','relations',(FID,'faction'),'mod'),
         MelRaceData('DATA','14sH4fI','_boosts','unk1',
             'maleHeight','femaleHeight','maleWeight','femaleWeight',(_flags,'flags',0L)),
-        MelRaceVoices('VNAM','2I',(FID,'maleVoice'),(FID,'femaleVoice')), #--0 same as race formid.
+        #MelRaceVoices('VNAM','2I',(FID,'maleVoice'),(FID,'femaleVoice')), #--0 same as race formid.
+        MelRaceVoices('VTCK','2I',(FID,'maleVoice'),(FID,'femaleVoice')), #--0 same as race formid.
         MelOptStruct('DNAM','2I',(FID,'defaultHairMale',0L),(FID,'defaultHairFemale',0L)), #--0=None
-        MelStruct('CNAM','B','defaultHairColor'), #--Int corresponding to GMST sHairColorNN
+        MelStruct('CNAM','2B','defaultHairColorMale','defaultHairColorFemale'), #--Int corresponding to GMST sHairColorNN
         MelBase('PNAM','PNAM'),
         MelBase('UNAM','UNAM'),
         #--Male: Str,Int,Wil,Agi,Spd,End,Per,luck; Female Str,Int,...
-        MelTuple('ATTR','16B','baseAttributes',[0]*16),
+        #MelTuple('ATTR','16B','baseAttributes',[0]*16),
+        MelTuple('ATTR','2B','baseAttributes',[0]*2),
         #--Begin Indexed entries
         MelBase('NAM0','_nam0',''),
         MelRaceModel('head',0),
@@ -2953,6 +2958,9 @@ class MreRace(MelRecord):
         MelBase('FGGA','fgga'),
         MelBase('FGTS','fgts'),
         MelBase('SNAM','SNAM'),
+        MelFormid('ONAM','Older'),
+        MelFormid('YNAM','Younger'),
+        MelBase('NAM2','_nam2',''),
         #--Distributor for face and body entries.
         MelRaceDistributor(),
         )
@@ -3387,11 +3395,11 @@ class MobBase(object):
     """Group of records and/or subgroups. This basic implementation does not 
     support unpacking, but can report its number of records and be written."""
     
-    __slots__=['size','label','groupType','stamp','debug','data','changed','numRecords','loadFactory','inName']
+    __slots__=['size','label','groupType','stamp','stamp2','debug','data','changed','numRecords','loadFactory','inName']
 
     def __init__(self,header,loadFactory,ins=None,unpack=False):
         """Initialize."""
-        (grup, self.size, self.label, self.groupType, self.stamp) = header
+        (grup, self.size, self.label, self.groupType, self.stamp, self.stamp2) = header
         self.debug = False
         self.data = None
         self.changed = False
@@ -3405,10 +3413,10 @@ class MobBase(object):
         if self.debug: print 'GRUP load:',self.label
         #--Read, but don't analyze.
         if not unpack:
-            self.data = ins.read(self.size-20,type)
+            self.data = ins.read(self.size-recHeaderSize,type)
         #--Analyze ins.
         elif ins is not None:
-            self.loadData(ins, ins.tell()+self.size-20)
+            self.loadData(ins, ins.tell()+self.size-recHeaderSize)
         #--Analyze internal buffer.
         else:
             reader = self.getReader()
@@ -3462,7 +3470,7 @@ class MobBase(object):
         if self.numRecords == -1:
             self.getNumRecords()
         if self.numRecords > 0:
-            out.pack('4sI4sII','GRUP',self.size,self.label,self.groupType,self.stamp)
+            out.pack('4sI4sIII','GRUP',self.size,self.label,self.groupType,self.stamp,self.stamp2)
             out.write(self.data)
         
     def getReader(self):
@@ -3523,17 +3531,17 @@ class MobObjects(MobBase):
         if not self.changed: 
             return self.size
         else:
-            return 20 + sum((20 + record.getSize()) for record in self.records)
+            return recHeaderSize + sum((recHeaderSize + record.getSize()) for record in self.records)
 
     def dump(self,out):
         """Dumps group header and then records."""
         if not self.changed:
-            out.pack('4sI4sII','GRUP',self.size,self.label,0,self.stamp)
+            out.pack('4sI4sIII','GRUP',self.size,self.label,0,self.stamp,self.stamp2)
             out.write(self.data)
         else:
             size = self.getSize()
-            if size == 20: return
-            out.pack('4sI4sII','GRUP',size,self.label,0,self.stamp)
+            if size == recHeaderSize: return
+            out.pack('4sI4sIII','GRUP',size,self.label,0,self.stamp,self.stamp2)
             for record in self.records:
                 record.dump(out)
 
@@ -3618,11 +3626,12 @@ class MobDials(MobObjects):
                 record = recClass(header,ins,True)
                 records.append(record)
             elif recType == 'GRUP':
-                (recType,size,label,groupType,stamp) = header
+                (recType,size,label,groupType,stamp,stamp2) = header
                 if groupType == 7:
                     record.infoStamp = stamp
+                    record.infoStamp2 = stamp2
                     infoClass = self.loadFactory.getRecClass('INFO')
-                    record.loadInfos(ins,ins.tell()+size-20,infoClass)
+                    record.loadInfos(ins,ins.tell()+size-recHeaderSize,infoClass)
                 else:
                     raise ModError(self.inName,'Unexpected subgroup %d in DIAL group.' % groupType)
             else:
@@ -3634,11 +3643,11 @@ class MobDials(MobObjects):
         """Returns size of records plus group and record headers."""
         if not self.changed: 
             return self.size
-        size = 20
+        size = recHeaderSize
         for record in self.records:
-            size += 20 + record.getSize()
+            size += recHeaderSize + record.getSize()
             if record.infos: 
-                size += 20 + sum(20+info.getSize() for info in record.infos)
+                size += recHeaderSize + sum(recHeaderSize+info.getSize() for info in record.infos)
         return size
 
     def getNumRecords(self,includeGroups=1):
@@ -3699,29 +3708,29 @@ class MobCell(MobBase):
 
     def getSize(self):
         """Returns size (incuding size of any group headers)."""
-        return 20 + self.cell.getSize() + self.getChildrenSize()
+        return recHeaderSize + self.cell.getSize() + self.getChildrenSize()
 
     def getChildrenSize(self):
         """Returns size of all childen, including the group header.  This does not include the cell itself."""
         size = self.getPersistentSize() + self.getTempSize() + self.getDistantSize()
-        return size + 20*bool(size)
+        return size + recHeaderSize*bool(size)
 
     def getPersistentSize(self):
         """Returns size of all persistent children, including the persistent children group."""
-        size = sum(20 + x.getSize() for x in self.persistent)
-        return size + 20*bool(size)
+        size = sum(recHeaderSize + x.getSize() for x in self.persistent)
+        return size + recHeaderSize*bool(size)
 
     def getTempSize(self):
         """Returns size of all temporary children, including the temporary children group."""
-        size = sum(20 + x.getSize() for x in self.temp)
-        if self.pgrd: size += 20 + self.pgrd.getSize()
-        if self.land: size += 20 + self.land.getSize()
-        return size + 20*bool(size)
+        size = sum(recHeaderSize + x.getSize() for x in self.temp)
+        if self.pgrd: size += recHeaderSize + self.pgrd.getSize()
+        if self.land: size += recHeaderSize + self.land.getSize()
+        return size + recHeaderSize*bool(size)
 
     def getDistantSize(self):
         """Returns size of all distant children, including the distant children group."""
-        size = sum(20 + x.getSize() for x in self.distant)
-        return size + 20*bool(size)
+        size = sum(recHeaderSize + x.getSize() for x in self.distant)
+        return size + recHeaderSize*bool(size)
 
     def getNumRecords(self,includeGroups=True):
         """Returns number of records, including self and all children."""
@@ -3755,13 +3764,13 @@ class MobCell(MobBase):
         self.cell.dump(out)
         childrenSize = self.getChildrenSize()
         if not childrenSize: return
-        out.writeGroup(childrenSize,self.cell.formid,6,self.stamp)
+        out.writeGroup(childrenSize,self.cell.formid,6,self.stamp,self.stamp2)
         if self.persistent:
-            out.writeGroup(self.getPersistentSize(),self.cell.formid,8,self.stamp)
+            out.writeGroup(self.getPersistentSize(),self.cell.formid,8,self.stamp,self.stamp2)
             for record in self.persistent:
                 record.dump(out)
         if self.temp or self.pgrd or self.land:
-            out.writeGroup(self.getTempSize(),self.cell.formid,9,self.stamp)
+            out.writeGroup(self.getTempSize(),self.cell.formid,9,self.stamp,self.stamp2)
             if self.pgrd:
                 self.pgrd.dump(out)
             if self.land:
@@ -3769,7 +3778,7 @@ class MobCell(MobBase):
             for record in self.temp:
                 record.dump(out)
         if self.distant:
-            out.writeGroup(self.getDistantSize(),self.cell.formid,10,self.stamp)
+            out.writeGroup(self.getDistantSize(),self.cell.formid,10,self.stamp,self.stamp2)
             for record in self.distant:
                 record.dump(out)
 
@@ -3864,7 +3873,7 @@ class MobCells(MobBase):
         if formid in self.id_cellBlock:
             self.id_cellBlock[formid].cell = cell
         else:
-            cellBlock = MobCell(('GRUP',0,0,6,self.stamp),self.loadFactory,cell)
+            cellBlock = MobCell(('GRUP',0,0,6,self.stamp,self.stamp2),self.loadFactory,cell)
             cellBlock.setChanged()
             self.cellBlocks.append(cellBlock)
             self.id_cellBlock[formid] = cellBlock
@@ -3884,17 +3893,17 @@ class MobCells(MobBase):
         bsbCellBlocks.sort(key = lambda x: x[1].cell.formid)
         bsbCellBlocks.sort(key = itemgetter(0))
         bsb_size = {}
-        totalSize = 20
+        totalSize = recHeaderSize
         for bsb,cellBlock in bsbCellBlocks:
             cellBlockSize = cellBlock.getSize()
             totalSize += cellBlockSize
             bsb0 = (bsb[0],None) #--Block group
-            bsb_size.setdefault(bsb0,20)
-            if bsb_size.setdefault(bsb,20) == 20:
-                bsb_size[bsb0] += 20
+            bsb_size.setdefault(bsb0,recHeaderSize)
+            if bsb_size.setdefault(bsb,recHeaderSize) == recHeaderSize:
+                bsb_size[bsb0] += recHeaderSize
             bsb_size[bsb] += cellBlockSize
             bsb_size[bsb0] += cellBlockSize
-        totalSize += 20 * len(bsb_size)
+        totalSize += recHeaderSize * len(bsb_size)
         return totalSize,bsb_size,bsbCellBlocks
 
     def dumpBlocks(self,out,bsbCellBlocks,bsb_size,blockGroupType,subBlockGroupType):
@@ -3902,15 +3911,16 @@ class MobCells(MobBase):
         curBlock = None
         curSubblock = None
         stamp = self.stamp
+        stamp2 = self.stamp2
         for bsb,cellBlock in bsbCellBlocks:
             (block,subblock) = bsb
             bsb0 = (block,None)
             if block != curBlock:
                 curBlock,curSubblock = bsb0
-                out.writeGroup(bsb_size[bsb0],block,blockGroupType,stamp)
+                out.writeGroup(bsb_size[bsb0],block,blockGroupType,stamp,stamp2)
             if subblock != curSubblock:
                 curSubblock = subblock
-                out.writeGroup(bsb_size[bsb],subblock,subBlockGroupType,stamp)
+                out.writeGroup(bsb_size[bsb],subblock,subBlockGroupType,stamp,stamp2)
             cellBlock.dump(out)
 
     def getNumRecords(self,includeGroups=1):
@@ -3975,9 +3985,9 @@ class MobICells(MobCells):
             elif recType == 'GRUP':
                 size,groupFormid,groupType = header[1:4]
                 if groupType == 2: # Block number
-                    endBlockPos = ins.tell()+size+20
+                    endBlockPos = ins.tell()+size+recHeaderSize
                 elif groupType == 3: # Sub-block number
-                    endSubblockPos = ins.tell()+size+20
+                    endSubblockPos = ins.tell()+size+recHeaderSize
                 elif groupType == 6: # Cell Children
                     if cell:
                         if groupFormid != cell.formid:
@@ -3987,7 +3997,7 @@ class MobICells(MobCells):
                             cellBlock = MobCell(header,self.loadFactory,cell,ins,True)
                         else:
                             cellBlock = MobCell(header,self.loadFactory,cell)
-                            ins.seek(header[1]-20,1)
+                            ins.seek(header[1]-recHeaderSize,1)
                         cellBlocks.append(cellBlock)
                         cell = None
                     else:
@@ -4005,7 +4015,7 @@ class MobICells(MobCells):
             out.write(self.data)
         elif self.cellBlocks:
             (totalSize, bsb_size, blocks) = self.getBsbSizes()
-            out.writeGroup(totalSize,self.label,self.groupType,self.stamp)
+            out.writeGroup(totalSize,self.label,self.groupType,self.stamp,self.stamp2)
             self.dumpBlocks(out,blocks,bsb_size,2,3)
 
 #-------------------------------------------------------------------------------
@@ -4047,11 +4057,11 @@ class MobWorld(MobCells):
                 if groupType == 4: # Exterior Cell Block
                     block = struct.unpack('2h',struct.pack('I',groupFormid))
                     block = (block[1],block[0])
-                    endBlockPos = ins.tell() + size + 20
+                    endBlockPos = ins.tell() + size + recHeaderSize
                 elif groupType == 5: # Exterior Cell Sub-Block
                     subblock = struct.unpack('2h',struct.pack('I',groupFormid))
                     subblock = (subblock[1],subblock[0])
-                    endSubblockPos = ins.tell() + size + 20
+                    endSubblockPos = ins.tell() + size + recHeaderSize
                 elif groupType == 6: # Cell Children
                     if cell:
                         if groupFormid != cell.formid:
@@ -4061,7 +4071,7 @@ class MobWorld(MobCells):
                             cellBlock = MobCell(header,self.loadFactory,cell,ins,True)
                         else:
                             cellBlock = MobCell(header,self.loadFactory,cell)
-                            ins.seek(header[1]-20,1)
+                            ins.seek(header[1]-recHeaderSize,1)
                         if block:
                             cellBlocks.append(cellBlock)
                         else:
@@ -4090,7 +4100,7 @@ class MobWorld(MobCells):
 
     def dump(self,out):
         """Dumps group header and then records.  Returns the total size of the world block."""
-        worldSize = self.world.getSize() + 20
+        worldSize = self.world.getSize() + recHeaderSize
         self.world.dump(out)
         if not self.changed:
             out.writeGroup(*self.headers[1:])
@@ -4099,10 +4109,10 @@ class MobWorld(MobCells):
         elif self.cellBlocks or self.road or self.worldCellBlock:
             (totalSize, bsb_size, blocks) = self.getBsbSizes()
             if self.road:
-                totalSize += self.road.getSize() + 20
+                totalSize += self.road.getSize() + recHeaderSize
             if self.worldCellBlock:
                 totalSize += self.worldCellBlock.getSize()
-            out.writeGroup(totalSize,self.world.formid,1,self.stamp)
+            out.writeGroup(totalSize,self.world.formid,1,self.stamp,self.stamp2)
             if self.road:
                 self.road.dump(out)
             if self.worldCellBlock:
@@ -4193,7 +4203,7 @@ class MobWorlds(MobBase):
                 if not world:
                     #raise ModError(ins.inName,'Extra subgroup %d in WRLD group.' % groupType)
                     #--Orphaned world records. Skip over.
-                    ins.seek(header[1]-20,1)
+                    ins.seek(header[1]-recHeaderSize,1)
                     self.orphansSkipped += 1
                     continue
                 if groupFormid != world.formid:
@@ -4207,7 +4217,7 @@ class MobWorlds(MobBase):
 
     def getSize(self):
         """Returns size (incuding size of any group headers)."""
-        return 20 + sum(x.getSize() for x in self.worldBlocks)
+        return recHeaderSize + sum(x.getSize() for x in self.worldBlocks)
 
     def dump(self,out):
         """Dumps group header and then records."""
@@ -4217,8 +4227,8 @@ class MobWorlds(MobBase):
         else:
             if not self.worldBlocks: return
             worldHeaderPos = out.tell()
-            out.writeGroup(0,self.label,0,self.stamp)
-            totalSize = 20 + sum(x.dump(out) for x in self.worldBlocks)
+            out.writeGroup(0,self.label,0,self.stamp,self.stamp2)
+            totalSize = recHeaderSize + sum(x.dump(out) for x in self.worldBlocks)
             out.seek(worldHeaderPos + 4)
             out.pack('I', totalSize)
             out.seek(worldHeaderPos + totalSize)
@@ -4261,7 +4271,7 @@ class MobWorlds(MobBase):
         if formid in self.id_worldBlocks:
             self.id_worldBlocks[formid].world = world
         else:
-            worldBlock = MobWorld(('GRUP',0,0,1,self.stamp),self.loadFactory,world)
+            worldBlock = MobWorld(('GRUP',0,0,1,self.stamp,self.stamp2),self.loadFactory,world)
             worldBlock.setChanged()
             self.worldBlocks.append(worldBlock)
             self.id_worldBlocks[formid] = worldBlock
@@ -4314,7 +4324,7 @@ class ModFile:
         #--Raw data read
         while not ins.atEnd():
             #--Get record info and handle it
-            (type,size,label,groupType,stamp) = header = ins.unpackRecHeader()
+            (type,size,label,groupType,stamp,stamp2) = header = ins.unpackRecHeader()
             if type != 'GRUP' or groupType != 0:
                 raise ModError(self.fileInfo.name,_('Improperly grouped file.'))
             topClass = self.loadFactory.getTopClass(label)
@@ -4323,7 +4333,7 @@ class ModFile:
                 self.tops[label].load(ins,unpack and (topClass != MobBase))
             else:
                 self.topsSkipped.add(label)
-                ins.seek(size-20,1,type+'.'+label)
+                ins.seek(size-recHeaderSize,1,type+'.'+label)
         #--Done Reading
         ins.close()
 
@@ -4896,7 +4906,7 @@ class SaveFile:
         createdNum, = ins.unpack('I',4)
         for count in xrange(createdNum):
             progress(ins.tell(),_('Reading created...'))
-            header = ins.unpack('4s4I',20)
+            header = ins.unpack('4s4II',recHeaderSize)
             self.created.append(MreRecord(header,modReader))
         #--Pre-records: Quickkeys, reticule, interface, regions
         buff = cStringIO.StringIO()
@@ -5310,8 +5320,8 @@ class SaveFile:
 
 #--------------------------------------------------------------------------------
 class CoSaves:
-    """Handles co-files (.pluggy, .obse) for saves."""
-    reSave  = re.compile(r'\.ess(f?)$',re.I)
+    """Handles co-files (.pluggy, .fose) for saves."""
+    reSave  = re.compile(r'\.fos(f?)$',re.I)
 
     @staticmethod
     def getPaths(savePath):
@@ -5319,7 +5329,7 @@ class CoSaves:
         maSave = CoSaves.reSave.search(savePath.s)
         if maSave: savePath = savePath.root
         first = maSave and maSave.group(1) or ''
-        return tuple(savePath+ext+first for ext in  ('.pluggy','.obse'))
+        return tuple(savePath+ext+first for ext in  ('.pluggy','.fose'))
 
     def __init__(self,savePath,saveName=None):
         """Initialize with savePath."""
@@ -5349,14 +5359,14 @@ class CoSaves:
 
     def getTags(self):
         """Returns tags expressing whether cosaves exist and are correct."""
-        cPluggy,cObse = ('','')
+        cPluggy,cFose = ('','')
         save = self.savePath
-        pluggy,obse = self.paths
+        pluggy,fose = self.paths
         if pluggy.exists():
             cPluggy = 'XP'[abs(pluggy.mtime - save.mtime) < 10]
-        if obse.exists():
-            cObse = 'XO'[abs(obse.mtime - save.mtime) < 10]
-        return (cObse,cPluggy)
+        if fose.exists():
+            cFose = 'XO'[abs(fose.mtime - save.mtime) < 10]
+        return (cFose,cPluggy)
 
 # File System -----------------------------------------------------------------
 #--------------------------------------------------------------------------------
@@ -5397,7 +5407,7 @@ class BsaFile:
         ins = bolt.StructFile(self.path.s,'rb')
         #--Header
         ins.seek(4*4)
-        (self.folderCount,self.fileCount,lenFolderNames,lenFileNames,fileFlags) = ins.unpack('5I',20)
+        (self.folderCount,self.fileCount,lenFolderNames,lenFileNames,fileFlags,fileFlags2) = ins.unpack('6I',recHeaderSize)
         #--FolderInfos (Initial)
         folderInfos = self.folderInfos = []
         for index in range(self.folderCount):
@@ -5555,7 +5565,7 @@ class Fallout3Ini:
     def ensureExists(self):
         """Ensures that Fallout3.ini file exists. Copies from default oblvion.ini if necessary."""
         if self.path.exists(): return
-        srcPath = dirs['app'].join('Fallout3_default.ini')
+        srcPath = dirs['app'].join('Fallout_default.ini')
         srcPath.copyTo(self.path)
 
     def getSetting(self,section,key,default=None):
@@ -6593,6 +6603,8 @@ class ModInfos(FileInfos):
         self.group_header = {}
         #--Fallout3 version 
         self.version_voSize = {
+            '1.0':int(_("288769595")),
+            '1.1':int(_("288771181")),
             '1.4':int(_("288771262")),
         }
         self.size_voVersion = bolt.invertDict(self.version_voSize)
@@ -10002,7 +10014,7 @@ class ModDetails:
                 progress(1.0*ins.tell()/modInfo.size,_("Scanning: ")+str0)
                 records = group_records.setdefault(str0,[])
                 if str0 in ('CELL','WRLD','DIAL'):
-                    ins.seek(size-20,1)
+                    ins.seek(size-recHeaderSize,1)
             elif type != 'GRUP':
                 eid = ''
                 nextRecord = ins.tell() + size
@@ -10547,7 +10559,7 @@ class CleanMod:
                 if formid != 0: #--Ignore sub-groups
                     pass 
                 elif str0 not in ('CELL','WRLD'):
-                    copy(size-20)
+                    copy(size-recHeaderSize)
             #--Handle cells
             elif type == 'CELL':
                 nextRecord = ins.tell() + size
@@ -10601,19 +10613,19 @@ class UndeleteRefs:
             out.write(buff)
         while not ins.atEnd():
             progress(ins.tell())
-            (type,size,flags,formid,uint2) = ins.unpackRecHeader()
+            (type,size,flags,formid,uint2,uint3) = ins.unpackRecHeader()
             copyPrev(20)
             if type == 'GRUP':
                 if formid != 0: #--Ignore sub-groups
                     pass 
                 elif flags not in ('CELL','WRLD'):
-                    copy(size-20)
+                    copy(size-recHeaderSize)
             #--Handle cells
             else:
                 if flags & 0x20 and type in ('ACHR','ACRE','REFR'):
                     flags = (flags & ~0x20) | 0x1000
                     out.seek(-20,1)
-                    out.write(struct.pack('=4s4I',type,size,flags,formid,uint2))
+                    out.write(struct.pack('=4s5I',type,size,flags,formid,uint2,uint3))
                     fixedRefs.add(formid)
                 copy(size)
         #--Done
