@@ -2869,22 +2869,28 @@ class MreRace(MelRecord):
         """Handles NAM0, NAM1, MNAM, FMAN and INDX records. Distributes load 
         duties to other elements as needed."""
         def __init__(self):
-            bodyAttrs = ('UpperBody','LowerBody','Hand','Foot','Tail')
-            self.attrs = {
+            headAttrs = ('Head', 'Ears', 'Mouth', 'TeethLower', 'TeethUpper', 'Tongue', 'LeftEye', 'RightEye')
+            bodyAttrs = ('UpperBody','LeftHand','RightHand','UpperBodyTexture')
+            self.headModelAttrs = {
+                'MNAM':tuple('male'+text for text in headAttrs),
+                'FNAM':tuple('female'+text for text in headAttrs),
+                }
+            self.bodyModelAttrs = {
                 'MNAM':tuple('male'+text for text in bodyAttrs),
                 'FNAM':tuple('female'+text for text in bodyAttrs),
-                'NAM0':('head', 'maleEars', 'femaleEars', 'mouth', 
-                'teethLower', 'teethUpper', 'tongue', 'leftEye', 'rightEye',)
                 }
-            self.tailModelAttrs = {'MNAM':'maleTailModel','FNAM':'femaleTailModel'}
+            self.attrs = {
+                'NAM0':self.headModelAttrs,
+                'NAM1':self.bodyModelAttrs
+                }
             self._debug = False
 
         def getSlotsUsed(self):
-            return ('_loadAttrs',)
+            return ('_loadAttrs','_modelAttrs',)
 
         def getLoaders(self,loaders):
             """Self as loader for structure types."""
-            for type in ('NAM0','MNAM','FNAM','INDX'):
+            for type in ('NAM0','NAM1','MNAM','FNAM','INDX'):
                 loaders[type] = self
         
         def setMelSet(self,melSet):
@@ -2896,15 +2902,17 @@ class MreRace(MelRecord):
                 if attr: self.loaders[attr] = element
         
         def loadData(self,record,ins,type,size,readId):
-            if type in ('NAM0','MNAM','FNAM'):
-                record._loadAttrs = self.attrs[type]
-                attr = self.tailModelAttrs.get(type)
-                if not attr: return
+            if type in ('NAM0','NAM1'):
+                record._modelAttrs = self.attrs[type]
+                return
+            elif type in ('MNAM','FNAM'):
+                record._loadAttrs = record._modelAttrs[type]
+                return
             else: #--INDX
                 index, = ins.unpack('i',4,readId)
                 attr = record._loadAttrs[index]
-            element = self.loaders[attr]
-            for type in ('MODL','MODB','ICON'):
+                element = self.loaders[attr]
+            for type in ('MODL','MODB','MODT','MODS','MODD','ICON', 'MICO'):
                 self.melSet.loaders[type] = element
 
     #--Mel Set
@@ -2927,30 +2935,33 @@ class MreRace(MelRecord):
         MelTuple('ATTR','2B','baseAttributes',[0]*2),
         #--Begin Indexed entries
         MelBase('NAM0','_nam0',''),
-        MelRaceModel('head',0),
-        MelRaceModel('maleEars',1),
-        MelRaceModel('femaleEars',2),
-        MelRaceModel('mouth',3),
-        MelRaceModel('teethLower',4),
-        MelRaceModel('teethUpper',5),
-        MelRaceModel('tongue',6),
-        MelRaceModel('leftEye',7),
-        MelRaceModel('rightEye',8),
-        MelBase('NAM1','_nam1',''),
         MelBase('MNAM','_mnam',''),
-        MelModel('maleTailModel'),
-        MelRaceIcon('maleUpperBody',0),
-        MelRaceIcon('maleLowerBody',1),
-        MelRaceIcon('maleHand',2),
-        MelRaceIcon('maleFoot',3),
-        MelRaceIcon('maleTail',4),
         MelBase('FNAM','_fnam',''),
-        MelModel('femaleTailModel'),
-        MelRaceIcon('femaleUpperBody',0),
-        MelRaceIcon('femaleLowerBody',1),
-        MelRaceIcon('femaleHand',2),
-        MelRaceIcon('femaleFoot',3),
-        MelRaceIcon('femaleTail',4),
+        MelRaceModel('maleHead',0),
+        MelRaceModel('femaleHead',0),
+        MelRaceIcon('maleEars',1),
+        MelRaceIcon('femaleEars',1),
+        MelRaceModel('maleMouth',2),
+        MelRaceModel('femaleMouth',2),
+        MelRaceModel('maleTeethLower',3),
+        MelRaceModel('femaleTeethLower',3),
+        MelRaceModel('maleTeethUpper',4),
+        MelRaceModel('femaleTeethUpper',4),
+        MelRaceModel('maleTongue',5),
+        MelRaceModel('femaleTongue',5),
+        MelRaceModel('maleLeftEye',6),
+        MelRaceModel('femaleLeftEye',6),
+        MelRaceModel('maleRightEye',7),
+        MelRaceModel('femaleRightEye',7),
+        MelBase('NAM1','_nam1',''),
+        MelRaceModel('maleUpperBody',0),
+        MelRaceModel('femaleUpperBody',0),
+        MelRaceModel('maleLeftHand',1),
+        MelRaceModel('femaleLeftHand',1),
+        MelRaceModel('maleRightHand',2),
+        MelRaceModel('femaleRightHand',2),
+        MelRaceModel('maleUpperBodyTexture',3),
+        MelRaceModel('femaleUpperBodyTexture',3),
         #--Normal Entries
         MelFormidList('HNAM','hair'),
         MelFormidList('ENAM','eyes'),
@@ -6425,7 +6436,7 @@ class ResourceReplacer:
         'fonts': ['.fnt', '.tex'],
         'menus': ['.bat', '.html', '.scc', '.txt', '.xml'],
         'meshes': ['.egm', '.egt', '.fim', '.kf', '.kfm', '.nif', '.tri', '.txt'],
-        'obse':['.dll','.dlx','.txt','.mp3'],
+        'fose':['.dll','.dlx','.txt','.mp3'],
         'shaders': ['.sdp','.fx'],
         'sound': ['.lip', '.mp3', '.wav'],
         'textures': ['.dds', '.ifl', '.psd', '.txt'],
