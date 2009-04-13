@@ -2617,6 +2617,21 @@ class MreNpc(MreActor):
         (14,'training'),
         (16,'recharge'),
         (17,'repair'),))
+    aitService = Flags(0L,Flags.getNames(
+        (0,'weapons'),
+        (1,'armor'),
+        (2,'clothing'),
+        (3,'books'),
+        (4,'ingredients'),
+        (7,'lights'),
+        (8,'apparatus'),
+        (10,'miscItems'),
+        (11,'spells'),
+        (12,'magicItems'),
+        (13,'potions'),
+        (14,'training'),
+        (16,'recharge'),
+        (17,'repair'),))
     #--Mel NPC DATA
     class MelNpcData(MelStruct):
         """Convert npc stats into skills, health, attributes."""
@@ -2641,20 +2656,26 @@ class MreNpc(MreActor):
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FULL','full'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelModel(),
-        MelStruct('ACBS','=I3Hh2H',
-            (_flags,'flags',0L),'baseSpell','fatigue','barterGold',
-            ('level',1),'calcMin','calcMax'),
+        MelStruct('ACBS','=I2Hh3Hf2H',
+            (_flags,'flags',0L),'fatigue','barterGold',('level',1),'calcMin','calcMax',
+            'speedMultiplier','karma','dispotionBase','templateFlags'),
         MelStructs('SNAM','=Ib3s','factions',
             (FID,'faction',None),'rank',('unknown','ODB')),
         MelFormid('INAM','deathItem'),
+        MelFormid('VTCK','voice'),
         MelFormid('RNAM','race'),
+        MelStruct('EAMT','H', 'eamt'),
         MelFormids('SPLO','spells'),
         MelFormid('SCRI','script'),
         MelStructs('CNTO','Ii','items',(FID,'item',None),('count',1)),
-        MelStruct('AIDT','=4BI2BH',
-            ('aggression',5),('confidence',50),('energyLevel',50),('responsibility',50),
-            (aiService,'services',0L),'trainSkill','trainLevel','aiUnknown'),
+        MelStruct('AIDT','=5B2I3B2H',
+            ('aggression',5),('confidence',50),('energyLevel',50),('responsibility',50),('mood',0L),
+            (aiService,'services',0L),(aiTeaches,'teaches',0L),'trainLevel','assistance',
+            'aggroRadiusBehavior','aggroRadius','unknown'),
         MelFormids('PKID','aiPackages'),
         MelBase('KFFZ','kffz'),
         MelFormid('CNAM','iclass'),
@@ -2843,12 +2864,15 @@ class MreRace(MelRecord):
                 MelStruct.dumpData(self,record,out)
     
     class MelRaceModel(MelGroup):
-        """Most face data, like a MelModel - MODT + ICON. Load is controlled by MelRaceDistributor."""
+        """Most face data, like a MelModel + ICON. Load is controlled by MelRaceDistributor."""
         def __init__(self,attr,index):
             MelGroup.__init__(self,attr,
                 MelString('MODL','path'),
                 MelBase('MODB','modb'),
+                MelBase('MODT','modt'),
+                MelBase('MODS','mods'),
                 MelBase('ICON','icon'),
+                MelBase('MICO','mico'),
                 MelStruct('MODD','B',('modd',0)))
             self.index = index
 
@@ -5566,7 +5590,7 @@ class BsaFile:
 #--------------------------------------------------------------------------------
 class Fallout3Ini:
     """Fallout3.ini file."""
-    bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa',r'..\obmm\bsaredirection.bsa'))
+    bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa',r'..\fomm\bsaredirection.bsa'))
 
     def __init__(self):
         """Initialize."""
@@ -5574,7 +5598,7 @@ class Fallout3Ini:
         self.isCorrupted = False
         
     def ensureExists(self):
-        """Ensures that Fallout3.ini file exists. Copies from default oblvion.ini if necessary."""
+        """Ensures that Fallout3.ini file exists. Copies from default fallout.ini if necessary."""
         if self.path.exists(): return
         srcPath = dirs['app'].join('Fallout_default.ini')
         srcPath.copyTo(self.path)
@@ -6631,11 +6655,11 @@ class ModInfos(FileInfos):
         """Returns a boolean indicating if mtime setting is allowed."""
         self.lockTimes = settings['bosh.modInfos.resetMTimes']
         self.fullBalo = settings.get('bash.balo.full',False)
-        obmmWarn = settings.setdefault('bosh.modInfos.obmmWarn',0)
-        if self.lockTimes and obmmWarn == 0 and dirs['app'].join('obmm').exists():
-            settings['bosh.modInfos.obmmWarn'] = 1
+        fommWarn = settings.setdefault('bosh.modInfos.fommWarn',0)
+        if self.lockTimes and fommWarn == 0 and dirs['app'].join('fomm').exists():
+            settings['bosh.modInfos.fommWarn'] = 1
         if not self.lockTimes: return False
-        if settings['bosh.modInfos.obmmWarn'] == 1: return False
+        if settings['bosh.modInfos.fommWarn'] == 1: return False
         if settings.dictFile.readOnly: return False
         #--Else
         return True
@@ -8109,7 +8133,7 @@ class Installer(object):
     dataDirs = set(('bash patches','distantlod','docs','facegen','fonts',
         'menus','meshes','music','shaders','sound', 'textures', 'trees','video'))
     dataDirsPlus = dataDirs | docDirs | set(('streamline','_tejon','ini tweaks','scripts'))
-    dataDirsMinus = set(('bash','obse','replacers')) #--Will be skiped even if hasExtraData == True.
+    dataDirsMinus = set(('bash','fose','replacers')) #--Will be skiped even if hasExtraData == True.
     reDataFile = re.compile(r'(masterlist.txt|\.(esp|esm|bsa))$',re.I)
     reReadMe = re.compile(r'^([^\\]*)(read[ _]?me|lisez[ _]?moi)([^\\]*)\.(txt|rtf|htm|html|doc|odt)$',re.I)
     skipExts = set(('.dll','.dlx','.exe','.py','.pyc','.7z','.zip','.rar','.db'))
@@ -8334,7 +8358,7 @@ class Installer(object):
         for full,size,crc in self.fileSizeCrcs:
             file = full #--Default
             fileLower = file.lower()
-            if full[:2] == '--' or fileLower[:20] == 'omod conversion data':
+            if full[:2] == '--' or fileLower[:20] == 'fomod conversion data':
                 continue
             if type == 2: #--Complex archive
                 subFile = full.split('\\',1)
@@ -8744,9 +8768,9 @@ class InstallerProject(Installer):
         self.removeEmpties(package)
         return (updated,removed)
 
-    #--Omod Config ------------------------------------------------------------
-    class OmodConfig:
-        """Tiny little omod config class."""
+    #--Fomod Config ------------------------------------------------------------
+    class FomodConfig:
+        """Tiny little fomod config class."""
         def __init__(self,name):
             self.name = name.s
             self.vMajor = 0
@@ -8757,10 +8781,10 @@ class InstallerProject(Installer):
             self.website = ''
             self.abstract = ''
 
-    def getOmodConfig(self,name):
-        """Get obmm config file for project."""
-        config = InstallerProject.OmodConfig(name)
-        configPath = dirs['installers'].join(name,'omod conversion data','config')
+    def getFomodConfig(self,name):
+        """Get fomm config file for project."""
+        config = InstallerProject.FomodConfig(name)
+        configPath = dirs['installers'].join(name,'fomod conversion data','config')
         if configPath.exists():
             ins = bolt.StructFile(configPath.s,'rb')
             ins.read(1) #--Skip first four bytes
@@ -8775,9 +8799,9 @@ class InstallerProject(Installer):
             ins.close()
         return config
 
-    def writeOmodConfig(self,name,config):
-        """Write obmm config file for project."""
-        configPath = dirs['installers'].join(name,'omod conversion data','config')
+    def writeFomodConfig(self,name,config):
+        """Write fomm config file for project."""
+        configPath = dirs['installers'].join(name,'fomod conversion data','config')
         configPath.head.makedirs()
         out = bolt.StructFile(configPath.temp.s,'wb')
         out.pack('B',4)
@@ -14662,7 +14686,7 @@ def initDirs(personal='',localAppData=''):
     if bashIni and bashIni.has_option('General','sFallout3Mods'):
         fallout3Mods = GPath(bashIni.get('General','sFallout3Mods').strip())
     else:
-        fallout3Mods = GPath(r'..\Fallout3 Mods')
+        fallout3Mods = GPath(r'..\Fallout 3 Mods')
     if not fallout3Mods.isabs():
         fallout3Mods = dirs['app'].join(fallout3Mods)
     for key,oldDir,newDir in (
