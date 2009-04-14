@@ -1401,7 +1401,11 @@ class MelBipedFlags(Flags):
     """Biped flags element. Includes biped flag set by default."""
     mask = 0xFFFF
     def __init__(self,default=0L,newNames=None):
-        names = Flags.getNames('head', 'hair', 'upperBody', 'lowerBody', 'hand', 'foot', 'rightRing', 'leftRing', 'amulet', 'weapon', 'backWeapon', 'sideWeapon', 'quiver', 'shield', 'torch', 'tail')
+        names = Flags.getNames(
+            'head', 'hair', 'upperBody', 'leftHand', 'rightHand', 'weapon',
+            'pipboy', 'backpack', 'necklace', 'headband', 'hat', 'eyeGlasses',
+            'noseRing', 'earrings', 'mask', 'choker', 'mouthObject',
+            'bodyAddOn1', 'bodyAddOn2', 'bodyAddOn3')
         if newNames: names.update(newNames)
         Flags.__init__(self,default,names)
         
@@ -1961,21 +1965,35 @@ class MreAppa(MelRecord):
 class MreArmo(MelRecord):
     """Amor record."""
     classType = 'ARMO' 
-    _flags = MelBipedFlags(0L,Flags.getNames((16,'hideRings'),(17,'hideAmulet'),(22,'notPlayable'),(23,'heavyArmor')))
+    _flags = MelBipedFlags(0L,Flags.getNames())
+    _generalFlags = Flags(0L,Flags.getNames(
+        (5,'powerArmor'),
+        (6,'notPlayable'),
+        (7,'heavyArmor')
+    ))
+    _etype = Flags(0L,Flags.getNames(
+        'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
+        'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
+    ))
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelFormid('SCRI','script'),
         MelFormid('ENAM','enchantment'),
         MelOptStruct('ANAM','H','enchantPoints'),
-        MelStruct('BMDT','I',(_flags,'flags',0L)),
+        MelStruct('BMDT','=2I',(_flags,'flags',0L),(_generalFlags,'generalFlags',0L)),
         MelModel('maleBody',0),
         MelModel('maleWorld',2),
         MelString('ICON','maleIcon'),
         MelModel('femaleBody',3),
         MelModel('femaleWorld',4),
         MelString('ICO2','femaleIcon'),
-        MelStruct('DATA','=HIIf','strength','value','health','weight'),
+        MelStruct('ETYP','I',(_etype,'etype',0L)),
+        MelStruct('DATA','=IIf','value','health','weight'),
+        MelStruct('DNAM','=HH','ar','flags'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -2283,8 +2301,8 @@ class MreFact(MelRecord):
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FULL','full'),
-        MelStructs('XNAM','Ii','relations',(FID,'faction'),'mod'),
-        MelStruct('DATA','B',(_flags,'flags',0L)),
+        MelStructs('XNAM','I2i','relations',(FID,'faction'),'mod','groupCombatReaction'),
+        MelStruct('DATA','2BH',(_flags,'flags',0L),'flags2','unknown'),
         MelStruct('CNAM','f',('crimeGoldMultiplier',1)),
         MelGroups('ranks',
             MelStruct('RNAM','i','rank'),
@@ -2607,46 +2625,59 @@ class MreNpc(MreActor):
         (1,'armor'),
         (2,'clothing'),
         (3,'books'),
-        (4,'ingredients'),
+        (4,'foods'),
+        (5,'chems'),
+        (6,'stimpacks'),
         (7,'lights'),
-        (8,'apparatus'),
         (10,'miscItems'),
-        (11,'spells'),
-        (12,'magicItems'),
         (13,'potions'),
         (14,'training'),
         (16,'recharge'),
         (17,'repair'),))
-    aitService = Flags(0L,Flags.getNames(
-        (0,'weapons'),
-        (1,'armor'),
-        (2,'clothing'),
-        (3,'books'),
-        (4,'ingredients'),
-        (7,'lights'),
-        (8,'apparatus'),
-        (10,'miscItems'),
-        (11,'spells'),
-        (12,'magicItems'),
-        (13,'potions'),
-        (14,'training'),
-        (16,'recharge'),
-        (17,'repair'),))
+    aiTeaches = Flags(0L,Flags.getNames(
+        (0,'barter'),
+        (1,'bigGuns'),
+        (2,'energyWeapons'),
+        (3,'explosives'),
+        (4,'lockpick'),
+        (5,'medicine'),
+        (6,'meleeWeapons'),
+        (7,'none'),
+        (8,'repair'),
+        (9,'science'),
+        (10,'smallGuns'),
+        (11,'sneak'),
+        (12,'throwing'),
+        (13,'unarmed'),))
     #--Mel NPC DATA
     class MelNpcData(MelStruct):
-        """Convert npc stats into skills, health, attributes."""
+        """Convert npc stats into health, attributes."""
         def loadData(self,record,ins,type,size,readId):
-            unpacked = list(ins.unpack('=21BI8B',size,readId))
+            unpacked = list(ins.unpack('=I7B',size,readId))
             recordSetAttr = record.__setattr__
-            recordSetAttr('skills',unpacked[:21])
-            recordSetAttr('health',unpacked[21])
-            recordSetAttr('attributes',unpacked[22:])
-            if self._debug: print unpacked[:21],unpacked[21],unpacked[22:]
+            recordSetAttr('health',unpacked[0])
+            recordSetAttr('attributes',unpacked[1:])
+            if self._debug: print unpacked[0],unpacked[1:]
         def dumpData(self,record,out):
             """Dumps data from record to outstream."""
             recordGetAttr = record.__getattribute__
-            values = recordGetAttr('skills')+[recordGetAttr('health')]+recordGetAttr('attributes')
-            out.packSub(self.subType,'=21BI8B',*values)
+            values = [recordGetAttr('health')]+recordGetAttr('attributes')
+            out.packSub(self.subType,'=I7B',*values)
+
+    #--Mel NPC DNAM
+    class MelNpcDnam(MelStruct):
+        """Convert npc stats into skills."""
+        def loadData(self,record,ins,type,size,readId):
+            unpacked = list(ins.unpack('=28B',size,readId))
+            recordSetAttr = record.__setattr__
+            recordSetAttr('skillValues',unpacked[:13])
+            recordSetAttr('skillOffsets',unpacked[14:])
+            if self._debug: print unpacked[:13]+unpacked[14:]
+        def dumpData(self,record,out):
+            """Dumps data from record to outstream."""
+            recordGetAttr = record.__getattribute__
+            values = recordGetAttr('skillValues')+recordGetAttr('skillOffsets')
+            out.packSub(self.subType,'=28B',*values)
 
     #--Mel NPC FNAM
     class MelNpcFnam(MelStruct):
@@ -2679,16 +2710,21 @@ class MreNpc(MreActor):
         MelFormids('PKID','aiPackages'),
         MelBase('KFFZ','kffz'),
         MelFormid('CNAM','iclass'),
-        MelNpcData('DATA','',('skills',[0]*21),'health',('attributes',[0]*8)),
+        MelNpcData('DATA','','health',('attributes',[0]*7)),
+        MelNpcDnam('DNAM','',('skillValues',[0]*14),('skillOffsets',[0]*14)),
         MelFormid('HNAM','hair'),
         MelStruct('LNAM','f',('hairLength',1)),
         MelFormid('ENAM','eyes'),
         MelStruct('HCLR','I',('hairColor',0xFFFFFF00L)),
         MelFormid('ZNAM','combatStyle'),
+        MelStruct('NAM4','I',('impactMaterialType',0L)),
         MelBase('FGGS','fggs'),
         MelBase('FGGA','fgga'),
         MelBase('FGTS','fgts'),
-        MelNpcFnam('FNAM','H','fnam'),
+        MelStruct('NAM5','H',('unknown',0L)),
+        MelStruct('NAM6','f',('height',0L)),
+        MelStruct('NAM7','f',('weight',0L)),
+        #MelNpcFnam('FNAM','H','fnam'),
         )
     __slots__ = MreActor.__slots__ + melSet.getSlotsUsed()
 
@@ -2838,7 +2874,7 @@ class MreRace(MelRecord):
     think of."""
 
     classType = 'RACE' 
-    _flags = Flags(0L,Flags.getNames('playable'))
+    _flags = Flags(0L,Flags.getNames('playable','child'))
 
     class MelRaceData(MelStruct):
         """Convert raw string of _boosts into boosts = [(av0,boost0),(av1,boost1),...]"""
@@ -2944,10 +2980,12 @@ class MreRace(MelRecord):
         MelString('EDID','eid'),
         MelString('FULL','full'),
         MelString('DESC','text'),
-        MelFormids('SPLO','spells'),
-        MelStructs('XNAM','Ii','relations',(FID,'faction'),'mod'),
+        #MelFormids('SPLO','spells'),
+        #MelStructs('XNAM','Ii','relations',(FID,'faction'),'mod'),
         MelRaceData('DATA','14sH4fI','_boosts','unk1',
             'maleHeight','femaleHeight','maleWeight','femaleWeight',(_flags,'flags',0L)),
+        MelFormid('ONAM','Older'),
+        MelFormid('YNAM','Younger'),
         #MelRaceVoices('VNAM','2I',(FID,'maleVoice'),(FID,'femaleVoice')), #--0 same as race formid.
         MelRaceVoices('VTCK','2I',(FID,'maleVoice'),(FID,'femaleVoice')), #--0 same as race formid.
         MelOptStruct('DNAM','2I',(FID,'defaultHairMale',0L),(FID,'defaultHairFemale',0L)), #--0=None
@@ -2993,8 +3031,6 @@ class MreRace(MelRecord):
         MelBase('FGGA','fgga'),
         MelBase('FGTS','fgts'),
         MelBase('SNAM','SNAM'),
-        MelFormid('ONAM','Older'),
-        MelFormid('YNAM','Younger'),
         MelBase('NAM2','_nam2',''),
         #--Distributor for face and body entries.
         MelRaceDistributor(),
