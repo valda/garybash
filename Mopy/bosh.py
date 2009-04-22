@@ -1154,43 +1154,47 @@ class MelEffects(MelGroups):
 
     #--Class Data
     seFlags = Flags(0x559E00L,Flags.getNames('hostile')) #--0x559E is probably junk.
-    class MelEffectsScit(MelStruct):
-        """Subclass to support alternate format."""
-        def __init__(self):
-            MelStruct.__init__(self,'SCIT','Ii4sI',(FID,'id',None),('school',0),
-                ('visual','REHE'),(MelEffects.seFlags,'flags',0x559E00L))
-        def loadData(self,record,ins,type,size,readId):
-            #--Alternate formats
-            if size == 16:
-                attrs,actions = self.attrs,self.actions
-                unpacked = ins.unpack(self.format,size,readId)
-            elif size == 12:
-                attrs,actions = ('id','school','flags'),(0,0,MelEffects.seFlags)
-                unpacked = ins.unpack('IiI',size,readId)
-            else: #--size == 4
-                #--The script formid for MS40TestSpell doesn't point to a valid script.
-                #--But it's not used, so... Not a problem! It's also t
-                attrs,actions = ('id',),(0,)
-                unpacked = ins.unpack('I',size,readId)
-                if unpacked[0] & 0xFF000000L: 
-                    unpacked = (0L,) #--Discard bogus MS40TestSpell formid
-            #--Unpack
-            for attr,value,action in zip(attrs,unpacked,actions):
-                if callable(action): value = action(value)
-                record.__setattr__(attr,value)
-            if self._debug: print ' ',unpacked
+#     class MelEffectsScit(MelStruct):
+#         """Subclass to support alternate format."""
+#         def __init__(self):
+#             MelStruct.__init__(self,'SCIT','Ii4sI',(FID,'id',None),('school',0),
+#                 ('visual','REHE'),(MelEffects.seFlags,'flags',0x559E00L))
+#         def loadData(self,record,ins,type,size,readId):
+#             #--Alternate formats
+#             if size == 16:
+#                 attrs,actions = self.attrs,self.actions
+#                 unpacked = ins.unpack(self.format,size,readId)
+#             elif size == 12:
+#                 attrs,actions = ('id','school','flags'),(0,0,MelEffects.seFlags)
+#                 unpacked = ins.unpack('IiI',size,readId)
+#             else: #--size == 4
+#                 #--The script formid for MS40TestSpell doesn't point to a valid script.
+#                 #--But it's not used, so... Not a problem! It's also t
+#                 attrs,actions = ('id',),(0,)
+#                 unpacked = ins.unpack('I',size,readId)
+#                 if unpacked[0] & 0xFF000000L: 
+#                     unpacked = (0L,) #--Discard bogus MS40TestSpell formid
+#             #--Unpack
+#             for attr,value,action in zip(attrs,unpacked,actions):
+#                 if callable(action): value = action(value)
+#                 record.__setattr__(attr,value)
+#             if self._debug: print ' ',unpacked
 
     #--Instance methods
     def __init__(self,attr='effects'):
         """Initialize elements."""
         MelGroups.__init__(self,attr,
             MelBase('EFID','id','REHE'),
-            MelStruct('EFIT','4s5i',('id','REHE'),'magnitude','area','duration','recipient','actorValue'),
-            MelGroup('scriptEffect',
-                MelEffects.MelEffectsScit(),
-                MelString('FULL','full'),
+            MelStruct('EFIT','5i','magnitude','area','duration','recipient','actorValue'),
+            MelGroup('conditions',
+                MelBase('CTDA','_ctda'), #--Should be a struct. Maybe later.
                 ),
             )
+#             MelGroup('scriptEffect',
+#                 MelEffects.MelEffectsScit(),
+#                 MelString('FULL','full'),
+#                 ),
+#             )
 
 #------------------------------------------------------------------------------
 class MelFull0(MelString):
@@ -1205,10 +1209,10 @@ class MelFull0(MelString):
 class MelModel(MelGroup):
     """Represents a model record."""
     typeSets = (
-        ('MODL','MODB','MODT'),
-        ('MOD2','MO2B','MO2T'),
-        ('MOD3','MO3B','MO3T'),
-        ('MOD4','MO4B','MO4T'),)
+        ('MODL','MODB','MODT','MODS','MODD'),
+        ('MOD2','MO2B','MO2T','MO2S','MO2D'),
+        ('MOD3','MO3B','MO3T','MO3S','MOSD'),
+        ('MOD4','MO4B','MO4T','MO4S','MO4D'),)
 
     def __init__(self,attr='model',index=0):
         """Initialize. Index is 0,2,3,4 for corresponding type id."""
@@ -1216,7 +1220,9 @@ class MelModel(MelGroup):
         MelGroup.__init__(self,attr,
             MelString(types[0],'path'),
             MelBase(types[1],'modb'),
-            MelBase(types[2],'modt'),)
+            MelBase(types[2],'modt'),
+            MelBase(types[3],'mods'),
+            MelBase(types[4],'modd'),)
 
     def debug(self,on=True):
         """Sets debug flag on self."""
@@ -1963,7 +1969,7 @@ class MreAppa(MelRecord):
 
 #------------------------------------------------------------------------------
 class MreArmo(MelRecord):
-    """Amor record."""
+    """Armor record."""
     classType = 'ARMO' 
     _flags = MelBipedFlags(0L,Flags.getNames())
     _generalFlags = Flags(0L,Flags.getNames(
@@ -1982,16 +1988,23 @@ class MreArmo(MelRecord):
                   'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelFormid('SCRI','script'),
+        MelFormid('EITM','objectEffect'),
         MelFormid('ENAM','enchantment'),
         MelOptStruct('ANAM','H','enchantPoints'),
         MelStruct('BMDT','=2I',(_flags,'flags',0L),(_generalFlags,'generalFlags',0L)),
         MelModel('maleBody',0),
         MelModel('maleWorld',2),
         MelString('ICON','maleIcon'),
+        MelString('MICO','maleIcon'),
         MelModel('femaleBody',3),
         MelModel('femaleWorld',4),
         MelString('ICO2','femaleIcon'),
+        MelString('BMCT','ragdollConstraintTemplate'),
+        MelFormid('REPL','repairList'),
+        MelFormid('BIPL','bipedModelList'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),
+        MelFormid('YNAM','soundPickUp'),
+        MelFormid('ZNAM','soundDrop'),
         MelStruct('DATA','=IIf','value','health','weight'),
         MelStruct('DNAM','=HH','ar','flags'),
         )
@@ -2069,6 +2082,7 @@ class MreClas(MelRecord):
         MelString('DESC','description'),
         MelString('ICON','icon'),
         MelBase('DATA','DATAREC'), #--Should be a struct. Maybe later.
+        MelTuple('ATTR','7B','attributes',[0]*7),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -2101,6 +2115,9 @@ class MreCont(MelRecord):
     _flags = Flags(0,Flags.getNames(None,'respawns'))
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelModel(),
         MelFormid('SCRI','script'),
@@ -2595,11 +2612,20 @@ class MreMisc(MelRecord):
     classType = 'MISC' 
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelModel(),
         MelString('ICON','icon'),
         MelFormid('SCRI','script'),
+        MelFormid('YNAM','soundPickUp'),
+        MelFormid('ZNAM','soundDrop'),
         MelStruct('DATA','if','value','weight'),
+        MelBase('DEST','_dest'),
+        MelBase('DSTD','_dstd'),
+        MelBase('DSTF','_dstf'),
+        MelString('MICO','mico'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -3175,7 +3201,7 @@ class MreSoun(MelRecord):
 
 #------------------------------------------------------------------------------
 class MreSpel(MelRecord,MreHasEffects):
-    """Spell record."""
+    """Spell (actor effect) record."""
     classType = 'SPEL' 
     class SpellFlags(Flags):
         """For SpellFlags, immuneSilence activates bits 1 AND 3."""
@@ -3273,13 +3299,30 @@ class MreWeap(MelRecord):
     """Weapon record."""
     classType = 'WEAP' 
     _flags = Flags(0L,Flags.getNames('notNormalWeapon'))
+    _etype = Flags(0L,Flags.getNames(
+        'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
+        'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
+    ))
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
-        MelModel(),
+        MelModel('model',0),
         MelString('ICON','icon'),
+        MelString('MICO','mico'),
         MelFormid('SCRI','script'),
-        MelFormid('ENAM','enchantment'),
+        MelFormid('EITM','effect'),
+        MelFormid('EAMT','enchantment'),
+        MelFormid('NAM0','ammo'),
+        MelFormid('REPL','repairList'),
+        MelStruct('ETYP','I',(_etype,'etype',0L)),
+        MelFormid('BIPL','bipedModelList'),
+        MelFormid('YNAM','soundPickUp'),
+        MelFormid('ZNAM','soundDrop'),
+        MelModel('shellCasingModel',2),
+        MelModel('scopeModel',3),
         MelOptStruct('ANAM','H','enchantPoints'),
         MelStruct('DATA','iffIIIfH','weaponType','speed','reach',(_flags,'flags',0L),
             'value','health','weight','damage'),
@@ -3332,6 +3375,38 @@ class MreWthr(MelRecord):
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
+#------------------------------------------------------------------------------
+class MreTxst(MelRecord):
+    """Texture set record."""
+    classType = 'TXST' 
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('TX00','baseImage'),
+        MelString('TX01','normalMap'),
+        MelString('TX02','environmentMapMask'),
+        MelString('TX03','growMap'),
+        MelString('TX04','parallaxMap'),
+        MelString('TX05','environmentMap'),
+        MelStruct('DODT','H', 'decalData'),
+        MelStruct('DNAM','H', 'flags'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreMicn(MelRecord):
+    """Menu icon record."""
+    classType = 'MICN' 
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('ICON','icon'),
+        MelBase('MICO','mico'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -3339,7 +3414,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreFlor, MreFurn, MreGlob, MreGmst, MreGras, MreHair, MreIngr, MreKeym, MreLigh, MreLscr,
     MreLvlc, MreLvli, MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreRefr,
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,  
-    MreWatr, MreWeap, MreWrld, MreWthr,
+    MreWatr, MreWeap, MreWrld, MreWthr, MreTxst, MreMicn
     ))
 MreRecord.simpleTypes = (set(MreRecord.type_class) - 
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
@@ -10804,7 +10879,9 @@ class PatchFile(ModFile):
         MreClot, MreCont, MreCrea, MreDoor, MreEfsh, MreEnch, MreEyes, MreFact, MreFlor, MreFurn, 
         MreGlob, MreGras, MreHair, MreIngr, MreKeym, MreLigh, MreLscr, MreLvlc, MreLvli, 
         MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreScpt, MreSgst,
-        MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr)
+        MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr,
+        MreTxst, MreMicn,
+        )
 
     @staticmethod
     def modIsMergeable(modInfo,progress=None):

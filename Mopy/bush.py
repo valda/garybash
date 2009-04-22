@@ -31,24 +31,16 @@ from bolt import _,GPath
 # Installer -------------------------------------------------------------------
 bethDataFiles = set((
     #--Vanilla
-    'oblivion.esm',
-    'oblivion_1.1.esm',
-    'oblivion_si.esm',
-    'oblivion_1.1.esm.ghost',
-    'oblivion_si.esm.ghost',
-    'oblivion - meshes.bsa',
-    'oblivion - misc.bsa',
-    'oblivion - sounds.bsa',
-    'oblivion - textures - compressed.bsa',
-    'oblivion - textures - compressed.bsa.orig',
-    'oblivion - voices1.bsa',
-    'oblivion - voices2.bsa',
-    #--Shivering Isles
-    'dlcshiveringisles.esp',
-    'dlcshiveringisles - meshes.bsa',
-    'dlcshiveringisles - sounds.bsa',
-    'dlcshiveringisles - textures.bsa',
-    'dlcshiveringisles - voices.bsa',
+    'fallout3.esm',
+    'fallout - menuvoices.bsa',
+    'fallout - meshes.bsa',
+    'fallout - misc.bsa',
+    'fallout - sounds.bsa',
+    'fallout - textures.bsa',
+    'fallout - voices.bsa',
+    #-- DLC
+    'anchorage.esm',
+    'thepitt.esm',
     ))
 
 # Balo Canonical Groups -------------------------------------------------------
@@ -84,13 +76,13 @@ groupTypes = [
     _('Cell Visible Distant Children'),
 ]
 
-#--Top types in Oblivion order.
+#--Top types in Fallout3 order.
 topTypes = ['GMST', 'GLOB', 'CLAS', 'FACT', 'HAIR', 'EYES', 'RACE', 'SOUN', 'SKIL', 
     'MGEF', 'SCPT', 'LTEX', 'ENCH', 'SPEL', 'BSGN', 'ACTI', 'APPA', 'ARMO', 'BOOK', 
     'CLOT', 'CONT', 'DOOR', 'INGR', 'LIGH', 'MISC', 'STAT', 'GRAS', 'TREE', 'FLOR', 
     'FURN', 'WEAP', 'AMMO', 'NPC_', 'CREA', 'LVLC', 'SLGM', 'KEYM', 'ALCH', 'SBSP', 
     'SGST', 'LVLI', 'WTHR', 'CLMT', 'REGN', 'CELL', 'WRLD', 'DIAL', 'QUST', 'IDLE', 
-    'PACK', 'CSTY', 'LSCR', 'LVSP', 'ANIO', 'WATR', 'EFSH']
+    'PACK', 'CSTY', 'LSCR', 'LVSP', 'ANIO', 'WATR', 'EFSH', 'TXST', 'MICN']
 
 #--Dict mapping 'ignored' top types to un-ignored top types.
 topIgTypes = dict([(struct.pack('I',(struct.unpack('I',type)[0]) | 0x1000),type) for type in topTypes])
@@ -101,7 +93,7 @@ recordTypes = set(topTypes + 'GRUP,TES4,ROAD,REFR,ACHR,ACRE,PGRD,LAND,INFO'.spli
 def getIdFunc(modName):
     return lambda x: (GPath(modName),x)
 
-ob = getIdFunc('Oblivion.esm')
+ob = getIdFunc('fallout3.esm')
 cobl = getIdFunc('Cobl Main.esm')
 
 # Race Info -------------------------------------------------------------------
@@ -162,7 +154,7 @@ raceHairFemale = {
 standardEyes = [ob(x) for x in (0x27306,0x27308,0x27309)] + [cobl(x) for x in (0x000821, 0x000823, 0x000825, 0x000828, 0x000834, 0x000837, 0x000839, 0x00084F, )]
 
 defaultEyes = {
-    #--Oblivion.esm
+    #--fallout3.esm
     ob(0x23FE9): #--Argonian
         [ob(0x3E91E)] + [cobl(x) for x in (0x01F407, 0x01F408, 0x01F40B, 0x01F40C, 0x01F410, 0x01F411, 0x01F414, 0x01F416, 0x01F417, 0x01F41A, 0x01F41B, 0x01F41E, 0x01F41F, 0x01F422, 0x01F424, )],
     ob(0x0224FC): #--Breton
