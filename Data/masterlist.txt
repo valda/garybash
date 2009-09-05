@@ -19,74 +19,235 @@
 Fallout3.esm
 Unofficial Fallout 3 Patch.esm
 CALIBR.esm
+CRAFT.esm
 FOOK2 - Main.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
+FO3 Wanderers Edition - Main File.esm
+Mart's Mutant Mod.esm
 Enhanced Weather - Rain and Snow.esm
 EnhancedChildren.esm
-Mart's Mutant Mod.esm
 ChildrenEmpire.esm
 AngelRaces.esm
 
+
+\---------
+\Base Mods
+\---------
+\
+\Mods that can be overridden in part.
+\Low priority mods.
+\New Items, NPCs & creatures that are not overrides of other mods.
+\'Library' mods. 
+
 DarNifiedUIF3.esp
-MoreMapMarkers.esp
 ASU.esp
 
+\Weather mods and overhauls
+\''''''''''''''''''''''''''
+\Unlikely to be affected by anything but sound mods.
+
+
+\Sound mods
+\''''''''''
+\Let other mods override as needed. Sometimes overrides weather overhauls with better lightening sounds etc.
+
+\Weather overrides
+\'''''''''''''''''
+
 Enhanced Weather - Rain and Snow in Fallout.esp
+? Requires 'Enhanced Weather - Rain and Snow.esm'
 Enhanced Weather - Sneak Bonus during Storms.esp
+? Requires 'Enhanced Weather - Rain and Snow.esm'
 Enhanced Weather - Weather Sounds in Interiors.esp
+? Requires 'Enhanced Weather - Rain and Snow.esm'
 Fellout-Full.esp
 
+\Lighting
+\''''''''
+\Should load early to allow more 'important' mods to override.
+
+FireLightFix.esp
+
+
+\General
+\'''''''
+\Includes nearly all new items (except weapons and armor)
+
+Centered 3P Cam.esp
+dD-Less Blood Time.esp
+noautoaim.esp
+? Not FWE compatible - already included in FWE.
+pip150.esp
+
+
+\Map marker Tweaks
+\'''''''''''''''''
+
+MoreMapMarkers.esp
+
+
+\-------------------------
+\Items (armor and weapons)
+\-------------------------
+\
+\VITAL for overhaul mod users: Wrye Bash tag all armor replacers {{BASH:Graphics}} to keep their new look. 
+\Some items will need to go after overhaul or location altering mods to appear.
+
+bzArmour.esp
+bzBodySuits.esp
+
+\---------
+\Overhauls
+\---------
+\
+\FOOK, FWE, XFO, MMM, etc
+
+\FOOK2
+\'''''''''''''''''''''''''''''''''''''''
+
 FOOK2 - Main.esp
+? Requires 'FOOK2 - Main.esm'
 FOOK2 - WANK Map Markers.esp
+? Requires 'FOOK2 - [WANK] World And Neighbourhood Kit.esm'
 FOOK2 - [EVE] Energy Visuals Enhanced.esp
 
+\FO3 Wanderers Edition
+\'''''''''''''''''''''''''''''''''''''''
+
+FO3 Wanderers Edition - Main File.esp
+
+\XFO
+\'''''''''''''''''''''''''''''''''''''''
+
 XFO_Playstyles.esp
+XFO_SP_Fix_(SP10_TAG25_INTxHalf).esp
+? Use either 'XFO_SP_Fix2_(SP10_TAGx2_INTxHalf).esp' or 'XFO_SP_Fix_(SP10_TAG25_INTxHalf).esp' but not both together.
 XFO_SP_Fix2_(SP10_TAGx2_INTxHalf).esp
+? Use either 'XFO_SP_Fix2_(SP10_TAGx2_INTxHalf).esp' or 'XFO_SP_Fix_(SP10_TAG25_INTxHalf).esp' but not both together.
 XFO_Perk_rebalance.esp
 XFO_Perk_paths.esp
+XFO_Perk_Flaws.esp
 XFO_SPECIAL_DnD.esp
 XFO_Stat_changes.esp
+XFO_barter_fix_harder.esp
+? Use either 'XFO_barter_fix_harder.esp' or 'XFO_barter_fix_mild.esp' but not both together.
 XFO_barter_fix_mild.esp
+? Use either 'XFO_barter_fix_harder.esp' or 'XFO_barter_fix_mild.esp' but not both together.
+XFO_Timescale_fast.esp
+? Choose either this one, 'XFO_Timescale_fast.esp', or neither, BUT DO NOT choose both.
 XFO_Timescale_med.esp
+? Choose either this one, 'XFO_Timescale_med.esp', or neither, BUT DO NOT choose both.
+XFO_Timescale_slow.esp
+? Choose either this one, 'XFO_Timescale_slow.esp', or neither, BUT DO NOT choose both.
 XFO_Cripple_fixes.esp
 XFO_Degradation_fixes.esp
 XFO_Gore_fixes.esp
 XFO_Weapon_Jamming.esp
 XFO_Karma_changes.esp
 XFO_Radiation_changes.esp
+XFO_Sneak_Rebalance_harder.esp
+? Use either 'XFO_Sneak_Rebalance_mild.esp' or 'XFO_Sneak_Rebalance_harder.esp' but not both together.
 XFO_Sneak_Rebalance_mild.esp
+? Use either 'XFO_Sneak_Rebalance_mild.esp' or 'XFO_Sneak_Rebalance_harder.esp' but not both together.
 XFO_Speed_increase.esp
+XFO_VATSdmg_100.esp
+? Choose either this one, 'XFO_VATSdmg_100.esp', or neither, BUT DO NOT choose both.
 XFO_VATSdmg_50.esp
+? Choose either this one, 'XFO_VATSdmg_50.esp', or neither, BUT DO NOT choose both.
+XFO_VATSdmg_75.esp
+? Choose either this one, 'XFO_VATSdmg_75.esp', or neither, BUT DO NOT choose both.
 XFO_misc_tweaks.esp
+XFO_Pacing_Epic.esp
+? Choose either this one, 'XFO_Pacing_Epic.esp', or neither, BUT DO NOT choose both.
+XFO_Pacing_high.esp
+? Choose either this one, 'XFO_Pacing_high.esp', or neither, BUT DO NOT choose both.
+XFO_Pacing_med.esp
+? Choose either this one, 'XFO_Pacing_med.esp', or neither, BUT DO NOT choose both.
 XFO_Pacing_mild.esp
+? Choose either this one, 'XFO_Pacing_mild.esp', or neither, BUT DO NOT choose both.
+XFO_Pacing_Extra_Levels.esp
 
-noautoaim.esp
-FireLightFix.esp
+CALIBRxMerchant.esp
+CRAFT - Activation Perk.esp
+Stealthboy Recon Armor - CRAFT.esp
+
+\MMM
+\'''''''''''''''''''''''''''''''''''''''
 
 Mart's Mutant Mod.esp
+? Requires 'Mart's Mutant Mod.esm'
 Mart's Mutant Mod - Increased Spawns.esp
 Mart's Mutant Mod - Zones Respawn.esp
 Mart's Mutant Mod - Feral Ghoul Rampage.esp
 Mart's Mutant Mod - Natural Selection.esp
 Mart's Mutant Mod - Tougher Traders.esp
 Mart's Mutant Mod - Hunting & Looting.esp
+
+\FOIP
+\'''''''''''''''''''''''''''''''''''''''
+
 Mart's Mutant Mod - FOOK2.esp
+Mart's Mutant Mod - FWE Master Release.esp
 
-Centered 3P Cam.esp
-SomePoses.esp
+\----------------------
+\Quests and Locations
+\----------------------
 
-dD-Less Blood Time.esp
+Angel.esp
+? Requires 'AngelRaces.esm'
+
+\---------
+\Overrides
+\---------
+\
+\Mods that deliberately change specific things about vanilla Oblivion, overhauls or other mods.
+\Some late loading quests and locations in here too.
+
+\General
+\'''''''
 
 DUIF3Extras.esp
 
-pip150.esp
+\---------
+\Pose mods
+\---------
+\Scripts and new animations.
 
+SomePoses.esp
 PCIdles.esp
 
-bzArmour.esp
-bzBodySuits.esp
+\----------
+\Companions
+\----------
+\Those related to companion mod systems. Most others in Quests section.
+\Recommended by authors to load very late.
+\Should go after custom races where the companion is a custom race.
 
-ChildrenEmpire Enemies.esp
 ChildrenEmpire Soldiers.esp
+? Requires 'ChildrenEmpire.esm'
+ChildrenEmpire Enemies.esp
+? Requires 'ChildrenEmpire.esm'
 
-Angel.esp
+
+\------------
+\Bashed Patch
+\------------
+
+Bashed Patch, 0.esp
+Bashed Patch, 1.esp
+Bashed Patch, 2.esp
+Bashed Patch, 3.esp
+Bashed Patch, 4.esp
+Bashed Patch, 5.esp
+Bashed Patch, 6.esp
+Bashed Patch, 7.esp
+Bashed Patch, 8.esp
+Bashed Patch, 9.esp
+Bashed Patch.esp
+
+\-----------------
+\Post Bashed Patch
+\-----------------
+\Mods rumoured to be needed after Bashed Patch.
+\Utility addons.
+\Ultimate final absolute end last mods, ever.
