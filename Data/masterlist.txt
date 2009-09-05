@@ -1,0 +1,92 @@
+\ Leading symbol code:
+\
+\ \ A silent comment - will be ignored by the program.
+\ % A Bashed Patch suggestion for the mod above.
+\ ? A comment about the mod above.
+\ * Flags a critical mistake for FCOM installation in relation to the mod above.
+\
+\ > process this line only if FCOM is installed.
+\ < process this line only if FCOM isn't installed.
+\ Every line starting with > must have an identicall line starting with < somewhere else and visa versa.
+\
+\ Multiple remark/comment/bash/error lines allowed.
+\ Lines beginning with \ and blank lines are treated the same (ignored).
+
+\----
+\ESMs
+\----
+
+Fallout3.esm
+Unofficial Fallout 3 Patch.esm
+CALIBR.esm
+FOOK2 - Main.esm
+FOOK2 - [WANK] World And Neighbourhood Kit.esm
+Enhanced Weather - Rain and Snow.esm
+EnhancedChildren.esm
+Mart's Mutant Mod.esm
+ChildrenEmpire.esm
+AngelRaces.esm
+
+DarNifiedUIF3.esp
+MoreMapMarkers.esp
+ASU.esp
+
+Enhanced Weather - Rain and Snow in Fallout.esp
+Enhanced Weather - Sneak Bonus during Storms.esp
+Enhanced Weather - Weather Sounds in Interiors.esp
+Fellout-Full.esp
+
+FOOK2 - Main.esp
+FOOK2 - WANK Map Markers.esp
+FOOK2 - [EVE] Energy Visuals Enhanced.esp
+
+XFO_Playstyles.esp
+XFO_SP_Fix2_(SP10_TAGx2_INTxHalf).esp
+XFO_Perk_rebalance.esp
+XFO_Perk_paths.esp
+XFO_SPECIAL_DnD.esp
+XFO_Stat_changes.esp
+XFO_barter_fix_mild.esp
+XFO_Timescale_med.esp
+XFO_Cripple_fixes.esp
+XFO_Degradation_fixes.esp
+XFO_Gore_fixes.esp
+XFO_Weapon_Jamming.esp
+XFO_Karma_changes.esp
+XFO_Radiation_changes.esp
+XFO_Sneak_Rebalance_mild.esp
+XFO_Speed_increase.esp
+XFO_VATSdmg_50.esp
+XFO_misc_tweaks.esp
+XFO_Pacing_mild.esp
+
+noautoaim.esp
+FireLightFix.esp
+
+Mart's Mutant Mod.esp
+Mart's Mutant Mod - Increased Spawns.esp
+Mart's Mutant Mod - Zones Respawn.esp
+Mart's Mutant Mod - Feral Ghoul Rampage.esp
+Mart's Mutant Mod - Natural Selection.esp
+Mart's Mutant Mod - Tougher Traders.esp
+Mart's Mutant Mod - Hunting & Looting.esp
+Mart's Mutant Mod - FOOK2.esp
+
+Centered 3P Cam.esp
+SomePoses.esp
+
+dD-Less Blood Time.esp
+
+DUIF3Extras.esp
+
+pip150.esp
+
+PCIdles.esp
+
+bzArmour.esp
+bzBodySuits.esp
+
+ChildrenEmpire Enemies.esp
+ChildrenEmpire Soldiers.esp
+
+Angel.esp
