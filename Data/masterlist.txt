@@ -28,7 +28,15 @@ Enhanced Weather - Rain and Snow.esm
 EnhancedChildren.esm
 ChildrenEmpire.esm
 AngelRaces.esm
+FaceMe.esm
 
+\-------------
+\NPC face mods
+\-------------
+\
+\Bash and deactivate to keep new faces with NPC altering mods later.
+
+FaceMe.esp
 
 \---------
 \Base Mods
@@ -79,6 +87,11 @@ noautoaim.esp
 ? Not FWE compatible - already included in FWE.
 pip150.esp
 
+MTC Wasteland Travellers.esp
+MTC Wasteland Travellers (Optional)- Crowded Cities.esp
+? Use either 'MTC Wasteland Travellers (Optional)- Crowded Cities.esp' or 'MTC Wasteland Travellers (Optional)- Crowded Cities less NPCs.esp' but not both together.
+MTC Wasteland Travellers (Optional)- Crowded Cities less NPCs.esp
+? Use either 'MTC Wasteland Travellers (Optional)- Crowded Cities.esp' or 'MTC Wasteland Travellers (Optional)- Crowded Cities less NPCs.esp' but not both together.
 
 \Map marker Tweaks
 \'''''''''''''''''
@@ -95,6 +108,7 @@ MoreMapMarkers.esp
 
 bzArmour.esp
 bzBodySuits.esp
+sunglassescollection.esp
 
 \---------
 \Overhauls
@@ -115,6 +129,7 @@ FOOK2 - [EVE] Energy Visuals Enhanced.esp
 \'''''''''''''''''''''''''''''''''''''''
 
 FO3 Wanderers Edition - Main File.esp
+FO3 Wanderers Edition - UFP Support.esp
 
 \XFO
 \'''''''''''''''''''''''''''''''''''''''
@@ -189,6 +204,11 @@ Mart's Mutant Mod - Hunting & Looting.esp
 Mart's Mutant Mod - FOOK2.esp
 Mart's Mutant Mod - FWE Master Release.esp
 
+\Further compatibility mods.
+\'''''''''''''''''''''''''''
+
+FaceMe-FWE-MMM.esp
+
 \----------------------
 \Quests and Locations
 \----------------------
@@ -207,6 +227,7 @@ Angel.esp
 \'''''''
 
 DUIF3Extras.esp
+choose_XP_FOSE.esp
 
 \---------
 \Pose mods
@@ -227,7 +248,7 @@ ChildrenEmpire Soldiers.esp
 ? Requires 'ChildrenEmpire.esm'
 ChildrenEmpire Enemies.esp
 ? Requires 'ChildrenEmpire.esm'
-
+ChildrenEmpire Enemies - MMM.esp
 
 \------------
 \Bashed Patch
