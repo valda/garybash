@@ -3253,6 +3253,7 @@ class MreTes4(MelRecord):
         MelString('CNAM','author','',512),
         MelString('SNAM','description','',512),
         MelTes4Name('MAST','masters'),
+        MelBase('ONAM','onam'),
         MelNull('DATA'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
