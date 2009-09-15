@@ -70,10 +70,10 @@ def init(initLevel):
     #--Settings
     bosh.initDirs()
     bosh.initSettings(readOnly=True)
-    bosh.oblivionIni = bosh.Fallout3Ini()
+    bosh.fallout3Ini = bosh.Fallout3Ini()
     #--MwIniFile (initLevel >= 1)
     if initLevel < 1: return
-    bosh.oblivionIni = bosh.Fallout3Ini()
+    bosh.fallout3Ini = bosh.Fallout3Ini()
     #--ModInfos (initLevel >= 2)
     if initLevel < 2: return
     bosh.modInfos = bosh.ModInfos()
