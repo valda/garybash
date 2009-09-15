@@ -10156,7 +10156,7 @@ class ModDetails:
         records = group_records['TES4'] = []
         ins = ModReader(modInfo.name,modInfo.getPath().open('rb'))
         while not ins.atEnd():
-            (type,size,str0,formid,uint2) = ins.unpackRecHeader()
+            (type,size,str0,formid,uint2,uint3) = ins.unpackRecHeader()
             if type == 'GRUP':
                 progress(1.0*ins.tell()/modInfo.size,_("Scanning: ")+str0)
                 records = group_records.setdefault(str0,[])
@@ -10700,7 +10700,7 @@ class CleanMod:
             out.write(buff)
         while not ins.atEnd():
             progress(ins.tell())
-            (type,size,str0,formid,uint2) = ins.unpackRecHeader()
+            (type,size,str0,formid,uint2,uint3) = ins.unpackRecHeader()
             copyPrev(20)
             if type == 'GRUP':
                 if formid != 0: #--Ignore sub-groups

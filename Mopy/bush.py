@@ -82,7 +82,11 @@ topTypes = ['GMST', 'GLOB', 'CLAS', 'FACT', 'HAIR', 'EYES', 'RACE', 'SOUN', 'SKI
     'CLOT', 'CONT', 'DOOR', 'INGR', 'LIGH', 'MISC', 'STAT', 'GRAS', 'TREE', 'FLOR', 
     'FURN', 'WEAP', 'AMMO', 'NPC_', 'CREA', 'LVLC', 'SLGM', 'KEYM', 'ALCH', 'SBSP', 
     'SGST', 'LVLI', 'WTHR', 'CLMT', 'REGN', 'CELL', 'WRLD', 'DIAL', 'QUST', 'IDLE', 
-    'PACK', 'CSTY', 'LSCR', 'LVSP', 'ANIO', 'WATR', 'EFSH', 'TXST', 'MICN']
+    'PACK', 'CSTY', 'LSCR', 'LVSP', 'ANIO', 'WATR', 'EFSH',
+    'TXST', 'MICN', 'HDPT', 'ASPC', 'TACT', 'TERM', 'SCOL', 'MSTT', 'PWAT', 'LVLN',
+    'IDLM', 'NOTE', 'COBJ', 'PROJ', 'NAVI', 'EXPL', 'DEBR', 'IMGS', 'IMAD', 'FLST',
+    'PERK', 'BPTD', 'ADDN', 'AVIF', 'RADS', 'CAMS', 'CPTH', 'VTYP', 'IPCT', 'IPDS',
+    'ARMA', 'ECZN', 'MESG', 'RGDL', 'DOBJ', 'LGTM', 'MUSC']
 
 #--Dict mapping 'ignored' top types to un-ignored top types.
 topIgTypes = dict([(struct.pack('I',(struct.unpack('I',type)[0]) | 0x1000),type) for type in topTypes])
