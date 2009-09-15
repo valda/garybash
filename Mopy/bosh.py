@@ -2568,12 +2568,12 @@ class MreMgef(MelRecord):
     """MGEF (magic effect) record."""
     classType = 'MGEF' 
     #--Mel NPC DATA
-    class MelMgefData(MelStruct):
+    class MelMgefData (MelStruct):
         """Handle older trucated DATA for DARK subrecord."""
         def getSlotsUsed(self):
             return MelStruct.getSlotsUsed(self) + ('unk1','unk2')
         def loadData(self,record,ins,type,size,readId):
-            if size == 64:
+            if size == 72:
                 MelStruct.loadData(self,record,ins,type,size,readId)
                 return
             #--Else is data for DARK record, read it all.
@@ -2597,11 +2597,11 @@ class MreMgef(MelRecord):
         MelString('DESC','text'),
         MelString('ICON','icon'),
         MelModel(),
-        MelMgefData('DATA','IfIiiIIf6I2f',
+        MelMgefData('DATA','IfIiiIIf6I2fII',
             'flags','baseCost',(FID,'associatedItem'),'school','resistValue','unk2',
-            (FID,'light'),'projectileSpeed',(FID,'effectShader'),(FID,'enchantEffect'),
-            (FID,'castingSound'),(FID,'boltSound'),(FID,'hitSound'),(FID,'areaSound'),
-            'cefEnchantment','cefBarter'),
+            (FID,'light'),'projectileSpeed',(FID,'effectShader'),(FID,'objectDisplayShader'),
+            (FID,'effectSound'),(FID,'boltSound'),(FID,'hitSound'),(FID,'areaSound'),
+            'cefEnchantment','cefBarter','archType','actorValue'),
         MelMgefEsce('ESCE','counterEffects'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
@@ -4453,7 +4453,7 @@ class ModFile:
             return self.tops[topType]
         elif topType in bush.topTypes:
             topClass = self.loadFactory.getTopClass(topType)
-            self.tops[topType] = topClass(('GRUP',0,topType,0,0),self.loadFactory)
+            self.tops[topType] = topClass(('GRUP',0,topType,0,0,0),self.loadFactory)
             self.tops[topType].setChanged()
             return self.tops[topType]
         elif topType == '__repr__':
