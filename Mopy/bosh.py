@@ -2679,7 +2679,10 @@ class MreNpc(MreActor):
     class MelNpcData(MelStruct):
         """Convert npc stats into health, attributes."""
         def loadData(self,record,ins,type,size,readId):
-            unpacked = list(ins.unpack('=I7B',size,readId))
+            if size == 11:
+                unpacked = list(ins.unpack('=I7B',size,readId))
+            else:
+                unpacked = list(ins.unpack('=I21B',size,readId))
             recordSetAttr = record.__setattr__
             recordSetAttr('health',unpacked[0])
             recordSetAttr('attributes',unpacked[1:])
@@ -2688,7 +2691,10 @@ class MreNpc(MreActor):
             """Dumps data from record to outstream."""
             recordGetAttr = record.__getattribute__
             values = [recordGetAttr('health')]+recordGetAttr('attributes')
-            out.packSub(self.subType,'=I7B',*values)
+            if len(recordGetAttr('attributes')) == 7:
+                out.packSub(self.subType,'=I7B',*values)
+            else:
+                out.packSub(self.subType,'=I21B',*values)
 
     #--Mel NPC DNAM
     class MelNpcDnam(MelStruct):
@@ -2696,9 +2702,9 @@ class MreNpc(MreActor):
         def loadData(self,record,ins,type,size,readId):
             unpacked = list(ins.unpack('=28B',size,readId))
             recordSetAttr = record.__setattr__
-            recordSetAttr('skillValues',unpacked[:13])
+            recordSetAttr('skillValues',unpacked[:14])
             recordSetAttr('skillOffsets',unpacked[14:])
-            if self._debug: print unpacked[:13]+unpacked[14:]
+            if self._debug: print unpacked[:14]+unpacked[14:]
         def dumpData(self,record,out):
             """Dumps data from record to outstream."""
             recordGetAttr = record.__getattribute__
@@ -2724,22 +2730,27 @@ class MreNpc(MreActor):
             (FID,'faction',None),'rank',('unknown','ODB')),
         MelFormid('INAM','deathItem'),
         MelFormid('VTCK','voice'),
+        MelFormid('TPLT','template'),
         MelFormid('RNAM','race'),
         MelStruct('EAMT','H', 'eamt'),
         MelFormids('SPLO','spells'),
         MelFormid('SCRI','script'),
-        MelStructs('CNTO','Ii','items',(FID,'item',None),('count',1)),
-        MelStruct('AIDT','=5B2I3B2H',
+        MelGroups('items',
+            MelStruct('CNTO','Ii',(FID,'item',None),('count',1)),
+            MelOptStruct('COED','IIf',(FID,'owner',None),(FID,'glob',None),('condition',1.0)),
+        ),
+        MelStruct('AIDT','=5B2I3Bi',
             ('aggression',5),('confidence',50),('energyLevel',50),('responsibility',50),('mood',0L),
             (aiService,'services',0L),(aiTeaches,'teaches',0L),'trainLevel','assistance',
-            'aggroRadiusBehavior','aggroRadius','unknown'),
+            'aggroRadiusBehavior','aggroRadius'),
         MelFormids('PKID','aiPackages'),
         MelBase('KFFZ','kffz'),
         MelFormid('CNAM','iclass'),
-        MelNpcData('DATA','','health',('attributes',[0]*7)),
+        MelNpcData('DATA','','health',('attributes',[0]*21)),
+        MelFormids('PNAM','headParts'),
         MelNpcDnam('DNAM','',('skillValues',[0]*14),('skillOffsets',[0]*14)),
         MelFormid('HNAM','hair'),
-        MelStruct('LNAM','f',('hairLength',1)),
+        MelOptStruct('LNAM','f',('hairLength',1)),
         MelFormid('ENAM','eyes'),
         MelStruct('HCLR','I',('hairColor',0xFFFFFF00L)),
         MelFormid('ZNAM','combatStyle'),
@@ -12163,7 +12174,7 @@ class NpcFacePatcher(ImportPatcher):
             faceFile.convertToLongFormids(('NPC_',))
             for npc in faceFile.NPC_.getActiveRecords():
                 if npc.formid[0] != faceMod:
-                    faceData[npc.formid] = (npc.fggs,npc.fgga,npc.fgts,npc.eyes,npc.hair,npc.hairLength,npc.hairColor)
+                    faceData[npc.formid] = (npc.fggs,npc.fgga,npc.fgts,npc.eyes,npc.headParts,npc.hair,npc.hairLength,npc.hairColor)
             progress.plus()
 
     def getReadClasses(self):
@@ -12193,7 +12204,7 @@ class NpcFacePatcher(ImportPatcher):
         faceData, count = self.faceData, 0
         for npc in self.patchFile.NPC_.records:
             if npc.formid in faceData:
-                (npc.fggs, npc.fgga, npc.fgts, npc.eyes,npc.hair, 
+                (npc.fggs, npc.fgga, npc.fgts, npc.eyes, npc.headParts, npc.hair, 
                     npc.hairLength, npc.hairColor) = faceData[npc.formid]
                 npc.setChanged()
                 keep(npc.formid)
@@ -14451,7 +14462,8 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 patchBlock.setRecord(record.getTypeCopy(mapper))
             for eyes in record.eyes:
                 if eyes in srcEyes: 
-                    eye_mesh[eyes] = (record.rightEye.path.lower(),record.leftEye.path.lower())
+                    eye_mesh[eyes] = (record.maleRightEye.path.lower(),record.maleLeftEye.path.lower(),
+                                      record.femaleRightEye.path.lower(),record.femaleLeftEye.path.lower(),)
 
     def buildPatch(self,log,progress):
         """Updates races as needed."""

@@ -37,6 +37,7 @@ FaceMe.esm
 \Bash and deactivate to keep new faces with NPC altering mods later.
 
 FaceMe.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
 
 \---------
 \Base Mods
@@ -207,7 +208,12 @@ Mart's Mutant Mod - FWE Master Release.esp
 \Further compatibility mods.
 \'''''''''''''''''''''''''''
 
-FaceMe-FWE-MMM.esp
+FaceMe-Broken Steel.esp
+FaceMe-FOOK.esp
+FaceMe-FWE.esp
+FaceMe-MMM Tougher Traders.esp
+FaceMe-MMM+FOOK.esp
+FaceMe-MMM.esp
 
 \----------------------
 \Quests and Locations
