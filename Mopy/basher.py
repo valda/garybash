@@ -4436,7 +4436,7 @@ class Files_Unhide(Link):
         if self.type == 'mod':
             wildcard = 'Fallout3 Mod Files (*.esp;*.esm)|*.esp;*.esm'
         elif self.type == 'save':
-            wildcard = 'Fallout3 Save files (*.ess)|*.ess'
+            wildcard = 'Fallout3 Save files (*.fos)|*.fos'
         else:
             wildcard = '*.*'
         #--File dialog
@@ -6499,7 +6499,7 @@ class Mod_Face_Import(Link):
     def Execute(self,event):
         #--Select source face file
         srcDir = bosh.saveInfos.dir
-        wildcard = _('Fallout3 Files')+' (*.ess;*.esr)|*.ess;*.esr'
+        wildcard = _('Fallout3 Files')+' (*.fos;*.esr)|*.fos;*.esr'
         #--File dialog
         srcPath = balt.askOpen(self.window,'Face Source:',srcDir, '', wildcard)
         if not srcPath: return
@@ -7564,7 +7564,7 @@ class Save_ImportFace(Link):
         fileInfo = self.window.data[fileName]
         #--Select source face file
         srcDir = fileInfo.dir
-        wildcard = _('Fallout3 Files')+' (*.esp;*.esm;*.ess;*.esr)|*.esp;*.esm;*.ess;*.esr'
+        wildcard = _('Fallout3 Files')+' (*.esp;*.esm;*.fos;*.esr)|*.esp;*.esm;*.fos;*.esr'
         #--File dialog
         srcPath = balt.askOpen(self.window,'Face Source:',srcDir, '', wildcard)
         if not srcPath: return
