@@ -2936,7 +2936,7 @@ class MreRace(MelRecord):
             if (record.maleVoice,record.femaleVoice) != (0,0):
                 MelStruct.dumpData(self,record,out)
     
-    class MelRaceModel(MelGroup):
+    class MelRaceHeadModel(MelGroup):
         """Most face data, like a MelModel + ICON. Load is controlled by MelRaceDistributor."""
         def __init__(self,attr,index):
             MelGroup.__init__(self,attr,
@@ -2944,11 +2944,25 @@ class MreRace(MelRecord):
                 MelBase('MODB','modb'),
                 MelBase('MODT','modt'),
                 MelBase('MODS','mods'),
+                MelOptStruct('MODD','B','modd'),
+                MelBase('ICON','icon'),
+                MelBase('MICO','mico'))
+            self.index = index
+        def dumpData(self,record,out):
+            out.packSub('INDX','i',self.index)
+            MelGroup.dumpData(self,record,out)
+
+    class MelRaceBodyModel(MelGroup):
+        """Most body data, like a MelModel + ICON. Load is controlled by MelRaceDistributor."""
+        def __init__(self,attr,index):
+            MelGroup.__init__(self,attr,
                 MelBase('ICON','icon'),
                 MelBase('MICO','mico'),
-                MelStruct('MODD','B',('modd',0)))
+                MelString('MODL','path'),
+                MelBase('MODT','modt'),
+                MelBase('MODS','mods'),
+                MelOptStruct('MODD','B','modd'))
             self.index = index
-
         def dumpData(self,record,out):
             out.packSub('INDX','i',self.index)
             MelGroup.dumpData(self,record,out)
@@ -2961,6 +2975,15 @@ class MreRace(MelRecord):
         def dumpData(self,record,out):
             out.packSub('INDX','i',self.index)
             MelString.dumpData(self,record,out)
+
+    class MelRaceFaceGen(MelGroup):
+        """Most fecegen data. Load is controlled by MelRaceDistributor."""
+        def __init__(self,attr):
+            MelGroup.__init__(self,attr,
+                MelBase('FGGS','fggs'),
+                MelBase('FGGA','fgga'),
+                MelBase('FGTS','fgts'),
+                MelBase('SNAM','snam'))
 
     class MelRaceDistributor(MelNull):
         """Handles NAM0, NAM1, MNAM, FMAN and INDX records. Distributes load 
@@ -2980,10 +3003,11 @@ class MreRace(MelRecord):
                 'NAM0':self.headModelAttrs,
                 'NAM1':self.bodyModelAttrs
                 }
+            self.facegenAttrs = {'MNAM':'maleFaceGen','FNAM':'femaleFaceGen'}
             self._debug = False
 
         def getSlotsUsed(self):
-            return ('_loadAttrs','_modelAttrs',)
+            return ('_loadAttrs','_modelAttrs')
 
         def getLoaders(self,loaders):
             """Self as loader for structure types."""
@@ -3004,13 +3028,16 @@ class MreRace(MelRecord):
                 return
             elif type in ('MNAM','FNAM'):
                 record._loadAttrs = record._modelAttrs[type]
-                return
+                attr = self.facegenAttrs.get(type)
+                element = self.loaders[attr]
+                for type in ('FGGS','FGGA','FGTS','SNAM'):
+                    self.melSet.loaders[type] = element
             else: #--INDX
                 index, = ins.unpack('i',4,readId)
                 attr = record._loadAttrs[index]
                 element = self.loaders[attr]
-            for type in ('MODL','MODB','MODT','MODS','MODD','ICON', 'MICO'):
-                self.melSet.loaders[type] = element
+                for type in ('MODL','MODB','MODT','MODS','MODD','ICON','MICO'):
+                    self.melSet.loaders[type] = element
 
     #--Mel Set
     melSet = MelSet(
@@ -3023,7 +3050,7 @@ class MreRace(MelRecord):
             'maleHeight','femaleHeight','maleWeight','femaleWeight',(_flags,'flags',0L)),
         MelFormid('ONAM','Older'),
         MelFormid('YNAM','Younger'),
-        #MelRaceVoices('VNAM','2I',(FID,'maleVoice'),(FID,'femaleVoice')), #--0 same as race formid.
+        MelBase('NAM2','_nam2',''),
         MelRaceVoices('VTCK','2I',(FID,'maleVoice'),(FID,'femaleVoice')), #--0 same as race formid.
         MelOptStruct('DNAM','2I',(FID,'defaultHairMale',0L),(FID,'defaultHairFemale',0L)), #--0=None
         MelStruct('CNAM','2B','defaultHairColorMale','defaultHairColorFemale'), #--Int corresponding to GMST sHairColorNN
@@ -3035,40 +3062,42 @@ class MreRace(MelRecord):
         #--Begin Indexed entries
         MelBase('NAM0','_nam0',''),
         MelBase('MNAM','_mnam',''),
-        MelBase('FNAM','_fnam',''),
-        MelRaceModel('maleHead',0),
-        MelRaceModel('femaleHead',0),
+        MelRaceHeadModel('maleHead',0),
         MelRaceIcon('maleEars',1),
+        MelRaceHeadModel('maleMouth',2),
+        MelRaceHeadModel('maleTeethLower',3),
+        MelRaceHeadModel('maleTeethUpper',4),
+        MelRaceHeadModel('maleTongue',5),
+        MelRaceHeadModel('maleLeftEye',6),
+        MelRaceHeadModel('maleRightEye',7),
+        MelBase('FNAM','_fnam',''),
+        MelRaceHeadModel('femaleHead',0),
         MelRaceIcon('femaleEars',1),
-        MelRaceModel('maleMouth',2),
-        MelRaceModel('femaleMouth',2),
-        MelRaceModel('maleTeethLower',3),
-        MelRaceModel('femaleTeethLower',3),
-        MelRaceModel('maleTeethUpper',4),
-        MelRaceModel('femaleTeethUpper',4),
-        MelRaceModel('maleTongue',5),
-        MelRaceModel('femaleTongue',5),
-        MelRaceModel('maleLeftEye',6),
-        MelRaceModel('femaleLeftEye',6),
-        MelRaceModel('maleRightEye',7),
-        MelRaceModel('femaleRightEye',7),
+        MelRaceHeadModel('femaleMouth',2),
+        MelRaceHeadModel('femaleTeethLower',3),
+        MelRaceHeadModel('femaleTeethUpper',4),
+        MelRaceHeadModel('femaleTongue',5),
+        MelRaceHeadModel('femaleLeftEye',6),
+        MelRaceHeadModel('femaleRightEye',7),
         MelBase('NAM1','_nam1',''),
-        MelRaceModel('maleUpperBody',0),
-        MelRaceModel('femaleUpperBody',0),
-        MelRaceModel('maleLeftHand',1),
-        MelRaceModel('femaleLeftHand',1),
-        MelRaceModel('maleRightHand',2),
-        MelRaceModel('femaleRightHand',2),
-        MelRaceModel('maleUpperBodyTexture',3),
-        MelRaceModel('femaleUpperBodyTexture',3),
+        MelBase('MNAM','_mnam',''),
+        MelRaceBodyModel('maleUpperBody',0),
+        MelRaceBodyModel('maleLeftHand',1),
+        MelRaceBodyModel('maleRightHand',2),
+        MelRaceBodyModel('maleUpperBodyTexture',3),
+        MelBase('FNAM','_fnam',''),
+        MelRaceBodyModel('femaleUpperBody',0),
+        MelRaceBodyModel('femaleLeftHand',1),
+        MelRaceBodyModel('femaleRightHand',2),
+        MelRaceBodyModel('femaleUpperBodyTexture',3),
         #--Normal Entries
         MelFormidList('HNAM','hair'),
         MelFormidList('ENAM','eyes'),
-        MelBase('FGGS','fggs'),
-        MelBase('FGGA','fgga'),
-        MelBase('FGTS','fgts'),
-        MelBase('SNAM','SNAM'),
-        MelBase('NAM2','_nam2',''),
+        #--FaceGen Entries
+        MelBase('MNAM','_mnam',''),
+        MelRaceFaceGen('maleFaceGen'),
+        MelBase('FNAM','_fnam',''),
+        MelRaceFaceGen('femaleFaceGen'),
         #--Distributor for face and body entries.
         MelRaceDistributor(),
         )
@@ -12174,7 +12203,7 @@ class NpcFacePatcher(ImportPatcher):
             faceFile.convertToLongFormids(('NPC_',))
             for npc in faceFile.NPC_.getActiveRecords():
                 if npc.formid[0] != faceMod:
-                    faceData[npc.formid] = (npc.fggs,npc.fgga,npc.fgts,npc.eyes,npc.headParts,npc.hair,npc.hairLength,npc.hairColor)
+                    faceData[npc.formid] = (npc.fggs,npc.fgga,npc.fgts,npc.eyes,npc.headParts,npc.hair,npc.hairLength,npc.hairColor,npc.race)
             progress.plus()
 
     def getReadClasses(self):
@@ -12205,7 +12234,7 @@ class NpcFacePatcher(ImportPatcher):
         for npc in self.patchFile.NPC_.records:
             if npc.formid in faceData:
                 (npc.fggs, npc.fgga, npc.fgts, npc.eyes, npc.headParts, npc.hair, 
-                    npc.hairLength, npc.hairColor) = faceData[npc.formid]
+                    npc.hairLength, npc.hairColor, npc.race) = faceData[npc.formid]
                 npc.setChanged()
                 keep(npc.formid)
                 count += 1
@@ -14370,7 +14399,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
         #--Restrict srcMods to active/merged mods.
         self.srcMods = [x for x in self.getConfigChecked() if x in patchFile.allSet]
         self.isActive = True #--Always enabled to support eye filtering
-        self.bodyKeys = ('Height','Weight','TailModel','UpperBody','LowerBody','Hand','Foot','Tail')
+        self.bodyKeys = ('Height','Weight','UpperBody','RightHand','LeftHand','UpperBodyTexture')
         self.eyeKeys = set(('Eyes-D','Eyes-R','Eyes-E','Eyes'))
         #--Mesh tuple for each defined eye. Derived from race records.
         defaultMesh = (r'characters\imperial\eyerighthuman.nif', r'characters\imperial\eyelefthuman.nif')
@@ -14397,8 +14426,10 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                     for hair in race.hair:
                         if hair not in raceHair: raceHair.append(hair)
                 if self.eyeKeys & bashTags:
-                    raceData['rightEye'] = race.rightEye
-                    raceData['leftEye'] = race.leftEye
+                    raceData['femaleRightEye'] = race.femaleRightEye
+                    raceData['femaleLeftEye'] = race.femaleLeftEye
+                    raceData['maleRightEye'] = race.maleRightEye
+                    raceData['maleLeftEye'] = race.maleLeftEye
                     raceEyes = raceData.setdefault('eyes',[])
                     for eyes in race.eyes:
                         if eyes not in raceEyes: raceEyes.append(eyes)
@@ -14413,15 +14444,15 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                     for key in ['female'+key for key in self.bodyKeys]:
                         raceData[key] = getattr(race,key)
                 if 'R.Teeth' in bashTags:
-                    for key in ('teethLower','teethUpper'):
+                    for key in ('maleTeethLower','femaleTeethLower','maleTeethUpper','femaleTeethUpper'):
                         raceData[key] = getattr(race,key)
                 if 'R.Mouth' in bashTags:
-                    for key in ('mouth','tongue'):
+                    for key in ('maleMouth','femaleMouth','maleTongue','femaleTongue'):
                         raceData[key] = getattr(race,key)
-                if 'R.Relations' in bashTags:
-                    relations = raceData.setdefault('relations',{})
-                    for x in race.relations:
-                        relations[x.faction] = x.mod
+                #if 'R.Relations' in bashTags:
+                #    relations = raceData.setdefault('relations',{})
+                #    for x in race.relations:
+                #        relations[x.faction] = x.mod
             progress.plus()
 
     def getReadClasses(self):
@@ -14487,28 +14518,14 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 race.hair = raceData['hair']
                 raceChanged = True
             if 'eyes' in raceData and (
-                race.rightEye.path != raceData['rightEye'].path or
-                race.leftEye.path  != raceData['leftEye'].path or
+                race.maleRightEye.path != raceData['maleRightEye'].path or
+                race.femaleRightEye.path != raceData['femaleRightEye'].path or
+                race.maleLeftEye.path  != raceData['maleLeftEye'].path or
+                race.femaleLeftEye.path  != raceData['femaleLeftEye'].path or
                 set(race.eyes) != set(raceData['eyes'])
                 ): 
-                for attr in ('rightEye','leftEye','eyes'):
+                for attr in ('maleRightEye','femaleRightEye','maleLeftEye','femaleLeftEye','eyes'):
                     setattr(race,attr,raceData[attr])
-                raceChanged = True
-            #--Teeth
-            if 'teethLower' in raceData and (
-                race.teethLower != raceData['teethLower'] or
-                race.teethUpper != raceData['teethUpper'] 
-                ):
-                race.teethLower = raceData['teethLower']
-                race.teethUpper = raceData['teethUpper'] 
-                raceChanged = True
-            #--Mouth
-            if 'mouth' in raceData and (
-                race.mouth != raceData['mouth'] or
-                race.tongue != raceData['tongue'] 
-                ):
-                race.mouth = raceData['mouth']
-                race.tongue = raceData['tongue'] 
                 raceChanged = True
             #--Gender info (voice, body data)
             for gender in ('male','female'):
@@ -14523,45 +14540,59 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                         if getattr(race,key) != raceData[key]:
                             setattr(race,key,raceData[key])
                             raceChanged = True
+                teethKeys = [gender+key for key in ('TeethLower', 'TeethUpper')]
+                if gender+'TeethLower' in raceData:
+                    for key in teethKeys:
+                        if getattr(race,key) != raceData[key]:
+                            setattr(race,key,raceData[key])
+                            raceChanged = True
+                mouthKeys = [gender+key for key in ('Mouth', 'Tongue')]
+                if gender+'Mouth' in raceData:
+                    for key in mouthKeys:
+                        if getattr(race,key) != raceData[key]:
+                            setattr(race,key,raceData[key])
+                            raceChanged = True
             #--Relations
-            if 'relations' in raceData:
-                relations = raceData['relations']
-                oldRelations = set((x.faction,x.mod) for x in race.relations)
-                newRelations = set(relations.items())
-                if newRelations != oldRelations:
-                    del race.relations[:]
-                    for faction,mod in newRelations:
-                        entry = MelObject()
-                        entry.faction = faction
-                        entry.mod = mod
-                        race.relations.append(entry)
-                    raceChanged = True
+            #if 'relations' in raceData:
+            #    relations = raceData['relations']
+            #    oldRelations = set((x.faction,x.mod) for x in race.relations)
+            #    newRelations = set(relations.items())
+            #    if newRelations != oldRelations:
+            #        del race.relations[:]
+            #        for faction,mod in newRelations:
+            #            entry = MelObject()
+            #            entry.faction = faction
+            #            entry.mod = mod
+            #            race.relations.append(entry)
+            #        raceChanged = True
             #--Changed
             if raceChanged:
                 racesPatched.append(race.eid)
                 keep(race.formid)
         #--Eye Mesh filtering
         eye_mesh = self.eye_mesh
-        blueEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x27308)]
-        argonianEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x3e91e)]
+        hazelEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x4255)] #!!!!!!!!!!!!!TODO
+        #argonianEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x3e91e)]
         if debug:
             print '== Eye Mesh Filtering'
-            print 'blueEyeMesh',blueEyeMesh
-            print 'argonianEyeMesh',argonianEyeMesh
+            print 'hazelEyeMesh',hazelEyeMesh
+            #print 'argonianEyeMesh',argonianEyeMesh
         for eye in (
             (GPath('Fallout3.esm'),0x1a), #--Reanimate
-            (GPath('Fallout3.esm'),0x54bb9), #--Dark Seducer
-            (GPath('Fallout3.esm'),0x54bba), #--Golden Saint
-            (GPath('Fallout3.esm'),0x5fa43), #--Ordered
+            #(GPath('Fallout3.esm'),0x54bb9), #--Dark Seducer
+            #(GPath('Fallout3.esm'),0x54bba), #--Golden Saint
+            #(GPath('Fallout3.esm'),0x5fa43), #--Ordered
             ):
-            eye_mesh.setdefault(eye,blueEyeMesh)
-        def setRaceEyeMesh(race,rightPath,leftPath):
-            race.rightEye.path = rightPath
-            race.leftEye.path = leftPath
+            eye_mesh.setdefault(eye,hazelEyeMesh)
+        def setRaceEyeMesh(race,maleRightPath,femaleRightPath,femaleLeftPath,maleLeftPath):
+            race.maleRightEye.path = maleRightPath
+            race.femaleRightEye.path = femaleRightPath
+            race.maleLeftEye.path = maleLeftPath
+            race.femaleLeftEye.path = femaleLeftPath
         for race in patchFile.RACE.records:
             if debug: print '===', race.eid
             if not race.eyes: continue #--Sheogorath. Assume is handled correctly.
-            if not race.rightEye or not race.leftEye: continue #--WIPZ race?
+            if not race.maleRightEye or not race.femaleRightEye or not race.maleLeftEye or not race.femaleLeftEye: continue #--WIPZ race?
             raceChanged = False
             mesh_eye = {}
             for eyes in race.eyes:
@@ -14571,7 +14602,8 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 if mesh not in mesh_eye:
                     mesh_eye[mesh] = []
                 mesh_eye[mesh].append(eyes)
-            currentMesh = (race.rightEye.path.lower(),race.leftEye.path.lower())
+            currentMesh = (race.maleRightEye.path.lower(),race.femaleRightEye.path.lower(),
+                           race.maleLeftEye.path.lower(),race.femaleLeftEye.path.lower())
             #print race.eid, mesh_eye
             maxEyesMesh = sorted(mesh_eye.keys(),key=lambda a: len(mesh_eye[a]))[0]
             #--Single eye mesh, but doesn't match current mesh?
@@ -14584,15 +14616,15 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                     print mesh
                     for eye in eyes: print ' ',strFormid(eye)
             if len(mesh_eye) > 1 and race.flags.playable:
-                #--If blueEyeMesh (mesh used for vanilla eyes) is present, use that.
-                if blueEyeMesh in mesh_eye and currentMesh != argonianEyeMesh:
-                    setRaceEyeMesh(race,*blueEyeMesh)
-                    race.eyes = mesh_eye[blueEyeMesh]
+                #--If hazelEyeMesh (mesh used for vanilla eyes) is present, use that.
+                if hazelEyeMesh in mesh_eye: #and currentMesh != argonianEyeMesh:
+                    setRaceEyeMesh(race,*hazelEyeMesh)
+                    race.eyes = mesh_eye[hazelEyeMesh]
                     raceChanged = True
-                elif argonianEyeMesh in mesh_eye:
-                    setRaceEyeMesh(race,*argonianEyeMesh)
-                    race.eyes = mesh_eye[argonianEyeMesh]
-                    raceChanged = True
+                #elif argonianEyeMesh in mesh_eye:
+                #    setRaceEyeMesh(race,*argonianEyeMesh)
+                #    race.eyes = mesh_eye[argonianEyeMesh]
+                #    raceChanged = True
                 #--Else figure that current eye mesh is the correct one
                 elif currentMesh in mesh_eye:
                     race.eyes = mesh_eye[currentMesh]
