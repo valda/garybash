@@ -18,8 +18,8 @@
 
 Fallout3.esm
 Unofficial Fallout 3 Patch.esm
-CALIBR.esm
 CRAFT.esm
+CALIBR.esm
 FOOK2 - Main.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
 FO3 Wanderers Edition - Main File.esm
@@ -51,6 +51,8 @@ FaceMe.esp
 DarNifiedUIF3.esp
 ASU.esp
 
+GreenWorld.esp
+
 \Weather mods and overhauls
 \''''''''''''''''''''''''''
 \Unlikely to be affected by anything but sound mods.
@@ -70,6 +72,12 @@ Enhanced Weather - Sneak Bonus during Storms.esp
 Enhanced Weather - Weather Sounds in Interiors.esp
 ? Requires 'Enhanced Weather - Rain and Snow.esm'
 Fellout-Full.esp
+
+LightingOverhual-FULL-1.0.esp
+LightingOverhaul-DOF-ONLY.esp
+LightingOverhual-InteriorONLY.esp
+FelloutWithLightingOverhual-1.0.esp
+? Requires original plugins 'Fellout-Full.esp', deactivated.
 
 \Lighting
 \''''''''
@@ -131,6 +139,13 @@ FOOK2 - [EVE] Energy Visuals Enhanced.esp
 
 FO3 Wanderers Edition - Main File.esp
 FO3 Wanderers Edition - UFP Support.esp
+FO3 Wanderers Edition - Power Armor Revamp.esp
+FO3 Wanderers Edition - Optional VATS Realtime.esp
+? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
+FO3 Wanderers Edition - Optional VATS Halftime.esp
+? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
+FO3 Wanderers Edition - Optional Worn Weapons.esp
+FO3 Wanderers Edition - Optional Harsher Wasteland.esp
 
 \XFO
 \'''''''''''''''''''''''''''''''''''''''
@@ -234,6 +249,7 @@ Angel.esp
 
 DUIF3Extras.esp
 choose_XP_FOSE.esp
+FPS Grenade Hotkey.esp
 
 \---------
 \Pose mods
