@@ -277,8 +277,8 @@ reImageExt = re.compile(r'\.(gif|jpg|bmp|png)$',re.I)
 reModExt  = re.compile(r'\.es[mp](.ghost)?$',re.I)
 reEsmExt  = re.compile(r'\.esm(.ghost)?$',re.I)
 reEspExt  = re.compile(r'\.esp(.ghost)?$',re.I)
-reEssExt  = re.compile(r'\.ess$',re.I)
-reSaveExt = re.compile(r'(quicksave(\.bak)+|autosave(\.bak)+|\.es[rs])$',re.I)
+reFosExt  = re.compile(r'\.fos$',re.I)
+reSaveExt = re.compile(r'(quicksave(\.bak)+|autosave(\.bak)+|\.fo[rs])$',re.I)
 reCsvExt  = re.compile(r'\.csv$',re.I)
 reQuoted  = re.compile(r'^"(.*)"$')
 reGroupHeader = re.compile(r'^(\+\+|==)')
@@ -7540,12 +7540,12 @@ class SaveInfos(FileInfos):
         return (fileName.cext == '.ess')
 
     def enable(self,fileName,value=True):
-        """Enables file by changing extension to 'ess' (True) or 'esr' (False)."""
+        """Enables file by changing extension to 'ess' (True) or 'for' (False)."""
         isEnabled = self.isEnabled(fileName)
         if isEnabled or value == isEnabled or re.match('(autosave|quicksave)',fileName.s,re.I):
             return fileName
         (root,ext) = fileName.rootExt
-        newName = root + ((value and '.ess') or '.esr')
+        newName = root + ((value and '.ess') or '.for')
         self.rename(fileName,newName)
         return newName
     

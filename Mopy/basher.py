@@ -1815,7 +1815,7 @@ class SaveDetails(wx.Window):
         fileStr = self.file.GetValue()
         if fileStr == self.fileStr: return
         #--Extension Changed?
-        if self.fileStr[-4:].lower() not in ('.ess','.bak'):
+        if self.fileStr[-4:].lower() not in ('.fos','.bak'):
             balt.showError(self,"Incorrect file extension: "+fileStr[-3:])
             self.file.SetValue(self.fileStr)
         #--Else file exists?
@@ -6499,7 +6499,7 @@ class Mod_Face_Import(Link):
     def Execute(self,event):
         #--Select source face file
         srcDir = bosh.saveInfos.dir
-        wildcard = _('Fallout3 Files')+' (*.fos;*.esr)|*.fos;*.esr'
+        wildcard = _('Fallout3 Files')+' (*.fos;*.for)|*.fos;*.for'
         #--File dialog
         srcPath = balt.askOpen(self.window,'Face Source:',srcDir, '', wildcard)
         if not srcPath: return
@@ -7564,7 +7564,7 @@ class Save_ImportFace(Link):
         fileInfo = self.window.data[fileName]
         #--Select source face file
         srcDir = fileInfo.dir
-        wildcard = _('Fallout3 Files')+' (*.esp;*.esm;*.fos;*.esr)|*.esp;*.esm;*.fos;*.esr'
+        wildcard = _('Fallout3 Files')+' (*.esp;*.esm;*.fos;*.for)|*.esp;*.esm;*.fos;*.for'
         #--File dialog
         srcPath = balt.askOpen(self.window,'Face Source:',srcDir, '', wildcard)
         if not srcPath: return
