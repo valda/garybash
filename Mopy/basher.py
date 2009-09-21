@@ -139,7 +139,7 @@ settingDefaults = {
         'Load Order': _('Load Order'),
         'Modified': _('Modified'),
         'Num': _('MI'),
-        'PlayTime':_('Hours'),
+        'PlayTime':_('Play Time'),
         'Player': _('Player'),
         'Rating': _('Rating'),
         'Rating':_('Rating'),
@@ -1602,8 +1602,7 @@ class SaveList(List):
             elif col == 'Player' and fileInfo.header:
                 value = fileInfo.header.pcName
             elif col == 'PlayTime' and fileInfo.header:
-                playMinutes = fileInfo.header.gameTicks/60000
-                value = "%d:%02d" % (playMinutes/60,(playMinutes % 60))
+                value = fileInfo.header.playTime
             elif col == 'Cell' and fileInfo.header:
                 value = fileInfo.header.pcLocation
             else:
@@ -1640,7 +1639,7 @@ class SaveList(List):
         elif col == 'Player':
             self.items.sort(key=lambda a: data[a].header.pcName)
         elif col == 'PlayTime':
-            self.items.sort(key=lambda a: data[a].header.gameTicks)
+            self.items.sort(key=lambda a: data[a].header.playTime)
         elif col == 'Cell':
             self.items.sort(key=lambda a: data[a].header.pcLocation)
         else:
@@ -1749,8 +1748,7 @@ class SaveDetails(wx.Window):
             self.playerNameStr = ''
             self.curCellStr = ''
             self.playerLevel = 0
-            self.gameDays = 0
-            self.playMinutes = 0
+            self.playTime = 0
             self.picData = None
             self.coSaves = '--\n--'
         #--Valid fileName?
@@ -1760,15 +1758,14 @@ class SaveDetails(wx.Window):
             self.fileStr = saveInfo.name.s
             self.playerNameStr = saveInfo.header.pcName
             self.curCellStr = saveInfo.header.pcLocation
-            self.gameDays = saveInfo.header.gameDays
-            self.playMinutes = saveInfo.header.gameTicks/60000
+            self.playTime = saveInfo.header.playTime
             self.playerLevel = saveInfo.header.pcLevel
             self.picData = saveInfo.header.image
             self.coSaves = '%s\n%s' % saveInfo.coSaves().getTags()
         #--Set Fields
         self.file.SetValue(self.fileStr)
-        self.playerInfo.SetLabel(_("%s\nLevel %d, Day %d, Play %d:%02d\n%s") % 
-            (self.playerNameStr,self.playerLevel,int(self.gameDays),self.playMinutes/60,(self.playMinutes % 60),self.curCellStr))
+        self.playerInfo.SetLabel(_("%s\nLevel %d, Play Time %s\n%s") % 
+            (self.playerNameStr,self.playerLevel,self.playTime,self.curCellStr))
         self.gCoSaves.SetLabel(self.coSaves)
         self.masters.SetFileInfo(saveInfo)
         #--Picture

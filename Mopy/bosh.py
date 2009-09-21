@@ -4919,9 +4919,9 @@ class SaveHeader:
     def __init__(self,path=None):
         """Initialize."""
         self.pcName = None
+        self.pcNick = None
         self.pcLocation = None
-        self.gameDays = 0
-        self.gameTicks = 0
+        self.playTime = None
         self.pcLevel = 0
         self.masters = []
         self.image = None
@@ -4932,27 +4932,35 @@ class SaveHeader:
         ins = path.open('rb')
         try:
             #--Header 
-            ins.seek(34)
+            ins.seek(11) # FO3SAVEGAME
             headerSize, = struct.unpack('I',ins.read(4))
-            #posMasters = 38 + headerSize
-            #--Name, location
-            ins.seek(38+4)
-            size, = struct.unpack('B',ins.read(1))
+            unknown,delim = struct.unpack('Ic',ins.read(5))
+            ssWidth,delim1,ssHeight,delim2,ssDepth,delim3 = struct.unpack('=IcIcIc',ins.read(15))
+            #--Name, nickname, level, location, playtime
+            size,delim = struct.unpack('Hc',ins.read(3))
             self.pcName = cstrip(ins.read(size))
-            self.pcLevel, = struct.unpack('H',ins.read(2))
-            size, = struct.unpack('B',ins.read(1))
+            delim, = struct.unpack('c',ins.read(1))
+            size,delim = struct.unpack('Hc',ins.read(3))
+            self.pcNick = cstrip(ins.read(size))
+            delim, = struct.unpack('c',ins.read(1))
+            self.pcLevel,delim = struct.unpack('Ic',ins.read(5))
+            size,delim = struct.unpack('Hc',ins.read(3))
             self.pcLocation = cstrip(ins.read(size))
+            delim, = struct.unpack('c',ins.read(1))
+            size,delim = struct.unpack('Hc',ins.read(3))
+            self.playTime = cstrip(ins.read(size))
+            delim, = struct.unpack('c',ins.read(1))
             #--Image Data
-            self.gameDays,self.gameTicks,self.gameTime,ssSize,ssWidth,ssHeight = struct.unpack('=fI16s3I',ins.read(36))
             ssData = ins.read(3*ssWidth*ssHeight)
             self.image = (ssWidth,ssHeight,ssData)
             #--Masters
-            #ins.seek(posMasters)
+            unknown,delim = struct.unpack('Ic',ins.read(5))
             del self.masters[:]
-            numMasters, = struct.unpack('B',ins.read(1))
+            numMasters,delim = struct.unpack('Bc',ins.read(2))
             for count in range(numMasters):
-                size, = struct.unpack('B',ins.read(1))
+                size,delim = struct.unpack('Hc',ins.read(3))
                 self.masters.append(GPath(ins.read(size)))
+                delim, = struct.unpack('c',ins.read(1))
         #--Errors
         except:
             raise SaveFileError(path.tail,_('File header is corrupted..'))
