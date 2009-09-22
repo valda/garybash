@@ -8258,13 +8258,18 @@ class ScreensData(DataDict):
         if ssBase.head:
             self.dir = self.dir.join(ssBase.head)
         newData = {}
+        reImageDir = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}_\d{2}_\d{2}$',re.I)
         reImageExt = re.compile(r'\.(bmp|jpg)$',re.I)
         #--Loop over files in directory
-        for fileName in self.dir.list():
-            filePath = self.dir.join(fileName)
-            maImageExt = reImageExt.search(fileName.s)
-            if maImageExt and filePath.isfile(): 
-                newData[fileName] = (maImageExt.group(1).lower(),filePath.mtime)
+        for dirName in self.dir.list():
+            dirPath = self.dir.join(dirName)
+            maImageDir = reImageDir.search(dirName.s)
+            if maImageDir and dirPath.isdir():
+                for fileName in dirPath.list():
+                    filePath = dirPath.join(fileName)
+                    maImageExt = reImageExt.search(fileName.s)
+                    if maImageExt and filePath.isfile():
+                        newData[dirName.join(fileName)] = (maImageExt.group(1).lower(),filePath.mtime)
         changed = (self.data != newData)
         self.data = newData
         return changed
