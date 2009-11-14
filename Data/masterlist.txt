@@ -17,18 +17,30 @@
 \----
 
 Fallout3.esm
+Anchorage.esm
+ThePitt.esm
+BrokenSteel.esm
+PointLookout.esm
+Zeta.esm
 Unofficial Fallout 3 Patch.esm
+Unofficial Fallout 3 Patch - Operation Anchorage.esp
+Unofficial Fallout 3 Patch - The Pitt.esp
+Unofficial Fallout 3 Patch - Broken Steel.esp
+Unofficial Fallout 3 Patch - Point Lookout.esp
+Unofficial Fallout 3 Patch - Mothership Zeta.esp
 CRAFT.esm
 CALIBR.esm
+Mart's Mutant Mod.esm
 FOOK2 - Main.esm
+FOOK2 - [DIK] DLC Improvement Kit.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
 FO3 Wanderers Edition - Main File.esm
-Mart's Mutant Mod.esm
 Enhanced Weather - Rain and Snow.esm
 EnhancedChildren.esm
 ChildrenEmpire.esm
 AngelRaces.esm
 FaceMe.esm
+Project Beauty HD version.esm
 
 \-------------
 \NPC face mods
@@ -37,6 +49,23 @@ FaceMe.esm
 \Bash and deactivate to keep new faces with NPC altering mods later.
 
 FaceMe.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+
+Project Beauty.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+Project Beauty- Broken Steel.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+PB MMM HD.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+PB MMM.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+Project Beauty- MMM Raiders.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+Project Beauty- Point Lookout MMM.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+Project Beauty- Point Lookout.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+Raider preset beta.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
 
 \---------
@@ -115,9 +144,20 @@ MoreMapMarkers.esp
 \VITAL for overhaul mod users: Wrye Bash tag all armor replacers {{BASH:Graphics}} to keep their new look. 
 \Some items will need to go after overhaul or location altering mods to appear.
 
+UWWUT.esp
+UWWUT - The Pitt Addon.esp
+UWWUT - Broken Steel Addon.esp
+UWWUT - WMK Addon.esp
+UWWUT_WT.esp
+UWWUT_WT - TP Addon.esp
+UWWUT_WT - BS Addon.esp
+
 bzArmour.esp
 bzBodySuits.esp
 sunglassescollection.esp
+
+EVE.esp
+EVE Operation Anchorage.esp
 
 \---------
 \Overhauls
@@ -133,12 +173,21 @@ FOOK2 - Main.esp
 FOOK2 - WANK Map Markers.esp
 ? Requires 'FOOK2 - [WANK] World And Neighbourhood Kit.esm'
 FOOK2 - [EVE] Energy Visuals Enhanced.esp
+FOOK2 - [DIK] DLC Improvement Kit.esp
+? Requires DLC 1-4
+FOOK2 - Mothership Zeta.esp
 
 \FO3 Wanderers Edition
 \'''''''''''''''''''''''''''''''''''''''
 
 FO3 Wanderers Edition - Main File.esp
+FO3 Wanderers Edition - DLC Anchorage.esp
+FO3 Wanderers Edition - DLC The Pitt.esp
+FO3 Wanderers Edition - DLC Broken Steel.esp
+FO3 Wanderers Edition - DLC Point Lookout.esp
+FO3 Wanderers Edition - DLC Mothership Zeta.esp
 FO3 Wanderers Edition - UFP Support.esp
+FO3 Wanderers Edition - Alternate Travel.esp
 FO3 Wanderers Edition - Power Armor Revamp.esp
 FO3 Wanderers Edition - Optional VATS Realtime.esp
 ? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
@@ -146,6 +195,14 @@ FO3 Wanderers Edition - Optional VATS Halftime.esp
 ? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
 FO3 Wanderers Edition - Optional Worn Weapons.esp
 FO3 Wanderers Edition - Optional Harsher Wasteland.esp
+
+\FWE-FOOK Merger (Main)
+\'''''''''''''''''''''''''''''''''''''''
+
+FO3 Wanderers Edition - FOOK Support.esp
+FO3 Wanderers Edition - FOOK Support - Classic DR.esp
+FWE - FOOK DLC Support.esp
+FWE - FOOK DLC Support - Classic DR.esp
 
 \XFO
 \'''''''''''''''''''''''''''''''''''''''
@@ -207,7 +264,13 @@ Stealthboy Recon Armor - CRAFT.esp
 
 Mart's Mutant Mod.esp
 ? Requires 'Mart's Mutant Mod.esm'
+Mart's Mutant Mod - DLC Anchorage.esp
+Mart's Mutant Mod - DLC The Pitt.esp
+Mart's Mutant Mod - DLC Broken Steel.esp
+Mart's Mutant Mod - DLC Point Lookout.esp
+Mart's Mutant Mod - DLC Zeta.esp
 Mart's Mutant Mod - Increased Spawns.esp
+Mart's Mutant Mod - Reduced Wasteland Spawns.esp
 Mart's Mutant Mod - Zones Respawn.esp
 Mart's Mutant Mod - Feral Ghoul Rampage.esp
 Mart's Mutant Mod - Natural Selection.esp
@@ -218,7 +281,14 @@ Mart's Mutant Mod - Hunting & Looting.esp
 \'''''''''''''''''''''''''''''''''''''''
 
 Mart's Mutant Mod - FOOK2.esp
+Mart's Mutant Mod - FOOK2 - DIK.esp
 Mart's Mutant Mod - FWE Master Release.esp
+
+\FWE-FOOK Merger (Optional)
+\'''''''''''''''''''''''''''''''''''''''
+
+FOOK+FWE+PB+MMM.esp
+FOOK+FWE+EVE+UWWUT.esp
 
 \Further compatibility mods.
 \'''''''''''''''''''''''''''
@@ -233,9 +303,6 @@ FaceMe-MMM.esp
 \----------------------
 \Quests and Locations
 \----------------------
-
-Angel.esp
-? Requires 'AngelRaces.esm'
 
 \---------
 \Overrides
@@ -259,6 +326,29 @@ FPS Grenade Hotkey.esp
 SomePoses.esp
 PCIdles.esp
 
+\--------------------------
+\Beauty Packs & Race Addons
+\--------------------------
+\Hair, eyes, race addons & changes and other cosmetics.
+
+\Body and head changes
+\'''''''''''''''''''''
+\May be hard to get to work with other race mods - try merging with TES4Geko.
+
+\Hair
+\''''
+Choose your own hairstyle (load this last on FOMM).esp
+% {{BASH:NpcFaces,Hair,Eyes}}
+
+\Eyes
+\''''
+
+\Mixed
+\'''''
+
+\Race additions (+ hair + eyes etc)
+\''''''''''''''''''''''''''''''''''
+
 \----------
 \Companions
 \----------
@@ -266,6 +356,8 @@ PCIdles.esp
 \Recommended by authors to load very late.
 \Should go after custom races where the companion is a custom race.
 
+Angel.esp
+? Requires 'AngelRaces.esm'
 ChildrenEmpire Soldiers.esp
 ? Requires 'ChildrenEmpire.esm'
 ChildrenEmpire Enemies.esp
