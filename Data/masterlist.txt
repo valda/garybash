@@ -28,6 +28,7 @@ Unofficial Fallout 3 Patch - The Pitt.esp
 Unofficial Fallout 3 Patch - Broken Steel.esp
 Unofficial Fallout 3 Patch - Point Lookout.esp
 Unofficial Fallout 3 Patch - Mothership Zeta.esp
+StreetLights.esm
 CRAFT.esm
 CALIBR.esm
 Mart's Mutant Mod.esm
@@ -35,6 +36,7 @@ FOOK2 - Main.esm
 FOOK2 - [DIK] DLC Improvement Kit.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
 FO3 Wanderers Edition - Main File.esm
+RH_IRONSIGHTS.esm
 Enhanced Weather - Rain and Snow.esm
 EnhancedChildren.esm
 ChildrenEmpire.esm
@@ -96,11 +98,16 @@ GreenWorld.esp
 
 Enhanced Weather - Rain and Snow in Fallout.esp
 ? Requires 'Enhanced Weather - Rain and Snow.esm'
+Enhanced Weather - Radioactive Rain and Snow Plugin.esp
+? Requires 'Enhanced Weather - Rain and Snow.esm'
 Enhanced Weather - Sneak Bonus during Storms.esp
 ? Requires 'Enhanced Weather - Rain and Snow.esm'
 Enhanced Weather - Weather Sounds in Interiors.esp
 ? Requires 'Enhanced Weather - Rain and Snow.esm'
+
 Fellout-Full.esp
+Fellout-Anchorage.esp
+Fellout-BrokenSteel.esp
 
 LightingOverhual-FULL-1.0.esp
 LightingOverhaul-DOF-ONLY.esp
@@ -119,11 +126,15 @@ FireLightFix.esp
 \'''''''
 \Includes nearly all new items (except weapons and armor)
 
+ROTS2.esp
+ROTS3.esp
 Centered 3P Cam.esp
 dD-Less Blood Time.esp
 noautoaim.esp
 ? Not FWE compatible - already included in FWE.
+Auto Aim Fix v1.1.esp
 pip150.esp
+1alexscorpionFPSanimations.esp
 
 MTC Wasteland Travellers.esp
 MTC Wasteland Travellers (Optional)- Crowded Cities.esp
@@ -152,9 +163,17 @@ UWWUT_WT.esp
 UWWUT_WT - TP Addon.esp
 UWWUT_WT - BS Addon.esp
 
+Tailor Maid.esp
+Tailor Maid Black Retex.esp
+Tailor Maid Anchorage.esp
+Tailor Maid PITT.esp
+Tailor Maid Brokensteel.esp
+Tailor Maid ZETA.esp
+
 bzArmour.esp
 bzBodySuits.esp
 sunglassescollection.esp
+1Animated Nightvision goggles.esp
 
 EVE.esp
 EVE Operation Anchorage.esp
@@ -176,6 +195,11 @@ FOOK2 - [EVE] Energy Visuals Enhanced.esp
 FOOK2 - [DIK] DLC Improvement Kit.esp
 ? Requires DLC 1-4
 FOOK2 - Mothership Zeta.esp
+
+MyFOOK2 - Ammo Weight.esp
+Sally Fix 2.1.esp
+P94-95.esp
+FOOK2 - 1Animated Nightvision goggles.esp
 
 \FO3 Wanderers Edition
 \'''''''''''''''''''''''''''''''''''''''
@@ -254,10 +278,30 @@ XFO_Pacing_med.esp
 XFO_Pacing_mild.esp
 ? Choose either this one, 'XFO_Pacing_mild.esp', or neither, BUT DO NOT choose both.
 XFO_Pacing_Extra_Levels.esp
+XFO_Immersion_Necessities.esp
+XFO_Immersion_nomsgs_sneak.esp
+XFO_Immersion_nomsgs_empty.esp
 
+
+\Arwen's Realism Tweaks
+\'''''''''''''''''''''''''''''''''''''''
+Arwen_Tweaks_Main.esp
+Arwen_SmarterAI.esp
+Arwen_Survival.esp
+Arwen_Armor.esp
+Arwen_Weapons.esp
+Arwen_Localized_Damage.esp
+Arwen_Less_Is_More.esp
+Arwen_FULL_Tweaks.esp
+
+
+\CALIBR and CRAFT
+\'''''''''''''''''''''''''''''''''''''''
 CALIBRxMerchant.esp
 CRAFT - Activation Perk.esp
 Stealthboy Recon Armor - CRAFT.esp
+CALIBR Ammo Schematics - CRAFT.esp
+
 
 \MMM
 \'''''''''''''''''''''''''''''''''''''''
@@ -304,6 +348,8 @@ FaceMe-MMM.esp
 \Quests and Locations
 \----------------------
 
+MiniVault+.esp
+
 \---------
 \Overrides
 \---------
@@ -316,7 +362,29 @@ FaceMe-MMM.esp
 
 DUIF3Extras.esp
 choose_XP_FOSE.esp
+OneKeyArmor.esp
+
+\Perk
+\'''''
+\Overrides overhauls. New perks go here for convenience.
+
+UPP - Original Perks.esp
+UPP - Experience Perks.esp
+UPP - Pack 1.esp
+UPP - Pack 2.esp
+UPP  - Quest Perks.esp
+UPP - Beverage Perks.esp
+
+\Combat
+\''''''
+\Overrides 'overhauls'.
+
+RH_IronSights_Basic_VanillaPlugin.esp
+RH_IS+FOOK2.esp
+DK_BulletTime.esp
 FPS Grenade Hotkey.esp
+FPS Grenade Hotkey - Zeta addon.esp
+CombatEnhanced-Package v02.esp
 
 \---------
 \Pose mods
@@ -325,6 +393,27 @@ FPS Grenade Hotkey.esp
 
 SomePoses.esp
 PCIdles.esp
+FacialExpressions.esp
+F3UmpaAnimation.esp
+The Groovatron.esp
+The Groovatron_DLC_Anch_Addon.esp
+The Groovatron_DLC_Pitt_Addon.esp
+
+\--------------------------------
+\Semi-Final overrides and patches
+\--------------------------------
+\Just stuff recommended to be very, VERY late.
+
+\--------------------
+\Respawn & day length
+\--------------------
+\Use only one of each kind. Unlikely to interact with other mods.
+
+TimeScaleTo3.esp
+TimeScaleTo5.esp
+TimeScaleTo15.esp
+TimeScaleTo20.esp
+TimeScaleTo25.esp
 
 \--------------------------
 \Beauty Packs & Race Addons
