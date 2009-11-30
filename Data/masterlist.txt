@@ -39,7 +39,9 @@ AngelRaces.esm
 EZCompanion.esm
 EZ_citizens.esm
 FaceMe.esm
+% {{BASH:NpcFaces,Hair,Eyes}}
 Project Beauty HD version.esm
+% {{BASH:NpcFaces,Hair,Eyes}}
 
 \-------------
 \NPC face mods
