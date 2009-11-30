@@ -23,11 +23,6 @@ BrokenSteel.esm
 PointLookout.esm
 Zeta.esm
 Unofficial Fallout 3 Patch.esm
-Unofficial Fallout 3 Patch - Operation Anchorage.esp
-Unofficial Fallout 3 Patch - The Pitt.esp
-Unofficial Fallout 3 Patch - Broken Steel.esp
-Unofficial Fallout 3 Patch - Point Lookout.esp
-Unofficial Fallout 3 Patch - Mothership Zeta.esp
 StreetLights.esm
 CRAFT.esm
 CALIBR.esm
@@ -41,6 +36,8 @@ Enhanced Weather - Rain and Snow.esm
 EnhancedChildren.esm
 ChildrenEmpire.esm
 AngelRaces.esm
+EZCompanion.esm
+EZ_citizens.esm
 FaceMe.esm
 Project Beauty HD version.esm
 
@@ -69,6 +66,16 @@ Project Beauty- Point Lookout.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
 Raider preset beta.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
+
+\---
+\UF3P
+\---
+
+Unofficial Fallout 3 Patch - Operation Anchorage.esp
+Unofficial Fallout 3 Patch - The Pitt.esp
+Unofficial Fallout 3 Patch - Broken Steel.esp
+Unofficial Fallout 3 Patch - Point Lookout.esp
+Unofficial Fallout 3 Patch - Mothership Zeta.esp
 
 \---------
 \Base Mods
@@ -172,8 +179,13 @@ Tailor Maid ZETA.esp
 
 bzArmour.esp
 bzBodySuits.esp
+OutFits.esp
 sunglassescollection.esp
 1Animated Nightvision goggles.esp
+
+\---------
+\Energy Visuals Enhanced
+\---------
 
 EVE.esp
 EVE Operation Anchorage.esp
@@ -348,6 +360,19 @@ FaceMe-MMM.esp
 \Quests and Locations
 \----------------------
 
+Angel.esp
+? Requires 'AngelRaces.esm'
+
+ChildrenEmpire Soldiers.esp
+? Requires 'ChildrenEmpire.esm'
+ChildrenEmpire Enemies.esp
+? Requires 'ChildrenEmpire.esm'
+ChildrenEmpire Enemies - MMM.esp
+
+EZ_TempleOfCant.esp
+EZ_MoreVoices.esp
+EZ_Ammo_Restriction.esp
+
 MiniVault+.esp
 
 \---------
@@ -444,14 +469,6 @@ Choose your own hairstyle (load this last on FOMM).esp
 \Those related to companion mod systems. Most others in Quests section.
 \Recommended by authors to load very late.
 \Should go after custom races where the companion is a custom race.
-
-Angel.esp
-? Requires 'AngelRaces.esm'
-ChildrenEmpire Soldiers.esp
-? Requires 'ChildrenEmpire.esm'
-ChildrenEmpire Enemies.esp
-? Requires 'ChildrenEmpire.esm'
-ChildrenEmpire Enemies - MMM.esp
 
 \------------
 \Bashed Patch
