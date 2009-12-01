@@ -14445,10 +14445,10 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                     for hair in race.hair:
                         if hair not in raceHair: raceHair.append(hair)
                 if self.eyeKeys & bashTags:
-                    raceData['femaleRightEye'] = race.femaleRightEye
                     raceData['femaleLeftEye'] = race.femaleLeftEye
-                    raceData['maleRightEye'] = race.maleRightEye
+                    raceData['femaleRightEye'] = race.femaleRightEye
                     raceData['maleLeftEye'] = race.maleLeftEye
+                    raceData['maleRightEye'] = race.maleRightEye
                     raceEyes = raceData.setdefault('eyes',[])
                     for eyes in race.eyes:
                         if eyes not in raceEyes: raceEyes.append(eyes)
@@ -14512,8 +14512,8 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 patchBlock.setRecord(record.getTypeCopy(mapper))
             for eyes in record.eyes:
                 if eyes in srcEyes: 
-                    eye_mesh[eyes] = (record.maleRightEye.path.lower(),record.maleLeftEye.path.lower(),
-                                      record.femaleRightEye.path.lower(),record.femaleLeftEye.path.lower(),)
+                    eye_mesh[eyes] = (record.maleLeftEye.path.lower(),record.maleRightEye.path.lower(),
+                                      record.femaleLeftEye.path.lower(),record.femaleRightEye.path.lower(),)
 
     def buildPatch(self,log,progress):
         """Updates races as needed."""
@@ -14537,13 +14537,13 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 race.hair = raceData['hair']
                 raceChanged = True
             if 'eyes' in raceData and (
+                race.maleLeftEye.path != raceData['maleLeftEye'].path or
                 race.maleRightEye.path != raceData['maleRightEye'].path or
+                race.femaleLeftEye.path != raceData['femaleLeftEye'].path or
                 race.femaleRightEye.path != raceData['femaleRightEye'].path or
-                race.maleLeftEye.path  != raceData['maleLeftEye'].path or
-                race.femaleLeftEye.path  != raceData['femaleLeftEye'].path or
                 set(race.eyes) != set(raceData['eyes'])
                 ): 
-                for attr in ('maleRightEye','femaleRightEye','maleLeftEye','femaleLeftEye','eyes'):
+                for attr in ('maleLeftEye','maleRightEye','femaleLeftEye','femaleRightEye','eyes'):
                     setattr(race,attr,raceData[attr])
                 raceChanged = True
             #--Gender info (voice, body data)
@@ -14604,14 +14604,14 @@ class RacePatcher(SpecialPatcher,ListPatcher):
             ):
             eye_mesh.setdefault(eye,hazelEyeMesh)
         def setRaceEyeMesh(race,maleRightPath,femaleRightPath,femaleLeftPath,maleLeftPath):
-            race.maleRightEye.path = maleRightPath
-            race.femaleRightEye.path = femaleRightPath
             race.maleLeftEye.path = maleLeftPath
+            race.maleRightEye.path = maleRightPath
             race.femaleLeftEye.path = femaleLeftPath
+            race.femaleRightEye.path = femaleRightPath
         for race in patchFile.RACE.records:
             if debug: print '===', race.eid
             if not race.eyes: continue #--Sheogorath. Assume is handled correctly.
-            if not race.maleRightEye or not race.femaleRightEye or not race.maleLeftEye or not race.femaleLeftEye: continue #--WIPZ race?
+            if not race.maleLeftEye or not race.maleRightEye or not race.femaleLeftEye or not race.femaleRightEye: continue #--WIPZ race?
             raceChanged = False
             mesh_eye = {}
             for eyes in race.eyes:
@@ -14621,8 +14621,8 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 if mesh not in mesh_eye:
                     mesh_eye[mesh] = []
                 mesh_eye[mesh].append(eyes)
-            currentMesh = (race.maleRightEye.path.lower(),race.femaleRightEye.path.lower(),
-                           race.maleLeftEye.path.lower(),race.femaleLeftEye.path.lower())
+            currentMesh = (race.maleLeftEye.path.lower(),race.maleRightEye.path.lower(),
+                           race.femaleLeftEye.path.lower(),race.femaleRightEye.path.lower())
             #print race.eid, mesh_eye
             maxEyesMesh = sorted(mesh_eye.keys(),key=lambda a: len(mesh_eye[a]))[0]
             #--Single eye mesh, but doesn't match current mesh?
