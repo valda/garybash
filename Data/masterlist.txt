@@ -23,6 +23,13 @@ BrokenSteel.esm
 PointLookout.esm
 Zeta.esm
 Unofficial Fallout 3 Patch.esm
+
+FaceMe.esm
+% {{BASH:NpcFaces,Hair,Eyes}}
+Project Beauty HD version.esm
+% {{BASH:NpcFaces,Hair,Eyes}}
+
+Enhanced Weather - Rain and Snow.esm
 StreetLights.esm
 CRAFT.esm
 CALIBR.esm
@@ -32,16 +39,11 @@ FOOK2 - [DIK] DLC Improvement Kit.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
 FO3 Wanderers Edition - Main File.esm
 RH_IRONSIGHTS.esm
-Enhanced Weather - Rain and Snow.esm
 EnhancedChildren.esm
 ChildrenEmpire.esm
 AngelRaces.esm
 EZCompanion.esm
 EZ_citizens.esm
-FaceMe.esm
-% {{BASH:NpcFaces,Hair,Eyes}}
-Project Beauty HD version.esm
-% {{BASH:NpcFaces,Hair,Eyes}}
 
 \-------------
 \NPC face mods
@@ -213,7 +215,6 @@ FOOK2 - Mothership Zeta.esp
 MyFOOK2 - Ammo Weight.esp
 Sally Fix 2.1.esp
 P94-95.esp
-FOOK2 - 1Animated Nightvision goggles.esp
 
 \FO3 Wanderers Edition
 \'''''''''''''''''''''''''''''''''''''''
@@ -407,7 +408,6 @@ UPP - Beverage Perks.esp
 \Overrides 'overhauls'.
 
 RH_IronSights_Basic_VanillaPlugin.esp
-RH_IS+FOOK2.esp
 DK_BulletTime.esp
 FPS Grenade Hotkey.esp
 FPS Grenade Hotkey - Zeta addon.esp
