@@ -92,6 +92,7 @@ Unofficial Fallout 3 Patch - Mothership Zeta.esp
 
 DarNifiedUIF3.esp
 ASU.esp
+CASM.esp
 
 GreenWorld.esp
 
@@ -140,10 +141,6 @@ FireLightFix.esp
 ROTS2.esp
 ROTS3.esp
 Centered 3P Cam.esp
-dD-Less Blood Time.esp
-noautoaim.esp
-? Not FWE compatible - already included in FWE.
-Auto Aim Fix v1.1.esp
 pip150.esp
 1alexscorpionFPSanimations.esp
 
@@ -392,6 +389,19 @@ DUIF3Extras.esp
 choose_XP_FOSE.esp
 OneKeyArmor.esp
 
+dD-Full Screen Blood.esp
+dD-Larger Blood.esp
+dD-Less Blood Time, Larger Blood.esp
+dD-Less Blood Time.esp
+dD-Less Blood Time.esp
+dD-No Screen Blood.esp
+dD-More Gore.esp
+dD-More Gore-BrokenSteel.esp
+dD-More Gore-PointLookout.esp
+dD-More Gore-The Pitt.esp
+dD-More Gore-Zeta.esp
+dD-Reduced Dismember Force.esp
+
 \Perk
 \'''''
 \Overrides overhauls. New perks go here for convenience.
@@ -407,11 +417,19 @@ UPP - Beverage Perks.esp
 \''''''
 \Overrides 'overhauls'.
 
+noautoaim.esp
+? Not FWE compatible - already included in FWE.
+Auto Aim Fix v1.1.esp
+
 RH_IronSights_Basic_VanillaPlugin.esp
 DK_BulletTime.esp
 FPS Grenade Hotkey.esp
 FPS Grenade Hotkey - Zeta addon.esp
 CombatEnhanced-Package v02.esp
+
+Fast_but_dramatic_VATS_0.9.esp
+playbackdelay_001.esp
+VATS_Normal_dmg_to_player.esp
 
 \---------
 \Pose mods
