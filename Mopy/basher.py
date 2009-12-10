@@ -3589,7 +3589,9 @@ class BashApp(wx.App):
         self.SetTopWindow(frame)
         frame.Show()
         balt.ensureDisplayed(frame)
-        if errLog: errLog.remove()
+        if errLog:
+            try: errLog.remove()
+            except: pass
         #--DocBrowser
         if settings['bash.modDocs.show']:
             #DocBrowser().Show()
