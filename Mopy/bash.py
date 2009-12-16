@@ -15,34 +15,34 @@
 #  along with Wrye Bash; if not, write to the Free Software Foundation,
 #  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye 
+#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye
 #
 # =============================================================================
 
-"""This module starts the Wrye Bash application. Basically, it runs some 
+"""This module starts the Wrye Bash application. Basically, it runs some
 initialization functions, and then starts the main application loop.
 
 bash [-u userPath] [-p personalPath] [-l localAppDataPath] [0]
-User directory arguments (-u, -p and -l). 
-These arguments allow you to specify your user directory in several ways. These 
-are only useful if the regular procedure for getting the user directory fails. 
-And even in that case, the user is probably bettr off installing win32com. 
+User directory arguments (-u, -p and -l).
+These arguments allow you to specify your user directory in several ways. These
+are only useful if the regular procedure for getting the user directory fails.
+And even in that case, the user is probably bettr off installing win32com.
 However, the arguments are:
 
--u userPath: Specify the user profile path. May help if HOMEDRIVE and/or HOMEPATH 
+-u userPath: Specify the user profile path. May help if HOMEDRIVE and/or HOMEPATH
 are missing from the user's environgment. Example: -u "C:\Documents and Settings\Wrye"
 
--p personalPath: Specify the user's personal directory. Must be used in 
+-p personalPath: Specify the user's personal directory. Must be used in
 conjunction with -l option.
 Example: -p "c:\documents and settings\Wrye\My Documents"
 
--l localAppDataPath: Specify the user's local application data directory. Must be used in 
+-l localAppDataPath: Specify the user's local application data directory. Must be used in
 conjunction with -l option.
 Example: -p "c:\documents and settings\Wrye\Local Settings\Application Data"
 
 Debug argument:
--d Send debug text to the console rather than to a newly created debug window. 
-Useful if bash is crashing on startup or if you want to print a lot of 
+-d Send debug text to the console rather than to a newly created debug window.
+Useful if bash is crashing on startup or if you want to print a lot of
 information (e.g. while developing or debugging).
 """
 

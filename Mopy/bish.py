@@ -15,25 +15,26 @@
 #  along with Wrye Bash; if not, write to the Free Software Foundation,
 #  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye 
+#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye
 #
 # =============================================================================
 
 """This module provides a command line interface for working with Fallout3 files 
-and environment. Functions are defined here and added to the callables 
+and environment. Functions are defined here and added to the callables
 singleton. Callables.main() is then used to parse command line arguments.
 
-Practice: 
-    While in theory this module is usable by anybody, no one but me (Wrye) has 
-    made use of it, so it's become my own miscellaneous toolbin and testing 
-    environment. As a result, its contents tend to shift depending on what I am 
-    currently working on. However, the functions (init, dumpData) and classes 
-    (Callables) at the top are fairly reliably present and unchanging.
+Practice:
+    While in theory this module is usable by anybody, no one but Wrye and
+    Waruddar have made use of it, so it's become our own miscellaneous toolbin
+    and testing environment. As a result, its contents tend to shift depending
+    on what we're currently working on. However, the functions (init, dumpData)
+    and classes (Callables) at the top are fairly reliably present and
+    unchanging.
 
 Rational Names:
-    Rational names is a mod that "Rationalizes" names of many objects in the 
-    Fallout3 world. Many of those names were generated here by functions working 
-    on the basis of the eid or pre-existing name. Naturally these tend to be 
+    Rational names is a mod that "Rationalizes" names of many objects in the
+    Fallout3 world. Many of those names were generated here by functions working
+    on the basis of the eid or pre-existing name. Naturally these tend to be
     use-once functions, but they also tended to be modified and then used again.
 """
 
@@ -54,12 +55,15 @@ import bush
 import bolt
 from bolt import _, GPath, mainfunc
 
+indent = 0
+longest = 0
+
 # Basics ----------------------------------------------------------------------
 #------------------------------------------------------------------------------
 def init(initLevel):
     """Initializes bosh environment to specified level. I.e., it initializes
-    certain data arrays which can then be accessed by the function. It's typical 
-    to init to level 3, which gives access to all basic data arrays (plugins, 
+    certain data arrays which can then be accessed by the function. It's typical
+    to init to level 3, which gives access to all basic data arrays (plugins,
     modInfos and saveInfos.)
 
     initLevels:
@@ -87,6 +91,120 @@ def init(initLevel):
     bosh.screensData = bosh.ScreensData()
     bosh.screensData.refresh()
 
+def readRecord(record, melSet=0, skipLabel=0):
+    global longest
+    global indent
+    indent += 2
+    if isinstance(record, bosh.MobCell):
+        melSet = ['cell','persistent','distant','temp','land','pgrd']
+    elif isinstance(record, bosh.MobWorld):
+        melSet = ['cellBlocks','world','road','worldCellBlock']
+    elif hasattr(record, 'melSet'):
+        melSet = record.melSet.getSlotsUsed()
+        if record.recType == 'DIAL':
+            melSet += ['infoStamp','infos']
+    elif hasattr(record, '__slots__'):
+        melSet = getattr(record, '__slots__')
+    elif hasattr(record, '__dict__'):
+        melSet = getattr(record, '__dict__').keys()
+    if hasattr(record,'setChanged'):
+        record.setChanged()
+    if hasattr(record, 'getHeader'):
+        if 6 > longest: longest = 6
+        attr = 'flags'
+        print ' '*indent + attr.ljust(longest) + ' :', record.flags1.hex(), record.flags1.getTrueAttrs()
+        attr = 'formID'
+        print ' '*indent + attr.ljust(longest) + ' : ' + bosh.strFid(record.fid)
+        attr = 'unk'
+        print ' '*indent + attr.ljust(longest) + ' : %08X' % record.flags2
+    for attr in melSet:
+        if len(attr) > longest: longest = len(attr)
+    for attr in melSet:
+        if hasattr(record,attr):
+            item = getattr(record, attr)
+        else:
+            item = record
+        if attr == 'references':
+            if isinstance(item, tuple):
+                if item[0] is True:
+                    attr = 'scro'
+                    item = item[1]
+                else:
+                    attr = 'scrv'
+                    item = item[1]
+        if skipLabel == 0:
+            report = ' '*indent + attr.ljust(longest) + ' :'
+        else:
+            report = ' '*indent + ' '.rjust(longest)
+        if item == None:
+            print report, 'None'
+        elif isinstance(item, list) or isinstance(item,tuple):
+            itemList = item
+            if len(itemList) == 0:
+                print report, 'Empty'
+                continue
+            print report
+            for item in itemList:
+                readRecord(item,[attr])
+        elif isinstance(item, bolt.Flags):
+            print report, item.hex(), item.getTrueAttrs()
+        elif attr[-2:] == '_p' or attr == 'pgrd':
+            print report, 'Packed Data'
+        elif attr[-2:] == 'Id':
+            print report, bosh.strFid(item)
+        elif attr[:6] == 'unused': pass
+        elif attr == 'scro':
+            print report, '%08X' % int(item)
+        elif attr in ['param1', 'param2']:
+            if record.form12[int(attr[-1])-1] == 'I':
+                print bosh.strFid(item)
+            else:
+                print report, item
+        elif attr == 'land':
+            print "land ", item
+            print type(item)
+            print dir(item)
+##            sys.exit()
+        elif isinstance(item,int):
+            print report, item
+        elif isinstance(item,long):
+            print report, item
+        elif isinstance(item,float):
+            print report, round(item,6)
+        elif attr in ['unk1','unk2','unk3','unk4','unk5','unk6']:
+            if sum(struct.unpack(str(len(item)) + 'b',item)) == 0:
+                print report, 'Null'
+            else:
+                print report, struct.unpack(str(len(item)) + 'b',item)
+        elif isinstance(item, basestring):
+            if len(item.splitlines()) > 1:
+                item = item.splitlines()
+                print report
+                for line in item:
+                    readRecord(line,[attr],1)
+            else:
+                if sum(struct.unpack(str(len(item)) + 'b',item)) == 0:
+                    print report, ''
+                else:
+                    print report, item
+        else:
+            print report
+            readRecord(item)
+    indent -= 2
+    if indent == 0:
+        longest = 0
+        print ''
+
+def readDiffs(newRecord, oldRecord, melSet=0, skipLabel=0):
+##    if oldRecord == None: return (newRecord, None, None)
+    differences = []
+    if hasattr(newRecord, 'melSet'):
+        melSet = newRecord.melSet.getSlotsUsed() + ['flags1','flags2']
+        if newRecord.recType == 'DIAL':
+            melSet += ['infoStamp','infos']
+    differences = [(attr, getattr(oldRecord,attr,None), getattr(newRecord,attr,None)) for attr in melSet if getattr(newRecord,attr,None) != getattr(oldRecord,attr,None)]
+    return differences
+
 # Common ----------------------------------------------------------------------
 #------------------------------------------------------------------------------
 @mainfunc
@@ -107,7 +225,7 @@ def convertFace(fileName,eid,fromEid,toEid):
     modFile = bosh.ModFile(modInfo,loadFactory)
     modFile.load(True)
     npc = modFile.NPC_.getRecordByEid(eid)
-    bosh.copyattrs(face,npc,('fggs','fgga','fgts'))
+    bosh.copyattrs(face,npc,('fggs_p','fgga_p','fgts_p'))
     npc.setChanged()
     modFile.safeSave()
 
@@ -154,11 +272,11 @@ def importRacialEyesHair(srcMod,srcRaceEid,dstMod,dstRaceEid):
         if dstid not in dstRace.eyes:
             dstRace.eyes.append(dstid)
             cntEyes += 1
-    dstRace.hair = []
-    for srcid in srcRace.hair:
+    dstRace.hairs = []
+    for srcid in srcRace.hairs:
         dstid = mapper(srcid)
-        if dstid not in dstRace.hair:
-            dstRace.hair.append(dstid)
+        if dstid not in dstRace.hairs:
+            dstRace.hairs.append(dstid)
             cntHair += 1
     dstRace.setChanged()
     #--Save Changes
@@ -168,7 +286,7 @@ def importRacialEyesHair(srcMod,srcRaceEid,dstMod,dstRaceEid):
 #------------------------------------------------------------------------------
 @mainfunc
 def diffScripts(oldFile,newFile):
-    """Compares scripts between old and new files and prints scripts which differ 
+    """Compares scripts between old and new files and prints scripts which differ
     from old to new to to two text files which can then be diffed by a diff utility."""
     init(3)
     oldScripts, newScripts = {},{}
@@ -177,7 +295,7 @@ def diffScripts(oldFile,newFile):
         modInfo = bosh.modInfos[GPath(fileName)]
         modFile = bosh.ModFile(modInfo,loadFactory)
         modFile.load(True)
-        scripts.update(dict((record.eid, record.text) for record in modFile.SCPT.records))
+        scripts.update(dict((record.eid, record.scriptText) for record in modFile.SCPT.records))
     oldDump,newDump = [(GPath(fileName).root()+'.mws').open('w') for fileName in (oldFile,newFile)]
     for eid in sorted(oldScripts):
         if eid in newScripts and oldScripts[eid] != newScripts[eid]:
@@ -203,7 +321,7 @@ def scriptVars(fileName=None,printAll=None):
         indices = [var.index for var in record.vars]
         if printAll or (indices != range(1,len(indices)+1)):
             print '%s:  NRefs: %d Last: %d' % (record.eid, record.numRefs, record.lastIndex)
-            refVars = set(record.refVars)
+            refVars = set(record.references)
             for var in record.vars:
                 print ' ',var.index,var.name,('','[REF]')[var.index in refVars]
 
@@ -244,20 +362,20 @@ def bookExport(fileName=None):
                 if firstLine:
                     firstLine = False
                     addTags = ('<' not in line)
-                    if addTags: 
+                    if addTags:
                         line = '<font face=1><div align="center">'+line
                 isBlank = not bool(line.strip())
                 if addTags:
                     line = reAt.sub('<div align="left">',line)
                     line = reEndLine.sub('<br>\n',line)
-                if isBlank: 
+                if isBlank:
                     blanks += line
                 else:
                     buffer.write(blanks)
                     buffer.write(line)
                     blanks = ''
         ins.close()
-        if eid and buffer: 
+        if eid and buffer:
             imported[eid] = bosh.winNewLines(buffer.getvalue())
     #--Books from mod
     changed = False
@@ -328,6 +446,29 @@ def bookImport(fileName=None):
     modFile.safeSave()
 
 # Misc. Utils -----------------------------------------------------------------
+@mainfunc
+def perfTest():
+    import psyco
+    psyco.full()
+    init(3)
+    test = 0.0
+    total = 0.0
+    from timeit import Timer
+    for testClasses in ['bosh.MreClmt','bosh.MreCsty','bosh.MreIdle','bosh.MreLtex','bosh.MreRegn','bosh.MreSbsp']:
+        test = Timer('testClasses = (%s,);loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("Oblivion.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)' % testClasses, "import bosh;from bolt import GPath").timeit(1)
+        print testClasses, ":", test
+        total += test
+    print "total:", total
+    sys.exit()
+    test = 0.0
+    total = 0.0
+    for testClasses in ['bosh.MreAchr,bosh.MreCell,bosh.MreWrld','bosh.MreAcre,bosh.MreCell,bosh.MreWrld','bosh.MreActi','bosh.MreAlch','bosh.MreAmmo','bosh.MreAnio','bosh.MreAppa','bosh.MreArmo','bosh.MreBook','bosh.MreBsgn','bosh.MreCell,bosh.MreWrld','bosh.MreClas','bosh.MreClot','bosh.MreCont','bosh.MreCrea','bosh.MreDial,bosh.MreInfo','bosh.MreDoor','bosh.MreEfsh','bosh.MreEnch','bosh.MreEyes','bosh.MreFact','bosh.MreFlor','bosh.MreFurn','bosh.MreGlob','bosh.MreGmst','bosh.MreGras','bosh.MreHair','bosh.MreIngr','bosh.MreKeym','bosh.MreLigh','bosh.MreLscr','bosh.MreLvlc','bosh.MreLvli','bosh.MreLvsp','bosh.MreMgef','bosh.MreMisc','bosh.MreNpc','bosh.MrePack','bosh.MreQust','bosh.MreRace','bosh.MreRefr,bosh.MreCell,bosh.MreWrld','bosh.MreRoad,bosh.MreCell,bosh.MreWrld','bosh.MreScpt','bosh.MreSgst','bosh.MreSkil','bosh.MreSlgm','bosh.MreSoun','bosh.MreSpel','bosh.MreStat','bosh.MreTes4','bosh.MreTree','bosh.MreWatr','bosh.MreWeap','bosh.MreWthr']:#,'"LAND"', '"PGRD"']:
+        test = Timer('testClasses = (%s,);loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("Oblivion.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)' % testClasses, "import bosh;from bolt import GPath").timeit(1)
+        print testClasses, ":", test
+        total += test
+    print "total:", total
+    ##print Timer('testClasses = (bosh.MreAchr,bosh.MreAcre,bosh.MreActi,bosh.MreAlch,bosh.MreAmmo,bosh.MreAnio,bosh.MreAppa,bosh.MreArmo,bosh.MreBook,bosh.MreBsgn,bosh.MreCell,bosh.MreClas,bosh.MreClmt,bosh.MreClot,bosh.MreCont,bosh.MreCrea,bosh.MreCsty,bosh.MreDial,bosh.MreDoor,bosh.MreEfsh,bosh.MreEnch,bosh.MreEyes,bosh.MreFact,bosh.MreFlor,bosh.MreFurn,bosh.MreGlob,bosh.MreGmst,bosh.MreGras,bosh.MreHair,bosh.MreIdle,bosh.MreInfo,bosh.MreIngr,bosh.MreKeym,bosh.MreLigh,bosh.MreLscr,bosh.MreLtex,bosh.MreLvlc,bosh.MreLvli,bosh.MreLvsp,bosh.MreMgef,bosh.MreMisc,bosh.MreNpc ,bosh.MrePack,bosh.MreQust,bosh.MreRace,bosh.MreRefr,bosh.MreRegn,bosh.MreRoad,bosh.MreSbsp,bosh.MreScpt,bosh.MreSgst,bosh.MreSkil,bosh.MreSlgm,bosh.MreSoun,bosh.MreSpel,bosh.MreStat,bosh.MreTes4,bosh.MreTree,bosh.MreWatr,bosh.MreWeap,bosh.MreWrld,bosh.MreWthr,"LAND", "PGRD");loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("Oblivion.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)', "import bosh;from bolt import GPath").timeit(1)
+    sys.exit()
 
 #------------------------------------------------------------------------------
 @mainfunc
@@ -357,7 +498,7 @@ def csType(newType,fileName="CS Functions.txt"):
         fields = line.split(';')
         fields = map(string.strip,fields)
         if fields and fields[0] and fields[0] != 'Function':
-            while len(fields) < 4: fields.append('') 
+            while len(fields) < 4: fields.append('')
             func,source,type,text = fields
             if func and func in funcs and newType not in type:
                 if type: type += ', '+newType
@@ -382,7 +523,7 @@ def csFunctions(fileName="CS Functions.txt"):
         fields = line.split(';')
         fields = map(string.strip,fields)
         if fields and fields[0] and fields[0] != 'Function':
-            while len(fields) < 4: fields.append('') 
+            while len(fields) < 4: fields.append('')
             if not fields[1]: print "  No source for",fields[0]
             if fields[0] in functions:
                 print "  Repeated function",fields[0]
@@ -399,7 +540,7 @@ def csFunctions(fileName="CS Functions.txt"):
     def dumpPage(fileName,records,source=None,header=None):
         doLinks = source != 'TSFC'
         #--Filter?
-        if source: 
+        if source:
             records = [x for x in records if re.match(source,x[1])]
         out = GPath(fileName).open('w')
         #--Header
@@ -445,8 +586,8 @@ def csFunctions(fileName="CS Functions.txt"):
 #------------------------------------------------------------------------------
 @mainfunc
 def getIds(fileName=None):
-    """Gets formids and returns as a set. Primarily for analysis of Fallout3.esm.
-    NOTE: Does a low level read and hence can read formids of ALL records in all 
+    """Gets fids and returns as a set. Primarily for analysis of Fallout3.esm.
+    NOTE: Does a low level read and hence can read fids of ALL records in all
     groups. Including CELLs WRLDs, etc."""
     def getRecordReader(ins,flags,size):
         """Decompress record data as needed."""
@@ -456,7 +597,7 @@ def getIds(fileName=None):
             import zlib
             sizeCheck, = struct.unpack('I',ins.read(4))
             decomp = zlib.decompress(ins.read(size-4))
-            if len(decomp) != sizeCheck: 
+            if len(decomp) != sizeCheck:
                 raise ModError(self.inName,
                     _('Mis-sized compressed data. Expected %d, got %d.') % (size,len(decomp)))
             reader = bosh.ModReader(fileName,cStringIO.StringIO(decomp))
@@ -467,8 +608,8 @@ def getIds(fileName=None):
     group_records = {}
     records = group_records['TES4'] = []
     while not ins.atEnd():
-        (type,size,str0,formid,uint2) = ins.unpackRecHeader()
-        print '>>',type,size,formid
+        (type,size,str0,fid,uint2) = ins.unpackRecHeader()
+        print '>>',type,size,fid
         if type == 'GRUP':
             records = group_records.setdefault(str0,[])
             if str0 in ('CELL','WRLD'):
@@ -483,7 +624,7 @@ def getIds(fileName=None):
                     eid = recs.readString(size)
                     break
                 ins.seek(size,1)
-            records.append((formid,eid))
+            records.append((fid,eid))
             ins.seek(nextRecord)
     ins.close()
     #--Report
@@ -491,29 +632,65 @@ def getIds(fileName=None):
     for group in sorted(group_records):
         #print
         print group
-        for formid,eid in sorted(group_records[group],key = lambda a: a[1].lower()):
-            print ' ',bosh.strFormid(formid),eid
+        for fid,eid in sorted(group_records[group],key = lambda a: a[1].lower()):
+            print ' ',bosh.strFid(fid),eid
 
 #------------------------------------------------------------------------------
 @mainfunc
 def gmstIds(fileName=None):
-    """Updates map of GMST eids to formids in Data\Fallout3_ids.pkl, based either
+    """Updates map of GMST eids to fids in Data\Fallout3_ids.pkl, based either
     on a list of new eids or the gmsts in the specified mod file. Updated pkl file
     is dropped in Mopy directory."""
     #--Data base
     import cPickle
-    formids = cPickle.load(GPath(r'Data\Fallout3_ids.pkl').open('r'))['GMST']
-    maxId = max(formids.values())
+    fids = cPickle.load(GPath(r'Data\Fallout3_ids.pkl').open('r'))['GMST']
+    maxId = max(fids.values())
     maxId = max(maxId,0xf12345)
     maxOld = maxId
     print 'maxId',hex(maxId)
-    #--Eid list?
-    for eid in ['fRepairCostMult']:
-        if eid not in formids:
+    #--Eid list? - if the GMST has a 00000000 eid when looking at it in the cs with nothing 
+	# but oblivion.esm loaded you need to add the gmst to this list, rebuild the pickle and overwrite the old one.
+    for eid in ['iTrainingSkills']:
+        if eid not in fids:
             maxId += 1
-            formids[eid] = maxId
+            fids[eid] = maxId
             print '%08X  %08X %s' % (0,maxId,eid)
-    #--Source file
+    for eid in ['fRepairCostMult']:
+        if eid not in fids:
+            maxId += 1 
+            fids[eid] = maxId
+            print '%08X  %08X %s' % (0,maxId,eid)
+    for eid in ['fCrimeGoldSteal']:
+        if eid not in fids:
+            maxId += 1
+            fids[eid] = maxId
+            print '%08X  %08X %s' % (0,maxId,eid)
+    for eid in ['iAllowAlchemyDuringCombat']:
+        if eid not in fids:
+            maxId += 1
+            fids[eid] = maxId
+            print '%08X  %08X %s' % (0,maxId,eid)
+    for eid in ['iNumberActorsAllowedToFollowPlayer']:
+        if eid not in fids:
+            maxId += 1
+            fids[eid] = maxId
+            print '%08X  %08X %s' % (0,maxId,eid)
+    for eid in ['iAllowRepairDuringCombat']:
+        if eid not in fids:
+            maxId += 1
+            fids[eid] = maxId
+            print '%08X  %08X %s' % (0,maxId,eid)
+    for eid in ['iMaxPlayerSummonedCreatures']:
+        if eid not in fids:
+            maxId += 1
+            fids[eid] = maxId
+            print '%08X  %08X %s' % (0,maxId,eid)
+    for eid in ['iAICombatMaxAllySummonCount']:
+        if eid not in fids:
+            maxId += 1
+            fids[eid] = maxId
+            print '%08X  %08X %s' % (0,maxId,eid)
+			#--Source file
     if fileName:
         init(3)
         sorter = lambda a: a.eid
@@ -523,13 +700,13 @@ def gmstIds(fileName=None):
         modFile.load(True)
         for gmst in sorted(modFile.GMST.records,key=sorter):
             print gmst.eid, gmst.value
-            if gmst.eid not in formids:
+            if gmst.eid not in fids:
                 maxId += 1
-                formids[gmst.eid] = maxId
-                print '%08X  %08X %s' % (gmst.formid,maxId,gmst.eid)
+                fids[gmst.eid] = maxId
+                print '%08X  %08X %s' % (gmst.fid,maxId,gmst.eid)
     #--Changes?
     if maxId > maxOld:
-        outData = {'GMST':formids}
+        outData = {'GMST':fids}
         cPickle.dump(outData,GPath(r'Fallout3_ids.pkl').open('w'))
         print "%d news gmst ids written to Fallout3_ids.pkl" % ((maxId - maxOld),)
 
@@ -558,20 +735,20 @@ def modCheck(fileName=None):
 
 #------------------------------------------------------------------------------
 @mainfunc
-def findSaveRecord(srcName,formid):
+def findSaveRecord(srcName,fid):
     """Finds specified record in save file."""
     init(3)
     srcInfo = bosh.saveInfos[GPath(srcName)]
     srcFile = bosh.SaveFile(srcInfo)
     srcFile.load()
     #--Get src npc data
-    formid = int(formid,16)
-    print srcFile.getRecord(formid)
+    fid = int(fid,16)
+    print srcFile.getRecord(fid)
 
 #------------------------------------------------------------------------------
 @mainfunc
 def renameArchives(root=r'C:\Program Files\Bethesda Softworks\Fallout 3\Downloads'):
-    """Renames TesSource archive files to sort a little better. 
+    """Renames TesSource archive files to sort a little better.
     E.g., change 12345-2.23-My Wicked Mod-TESSource.zip to My Wicked Mod 2.23.zip."""
     reTesSource = re.compile(r'^\d{4}-(\d[^-]*)-(.+)-TESSource.(zip|rar|7z|ace|exe)$',re.I)
     reTesSourceNV = re.compile(r'^\d{4}-(.+)-TESSource.(zip|rar|7z|ace|exe)$',re.I)
@@ -624,8 +801,8 @@ def parseTest(srcName=None,dstName='Wrye Test.esp'):
     loadFactory = bosh.LoadFactory(True,*testClasses)
     dstInfo = bosh.modInfos[GPath(dstName)]
     dstFile = bosh.ModFile(dstInfo,loadFactory)
-    dstFile.convertToLongFormids()
-    srcFile.convertToLongFormids()
+    dstFile.convertToLongFids()
+    srcFile.convertToLongFids()
     #--Save to test file
     for testClass in testClasses:
         type = testClass.classType
@@ -636,7 +813,7 @@ def parseTest(srcName=None,dstName='Wrye Test.esp'):
             dstBlock.setRecord(record.getTypeCopy())
     #--Convert and save
     dstFile.tes4.masters = dstFile.getMastersUsed()
-    dstFile.convertToShortFormids()
+    dstFile.convertToShortFids()
     dstFile.askSave(True)
 
 @mainfunc
@@ -653,8 +830,8 @@ def parseDials(srcName=None,dstName='Wrye Test.esp'):
     loadFactory = bosh.LoadFactory(True,*testClasses)
     dstInfo = bosh.modInfos[GPath(dstName)]
     dstFile = bosh.ModFile(dstInfo,loadFactory)
-    dstFile.convertToLongFormids()
-    srcFile.convertToLongFormids()
+    dstFile.convertToLongFids()
+    srcFile.convertToLongFids()
     #--Save to test file
     srcBlock = getattr(srcFile,'DIAL')
     dstBlock = getattr(dstFile,'DIAL')
@@ -663,9 +840,70 @@ def parseDials(srcName=None,dstName='Wrye Test.esp'):
         dstBlock.setRecord(record)
     #--Convert and save
     dstFile.tes4.masters = dstFile.getMastersUsed()
-    dstFile.convertToShortFormids()
+    dstFile.convertToShortFids()
     dstFile.askSave(True)
 
+@mainfunc
+def parseRecords(fileName='Oblivion.esm'):
+    import psyco
+    psyco.full()
+    init(3)
+    skipPrint = False
+    tempDict = dict()
+    diffDict = dict()
+    skipPrint = True
+##    #All complex records
+##    testClasses = [bosh.MreRecord.type_class[x] for x in (set(bosh.MreRecord.type_class) - bosh.MreRecord.simpleTypes)] ##'LAND', 'PGRD'
+##    #All simple records
+##    testClasses = [bosh.MreRecord.type_class[x] for x in bosh.MreRecord.simpleTypes]
+    #All Records
+##    testClasses = bosh.MreRecord.type_class.values() + ['LAND','PGRD']
+    testClasses = [bosh.MreRegn,]
+##    testClasses = [bosh.MreRefr,bosh.MreCell,bosh.MreWrld]
+    loadFactory = bosh.LoadFactory(False,*testClasses)
+    modInfo = bosh.modInfos[GPath(fileName)]
+    modFile = bosh.ModFile(modInfo,loadFactory)
+    modFile.load(True)
+    class disablePrint:
+        def write(self,text):
+            pass
+    if skipPrint == True:
+        oOut = sys.stdout
+        sys.stdout = disablePrint()
+    for typed in bush.topTypes:
+        if typed not in loadFactory.recTypes or typed not in modFile.tops: continue
+        print typed
+        if hasattr(getattr(modFile,typed), 'melSet'): readRecord(getattr(modFile,typed))
+        elif typed == 'CELL':
+            for cb in getattr(modFile,typed).cellBlocks: readRecord(cb)
+        elif typed == 'WRLD':
+            for wb in getattr(modFile,typed).worldBlocks: readRecord(wb)
+        elif hasattr(getattr(modFile,typed), 'records'):
+            for record in getattr(modFile,typed).records:
+                if hasattr(record, 'melSet'): readRecord(record)
+                else:
+                    print record
+                    print dir(record)
+                    for item in dir(record):
+                        print item
+                    print "Blergh", typed
+                    sys.exit()
+                    return
+        else:
+            print typed
+            return
+    if skipPrint == True:
+        sys.stdout = oOut
+    modFile.tes4.masters.append(modInfo.name)
+    modFile.tes4.setChanged()
+    outInfo = bosh.ModInfo(modInfo.dir,GPath(modFile.fileInfo.name.s[:-4] + " Dump.esp"))
+    modFile.fileInfo = outInfo
+    loadFactory.keepAll = True
+    modFile.safeSave()
+    print modFile.fileInfo.name.s,'saved.'
+    modFile.fileInfo.getHeader()
+    modFile.fileInfo.setType('esp')
+    
 # Temp ------------------------------------------------------------------------
 """Very temporary functions."""
 #--Temp
@@ -679,24 +917,24 @@ def temp(fileName=None):
     modInfo = bosh.modInfos[GPath(fileName)]
     modFile = bosh.ModFile(modInfo,loadFactory)
     modFile.load(True)
-    strf = bosh.strFormid
+    strf = bosh.strFid
     for cb in modFile.CELL.cellBlocks:
-        print cb.cell.full,strf(cb.cell.formid)
+        print cb.cell.full,strf(cb.cell.fid)
         cb.cell.setChanged()
         for attr in ('persistent','temp','distant'):
             #print ' ',attr
             for record in getattr(cb,attr):
-                #print '   ',strf(record.formid)
+                #print '   ',strf(record.fid)
                 record.setChanged()
     for wb in modFile.WRLD.worldBlocks:
-        print wb.world.full,strf(wb.world.formid)
+        print wb.world.full,strf(wb.world.fid)
         for cb in wb.cellBlocks:
-            print '.',cb.cell.full,strf(cb.cell.formid)
+            print '.',cb.cell.full,strf(cb.cell.fid)
             cb.cell.setChanged()
             for attr in ('persistent','temp','distant'):
                 #print ' ',attr
                 for record in getattr(cb,attr):
-                    #print '   ',strf(record.formid)
+                    #print '   ',strf(record.fid)
                     record.setChanged()
     modFile.tes4.masters.append(modInfo.name)
     modFile.tes4.setChanged()
@@ -708,7 +946,7 @@ def temp(fileName=None):
     for record in modFile.SCPT.getActiveRecords():
         print record.eid
         out = GPath(record.eid+'.mws').open('w')
-        out.write(record.text)
+        out.write(record.scriptText)
         out.close()
     return
     #--Save to test file
@@ -716,9 +954,9 @@ def temp(fileName=None):
         print testClass.classType
         for record in getattr(modFile,testClass.classType).records:
             #print record.eid
-            if reBarExt.match(record.model.path):
-                record.model.path = reBarExt.sub(r'Architecture\\BarabusCrypt',record.model.path)
-                print record.eid, record.model.path
+            if reBarExt.match(record.model.modPath):
+                record.model.modPath = reBarExt.sub(r'Architecture\\BarabusCrypt',record.model.modPath)
+                print record.eid, record.model.modPath
                 record.setChanged()
     modFile.askSave(True)
 
@@ -735,23 +973,65 @@ def balancer(fileName=None):
     balFile.load(True)
     skillNames = bush.actorValues[12:33]
     for race in sorted(modFile.RACE.getActiveRecords(),key=attrgetter('eid')):
-        balRace = balFile.RACE.getRecord(race.formid)
+        balRace = balFile.RACE.getRecord(race.fid)
         if not balRace: continue
         print 'if',race.eid
         #--Attributes
-        for index,attr,balAttr in zip(range(16),race.baseAttributes,balRace.baseAttributes):
-            if index == 0: print '\tif getPcIsSex male'
-            if index == 8: print '\telse'
-            if attr != balAttr:
-                print '\t\tset mod%s to %d' % (bush.actorValues[index%8],balAttr-attr)
-            if index == 15: print '\tendif'
+        print '\tif getPcIsSex male'
+        if race.maleStrength != balRace.maleStrength:
+            print '\t\tset mod%s to %d' % (bush.actorValues[0],balRace.maleStrength-race.maleStrength)
+        if race.maleIntelligence != balRace.maleIntelligence:
+            print '\t\tset mod%s to %d' % (bush.actorValues[1],balRace.maleIntelligence-race.maleIntelligence)
+        if race.maleWillpower != balRace.maleWillpower:
+            print '\t\tset mod%s to %d' % (bush.actorValues[2],balRace.maleWillpower-race.maleWillpower)
+        if race.maleAgility != balRace.maleAgility:
+            print '\t\tset mod%s to %d' % (bush.actorValues[3],balRace.maleAgility-race.maleAgility)
+        if race.maleSpeed != balRace.maleSpeed:
+            print '\t\tset mod%s to %d' % (bush.actorValues[4],balRace.maleSpeed-race.maleSpeed)
+        if race.maleEndurance != balRace.maleEndurance:
+            print '\t\tset mod%s to %d' % (bush.actorValues[5],balRace.maleEndurance-race.maleEndurance)
+        if race.malePersonality != balRace.malePersonality:
+            print '\t\tset mod%s to %d' % (bush.actorValues[6],balRace.malePersonality-race.malePersonality)
+        if race.maleLuck != balRace.maleLuck:
+            print '\t\tset mod%s to %d' % (bush.actorValues[7],balRace.maleLuck-race.maleLuck)
+        print '\telse'
+        if race.femaleStrength != balRace.femaleStrength:
+            print '\t\tset mod%s to %d' % (bush.actorValues[0],balRace.femaleStrength-race.femaleStrength)
+        if race.femaleIntelligence != balRace.femaleIntelligence:
+            print '\t\tset mod%s to %d' % (bush.actorValues[1],balRace.femaleIntelligence-race.femaleIntelligence)
+        if race.femaleWillpower != balRace.femaleWillpower:
+            print '\t\tset mod%s to %d' % (bush.actorValues[2],balRace.femaleWillpower-race.femaleWillpower)
+        if race.femaleAgility != balRace.femaleAgility:
+            print '\t\tset mod%s to %d' % (bush.actorValues[3],balRace.femaleAgility-race.femaleAgility)
+        if race.femaleSpeed != balRace.femaleSpeed:
+            print '\t\tset mod%s to %d' % (bush.actorValues[4],balRace.femaleSpeed-race.femaleSpeed)
+        if race.femaleEndurance != balRace.femaleEndurance:
+            print '\t\tset mod%s to %d' % (bush.actorValues[5],balRace.femaleEndurance-race.femaleEndurance)
+        if race.femalePersonality != balRace.femalePersonality:
+            print '\t\tset mod%s to %d' % (bush.actorValues[6],balRace.femalePersonality-race.femalePersonality)
+        if race.femaleLuck != balRace.femaleLuck:
+            print '\t\tset mod%s to %d' % (bush.actorValues[7],balRace.femaleLuck-race.femaleLuck)
+        print '\tendif'
+
         #--Skills
         boosts = [0 for x in skillNames]
-        for av,boost in race.boosts:
-            if av != 255: boosts[av-12] = boost
+        if race.skill1 != 255: boosts[race.skill1-12] = race.skill1Boost
+        if race.skill2 != 255: boosts[race.skill2-12] = race.skill2Boost
+        if race.skill3 != 255: boosts[race.skill3-12] = race.skill3Boost
+        if race.skill4 != 255: boosts[race.skill4-12] = race.skill4Boost
+        if race.skill5 != 255: boosts[race.skill5-12] = race.skill5Boost
+        if race.skill6 != 255: boosts[race.skill6-12] = race.skill6Boost
+        if race.skill7 != 255: boosts[race.skill7-12] = race.skill7Boost
+
         balBoosts = [0 for x in skillNames]
-        for av,boost in balRace.boosts:
-            balBoosts[av-12] = boost
+        if balRace.skill1 != 255: balBoosts[balRace.skill1-12] = balRace.skill1Boost
+        if balRace.skill2 != 255: balBoosts[balRace.skill2-12] = balRace.skill2Boost
+        if balRace.skill3 != 255: balBoosts[balRace.skill3-12] = balRace.skill3Boost
+        if balRace.skill4 != 255: balBoosts[balRace.skill4-12] = balRace.skill4Boost
+        if balRace.skill5 != 255: balBoosts[balRace.skill5-12] = balRace.skill5Boost
+        if balRace.skill6 != 255: balBoosts[balRace.skill6-12] = balRace.skill6Boost
+        if balRace.skill7 != 255: balBoosts[balRace.skill7-12] = balRace.skill7Boost
+
         #--Attributes
         for index,boost,balBoost in zip(range(21),boosts,balBoosts):
             if boost != balBoost:
@@ -766,6 +1046,137 @@ def temp1(fileName):
     #saveFile.load()
     #saveFile.weather = ''
     #saveFile.safeSave()
+
+@mainfunc
+def testOverRefr(fileName=None):
+    #Oscuro's_Oblivion_Overhaul.esp
+    import psyco
+    psyco.full()
+    f = open('Unofficial Oblivion Patch.esp.txt', 'r')
+    ChangedPos = dict(cPickle.load(f))
+    f.close()
+    print ChangedPos
+    sys.exit()
+    init(3)
+    testClasses = (bosh.MreWrld,bosh.MreCell,bosh.MreRefr)
+    loadFactory = bosh.LoadFactory(False,*testClasses)
+    modInfo = bosh.modInfos[GPath(fileName)]
+    modFile = bosh.ModFile(modInfo,loadFactory)
+    modFile.load(True)
+    strf = bosh.strFid
+    id_position = {}
+    newRecords = set()
+    mapper = modFile.getLongMapper()
+    for cb in modFile.CELL.CellBlocks:
+        for attr in ('Persistent','Temp','Distant'):
+            for record in getattr(cb,attr):
+                if mapper(record.fid) in ChangedPos and (record.posX, record.posY, record.posZ) != ChangedPos[mapper(record.fid)]:
+                    record.posX = ChangedPos[mapper(record.fid)][0]
+                    record.posY = ChangedPos[mapper(record.fid)][1]
+                    record.posZ = ChangedPos[mapper(record.fid)][2]
+                    record.setChanged()
+                    newRecords.add(record.fid)
+                    #id_position[mapper(record.fid)] = (record.posX, record.posY, record.posZ)
+    modFile.CELL.keepRecords(newRecords)
+    modFile.WRLD.keepRecords(newRecords)
+    outInfo = bosh.ModInfo(modInfo.dir,GPath("War Dump2.esp"))
+    modFile.fileInfo = outInfo
+    loadFactory.keepAll = True
+    modFile.askSave()
+    return
+    mapper = modFile.getLongMapper()
+    newRecords = []
+    ChangedPosDiff = [(fid, position) for fid, position in ChangedPos if fid in id_position and id_position[fid] != position]
+    print ChangedPosDiff
+
+@mainfunc
+def diffMasterRefr(fileName='Unofficial Oblivion Patch.esp'):
+    #diffMasterRefr "Cliff_BetterLetters.esp"
+    import psyco
+    psyco.full()
+    init(3)
+    skipPrint = False
+    tempDict = dict()
+    diffDict = dict()
+    skipPrint = True
+##    #All complex records
+##    testClasses = [bosh.MreRecord.type_class[x] for x in (set(bosh.MreRecord.type_class) - bosh.MreRecord.simpleTypes)] ##'LAND', 'PGRD'
+##    #All simple records
+##    testClasses = [bosh.MreRecord.type_class[x] for x in bosh.MreRecord.simpleTypes]
+    #All Records
+    testClasses = bosh.MreRecord.type_class.values()
+    loadFactory = bosh.LoadFactory(False,*testClasses)
+    modInfo = bosh.modInfos[GPath(fileName)]
+    modFile = bosh.ModFile(modInfo,loadFactory)
+    modFile.load(True)
+    modFile.convertToLongFids()
+    class disablePrint:
+        def write(self,text):
+            pass
+    if skipPrint == True:
+        oOut = sys.stdout
+        sys.stdout = disablePrint()
+    for master in modFile.tes4.masters:
+        masterInfo = bosh.modInfos[master]
+        for typed in bush.topTypes:
+            if typed not in loadFactory.recTypes or typed not in modFile.tops: continue
+            masterFactory = bosh.LoadFactory(False,bosh.MreRecord.type_class[typed])
+            masterFile = bosh.ModFile(masterInfo,masterFactory)
+            masterFile.load(True)
+            if typed in masterFile.tops:
+                masterFile.convertToLongFids()
+                if typed == 'GMST':
+                    for newRecord in getattr(modFile,typed).records:
+                        oldRecord = getattr(masterFile,typed).getRecordByEid(newRecord.eid)
+                        delta = newRecord.getDelta(oldRecord)
+                        if len(delta) > 0:
+                            tempDict[newRecord.eid] = delta
+##                            print newRecord.eid, ':', tempDict[newRecord.eid]
+                    diffDict[typed] = tempDict.copy()
+                    tempDict.clear()
+                elif typed in ['SPEL']:#'GLOB','CLAS','FACT','HAIR','MGEF','SCPT','LTEX','ENCH']:
+                    for newRecord in getattr(modFile,typed).records:
+                        oldRecord = getattr(masterFile,typed).getRecord(newRecord.fid)
+                        delta = newRecord.getDelta(oldRecord)
+                        if len(delta) > 0:
+                            tempDict[newRecord.fid] = delta
+                            print '\n',bosh.strFid(newRecord.fid), ':', tempDict[newRecord.fid]
+                    diffDict[typed] = tempDict.copy()
+                    tempDict.clear()
+##                elif typed == 'CELL':
+##                    for cb in getattr(modFile,typed).cellBlocks: readDiffs(cb,masterFile)
+##                elif typed == 'WRLD':
+##                    for wb in getattr(modFile,typed).worldBlocks: readDiffs(wb,masterFile)
+                else:
+                    continue
+                    f = open('Unofficial Oblivion Patch.esp.txt', 'w')
+                    cPickle.dump(diffDict,f)
+                    f.close()
+                    sys.exit()
+                    for diff in diffDict['FACT']:
+                        print '\n', diff
+                        for change in diffDict['FACT'][diff]:
+                            print change, ''
+                    sys.exit()
+                    if hasattr(getattr(modFile,typed), 'melSet'): readDiffs(getattr(modFile,typed),masterFile)
+                    elif hasattr(getattr(modFile,typed), 'records'):
+                        for record in getattr(modFile,typed).records:
+                            if hasattr(record, 'melSet'): readDiffs(record,masterFile)
+                            else:
+                                print record
+                                print dir(record)
+                                for item in dir(record):
+                                    print item
+                                print "Blergh", typed
+                                sys.exit()
+                                return
+                    else:
+                        print typed
+                        return
+
+    if skipPrint == True:
+        sys.stdout = oOut
+    return
 
 # Zip Stuff --------------------------------------------------------------------
 class Archive:
@@ -806,11 +1217,11 @@ class Archive:
 
     def extract(self):
         """Extracts specified files from archive."""
-        out = os.popen('7z.exe x "'+self.path.s+'" -y -oDumpster @listfile.txt','r')
+        out = os.popen('7z.exe x "'+self.path.s+'" -y -oDumpster @listfile.txt -scsWIN','r')
         reExtracting = re.compile('Extracting\s+(.+)')
         for line in out:
             maExtracting = reExtracting.match(line)
-            if maExtracting: 
+            if maExtracting:
                 print maExtracting.group(1)
         print 'result',out.close()
 
@@ -818,12 +1229,12 @@ class Archive:
 def test(file):
     x = Archive(file)
     x.refresh()
-    
+
 
 # Main -------------------------------------------------------------------------
 if __name__ == '__main__':
     #--No profile
-    if True: 
+    if True:
         bolt._mainFunctions.main()
     #--Profile
     else:

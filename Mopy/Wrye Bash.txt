@@ -3,7 +3,7 @@
 === Getting Started: 
 * __[[#|Installation]]__
 * [[http://www.uesp.net/wiki/Tes4Mod:Wrye_Bash|How To's and FAQs]]
-* [[http://www.bethsoft.com/bgsforums/index.php?showtopic=929386|RELZ Topic]]
+* [[http://www.bethsoft.com/bgsforums/index.php?showtopic=1029359|RELZ Topic]]
 * Download: 
   * [[http://wrye.ufrealms.net|UFRealms]]
   * [[http://tesnexus.com/downloads/file.php?id=22368|TesNexus]] 
@@ -33,13 +33,16 @@ In particular, see:
 
 == Credits and Contact ========================================================
 <img src="images/wrye_monkey_87.jpg" width="87" height="87" border="1" alt="Monkey God of Modding" align=right> 
-=== Author
-  * **Wrye: Monkey God of Modding!**
+=== Authors
+* **Head Monkey**
+  * Wrye: Monkey God of Modding!
+* **Assistant Monkeys**
+  * Waruddar: Extensive additions/improvements/fixes.
+  * Ralgor: Cell support and Import Cells.
+  * Pacific Morrowind: New imports, exports, tweaks, etc.
+  * Breeze582000: Bashmon
 
 === Additional Credits
-* **Additional Code**
-  * Ralgor: Cell support and Import Cells.
-  * Breeze582000: Bashmon
 * **Translators:**
   * German: DWS
   * Italian: Abot
@@ -65,6 +68,7 @@ In particular, see:
   * ElminsterEU: Bug catching, technical suggestions.
   * Tom Suprgan: Several well researched suggestions.
   * Sativarg: Proofreading
+  * Kmacg94: Additional power exhaustion coverage.
 * **Misc. Resources**
   * [[http://www.famfamfam.com/lab/icons/silk/|FamFamFam icons]]
 
@@ -201,7 +205,7 @@ At the bottom left of Bash's main window you'll find launch buttons for Oblivion
 * __Overview:__
   * Each of the application buttons will be present if the corresponding application is present in the Oblivion install directory.
   * Tes4Gecko will be available if the javaw.exe is present in Windows\System32 and if the Tes4Gecko.jar file is present in the Oblivion install directory.
-  * Tes4Edit and Tes4Trans are just different modes of Tes4View.exe and will be available if Tes4View is available.
+  * Tes4Edit, Tes4Trans and Tes4view are just different modes of Tes4Edit.exe and will be available if Tes4Edit.exe is available.
 * __Applications:__
   * Oblivion (Main Oblivion executable, not the launcher.)
   * Oblivion Mod Manager
@@ -210,6 +214,7 @@ At the bottom left of Bash's main window you'll find launch buttons for Oblivion
   * Tes4View
   * Tes4Edit
   * Tes4Trans
+  * BOSS
   * Tes4LodGen
 
 === Bash Option Buttons
@@ -231,9 +236,11 @@ At the bottom left of Bash's main window you'll find launch buttons for Oblivion
 The Installers tab provides a mod package installer facility. In general purpose, it's much like TimeSlip's OBMM tool, however implementation is somewhat different from OBMM. Relative to OBMM, there are several substantial improvements; however in other ways, it is simpler and less powerful than OBMM. (Notably, there is no BSA archive handling in Bain.)
 
 === Getting Started
-Her's a brief getting started guide. You may have to read sections further down before this section makes full sense.
+Here's a brief getting started guide. You may have to read sections further down before this section makes full sense.
 * __Terminology: Package__
   * A "package" is a collection of esps, esms and/or resource files. Everything listed under the Installers tab is a package. Packages can be either archive files in (zip, 7z or rar format) or directories (aka [[#ProjectPackages|Projects]]).
+* __Terminology: [[#BainConversionFiles|Bain Conversion File]]__
+  * A "Bain Conversion File" or "BCF" is a special archive that tells Bash how to convert a standard archive into a Bain-ready archive. It also contains any new files that weren't present in the original archive. BCF's allow mod users to easily share their custom Bain compilations.
 * __Initialization__
   * When you first visit the Installers tab after starting Bash, Bain will need to go through an initialization process. If you've done this before, and no new packages are installed, and the machine is "warm", then it will take on the order of ten seconds. 
   * However, if you have just added a bunch of packages, then Bain will take longer to intitialize, since it will need to scan all new/modified packages.
@@ -327,6 +334,7 @@ Bain assigns an install order to all packages. When packages are installed and/o
   * Install order is shown the table in the "Order" column. 
   * All packages are moved to just before the ==Last== marker when Bain first encounteres them.
   * Order can be changed by right clicking on a package (or group of selected packages) and selecting "Move To". Just enter the position to which the packages should be moved. If you're moving many packages at once, they'll keep their relative order, with the "oldest" moving to the specified position, and the others following after it.
+  * You can also use Ctrl-Up and Ctrl-Down to change the order of packages.  This preserves their relative load order without moving them as a block.
 * __Last__
   * Last is a special marker entry that Bain automatically adds to the archive list. It corresponds to the position at which any newly encountered packages are inserted. if you want specific packages (e.g. your personal projects) to always have high order, then move them to ~~after~~ the ==Last== marker.
 * __Install Order__
@@ -344,6 +352,38 @@ If you're building a a triple mode (Bain/Manual/OBMM) project...
 * For the screenshot, just copy a jpg file to the omod conversion data directory and rename it to "screenshot" (with NO extension).
 * If you need a script file, you can create script.txt in the omod conversion data directory. You can edit this file with any text editor. (However, testing/debugging the script is best done in OBMM itself.)
 * The info.txt file is __not__ required. (If you export an omod to an archive, it creates an info.txt file in the conversion directory. However, the file is form informational purposes only and can be safely discarded/skipped.)
+
+=== Bain Conversion Files
+Bain Conversion Files (BCFs) allow modders to essentially repackage existing archives into a new layout. A BCF doesn't contain any files that are available in the original archives. This means that a BCF is freely distributable, and there is typically no need to worry about permissions.  The only files included in a BCF are any new files that you added to the new layout (typically "package.txt" and *.ini tweaks), and a BCF.dat that tells Bash how to reorganize the files. A BCF is usually under 20kb in size.
+* __Notes__
+  * BCFs are stored in the __Oblivion Mods\Bash Installers\Bain Converters__ directory. This is referred to as the BCF directory.
+  * The fastest way to access this directory is to open Bash, navigate to the Installers Tab, and right-click on the column header and choose "Open...". This opens __Oblivion Mods\Bash Installers__ and you should easily see the BCF directory.
+  * BCFs must end in -BCF.7z, but the resulting converted archive may use .7z or .zip.
+  * BCFs store the configuration settings of the original converted archive.
+  * BCFs supports any level of embedded archives within an archive.
+  * Any duplicate BCFs in the BCF directory will be moved to __Oblivion Mods\Bash Installers\Bain Converters\--Duplicates__
+  * __Important:__ BCFs use what 7z refers to as the "Data CRC" to associate themselves with archives. This "Data CRC" is the cumulative CRC of all the files within an archive, and it is not the same as the CRC of the archive itself.  If two archives contain the same files, even if one is a .zip file and the other a .rar, they will have the same "Data CRC". This means that BCFs ignores both the names of archives and how an archive was compressed. For this reason, Bash displays the "Data CRC" on the General Info tab of projects and archives.
+* __Creating a BCF__
+  * Add all of the source archives to Bain
+  * Create a new project, and rearrange the files until you are satisfied
+  * Right-click on the project, and choose "Pack to Archive..."
+  * Name the new archive, and choose whether to use solid compression. Solid compression will improve performance (at the cost of disk space), so it is only really recommended for archives such at Qarl's Texture Pack 3. The name will be used as the default suggestion for the BCF name. If this archive uses solid compression, the converted archive will too.
+  * Set any options on the new archive package that you wish to be initially set whenever the BCF is applied.
+  * Select all of the source archives in the Installers Tab, right-click and choose "Create..." under the "Conversions" menu. Select the target archive (that you just created and setup), and name the BCF.
+  * Look over the result log, and make sure that it looks alright. If there is a large number of contained files in the BCF, you may have chosen the wrong source or target archive.
+  * If it looks wrong (large size, large number of contained files), you may either open the BCF directory and manually delete the new file, or you may simply overwrite it by creating a BCF with the same name.
+  * If it looks right, you can find the BCF in the BCF for distribution. It is recommended that you copy/paste the result log into your readme for your BCF.
+* __Installing BCFs__
+You've downloaded a bunch of BCFs.  Now what?
+  * Simply copy all of the *-BCF.7z files that you downloaded into your BCF directory.
+* __Applying a BCF__
+  * Bash will only display the BCFs that are currently valid. Valid BCFs are those that end in -BCF.7z, and have all of their required source archives visible on the Installers Tab.
+  * If a source archive has any associated BCFs, you will see them listed when you right-click an archive package and open the "Conversions" sub menu.  If the "Apply" menu is grayed out, then there are no valid BCFs for that particular archive.
+  * An asterisk is added to the end of the BCF name for every source archive it requires that you don't have currently selected (but do have installed).
+  * Select a BCF from the "Apply" menu.
+  * Choose a name for the converted archive, or use the default name suggested.
+  * Wait while Bash unpacks the source archive, rearranges the files, and packs the converted archive.
+  * Once finished, you are free to delete the original archives if you so desire.
 
 === Package Commands
 The following commands are available from context menu of packages.
@@ -367,7 +407,12 @@ The following commands are available from context menu of packages.
   * __Install Last:__ Moves the package to to the end of the order list and installs it.
   * __Uninstall:__ Uninstalls the package. If Auto-Anneal is active, then files from lower order packages will automatically be restored as necessary.
 * __Project__
+  * __Conversions__ (Archives only.)
+    * __Create:__ Creates a new Bain conversion file.
+    * __Apply__ Applies a Bain conversion file.
+  * __Pack to Archive:__ (Projects only.) Packs the project to an archive. It defaults to .7z, but also supports .zip. 7z doesn't support writing to .rar and most other relevant formats.
   * __Unpack to Project:__ (Archives only.) Unpack the archive to a project.
+  * __Package for Release:__ (Projects only.) Just like "Pack to Archive" except it doesn't archive the following: thumbs.db, desktop.ini, and any folder that begins with "--".
   * __Sync from Data:__ (Projects only.) Synchronize the project with files from the Oblivion\Data directory. This is essentially the reverse of "Install" for projects since it copies from the Oblivion\Data directory to the project rather than the other way around. 
   * __OMOD Info:__ (Projects only.) Allows you to read/write omod configuration info. Useful for updating OMOD conversion info for triple mode (Bain/Manual/OBMM) archives.
 
@@ -381,11 +426,14 @@ The following commands are available by right clicking on the column header of t
   * __Refresh Data:__ Rescans the Data directory and all project directories. Since this operation takes a little while, this scan is ordinarily done only once per Bash session. So, if you have manually edited the directories after that one-time scan, you should run this command to update Bain to the changes.
   * __Full Refresh:__ This does a full refresh of all data files. Notably this will recalculate CRCs for all files (ordinarily CRCs are only calculated for files that seem to have changed). Running this command will likely take 5-15 minutes.
   * __INI Tweaks:__ This brings up a list of INI tweaks that can be applied. For use after installing/uninstalling a mod that needs to tweak INI settings.
+  * __List Packages:__ Displays list of projects and archives and copies that same list to the clipboard. Useful for posting your package order to forums for install debugging help. 
   * __Anneal All:__ This will install any missing files (for active installers) and correct all install order and reconfiguration errors.
 * __Availability__
   * __Avoid at Startup:__ Toggles Bash to avoid the Installers tab on startup, thus avoiding unnecessary data scanning. Unless you're spending a lot of time in the Installers tab, you'll should Enable this.
   * __Enabled:__ This enables/disables Bain itself. Preferred setting: Enabled (checked).
-  * __Show Replacers Tab:__ If checked, will cause the Replacers tab to appear.   * __Auto-Anneal:__ Toggles the auto-anneal process on/off. Preferred setting: enabled.
+  * __Show Replacers Tab:__ If checked, will cause the Replacers tab to appear.
+  * __Auto-Anneal:__ Toggles the auto-anneal process on/off. Preferred setting: enabled.
+  * __Auto-Refresh Projects:__ Toggles the auto-refreshing of projects on/off. Preferred setting: enabled.
 * __Behavior__
   * __BSA Redirection:__ Uses Quarn's [[http://devnull.devakm.googlepages.com/archiveinvalidation|BSA redirection technique]] to avoid bugs with the engines texture getting system. This is compatible with both OBMM and Quarn's original BSA redirection approaches.
   * __Clean Data Directory:__ If this is checked, then any empty subfolders of the Oblivion\Data directory will be deleted. This reduces some clutter (especially after uninstalling packages). Removing unused data directories also improves Oblivion.exe performance. 
@@ -419,8 +467,12 @@ If you're currently using the Textures BSA facility, you should switch to using 
     context menu.
   * Force selected mods to the top of the list by selecting "Sort by Selection"
     from the context menu.
-* __Activating Mods__ 
-  * Activate mods by clicking on the checkbox next to their name.
+* __{{A:Activating Mods}}__ 
+  * Activate mods by clicking on the checkbox next to their name or by pressing the space bar when the mod is selected.
+    * If multiple mods are selected, the space bar will:
+      * If some of the selected mods weren't activated, it activates them.
+      * If all of the mods were activated, it deactivates all of them.
+      * If none of the mods were activated, it activates all of them.
   * Note: When a mod is activated, it's master mods will also be activated. 
   * Conversely, when a mod is deactivated, any mods that depend on it (its "children") will also be deactivated.
 * __Text Colors__
@@ -482,6 +534,8 @@ If you're currently using the Textures BSA facility, you should switch to using 
 * __Changing Load Order__
   * You can change the load order of any file by editing it's modified date in the details panel and saving the changes.
   * You can alphabetically sort several mods at once by selecting them and then selecting "File: Sort" from the context menu.
+  * You can move files up and down the load order with Ctrl-Up and Ctrl-Down, respectively. This also works when multiple files are selected, and preserves their relative load order.
+  * You can select multiple files and use the "Redate" command. The first mod will be moved to the specified date/time, with other mods following at one minute intervals.
 * __Maintaining Load Order__
   * First, make sure that the "Lock Times" option is selected on the column header context menu.
   * Then, after making any changes to mod files, bring the main Bash window to the foreground, and Bash will reset times as needed.
@@ -496,9 +550,12 @@ These are the commands for the context menu for the mods list. (You'll get this 
 * __Ghosting:__ To get around this problem, Bash allow you to "ghost" inactive mods. Mods are ghosted simply by adding the extension ".ghost" to their name, and unghosted by removing that extension. If you activate Auto-Ghost, Bash will do ghost and unghost mods depending on whether they are active or not. Activating or deactivating a mod will immediately cause it to ghost/unghost as needed.
 * __Interaction Problems:__ 
  * The main problem with ghosting is that it hides mods not only from Oblivion.exe, but also from non-Bash utilities. To deal with this, you have two options:
-    * __Don't Ghost:__ If you have individual files which you do ~~not~~ want to auto-ghost, you can select them and check "Don't Ghost" from their context menu.
+    * __Don't Ghost:__ If you have individual files which you do ~~not~~ want to auto-ghost, you can select them and check "Don't Ghost" from their context menu.  If you have multiple files selected, "Don't Ghost" is replaced with a "Ghosting" menu with the following choices:
+      * __Allow Ghosting__ - Unchecks "Don't Ghost" for every item.
+      * __Disallow Ghosting__ - Checks "Don't Ghost" for every item. 
+      * __Invert Ghosting__  - Checks "Don't Ghost" if it was unchecked, and unchecks "Don't Ghost" if it was checked. 
     * __OR__ Turn auto-ghosting off temporarily, then turn it back on.
-  * Bash however, ~~does~~ recognize ghosted files. So bashed patch merging, profile switching and Bain will work with ghoste esps.
+  * Bash however, ~~does~~ recognize ghosted files. So bashed patch merging, profile switching and Bain will work with ghosted esps.
 
 === Load Lists
 * Aside from using checkboxes to select and unselect mods, you can also use load lists. These are accessed through the column context menu, and work in the same way at the [[#|Load Masters]] command.
@@ -528,16 +585,19 @@ These are the commands found on context menu for mods...
 
 === File Commands
 * __File Operations__ 
-  * **Backup** Create a backup of the file. Note that backups are also automatically created (see "Revert to Backup" below). If you want to be sure that you can late restore from a specific point, use Duplicate or Snapshot instead.
-  * **Duplicate** Creates a duplicate of the file in the mods directory.
+  * **{{A:Backup}}** Create a backup of the file. Note that backups are also automatically created (see "Revert to Backup" below). If you want to be sure that you can late restore from a specific point, use Duplicate or Snapshot instead.
+    * If multiple files are selected, this is done without any user input.
+  * **{{A:Duplicate}}** Creates a duplicate of the file in the mods directory.
+    * If multiple files are selected, this is done without any user input.
   * **{{A:Snapshot}}...** Creates a snapshot copy of the current mod in a subdirectory 
     (Bash\Snapshots). 
     * Snapshots are indicated by appending to "-l.n.m" to the root of the 
       file name. E.g., "My.esp" becomes "My-01.esp" or "My Mod v1.01.esp" becomes "My Mod v1.01-01.esp".
     * Note that Bash will automatically generate the next available snapshot
-      number. However, you are free to chose a different number if you like.
+      number. However, you are free to choose a different number if you like.
     * Also, if there's an existing version line (e.g., "Version NN.MM-LL") 
       in the description field of the mod, then it will updated with the new version plus snapshot number when the snapshot is saved.
+    * If multiple files are selected, this is done without any user input.
   * **Delete** Deletes the file... **Permanently.** 
     * Also deletes all backups and temp files, but **not** snapshots.
   * **Hide** Moves the file to a subdirectory (Bash\Hidden). 
@@ -569,15 +629,18 @@ These are the commands found on context menu for mods...
 
 === Decompile All
 * This command will remove the effects of a 'compile all' by removing all scripts whose texts appear to be identical to the version that they override.
+* It ignores/will not work on "Oblivion.esm" and "Oblivion_1.1.esm"
 
 === Copy to Esp/Esm
 * Creates an esm copy of an esp or vice versa.
 * Notes: For esps, the [[#|Espify/Esmify Self]] command will often be more desirable.
+* If a mixture of esps and esms are selected, this command is disabled.
 
 === Espify/Esmify Self
 * __Background:__ The distinction between esps and esms is **not** determined by the file extension, but rather by an internal bit of the file. This command flips that bit, making an esp file behave as an esm and vice versa.
 * __Esp Mastering:__ Ordinarily, the construction set will not allow one esp to act as a master of another esp. However, the game engine (Oblivion.exe) ~~does~~ allow such mastering. Using this command on an esp will allow that esp to be used as master for other esps. 
 * __Esm Editing:__ This command ~~should~~ allow esms to be edited, unfortunately, because of some bugginess in the CS, it will crash soon after you save an esm that's been flipped to an esp. Hence the command is disabled for esms. Use [[#|Copy to Esp/Esm]] instead.
+* If multiple files are selected, this is only available if the entire selection qualifies to be espified or esmified.
 * **Warning:** Leaving mods in an a flipped esm/esp state will likely cause confusion for users and for savegames. Keep in mind that the flipped esp/esm is treated by the game as what it's flipped to. Be sure to flip mods back to their normal state for normal game play and when releasing.
 
 === Espify/Esmify Masters
@@ -680,14 +743,23 @@ These are the commands found on context menu for mods...
 * Note: This does not export race relations.
 
 === Export/Import Stats
-* These paired functions allow you to export ammo, armor and weapon stats to a spreadsheet file, edit the file and the reimport the stats. The exported file can also be used with the [[#|Import Stats]]. 
+* These paired functions allow you to export ammo, apparatus, armor, book, clothing, ingredient, key, light, misc object, sigil stone, soulgem  and weapon stats to a spreadsheet file, edit the file and then reimport the stats. The exported file can also be used with the [[#|Import Stats]]. 
 * __Uses__
-  * Systematically editing weapon statistics to fit a weapon quality paradigm (e.g. Medieval Oblivion Balance System (MOBS)). The spreadsheet makes it easy to view and edit the stats in a systematic way.
-  * Patching miscellaneous mods to fit a balance system through [[#|Import Stats]]. Stats for weapons for multiple mods can all be covered in a single spreadsheet file. The stats patcher will then apply changes only for those mods that are active when the patch is updated.
+  * Systematically editing weapon statistics to fit a weapon quality paradigm (e.g. Medieval Oblivion Balance System (MOBS)) or systematically editing object prices to fit a scheme. The spreadsheet makes it easy to view and edit the stats in a systematic way.
+  * Patching miscellaneous mods to fit a balance system through [[#|Import Stats]]. Stats for items for multiple mods can all be covered in a single spreadsheet file. The stats patcher will then apply changes only for those mods that are active when the patch is updated.
 * __Spreadsheet Format__
   * The spreadsheet is written/read as a csv file. After making changes, be sure to save in this format. Also, stat values must be numbers, not formulas.
   * Any line in which the entry in the third column does not begin with "0x" will be ignored when Bash reads the file, and so can be used for comments, etc.
 
+=== Export/Import Spell Stats
+* These paired functions allow you to export spell stats to a spreadsheet file, edit the file and then reimport the stats. The exported file can also be used with the [[#|Import Spell Stats]]. 
+* __Uses__
+  * Systematically editing spell statistics to fit a spell quality paradigm etc. The spreadsheet makes it easy to view and edit the stats in a systematic way.
+  * Patching miscellaneous mods to fit a balance system through [[#|Import Spell Stats]]. Stats for spells for multiple mods can all be covered in a single spreadsheet file. The spell stats patcher will then apply changes only for those mods that are active when the patch is updated.
+* __Spreadsheet Format__
+  * The spreadsheet is written/read as a csv file. After making changes, be sure to save in this format. Also, stat values must be numbers, not formulas.
+  * Any line in which the entry in the third column does not begin with "0x" will be ignored when Bash reads the file, and so can be used for comments, etc.  
+  
 === Details
 * Displays list of records in mod, similar to Details view in TESCS.
 
@@ -722,6 +794,14 @@ These are the commands found on context menu for mods...
   * It's not really known if the orphaned world groups will cause any problem. At the least, they're unnecessary. Hence modders should probably remove them from their own mods.
   * If you have orphaned world groups, it will be mentioned by bash when you're rebuilding the bashed patch. You an also see them while reviewing the mod in Tes4View -- you'll see a world group without a corresponding world record.
   * This command simply removes the orphaned world groups from the mod. 
+
+=== Undelete Refs
+* ~~__EXPERIMENTAL__~~
+* This command is for advanced modders only. If you don't know what it does, you don't need it. If you do need it, you should probably use TES4Edit instead.
+* Techie Explanation
+  * Oblivion can crash if one mod deletes a references and a mod later in the load order references the deleted reference.
+  * One solution to this problem is to undelete the deleted reference, and mark it initially disabled instead.
+  * One problem with this is that deleted reference records contain a bare minimum of information, and Bash doesn't add back the missing data. TES4Edit does.
 
 === Version 0.8
 * Resets the file version number of a mod file back to an older version (0.8) so that the older construction set can edit it. The feature is somewhat dated now that the updated construction set is available, but is still useful for modders who prefer to work with the older CS. (Note that the newer CS has some bugs that the older CS does not.)
@@ -875,7 +955,9 @@ A __Bashed Patch__ is a configurable, custom built patch. The patch can have mul
   * R.Relations: Mod changes race relationships ([[#|Race Info]]).
   * R.Teeth: Mod changes upper/lower teeth ([[#|Race Info]]).
   * Relev: Mod relevels items in ([[#|Leveled Lists]]).
+  * Scripts: Mod modifies item, npc or object scripts ([[#| Import Scripts]]).
   * Sound: Mod is a sound replacer ([[#|Import Sound]]).
+  * SpellStats: Mod modifies spell stats ([[#|Import Spell Stats]]).
   * Stats: Mod modifies item stats ([[#|Import Stats]]).
   * Voice-F: Mod modifies female voice definition ([[#|Race Info]]).
   * Voice-M: Mod modifies male voice definition ([[#|Race Info]]).
@@ -922,7 +1004,7 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
   * Deep Filtering: 
     * Entries in leveled lists will be filtered. E.g. if a leveled list has items from MMM, but MMM is not active, then the MMM entries will be discarded.
     * For creatures and NPCs, spells, factions and items will be filtered.
-  * Filtering is done according to the currently active mods. __Hence, it is important when building the patch, to make sure that all desired mods are activate!__ It this isn't the case, then the patch is likely to end up ~~not~~ including changes from the filtered mod that it should include. 
+  * Filtering is done according to the currently active mods. __Hence, it is important when building the patch, to make sure that all desired mods are activated!__ It this isn't the case, then the patch is likely to end up ~~not~~ including changes from the filtered mod that it should include. 
 
 === Item Interchange Mode
 * This is a hack designed to support Vacuity's Item Interachange Mode. It's a "hack" because it's horribly inelegant and is inconsistent with the rest of bash patching approach. But it works and its simpler than rewriting a bunch of code to support a special case.
@@ -967,11 +1049,12 @@ __Importers__ are components that import specific information from selected mods
   * Source mods are automatically recognized if they have a <code>Graphics</code> [[#BashTags|tag]] in the mod description. 
 * __Graphics/Records Handled:__
 . Only the following types of records are handled. Other types do not commonly require patching, or are not yet supported by Bash.
-  * Icons only: birthsigns, loadscreens
-  * Models only: activators, doors.
-  * Icons and Models: potions, ammo, apparatus, books, ingredients, keys, misc., sigil stones, soul gems, weapons, clothing, armor.
+  * Icons only: birthsigns, loadscreens, region, land texture (probably actually the texture)
+  * Models only: activators, doors, plants, furniture, grass, statics.
+  * Icons and Models: potions, ammo, apparatus, books, ingredients, keys, misc., sigil stones, soul gems, weapons, clothing, armor, tree (icon probably is texture).
   * Creatures: model, body parts, blood.
   * Magic Effects: icon, model, shader, effects, light.
+  * Effect Shaders: particle texture, fill texture
 
 === Import Names
 * __Overview__
@@ -989,12 +1072,12 @@ __Importers__ are components that import specific information from selected mods
   * Note that it is best not to edit this file directly since it is included in the Bash distribution. Instead, duplicate and edit as desired.
 
 === Import Inventory
-* This option will merge changes to npc and creature inventories from the selected mods. Only mods marked with the <code>Invent</code> or <code>InventOnly</code> [[#BashTags|tag]] will appear in the list.
+* This option will merge changes to npc, container and creature inventories from the selected mods. Only mods marked with the <code>Invent</code> or <code>InventOnly</code> [[#BashTags|tag]] will appear in the list.
 * __Invent vs. InventOnly__
-  * "InventOnly" is a hack -- i.e. "a quick job that produces what is needed, but not well." It's there to support Vacuity's Item Interchange and that's pretty much it. It probably should not be used except for Item Interchange or a mod very much like II. Ideally, it should be separated into two tags: Ivent,IIHack -- where it would still be hack, but at least a more clearly labeled hack.
+  * "InventOnly" is a hack -- i.e. "a quick job that produces what is needed, but not well." It's there to support Vacuity's Item Interchange and that's pretty much it. It probably should not be used except for Item Interchange or a mod very much like II. Ideally, it should be separated into two tags: Invent,IIHack -- where it would still be hack, but at least a more clearly labeled hack.
   * InventOnly basically does Invent, but also does
   * Invent
-  * Sometimes it's desirable to change only the inventory of an actor. This is desirable when modifying the inventory of creatures that have been changed by overhauls -- especially when you can't rely on the overhauls being present. 
+  * Sometimes it's desirable to change only the inventory of an actor or container. This is desirable when modifying the inventory of creatures that have been changed by overhauls -- especially when you can't rely on the overhauls being present. 
   * For a mod to override only the inventory, the mod must be tagged with <code>InventOnly</code> and must be merged into the patch (i.e. the mod must ~~not~~ be active when the patch is being built.) 
 * __Notes__
   * This feature is primarily concerned with removing, replacing and adding completely new items to inventories. If a mod only changes the number of items in an inventory, then this feature will ignore that change.
@@ -1030,6 +1113,14 @@ __Importers__ are components that import specific information from selected mods
 * __Configuration:__ 
   * Source mods are automatically recognized if they have a <code>Roads</code> [[#BashTags|tag]] in the mod description. 
 
+=== Import Scripts
+* __Overview__
+  * There are a fair number of mods that change the scripts on items and they often got blocked by the overhauls or cause compatibility problems. This fixes it so only the script change gets brought forward (and non-conflicting data)
+* __Configuration:__ 
+  * Source mods are automatically recognized if they have a <code>Scripts</code> [[#BashTags|tag]] in the mod description. 
+* __Script/Records Handled:__
+  * all editor object except spells and quests
+  
 === Import Sound
 * __Overview__
   * There are not many mods that modify the sounds of existing records, but there are a few mods that tweak the sounds of magic effects (e.g. to silence them). Since magic effect records tend to modified for other reasons as well, other changes to the same records will wipe out the changes to sounds. This patcher component allows you to make sure that changes to the sounds of spells are included in the final version of the record.
@@ -1038,10 +1129,13 @@ __Importers__ are components that import specific information from selected mods
 * __Sound/Records Handled:__
 . Only the following types of records are handled.
   * Magic Effects: casting, bolt, area and hit sounds.
+  * Activators, Lights, Weather: sounds
+  * Containers: Open and close sounds
+  * Doors: Open, close and loop sounds.
 
 === Import Stats
 * __Overview__
-  * This patcher can be used to modify ammo, armor and weapon stats according to specified mods and/or spreadsheet files. 
+  * This patcher can be used to modify ammo, apparatus, armor, book, clothing, ingredient, key, light, misc object, sigil stone, soulgem  and weapon stats according to specified mods and/or spreadsheet files. 
   * One use for this is to make sure that weapon stats from one early loading mod are not overridden by a layer loading mod. 
   * Another use is patch random armor and weapon mods to fit the equipment balancing system specified by one of the overhaul mods. For this use the best approach is to supply a single spreadsheet which rebalances weapons of many mods to fit a given overhaul. When using such a file, Bash will only apply stats for mods that are currently active and ignore the rest.
   * Source spreadsheets can be generated by using the [[#|Export/Import Stats]] command.
@@ -1056,15 +1150,25 @@ __Tweakers__ tweak records in the currently active set of mods in specified ways
 * Assorted Tweaks...
 * __Armor Shows Amulets/Rings__
   * Modifies playable armor to prevent hiding of amulets/rings.
+* __Clothing Shows Amulets/Rings__
+  * Modifies clothing to prevent hiding of amulets/rings.
 * __Bow Reach Fix__
   * Some of the bows in Oblivion (and a few in user mods) have a reach of zero. Due to a bug in the Oblivion engine, if these bows are equipped by an NPC, the game will crash. This patch changes bows with zero reach to have reach == 1. (Note this is also fixed for vanilla Oblivion by the Unofficial Oblivion Patch. However, Shivering Isles introduces more bows with the same problem.)
 * __Darnified Books__
   * Tweak book coloring and font for use with Darnified UI.
+  * Wtxt formatting (applied if first line looks like <code>== title ==</code>
+    * << or ^^ or >> at beginning of line generates a div align=xxx tag. (<<: left, ^^: center and >> right).
+    * <code>== Text ==</code>: Generates a level 2 header..
+    * <code>=== Text</code>: Generates a level 3 header.
+    * Double undescores generates emphasized (strong color) text.
+    * Double asterisks, double tildes have same effect as double underscores.
 * __Max Weight Potions__
   * Potions in Oblivion are rather heavy by default. This changes the weight of potions to a specified value (0.1 up to 0.8). Note: this does not affect potions with script effects or with current weight >= 1.0. Thus it should not affect alcoholic beverages or scripted "potions" like HTS water skins.
   . Note that this is similar, but not the same as the [[#|Reweigh Potions]] command for savegames, which reweighs ~~user created~~ potions rather than mod created potions.
 * __Max Weight Staffs__
   * Like Max Weight Potions, but caps the weight of staffs.
+* __Min Weight Potions__
+  * Reweighs potions to a minimum weight.
 * __No Light Flicker__
   * Turns off flickering effects for lights. May help on machines with low end graphic cards.
 * __Nvidia Fog Fix__
@@ -1102,23 +1206,35 @@ __Tweakers__ tweak records in the currently active set of mods in specified ways
 === Tweak Settings
 * __Overview__
 . Allows you to tweak game behavior in miscellaneous ways. Item ending with a "[xxx]" will allow you to choose a different value. Right click on the item and choose the preferred value from the list.
-* __Arrow Litter Count/Time:__ Shot arrows will be automatically removed from the world after a certain period (Arrow Litter Time) or if their number exceeds the Arrow Litter Count.
-* __Arrow Recovery from Actor:__ Your chance of recovering an arrow shot into an actor (including arrows shot into player). 
+* __Arrow: Litter Count/Time:__ Shot arrows will be automatically removed from the world after a certain period (Arrow Litter Time) or if their number exceeds the Arrow Litter Count.
+* __Arrow: Recovery from Actor:__ Your chance of recovering an arrow shot into an actor (including arrows shot into player). 
 * __Arrow Speed:__ Speed at which a full power arrow travels.
+* __Bounty: Attack:__ The Bounty for attacking a "good" npc when observed.
+* __Bounty: Horse Theft:__ The Bounty for horse stealing.
+* __Camera: Chase Distance:__ Changes the maximum distance the chase camera can be moved away from the player. Very useful for creating a birds eye view -- but also a little bit uber for that reason.
+* __Camera: Chase Tightness:__ Tightens up the 3rd person chase camera. Highest setting (x 3.0) essentially locks camera behind player.
+* __Camera: PC Death Time:__ This is how long the camera lingers on the player after player's death before the reload menu appears. (Even at "Unlimited", you can hit escape to force reload menu to appear.)
 * __Cell Respawn Time:__ Time that must pass after you've last visited a cell before the creatures, npcs and items in it respawn. Default is 3 days. Note that setting to longer durations will result in larger savegames.
-* __Chameleon: No Refraction:__ Turns off the refraction effect for chameleon, but leaves the incremental transparency effect on. (Transparency won't be very obvious until PC/NPC is at higher levels of Chameleon.)
-* __Chase Camera Distance:__ Changes the maximum distance the chase camera can be moved away from the player. Very useful for creating a birds eye view -- but also a little bit uber for that reason.
-* __Chase Camera Tightness:__ Tightens up the 3rd person chase camera. Highest setting (x 3.0) essentially locks camera behind player.
+* __Combat: Max Actors:__ the maximum number of actors that the engine will process in combat. 
 * __Combat: Recharge Weapons:__ By default, you can recharge weapons during combat. Disallowing that encourages you to be ready for battle ahead of time.
 * __Compass: Disable XXX:__ Disables POI's (Points of Interest), Quest Markers, or both on the compass. 
   * Warning: Some quests may be hard to complete when quest markers are turned off (e.g., an early stage of Knights of the Nine).
   * Note: While this works with the vanilla interface, it appears to not work with some modifications of the UI. Problem might be changes to the marker icons, or it might be due to the POI recognition tweak.
 * __Compass: POI Recognition:__ Distance at which Points of Interest become visible on the compass. Default is 12,000 units. Lowest setting (x 0.25) is just a little farther than unvisited locations will be "found." I.e., about a rock's throw. (No affect if POI visibility is turned off.)
+* __Cost Multiplier: Enchantment:__ The cost multiplier factor for enchanting, OOO default: 120, vanilla default: 10.
+* __Cost Multiplier: Recharge:__ The cost multiplier factor for recharging.
+* __Cost Multiplier: Repair:__ The cost multiplier factor for repairing.
+* __Cost Multiplier: Spellmaking:__ The cost multiplier factor for spellmaking.
+* __Crime Alarm Distance:__ the distance from the player that NPCs will be alerted to crimes
 * __Essential NPC Unconsciousness:__ Time for which an essential NPC stays unconscious after being knocked out.
+* __Fatigue from Running/Encumbrance:__ Fatigue cost multiplier for running or encumbrance
+* __Greeting Distance:__ Distance at which NPCs will great the player.
 * __Horse Turning Speed:__ Default Horse turning speed is rather slow. This allows you to increase it by 1.5 or 2.0 times normal speed.
 * __Jump Higher:__ Increases the maximum allowed jump height. Note that this may allow you to jump over city walls and so end up with graphical strangeness. (Empty towns or empty countryside, depending on whether you jump into or out of the town.)
-* __Magic Bolt Speed:__ Speed at which at which magic bolts (projectiles) travel.
-* __PC Death Camera:__ This is now long the camera lingers on the player after player's death before the reload menu appears. (Even at "Unlimited", you can hit escape to force reload menu to appear.)
+* __Magic: Bolt Speed:__ Speed at which at which magic bolts (projectiles) travel.
+* __Magic: Chameleon Refraction:__ Turns off the refraction effect for chameleon, but leaves the incremental transparency effect on. (Transparency won't be very obvious until PC/NPC is at higher levels of Chameleon.)
+* __Master of Mercantile Extra Gold Amount:__ The extra barter gold all vendor's have for a master of mercantile.
+* __Msg: Equip Misc. Item:__ sets the message on equiping a misc item to blank or either "." or "Hmm..."
 
 -------------------------------------------------------------------------------
 __Special__ patch components don't fit into the categories above. Two of them ([[#|Alchemical Catalogs]] and [[#|Power Exhaustion]]) are for use with specific mods. The remaining component, [[#|Leveled Lists]], is for general use.
@@ -1126,6 +1242,15 @@ __Special__ patch components don't fit into the categories above. Two of them ([
 === Alchemical Catalogs
 * __Overview__
 . This patcher component will update the alchemical catalogs found in the [[http://wrye.ufrealms.net/Cobl.html|Common Oblivion]]. No configuration is required and the catalogs will not be produced unless __Cobl Main.esm__ is in the load list. The original catalogs list all ingredients found in Oblivion.esm. The update will add ingredients from all selected mods. See [[http://wrye.ufrealms.net/Cobl.html| COBL docs]] for more information on how to acquire the catalogs.
+
+=== Cobl Exhaustion
+* Requires Cobl 1.66 or higher.
+* Converts powers into lesser powers, but imposes a (potentially fatal) penalty if they're used too frequently. 
+* Cobl's power exhaustion feature is intended as a replacment for my [[http://wrye.ufrealms.net/Power%20Exhaustion.html|Power Exhaustion]] mod. 
+
+=== Content Checker
+* When activated, this will check the inventory contents of containers, creatures and NPCs, and the entries of leveled lists to make sure that their entries are of valid types. E.g. it will try to ensure that leveled spell lists only contain spells and other leveled lists. 
+* If items/entries of incorrect type are found, then they are removed from the container/list. The patch report will list any containers/lists modified and what was removed from them.
 
 === Leveled Lists
 * __Background__ 
@@ -1158,12 +1283,9 @@ __Special__ patch components don't fit into the categories above. Two of them ([
 
 === Power Exhaustion
 * __Overview:__
-. My [[http://wrye.ufrealms.net/Power%20Exhaustion.html|Power Exhaustion]] mod changes the greater powers in Vanilla (non-Shivering Isles) into lesser powers, but imposes a (potentially fatal) penalty if they're used too frequently. This patcher extends coverage to the Orrery and Shivering Isles powers. It will also affect powers from other mods that have been flagged correctly.
-* __Other Mods:__
-  * Modders can flag the powers defined in their mods for conversion by adding a 1 point Fortify Endurance effect to the power. The duration of the effect will set the duration (and thus strength) of its power exhaustion effect. 
-    * 7 seconds is normal exhaustion (this is recommended)
-    * 9 seconds is maximum exhaustion that can be experienced without penalty. (Should be 10, but at the moment there's a problem with Powers Exhaustion magic effect script that will be fixed later).
-  . Lesser durations might be used for "smaller" greater powers. Durations greater than ten are guaranteed to cause penalty -- but this might be used as a particularly powerful power -- which may kill a low to mid level NPC.
+* My [[http://wrye.ufrealms.net/Power%20Exhaustion.html|Power Exhaustion]] mod changes the greater powers in Vanilla (non-Shivering Isles) into lesser powers, but imposes a (potentially fatal) penalty if they're used too frequently. 
+* Assorted_Exhaust.csv: This patcher extends coverage to the Orrery and Shivering Isles powers.
+* Kmacg94_Exhaust.csv: This patcher (by Kmagc94) extends coverage to several more mods (bgBalancingEVCore, Consequences, Kenhanimal's Awsome Vampire Mod, Oblivion War Cry EV, Oscuro's Oblivion Overhaul, StartX Vanilla Vampires Revised, Vampire Hunter Tools, Vows and Covenants).
 
 <a name="ImportRaceInfo">
 === Race Records
@@ -1651,6 +1773,137 @@ DELETE PROFILE %s AND THE %d SAVE FILES IT CONTAINS?
 == Versions ===================================================================
 {{CONTENTS=0}}
 **All versions by Wrye unless otherwise noted.**
+
+=== 275 [11/06/2009] [PacificMorrowind]
+* Bugfix: removed accidental python 2.6 refs preventing load if using python 2.5
+* Bashed Patch: Added Mayu's Animation Overhaul patcher; see details under special patches
+* Added 2 new game settings tweaks, updated Oblivion_ids.pkl to allow add them.
+
+=== 274 [11/05/2009] [PacificMorrowind]
+* BAIN: Couple changes to speed up prescanning if skipping file types.
+* Misc: Fix to NIFZ (and KFFZ) writing to prevent incorrect writing of bad data.
+* Bashed Patch: Added Import Script Contents (at last & only partially unfortunately); see details up above.
+* Added 4 new game settings tweaks, updated docs
+
+=== 273 [11/02/2009] [Raziel23x]
+* Tweaked Training Max settings 1, default[5], 50, 100, 200, 99
+* Tweaked Maximum Armor Rating 50, 75, default[85], 90, 95
+
+=== 272 [11/01/2009] [Raziel23x]
+* Added two new gaming settings
+
+=== 271 [8/28/2009]
+* Revert autorecognize Data\ini. Already standardized as Data\Scripts.
+* Minor change to errlog deletion to support Python 2.6 (hopefully).
+
+=== 270 [8/26/2009] [PacificMorrowind]
+* Bain: just a couple changes (skip images/docs and autorecognizing ini folder)
+
+=== 269 [8/23/2009]
+* Bain: Now supports umlauts, etc. in filenames. (At least on Wrye's machine -- solution is a bit of a hack.)
+
+=== 268 [7/27/2009] [PacificMorrowind]
+* Bashed Patch:
+  * New:
+    * Import Scripts
+    * Import Spell Stats
+  * Edited:
+    * Import Sounds: added ability to import more types of sounds
+    * Import Graphics: added ability to import more types of grahics
+    * Import Stats: added a ability to import a bunch of other object stats
+    * Import Inventory: added ability to import container inventory
+    * GMST Tweaks
+    * Other tweaks
+* Mods Tab:
+  * New: Import/Export Spell Stats
+  * Edited: Import/Export Stats
+* Misc:
+  * New: New shortcut and icon for BOSS in status bar
+  * Fixed Tes4edit path to new default distribution name
+
+=== 267 [5/24/2009] [Wrye, Kmagc94]
+* Bugfix
+  * Safety check on bolt.Path.moveTo to avoid accidental deletion.
+  * Fix tooltip for Oblivion launcher to show "+ OBSE" correctly.
+  * Fix a bug in handling final lines of ini tweak files that lack a trailing new line.
+  * Bashed patch rebuild will now auto-activate files as necessary.
+* Refactoring:
+  * Change formid/formId to fid.
+  * Removed "Id" from end of record fields.
+* Race Patcher: 
+  * Change random hair/eye setter to use eid as seed (thus producing consistent results across patch rebuilds).
+* DarN Books: 
+  * Restore some formatting behavior that got lost between v 264 and v 266.
+* Power Exhaustion
+  * [[http://www.tesnexus.com/downloads/file.php?id=24343|Added Kmagc94_Exhaust.csv]]
+
+=== 266 [4/10/2009] [Waruddar]
+* [[#|Installers Tab]]:
+  * [[#|Package Commands]]
+    * Added: "Package for Release" for projects
+  * [[#|Package Header Commands]]
+    * Added: "List Packages..."
+    * Added: "Auto-Refresh Projects": Option to disable auto-refreshing of projects
+      * This is intended as a temporary workaround for users with non-ascii filenames
+* Code checking/fixes:
+  * Added: [[#Ordering|Ctrl-Up/Down]] now works on the installer tab for reordering
+  * Fixed (v265): Issue with CELL records that caused some cells to be skipped
+  * Fixed: File -> Sort
+  * Fixed: Issue with merging some REGN records
+  * Fixed (possibly): Content Checker might work with injected records
+  * Updated: [[#LoadOrder|Ctrl-Up/Down]] now works when multiple items are selected
+  * Updated: Improved handling of REGN records
+
+=== 265 [4/06/2009] [Waruddar]
+* [[#|Installers Tab]]:
+  * New feature: [[#|Bain Conversion Files]].
+  * Added: "Pack to Archive" for projects
+  * Added: Support for auto-refreshing after a project is changed
+  * Added: The "Data CRC" is now displayed on the General Info tab
+  * Added: The last modified time is now displayed on the General Info tab
+  * Fixed: Inconsistent "Move To..." behavior
+  * Updated: The "Compressed: " field on the General Info tab was renamed to "Size: ", and it now indicates whether solid compression was used on the archive.
+* [[#|Mods Tab]]:
+  * [[#|Activating Mods]]: Mods may now be activated/deactivated with the space bar
+  * Many context menu choices now work with multiple selections:
+    * __Note:__ Most multiple selection choices will skip/ignore "Oblivion.esm" and "Oblivion_1.1.esm"
+    * [[#AutoGhost|Don't Ghost]]
+    * [[#|Backup]]
+    * [[#|Duplicate]]
+    * [[#|Snapshot]]
+    * [[#|Decompile All]]
+    * [[#|Copy to Esp/Esm]]
+    * [[#|Espify/Esmify Self]]
+    * [[#|Remove World Orphans]]
+    * [[#|Undelete Refs]]
+  * [[#|Mark Mergeable]] and [[#|Merge Patches]]:
+    * Added climate, combat styles, idles, landscape textures, regions, skills, and subspaces to the mergeable records list
+* Code checking/fixes:
+  * Added: Missing record definitions (CLMT,CSTY,IDLE,LTEX,REGI,SBSP, XSOL subrecord)
+  * Fixed: bolt.Path.walk
+  * Fixed: Error logging on extraction/compression errors
+  * Updated: bolt.Path.size and bolt.Path.getmtime now support directories
+  * Updated: Installer CRCs now refer to the cumulative "Data CRC" rather than the file CRC
+  * Updated: Improved handling of subrecords (notably XMRK and XCLC)
+  * Updated: Various record definitions
+  * Updated: Standardized many variable names
+  * Minor optimizations
+
+=== 264 [4/1/2009] [Wrye, DJ_Kovrik]
+* Updated Russian translation (by DJ_Kovrik).
+* Bashmon: Fix so that it doesn't crash when files are busy.
+* Tweaked Sort Mods by Selected to count Imported and Merged as "Selected".
+* Bashed Patch: Added [[#|Content Checker]].
+
+=== 263 [3/22/2009] 
+* [[#|Installers Tab]]: 
+  * No more "removed files" message after uninstalling.
+  * Fix a bug with archive error reporting.
+* Balt: Minor fix(?) to some window showing
+* Import Editor Ids: Fix a bug that forgot old editor ids.
+* Bashed Patch: [[#|Cobl Exhaustion]].
+* Rational Names: Add spells from Supreme Magicka.
+* [[#|Tweak Assorted]]: DarNified Books: Add support for wtxt formatted books.
 
 === 262 [3/2/2009] [Wrye, Waruddar]
 * Code checking/fixes [Waruddar]
@@ -3086,4 +3339,3 @@ DELETE PROFILE %s AND THE %d SAVE FILES IT CONTAINS?
 * **First Release!**
 
 {{CONTENTS=2}}
-

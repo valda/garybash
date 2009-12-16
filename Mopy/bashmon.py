@@ -15,12 +15,12 @@
 #  along with Wrye Bash; if not, write to the Free Software Foundation,
 #  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye 
+#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye
 #
 # =============================================================================
 
 """bashmon is a monitor program which handles requests from Breeze582000's OBSE
-extension. Current monitor commands are focused exclusively on shapeshifting the 
+extension. Current monitor commands are focused exclusively on shapeshifting the
 player, however other commands might be useful to include.
 
 Note: bashmon is based on Breeze582000's brzMonitor (which it replaces).
@@ -44,7 +44,7 @@ from bolt import _, GPath, intArg
 bosh.deprintOn = True
 
 # Utils -----------------------------------------------------------------------
-class Data: 
+class Data:
     """Some setup and data. Mostly various paths."""
     def __init__(self):
         #--Init bosh stuff
@@ -213,7 +213,7 @@ def ripAppearance(srcName,destName,srcForm='player',destForm='player',flags=`0x2
 
 @monitorCommand
 def swapPlayer(saveName,oldForm,newForm,flags=0x1|0x2|0x4|0x8|0x10|0x20|0x40):
-    """Swaps the player between old and new forms. 
+    """Swaps the player between old and new forms.
     Archives player's current form/stats to oldForm, then changes player into new form."""
     oldForm = intArg(oldForm)
     newForm = intArg(newForm)
@@ -227,7 +227,7 @@ def swapPlayer(saveName,oldForm,newForm,flags=0x1|0x2|0x4|0x8|0x10|0x20|0x40):
     if not oldFace.gender: data.shapeIsMale.touch()
     #--newForm >> player
     newFace = PCFaces.save_getCreatedFace(saveFile,newForm)
-    PCFaces.save_setPlayerFace(saveFile,newFace,flags) 
+    PCFaces.save_setPlayerFace(saveFile,newFace,flags)
     #--Checking
     #printFace(oldFace)
     #printFace(PCFaces.save_getCreatedFace(saveFile,oldForm))
@@ -254,8 +254,8 @@ def moveSave(oldSave,newSave):
 # Monitor ---------------------------------------------------------------------
 header = """== STARTING BASHMON ==
   bashmon is a monitor program which handles requests from Breeze582000's OBSE
-  extension. Currently (Dec. 2007), the monitor is focused exclusively on 
-  shapeshifting the  player, hence it is only useful in combination with 
+  extension. Currently (Dec. 2007), the monitor is focused exclusively on
+  shapeshifting the  player, hence it is only useful in combination with
   Breeze's Seducers/Succubi mod and Wrye's Morph mod.
 
   To stop the monitor, press Ctrl-c or close the command shell window."""
@@ -280,6 +280,14 @@ def monitor(sleepSeconds=0.25):
             print time.strftime('\n%H:%M:%S',time.localtime()),_("Bashmon stopped.")
             running = False
             continue
+        except IOError:
+            print time.strftime('\n%H:%M:%S',time.localtime()),_("Oblivion.ini is busy.")
+            continue
+        except:
+            data.failed.touch()
+            traceback.print_exc()
+            running = False
+            break
         #--Handle lines in request
         print time.strftime('%H:%M:%S request',time.localtime()) #, '='*60
         ins = data.request.open('r')
@@ -298,7 +306,7 @@ def monitor(sleepSeconds=0.25):
             data.completed.touch()
             if data.removeRequest:
                 data.request.remove()
-            while data.completed.exists(): 
+            while data.completed.exists():
                 time.sleep(0.1)
             data.setSignals()
         except:

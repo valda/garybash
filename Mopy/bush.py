@@ -15,12 +15,12 @@
 #  along with Wrye Bash; if not, write to the Free Software Foundation,
 #  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye 
+#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye
 #
 # =============================================================================
 
-"""This module defines static data for use by other modules in the Wrye Bash package. 
-Its use should generally be restricted to large chunks of data and/or chunks of data 
+"""This module defines static data for use by other modules in the Wrye Bash package.
+Its use should generally be restricted to large chunks of data and/or chunks of data
 that are used by multiple objects."""
 
 # Imports ---------------------------------------------------------------------
@@ -76,12 +76,12 @@ groupTypes = [
     _('Cell Visible Distant Children'),
 ]
 
-#--Top types in Fallout3 order.
-topTypes = ['GMST', 'GLOB', 'CLAS', 'FACT', 'HAIR', 'EYES', 'RACE', 'SOUN', 'SKIL', 
-    'MGEF', 'SCPT', 'LTEX', 'ENCH', 'SPEL', 'BSGN', 'ACTI', 'APPA', 'ARMO', 'BOOK', 
-    'CLOT', 'CONT', 'DOOR', 'INGR', 'LIGH', 'MISC', 'STAT', 'GRAS', 'TREE', 'FLOR', 
-    'FURN', 'WEAP', 'AMMO', 'NPC_', 'CREA', 'LVLC', 'SLGM', 'KEYM', 'ALCH', 'SBSP', 
-    'SGST', 'LVLI', 'WTHR', 'CLMT', 'REGN', 'CELL', 'WRLD', 'DIAL', 'QUST', 'IDLE', 
+#--Top types in Fallout3 order. (TODO: I want to make it such some day...)
+topTypes = ['GMST', 'GLOB', 'CLAS', 'FACT', 'HAIR', 'EYES', 'RACE', 'SOUN', 'SKIL',
+    'MGEF', 'SCPT', 'LTEX', 'ENCH', 'SPEL', 'BSGN', 'ACTI', 'APPA', 'ARMO', 'BOOK',
+    'CLOT', 'CONT', 'DOOR', 'INGR', 'LIGH', 'MISC', 'STAT', 'GRAS', 'TREE', 'FLOR',
+    'FURN', 'WEAP', 'AMMO', 'NPC_', 'CREA', 'LVLC', 'SLGM', 'KEYM', 'ALCH', 'SBSP',
+    'SGST', 'LVLI', 'WTHR', 'CLMT', 'REGN', 'CELL', 'WRLD', 'DIAL', 'QUST', 'IDLE',
     'PACK', 'CSTY', 'LSCR', 'LVSP', 'ANIO', 'WATR', 'EFSH',
     'TXST', 'MICN', 'HDPT', 'ASPC', 'TACT', 'TERM', 'SCOL', 'MSTT', 'PWAT', 'LVLN',
     'IDLM', 'NOTE', 'COBJ', 'PROJ', 'NAVI', 'EXPL', 'DEBR', 'IMGS', 'IMAD', 'FLST',
@@ -440,7 +440,7 @@ magicEffects = {
     'DRSP': (2,_('Drain Magicka')),
     'DSPL': (4,_('Dispel')),
     'DTCT': (4,_('Detect Life')),
-    'DUMY': (2,_('Mehrunes Dagon')), #--Formid == 0 
+    'DUMY': (2,_('Mehrunes Dagon')), #--Formid == 0
     'FIDG': (2,_('Fire Damage')),
     'FISH': (0,_('Fire Shield')),
     'FOAT': (5,_('Fortify Attribute')),
@@ -592,7 +592,7 @@ actorValueEffects = set([
     'FOSK', #--Fortify Skill
     'REAT', #--Restore Attribute
     ])
-    
+
 actorValues = [
     _('Strength'), #--00
     _('Intelligence'),
@@ -672,7 +672,7 @@ actorValues = [
     'Vampirism',
 
     'Darkness', #--70
-    'ResistWaterDamage', 
+    'ResistWaterDamage',
     ]
 
 acbs = {
@@ -691,7 +691,7 @@ acbs = {
     'Mysticism': 12,
     'Restoration': 13,
     'Acrobatics': 14,
-    'Light Armor': 15,  
+    'Light Armor': 15,
     'Marksman': 16,
     'Mercantile': 17,
     'Security': 18,
@@ -791,7 +791,7 @@ id_exhaustion = {
     ob(0x047AE9): 7, # PwRaceWoodElfCommandCreature
     ob(0x03BEDB): 7, # VampireEmbraceofShadows
     ob(0x03BEDC): 7, # VampireReignofTerror
-    ob(0x03BED9): 7, # VampireSeduction    
+    ob(0x03BED9): 7, # VampireSeduction
     #--Shivering Isles
     ob(0x08F024): 7, # SE02BlessingDementia
     ob(0x08F023): 7, # SE02BlessingMania
@@ -817,7 +817,7 @@ id_exhaustion = {
     ob(0x050C80): 3, # SE09PwGKTorso1
     ob(0x050C81): 3, # SE09PwGKTorso2
     ob(0x08E93F): 3, # SESuicidePower
-    
+
     #--Orrery
     orrery(0x11DC5F): 7, # Masser's Might
     orrery(0x11DC60): 7, # Masser's Grace
@@ -922,7 +922,7 @@ messagesHeader = """<html>
 		html{
 			overflow-x: auto;
 		}
-		
+
 		body{
 			background-color: #fff;
 			color: #000;
@@ -932,84 +932,84 @@ messagesHeader = """<html>
 			padding:0px;
 			text-align:center;
 		   }
-		   
+
 		a:link, a:visited, a:active{
 			color: #000;
 			text-decoration: underline;
 		}
-		
+
 		a:hover{
 			color: #465584;
 			text-decoration:underline;
 		}
-		
+
 		img{
 			border: 0;
 			vertical-align: middle;
 		}
-				
+
 		#ipbwrapper{
 			margin: 0 auto 0 auto;
 			text-align: left;
 			width: 95%;
 		}
-		
+
 		.post1{
 			background-color: #F5F9FD;
 		}
-		
+
 		.post2{
 			background-color: #EEF2F7;
 		}
-	
+
 		/* Common elements */
 		.row1{
 			background-color: #F5F9FD;
 		}
-		
+
 		.row1{
 			background-color: #DFE6EF;
 		}
-		
+
 		.row3{
 			background-color: #EEF2F7;
 		}
-		
+
 		.row2{
 			background-color: #E4EAF2;
 		}
-	
+
 		/* tableborders gives the white column / row lines effect */
 		.plainborder{
 			background-color: #F5F9FD
 			border: 1px solid #345487;
 		}
-		
+
 		.tableborder{
 			background-color: #FFF;
 			border: 1px solid #345487;
 			margin: 0;
 			padding: 0;
 		}
-		
+
 		.tablefill{
 			background-color: #F5F9FD;
 			border: 1px solid #345487;
 			padding: 6px;
 		}
-		
+
 		.tablepad{
 			background-color: #F5F9FD;
 			padding:6px;
 		}
-		
+
 		.tablebasic{
 			border: 0;
 			margin: 0;
 			padding: 0;
 			width:100%;
 		}
-	
+
 		.pformstrip{
 			background-color: #D1DCEB;
 			color: #3A4F6C;
@@ -1017,7 +1017,7 @@ messagesHeader = """<html>
 			margin-top:1px
 			padding:7px;
 		}
-		
+
 		#QUOTE{
 			background-color: #FAFCFE;
 			border: 1px solid #000;
@@ -1026,7 +1026,7 @@ messagesHeader = """<html>
 			font-size: 11px;
 			padding: 2px;
 		}
-		
+
 		#CODE{
 			background-color: #FAFCFE;
 			border: 1px solid #000;
@@ -1043,27 +1043,27 @@ messagesHeader = """<html>
 			padding:8px 0px 8px 5px;
 			vertical-align:middle;
 		}
-		
+
 		.maintitle a:link, .maintitle  a:visited, .maintitle  a:active{
 			color: #fff;
 			text-decoration: none;
 		}
-		
+
 		.maintitle a:hover{
 			text-decoration: underline;
 		}
-		
+
 		/* Topic View elements */
 		.signature{
 			color: #339;
 			font-size: 10px;
 			line-height:150%;
 		}
-		
+
 		.postdetails{
 			font-size: 10px;
 		}
-		
+
 		.postcolor{
 			font-size: 12px;
 			line-height: 160%;
@@ -1076,13 +1076,13 @@ messagesHeader = """<html>
             margin-bottom: 0;
             padding: 0.5em;
         }
-        
+
         .quotemain {
             margin: 0 1em;
             padding: 0.5em;
             border: solid 1px #000;
         }
-        
+
         .codetop {
             font-family: monospace;
             color: #fff;
@@ -1091,7 +1091,7 @@ messagesHeader = """<html>
             margin-bottom: 0;
             padding: 0.5em;
         }
-        
+
         .codemain {
             font-family: monospace;
             margin: 0 1em;

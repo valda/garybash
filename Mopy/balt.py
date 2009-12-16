@@ -15,7 +15,7 @@
 #  along with Wrye Bolt; if not, write to the Free Software Foundation,
 #  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-#  Wrye Bolt copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye 
+#  Wrye Bolt copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye
 #
 # =============================================================================
 
@@ -38,14 +38,14 @@ from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 
 # Basics ---------------------------------------------------------------------
 class IdList:
-    """Provides sequences of semi-unique ids. Useful for choice menus. 
+    """Provides sequences of semi-unique ids. Useful for choice menus.
 
-    Sequence ids come in range from baseId up through (baseId + size - 1). 
+    Sequence ids come in range from baseId up through (baseId + size - 1).
     Named ids will be assigned ids starting at baseId + size.
-    
+
     Example:
-      loadIds = IdList(10000, 90,'SAVE','EDIT','NONE') 
-    sequence ids are accessed by an iterator: i.e. iter(loadIds), and 
+      loadIds = IdList(10000, 90,'SAVE','EDIT','NONE')
+    sequence ids are accessed by an iterator: i.e. iter(loadIds), and
     named ids accessed by name. e.g. loadIds.SAVE, loadIds.EDIT, loadIds.NONE
     """
 
@@ -70,8 +70,8 @@ defPos = wx.DefaultPosition
 defSize = wx.DefaultSize
 
 wxListAligns = {
-    'LEFT':   wx.LIST_FORMAT_LEFT, 
-    'RIGHT':  wx.LIST_FORMAT_RIGHT, 
+    'LEFT':   wx.LIST_FORMAT_LEFT,
+    'RIGHT':  wx.LIST_FORMAT_RIGHT,
     'CENTER': wx.LIST_FORMAT_CENTRE,
     }
 
@@ -83,7 +83,7 @@ sizes = {} #--Using applications should override this.
 class Colors:
     """Colour collection and wrapper for wx.ColourDatabase.
     Provides dictionary syntax access (colors[key]) and predefined colours."""
-    def __init__(self): 
+    def __init__(self):
         self.data = {}
         self.database = None
 
@@ -111,7 +111,7 @@ class Colors:
             return self.data[key]
         else:
             return self.database.Find(key)
-    
+
 #--Singleton
 colors = Colors()
 
@@ -119,7 +119,7 @@ colors = Colors()
 images = {} #--Singleton for collection of images.
 
 #------------------------------------------------------------------------------
-class Image: 
+class Image:
     """Wrapper for images, allowing access in various formats/classes.
 
     Allows image to be specified before wx.App is initialized."""
@@ -135,7 +135,7 @@ class Image:
         if not self.bitmap:
             self.bitmap = wx.Bitmap(self.file.s,self.type)
         return self.bitmap
-    
+
     def GetIcon(self):
         if not self.icon:
             self.icon = wx.EmptyIcon()
@@ -143,7 +143,7 @@ class Image:
         return self.icon
 
 #------------------------------------------------------------------------------
-class ImageBundle: 
+class ImageBundle:
     """Wrapper for bundle of images.
 
     Allows image bundle to be specified before wx.App is initialized."""
@@ -184,7 +184,7 @@ class ImageList:
             for key,image in self.data:
                 indices[key] = imageList.Add(image.GetBitmap())
         return self.imageList
-    
+
     def __getitem__(self,key):
         self.GetImageList()
         return self.indices[key]
@@ -202,7 +202,7 @@ def ensureDisplayed(frame,x=100,y=100):
         frame.MoveXY(topLeft.x+x,topLeft.y+y)
 
 def setCheckListItems(gList,names,values):
-    """Convenience method for setting a bunch of wxCheckListBox items. The main advantage 
+    """Convenience method for setting a bunch of wxCheckListBox items. The main advantage
     of this is that it doesn't clear the list unless it needs to. Which is good if you want
     to preserve the scroll position of the list."""
     if not names:
@@ -229,10 +229,11 @@ def tooltip(text,wrap=50):
     return wx.ToolTip(text)
 
 def bitmapButton(parent,bitmap,pos=defPos,size=defSize,style=wx.BU_AUTODRAW,val=defVal,
-        name='button',id=defId,onClick=None,tip=None):
+        name='button',id=defId,onClick=None,tip=None,onRClick=None):
     """Creates a button, binds click function, then returns bound button."""
     gButton = wx.BitmapButton(parent,id,bitmap,pos,size,style,val,name)
     if onClick: gButton.Bind(wx.EVT_BUTTON,onClick)
+    if onRClick: gButton.Bind(wx.EVT_RIGHT_DOWN,onRClick)
     if tip: gButton.SetToolTip(tooltip(tip))
     return gButton
 
@@ -375,7 +376,7 @@ def askOpen(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.OP
     """Show as file dialog and return selected path(s)."""
     defaultDir,defaultFile = [GPath(x).s for x in (defaultDir,defaultFile)]
     dialog = wx.FileDialog(parent,title,defaultDir,defaultFile,wildcard, style )
-    if dialog.ShowModal() != wx.ID_OK: 
+    if dialog.ShowModal() != wx.ID_OK:
         result = False
     elif style & wx.MULTIPLE:
         result = map(GPath,dialog.GetPaths())
@@ -406,7 +407,7 @@ def askText(parent,message,title='',default=''):
 
 # Message Dialogs -------------------------------------------------------------
 def askStyled(parent,message,title,style):
-    """Shows a modal MessageDialog. 
+    """Shows a modal MessageDialog.
     Use ErrorMessage, WarningMessage or InfoMessage."""
     dialog = wx.MessageDialog(parent,message,title,style)
     result = dialog.ShowModal()
@@ -421,11 +422,11 @@ def askYes(parent,message,title='',default=True):
     """Shows a modal warning message."""
     style = wx.YES_NO|wx.ICON_EXCLAMATION|((wx.NO_DEFAULT,wx.YES_DEFAULT)[default])
     return askStyled(parent,message,title,style)
-    
+
 def askWarning(parent,message,title=_('Warning')):
     """Shows a modal warning message."""
     return askStyled(parent,message,title,wx.OK|wx.CANCEL|wx.ICON_EXCLAMATION)
-    
+
 def showOk(parent,message,title=''):
     """Shows a modal error message."""
     return askStyled(parent,message,title,wx.OK)
@@ -437,7 +438,7 @@ def showError(parent,message,title=_('Error')):
 def showWarning(parent,message,title=_('Warning')):
     """Shows a modal warning message."""
     return askStyled(parent,message,title,wx.OK|wx.ICON_EXCLAMATION)
-    
+
 def showInfo(parent,message,title=_('Information')):
     """Shows a modal information message."""
     return askStyled(parent,message,title,wx.OK|wx.ICON_INFORMATION)
@@ -553,9 +554,10 @@ def showWryeLog(parent,logText,title='',style=0,asDialog=True,icons=None):
     #--Show
     if asDialog:
         window.ShowModal()
-        _settings['balt.WryeLog.pos'] = window.GetPositionTuple()
-        _settings['balt.WryeLog.size'] = window.GetSizeTuple()
-        window.Destroy()
+        if window:
+            _settings['balt.WryeLog.pos'] = window.GetPositionTuple()
+            _settings['balt.WryeLog.size'] = window.GetSizeTuple()
+            window.Destroy()
     else:
         window.Show()
 
@@ -617,7 +619,7 @@ class ListEditorData:
     def setInfo(self,item,text):
         """Sets string info on specified item."""
         raise AbstractError
-    
+
     #--Checklist
     def getChecks(self):
         """Returns checked state of items as array of True/False values matching Item list."""
@@ -776,7 +778,7 @@ class ListEditor(wx.Dialog):
         if self.gInfoBox:
             self.gInfoBox.DiscardEdits()
             self.gInfoBox.SetValue('')
-        
+
     #--Show Info
     def OnSelect(self,event):
         """Handle show info (item select) event."""
@@ -849,7 +851,7 @@ class Picture(wx.Window):
             newWidth,newHeight = int(factor*imgWidth),int(factor*imgHeight)
             self.scaled = image.Scale(newWidth,newHeight).ConvertToBitmap()
             #self.scaled = image.Scale(newWidth,newHeight,wx.IMAGE_QUALITY_HIGH ).ConvertToBitmap()
-        
+
     def OnPaint(self, event=None):
         """Draw bitmap or clear drawing area."""
         dc = wx.PaintDC(self)
@@ -877,7 +879,7 @@ class Progress(bolt.Progress):
     """Progress as progress dialog."""
     def __init__(self,title=_('Progress'),message=' '*60,parent=None,
         style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE):
-        if sys.version[:3] != '2.4': style |= wx.PD_SMOOTH 
+        if sys.version[:3] != '2.4': style |= wx.PD_SMOOTH
         self.dialog = wx.ProgressDialog(title,message,100,parent,style)
         bolt.Progress.__init__(self)
         self.message = message
@@ -889,7 +891,7 @@ class Progress(bolt.Progress):
     def doProgress(self,state,message):
         if not self.dialog:
             raise StateError(_('Dialog already destroyed.'))
-        elif (state == 0 or state == 1 or (message != self.prevMessage) or 
+        elif (state == 0 or state == 1 or (message != self.prevMessage) or
             (state - self.prevState) > 0.05 or (time.time() - self.prevTime) > 0.5):
             if message != self.prevMessage:
                 self.dialog.Update(int(state*100),message)
@@ -906,7 +908,7 @@ class Progress(bolt.Progress):
 
 #------------------------------------------------------------------------------
 class Tank(wx.Panel):
-    """'Tank' format table. Takes the form of a wxListCtrl in Report mode, with 
+    """'Tank' format table. Takes the form of a wxListCtrl in Report mode, with
     multiple columns and (optionally) column an item menus."""
 
     class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
@@ -940,7 +942,7 @@ class Tank(wx.Panel):
         self.SetSizeHints(50,50)
         #--ListCtrl
         self.gList = gList = Tank.ListCtrl(self, -1, style=style)
-        if self.icons: 
+        if self.icons:
             gList.SetImageList(icons.GetImageList(),wx.IMAGE_LIST_SMALL)
         #--State info
         self.mouseItem = None
@@ -1061,7 +1063,7 @@ class Tank(wx.Panel):
     def SortItems(self,column=None,reverse='CURRENT'):
         """Sort items. Real work is done by data object, and that completed
         sort is then "cloned" list through an intermediate cmp function.
-        
+
         column: column to sort. Defaults to current sort column.
 
         reverse:
@@ -1185,7 +1187,7 @@ class Tank(wx.Panel):
         """Left mouse button was pressed."""
         #self.hitTest = self.gList.HitTest((event.GetX(),event.GetY()))
         event.Skip()
-    
+
     def OnColumnClick(self, event):
         """Column header was left clicked on. Sort on that column."""
         columns = self.data.getParam('columns')
@@ -1353,7 +1355,7 @@ class Tank_Open(Link):
 
 #------------------------------------------------------------------------------
 class Tank_Duplicate(Link):
-    """Create a duplicate of a tank item, assuming that tank item is a file, 
+    """Create a duplicate of a tank item, assuming that tank item is a file,
     and using a SaveAs dialog."""
 
     def AppendToMenu(self,menu,window,data):
