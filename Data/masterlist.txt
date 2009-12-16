@@ -38,6 +38,7 @@ FOOK2 - Main.esm
 FOOK2 - [DIK] DLC Improvement Kit.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
 FO3 Wanderers Edition - Main File.esm
+LingsFinerThings.esm
 RH_IRONSIGHTS.esm
 EnhancedChildren.esm
 ChildrenEmpire.esm
@@ -180,8 +181,10 @@ Tailor Maid ZETA.esp
 
 bzArmour.esp
 bzBodySuits.esp
+LingsFinerThings.esp
 OutFits.esp
 sunglassescollection.esp
+teddybear_brothers.esp
 1Animated Nightvision goggles.esp
 
 \---------
@@ -212,6 +215,7 @@ FOOK2 - Mothership Zeta.esp
 MyFOOK2 - Ammo Weight.esp
 Sally Fix 2.1.esp
 P94-95.esp
+rothfix.esp
 
 \FO3 Wanderers Edition
 \'''''''''''''''''''''''''''''''''''''''
@@ -314,6 +318,16 @@ CRAFT - Activation Perk.esp
 Stealthboy Recon Armor - CRAFT.esp
 CALIBR Ammo Schematics - CRAFT.esp
 
+\Weapon Mod Kits
+\'''''''''''''''''''''''''''''''''''''''
+WeaponModKits.esp
+WeaponModKits - OperationAnchorage.esp
+WeaponModKits - ThePitt.esp
+WeaponModKits - BrokenSteel.esp
+WeaponModKits - PointLookout.esp
+WeaponModKits - Zeta.esp
+WeaponModKits - FOOK.esp
+WMKAA12Shotgun.esp
 
 \MMM
 \'''''''''''''''''''''''''''''''''''''''
@@ -333,7 +347,7 @@ Mart's Mutant Mod - Natural Selection.esp
 Mart's Mutant Mod - Tougher Traders.esp
 Mart's Mutant Mod - Hunting & Looting.esp
 
-\FOIP
+\FOIP-MMM
 \'''''''''''''''''''''''''''''''''''''''
 
 Mart's Mutant Mod - FOOK2.esp
@@ -388,6 +402,7 @@ MiniVault+.esp
 DUIF3Extras.esp
 choose_XP_FOSE.esp
 OneKeyArmor.esp
+Automated FOV.esp
 
 dD-Full Screen Blood.esp
 dD-Larger Blood.esp
@@ -489,6 +504,12 @@ Choose your own hairstyle (load this last on FOMM).esp
 \Those related to companion mod systems. Most others in Quests section.
 \Recommended by authors to load very late.
 \Should go after custom races where the companion is a custom race.
+
+\------------
+\Merged Patch
+\------------
+
+FO3Edit Merged Patch.esp
 
 \------------
 \Bashed Patch
