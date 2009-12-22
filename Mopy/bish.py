@@ -650,46 +650,46 @@ def gmstIds(fileName=None):
     print 'maxId',hex(maxId)
     #--Eid list? - if the GMST has a 00000000 eid when looking at it in the cs with nothing 
 	# but oblivion.esm loaded you need to add the gmst to this list, rebuild the pickle and overwrite the old one.
-    for eid in ['iTrainingSkills']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['fRepairCostMult']:
-        if eid not in fids:
-            maxId += 1 
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['fCrimeGoldSteal']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['iAllowAlchemyDuringCombat']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['iNumberActorsAllowedToFollowPlayer']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['iAllowRepairDuringCombat']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['iMaxPlayerSummonedCreatures']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['iAICombatMaxAllySummonCount']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
+    # for eid in ['iTrainingSkills']:
+    #     if eid not in fids:
+    #         maxId += 1
+    #         fids[eid] = maxId
+    #         print '%08X  %08X %s' % (0,maxId,eid)
+    # for eid in ['fRepairCostMult']:
+    #     if eid not in fids:
+    #         maxId += 1 
+    #         fids[eid] = maxId
+    #         print '%08X  %08X %s' % (0,maxId,eid)
+    # for eid in ['fCrimeGoldSteal']:
+    #     if eid not in fids:
+    #         maxId += 1
+    #         fids[eid] = maxId
+    #         print '%08X  %08X %s' % (0,maxId,eid)
+    # for eid in ['iAllowAlchemyDuringCombat']:
+    #     if eid not in fids:
+    #         maxId += 1
+    #         fids[eid] = maxId
+    #         print '%08X  %08X %s' % (0,maxId,eid)
+    # for eid in ['iNumberActorsAllowedToFollowPlayer']:
+    #     if eid not in fids:
+    #         maxId += 1
+    #         fids[eid] = maxId
+    #         print '%08X  %08X %s' % (0,maxId,eid)
+    # for eid in ['iAllowRepairDuringCombat']:
+    #     if eid not in fids:
+    #         maxId += 1
+    #         fids[eid] = maxId
+    #         print '%08X  %08X %s' % (0,maxId,eid)
+    # for eid in ['iMaxPlayerSummonedCreatures']:
+    #     if eid not in fids:
+    #         maxId += 1
+    #         fids[eid] = maxId
+    #         print '%08X  %08X %s' % (0,maxId,eid)
+    # for eid in ['iAICombatMaxAllySummonCount']:
+    #     if eid not in fids:
+    #         maxId += 1
+    #         fids[eid] = maxId
+    #         print '%08X  %08X %s' % (0,maxId,eid)
 			#--Source file
     if fileName:
         init(3)
@@ -844,7 +844,7 @@ def parseDials(srcName=None,dstName='Wrye Test.esp'):
     dstFile.askSave(True)
 
 @mainfunc
-def parseRecords(fileName='Oblivion.esm'):
+def parseRecords(fileName='Fallout3.esm'):
     import psyco
     psyco.full()
     init(3)
