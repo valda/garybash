@@ -5701,8 +5701,8 @@ class SaveHeader:
             #--Image Data
             ssData = ins.read(3*ssWidth*ssHeight)
             self.image = (ssWidth,ssHeight,ssData)
-            #--Masters
             unknown,delim = struct.unpack('Ic',ins.read(5))
+            #--Masters
             del self.masters[:]
             numMasters,delim = struct.unpack('Bc',ins.read(2))
             for count in range(numMasters):
@@ -5726,26 +5726,37 @@ class SaveHeader:
         def pack(format,*args):
             out.write(struct.pack(format,*args))
         #--Header
-        out.write(ins.read(34))
+        out.write(ins.read(11))
         #--SaveGameHeader
         size, = unpack('I',4)
         pack('I',size)
-        out.write(ins.read(size))
+        out.write(ins.read(5))
+        ssWidth,delim1,ssHeight,delim2 = unpack('=IcIc',10)
+        pack('=IcIc',ssWidth,delim1,ssHeight,delim2)
+        out.write(ins.read(size-15))
+        #--Image Data
+        out.write(ins.read(3*ssWidth*ssHeight))
+        out.write(ins.read(5))
         #--Skip old masters
-        numMasters, = unpack('B',1)
+        numMasters,delim = unpack('Bc',2)
         oldMasters = []
         for count in range(numMasters):
-            size, = unpack('B',1)
+            size,delim = unpack('Hc',3)
             oldMasters.append(GPath(ins.read(size)))
+            delim, = unpack('c',1)
         #--Write new masters
-        pack('B',len(self.masters))
+        pack('Bc',len(self.masters),'|')
         for master in self.masters:
-            pack('B',len(master))
+            pack('Hc',len(master),'|')
             out.write(master.s)
+            pack('c','|')
         #--Fids Address
         offset = out.tell() - ins.tell()
         fidsAddress, = unpack('I',4)
         pack('I',fidsAddress+offset)
+        #--???? Address
+        unknownAddress, = unpack('I',4)
+        pack('I',unknownAddress+offset)
         #--Copy remainder
         while True:
             buffer= ins.read(0x5000000)
