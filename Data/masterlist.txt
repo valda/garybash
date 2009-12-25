@@ -122,18 +122,20 @@ Fellout-Full.esp
 Fellout-Anchorage.esp
 Fellout-BrokenSteel.esp
 
-LightingOverhual-FULL-1.0.esp
-LightingOverhaul-DOF-ONLY.esp
-LightingOverhual-InteriorONLY.esp
-FelloutWithLightingOverhual-1.0.esp
-? Requires original plugins 'Fellout-Full.esp', deactivated.
-
 \Lighting
 \''''''''
 \Should load early to allow more 'important' mods to override.
 
 FireLightFix.esp
-
+LightingOverhual-FULL-1.0.esp
+LightingOverhaul-DOF-ONLY.esp
+LightingOverhual-InteriorONLY.esp
+FelloutWithLightingOverhual-1.0.esp
+? Requires original plugins 'Fellout-Full.esp', deactivated.
+Realistic Interior Lighting.esp
+Realistic Interior Lighting - OA.esp
+Realistic Interior Lighting - BS.esp
+StreetLights - Wasteland.esp
 
 \General
 \'''''''
@@ -441,6 +443,7 @@ DK_BulletTime.esp
 FPS Grenade Hotkey.esp
 FPS Grenade Hotkey - Zeta addon.esp
 CombatEnhanced-Package v02.esp
+Backpedal.esp
 
 Fast_but_dramatic_VATS_0.9.esp
 playbackdelay_001.esp
