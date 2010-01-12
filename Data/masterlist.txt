@@ -144,9 +144,19 @@ StreetLights - Wasteland.esp
 ROTS2.esp
 ROTS3.esp
 Centered 3P Cam.esp
-pip150.esp
-1alexscorpionFPSanimations.esp
 
+pip30.esp
+pip60.esp
+pip150.esp
+pipomfg.esp
+LED pipboy light.esp
+LED pipboy light extended.esp
+LED pipboy light amber.esp
+LED pipboy light ember extended.esp
+LED pipboy light green.esp
+LED pipboy light green extended.esp
+
+1alexscorpionFPSanimations.esp
 MTC Wasteland Travellers.esp
 MTC Wasteland Travellers (Optional)- Crowded Cities.esp
 ? Use either 'MTC Wasteland Travellers (Optional)- Crowded Cities.esp' or 'MTC Wasteland Travellers (Optional)- Crowded Cities less NPCs.esp' but not both together.
@@ -188,13 +198,10 @@ OutFits.esp
 sunglassescollection.esp
 teddybear_brothers.esp
 1Animated Nightvision goggles.esp
+StealthArmorHelmLess.esp
+JM Stealth Suit.esp
+JM Stealth Suit - Vanilla.esp
 
-\---------
-\Energy Visuals Enhanced
-\---------
-
-EVE.esp
-EVE Operation Anchorage.esp
 
 \---------
 \Overhauls
@@ -223,20 +230,32 @@ rothfix.esp
 \'''''''''''''''''''''''''''''''''''''''
 
 FO3 Wanderers Edition - Main File.esp
-FO3 Wanderers Edition - DLC Anchorage.esp
-FO3 Wanderers Edition - DLC The Pitt.esp
-FO3 Wanderers Edition - DLC Broken Steel.esp
-FO3 Wanderers Edition - DLC Point Lookout.esp
-FO3 Wanderers Edition - DLC Mothership Zeta.esp
-FO3 Wanderers Edition - UFP Support.esp
 FO3 Wanderers Edition - Alternate Travel.esp
-FO3 Wanderers Edition - Power Armor Revamp.esp
-FO3 Wanderers Edition - Optional VATS Realtime.esp
-? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
+FO3 Wanderers Edition - DLC Anchorage.esp
+FO3 Wanderers Edition - DLC Broken Steel.esp
+FO3 Wanderers Edition - DLC Mothership Zeta.esp
+FO3 Wanderers Edition - DLC Point Lookout.esp
+FO3 Wanderers Edition - DLC The Pitt.esp
+FO3 Wanderers Edition - Followers Enhanced.esp
+? Use either 'FO3 Wanderers Edition - Followers Enhanced.esp' or 'FO3 Wanderers Edition - Followers Enhanced (BrokenSteel).esp' but not both together.
+FO3 Wanderers Edition - Followers Enhanced (BrokenSteel).esp
+? Use either 'FO3 Wanderers Edition - Followers Enhanced.esp' or 'FO3 Wanderers Edition - Followers Enhanced (BrokenSteel).esp' but not both together.
+FO3 Wanderers Edition - Lvl 30 Balance.esp
+? Use either 'FO3 Wanderers Edition - Lvl 30 Balance' or 'FO3 Wanderers Edition - Lvl 30 High Skills' but not both together.
+FO3 Wanderers Edition - Lvl 30 High Skills.esp
+? Use either 'FO3 Wanderers Edition - Lvl 30 Balance' or 'FO3 Wanderers Edition - Lvl 30 High Skills' but not both together.
+FO3 Wanderers Edition - No Drug Visuals.esp
+FO3 Wanderers Edition - Optional Free Play After MQ.esp
+FO3 Wanderers Edition - Optional Harsher Wasteland.esp
+FO3 Wanderers Edition - Optional No Fast Travel.esp
+FO3 Wanderers Edition - Optional Restore Tracers.esp
 FO3 Wanderers Edition - Optional VATS Halftime.esp
 ? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
+FO3 Wanderers Edition - Optional VATS Realtime.esp
+? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
 FO3 Wanderers Edition - Optional Worn Weapons.esp
-FO3 Wanderers Edition - Optional Harsher Wasteland.esp
+FO3 Wanderers Edition - UFP Support.esp
+
 
 \FWE-FOOK Merger (Main)
 \'''''''''''''''''''''''''''''''''''''''
@@ -323,31 +342,64 @@ CALIBR Ammo Schematics - CRAFT.esp
 \Weapon Mod Kits
 \'''''''''''''''''''''''''''''''''''''''
 WeaponModKits.esp
+
+\FOIP-WMK
+\'''''''''''''''''''''''''''''''''''''''
+WeaponModKits - FOOK.esp
+WeaponModKits - FWE Master Release.esp
+WeaponModKits - FWE Optional Worn Weapons.esp
+
+\Weapon Mod Kits - optionals
+\'''''''''''''''''''''''''''''''''''''''
+
 WeaponModKits - OperationAnchorage.esp
 WeaponModKits - ThePitt.esp
 WeaponModKits - BrokenSteel.esp
 WeaponModKits - PointLookout.esp
 WeaponModKits - Zeta.esp
-WeaponModKits - FOOK.esp
 WMKAA12Shotgun.esp
+
+\EVE (Energy Visuals Enhanced)
+\'''''''''''''''''''''''''''''''''''''''
+
+EVE.esp
+EVE Operation Anchorage.esp
+
+\FOIP-EVE
+\'''''''''''''''''''''''''''''''''''''''
+
+EVE - FWE Master Release.esp
+EVE - FWE Master Release (Follower Enhanced).esp
+EVE Anchorage - FWE DLC Anchorage.esp
+EVE - FWE with WeaponModKits.esp
 
 \MMM
 \'''''''''''''''''''''''''''''''''''''''
 
 Mart's Mutant Mod.esp
 ? Requires 'Mart's Mutant Mod.esm'
+Mart's Mutant Mod - Increased Spawns.esp
+? Use either 'Mart's Mutant Mod - Increased Spawns.esp' or 'Mart's Mutant Mod - Increased Increased Spawns.esp' but not both together.
+Mart's Mutant Mod - Increased Increased Spawns.esp
+? Use either 'Mart's Mutant Mod - Increased Spawns.esp' or 'Mart's Mutant Mod - Increased Increased Spawns.esp' but not both together.
+Mart's Mutant Mod - Feral Ghoul Rampage.esp
+Mart's Mutant Mod - Hunting & Looting.esp
+Mart's Mutant Mod - Natural Selection.esp
+Mart's Mutant Mod - Reduced Wasteland Spawns.esp
+Mart's Mutant Mod - No Size Scaling.esp
+Mart's Mutant Mod - No Corpse Flies.esp
+Mart's Mutant Mod - No Floaters.esp
+Mart's Mutant Mod - No Skeleton Decay.esp
+Mart's Mutant Mod - No Geckos.esp
+Mart's Mutant Mod - No Ghoul Raise.esp
+Mart's Mutant Mod - No Wanamingos.esp
+Mart's Mutant Mod - Tougher Traders.esp
+Mart's Mutant Mod - Zones Respawn.esp
 Mart's Mutant Mod - DLC Anchorage.esp
 Mart's Mutant Mod - DLC The Pitt.esp
 Mart's Mutant Mod - DLC Broken Steel.esp
 Mart's Mutant Mod - DLC Point Lookout.esp
 Mart's Mutant Mod - DLC Zeta.esp
-Mart's Mutant Mod - Increased Spawns.esp
-Mart's Mutant Mod - Reduced Wasteland Spawns.esp
-Mart's Mutant Mod - Zones Respawn.esp
-Mart's Mutant Mod - Feral Ghoul Rampage.esp
-Mart's Mutant Mod - Natural Selection.esp
-Mart's Mutant Mod - Tougher Traders.esp
-Mart's Mutant Mod - Hunting & Looting.esp
 
 \FOIP-MMM
 \'''''''''''''''''''''''''''''''''''''''
@@ -355,12 +407,24 @@ Mart's Mutant Mod - Hunting & Looting.esp
 Mart's Mutant Mod - FOOK2.esp
 Mart's Mutant Mod - FOOK2 - DIK.esp
 Mart's Mutant Mod - FWE Master Release.esp
+Mart's Mutant Mod - FWE with EVE.esp
 
 \FWE-FOOK Merger (Optional)
 \'''''''''''''''''''''''''''''''''''''''
 
 FOOK+FWE+PB+MMM.esp
 FOOK+FWE+EVE+UWWUT.esp
+
+\Kais Fixes and Tweaks for FWE
+\'''''''''''''''''''''''''''
+
+KH_FWE Hellfirefix.esp
+KH_FWE Fixes.esp
+KH_FWE Tweaks.esp
+KH_MMM override.esp
+KH_FWE Unlimited Followers(BrokenSteel).esp
+KH_223EX.esp
+KH_NoAmmoWeight.esp
 
 \Further compatibility mods.
 \'''''''''''''''''''''''''''
@@ -385,11 +449,12 @@ ChildrenEmpire Enemies.esp
 ? Requires 'ChildrenEmpire.esm'
 ChildrenEmpire Enemies - MMM.esp
 
-EZ_TempleOfCant.esp
-EZ_MoreVoices.esp
-EZ_Ammo_Restriction.esp
-
 MiniVault+.esp
+EZ_MoreVoices.esp
+EZ_TempleOfCant.esp
+EZ_Ammo_Restriction.esp
+EZ_citizens.esp
+BoSPatrols.esp
 
 \---------
 \Overrides
@@ -405,7 +470,8 @@ DUIF3Extras.esp
 choose_XP_FOSE.esp
 OneKeyArmor.esp
 Automated FOV.esp
-
+KHWeaponscanner.esp
+ShellRain.esp
 dD-Full Screen Blood.esp
 dD-Larger Blood.esp
 dD-Less Blood Time, Larger Blood.esp
@@ -442,8 +508,11 @@ RH_IronSights_Basic_VanillaPlugin.esp
 DK_BulletTime.esp
 FPS Grenade Hotkey.esp
 FPS Grenade Hotkey - Zeta addon.esp
+FPS Grenade Hotkey - FOOK2.esp
+FPS Grenade Hotkey - FOOK2 DIK.esp
 CombatEnhanced-Package v02.esp
 Backpedal.esp
+Sprint Mod.esp
 
 Fast_but_dramatic_VATS_0.9.esp
 playbackdelay_001.esp
@@ -466,6 +535,9 @@ The Groovatron_DLC_Pitt_Addon.esp
 \Semi-Final overrides and patches
 \--------------------------------
 \Just stuff recommended to be very, VERY late.
+
+KH_MMM override.esp
+? Requires 'Mart's Mutant Mod.esm', 'FO3 Wanderers Edition - Main File.esm'
 
 \--------------------
 \Respawn & day length
@@ -512,6 +584,7 @@ Choose your own hairstyle (load this last on FOMM).esp
 \Merged Patch
 \------------
 
+Mez's Merged Patch - FWE-WMK-MMM.esp
 FO3Edit Merged Patch.esp
 
 \------------
