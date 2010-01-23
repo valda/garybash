@@ -1534,6 +1534,8 @@ class MelSet:
             if _debug: print type,size
             readId = recType + '.' + type
             try:
+                eid = getattr(record,'eid','<<NO EID>>')
+                print '---Loading: %08X..%s..%s.%s..%d..' % (record.fid,eid,record.recType,type,size)
                 if type not in loaders:
                     raise ModError(ins.inName,_('Unexpected subrecord: ')+readId)
                 #--Hack to handle the fact that there can be two types of FULL in spell/ench/ingr records.
@@ -4014,24 +4016,44 @@ class MreWeap(MelRecord):
                   'corner0X','corner0Y','corner0Z',
                   'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
-        MelModel(),
-        MelString('ICON','iconPath'),
-        MelString('MICO','mico'),
+        MelGroup('model',
+                MelString('MODL','modPath'),
+                MelBase('MODT','modt_p'),
+                MelGroups('alternateTextures',
+                    MelBase('MODS','mods_p') #--Should be a struct. Maybe later.
+                ),
+                MelOptStruct('MODD','B','facegenModelFlag')),
+        MelGroup('icon',
+                 MelString('ICON','iconPath'),
+                 MelString('MICO','mico')
+                 ),
         MelFid('SCRI','script'),
         MelFid('EITM','effect'),
         MelFid('EAMT','enchantment'),
         MelFid('NAM0','ammo'),
-        MelFid('REPL','repairList'),
+        MelFidList('REPL','repairList'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),
         MelFid('BIPL','bipedModelList'),
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
         MelModel('shellCasingModel',2),
         MelModel('scopeModel',3),
-        MelOptStruct('ANAM','H','enchantPoints'),
-        MelStruct('DATA','I2f3IfH','weaponType','speed','reach',(_flags,'flags',0L),
-            'value','health','weight','damage'),
-        #--weaponType = 0: Blade 1Hand, 1: Blade 2Hand, 2: Blunt 1Hand, 3: Blunt 2Hand, 4: Staff, 5: Bow
+        MelFid('EFSD','scopeEffect'),
+        MelFid('NNAM','embeddedWeaponNode'),
+        MelFid('INAM','impactDataset'),
+        MelFid('WNAM','firstPersonModel'),
+        MelFid('SNAM','soundGunShot3D'),
+        MelFid('XNAM','soundGunShot2D'),
+        MelFid('NAM7','soundGunShot3DLooping'),
+        MelFid('TNAM','soundMeleeSwingGunNoAmmo'),
+        MelFid('NAM6','soundBlock'),
+        MelFid('UNAM','idle'),
+        MelFid('NAM9','equip'),
+        MelFid('NAM8','unequip'),
+        MelStruct('DATA','2IfHB','value','health','weight','damage','clipsize'),
+        MelBase('DNAM','_dnam'), #--Should be a struct. Maybe later.
+        MelBase('CRDT','_crdt'), #--Should be a struct. Maybe later.
+        MelBase('VNAM','_vnam','sountLevel'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
