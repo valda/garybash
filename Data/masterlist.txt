@@ -1,4 +1,4 @@
-\ Leading symbol code:
+S\ Leading symbol code:
 \
 \ \ A silent comment - will be ignored by the program.
 \ % A Bashed Patch suggestion for the mod above.
@@ -45,6 +45,7 @@ ChildrenEmpire.esm
 AngelRaces.esm
 EZCompanion.esm
 EZ_citizens.esm
+MiniVault+.esm
 
 \-------------
 \NPC face mods
@@ -92,6 +93,7 @@ Unofficial Fallout 3 Patch - Mothership Zeta.esp
 \'Library' mods. 
 
 DarNifiedUIF3.esp
+DarNifiedUIF3_FWE.esp
 ASU.esp
 CASM.esp
 
@@ -202,6 +204,7 @@ StealthArmorHelmLess.esp
 JM Stealth Suit.esp
 JM Stealth Suit - Vanilla.esp
 
+BoS_DX.esp
 
 \---------
 \Overhauls
@@ -421,7 +424,6 @@ FOOK+FWE+EVE+UWWUT.esp
 KH_FWE Hellfirefix.esp
 KH_FWE Fixes.esp
 KH_FWE Tweaks.esp
-KH_MMM override.esp
 KH_FWE Unlimited Followers(BrokenSteel).esp
 KH_223EX.esp
 KH_NoAmmoWeight.esp
@@ -475,7 +477,6 @@ ShellRain.esp
 dD-Full Screen Blood.esp
 dD-Larger Blood.esp
 dD-Less Blood Time, Larger Blood.esp
-dD-Less Blood Time.esp
 dD-Less Blood Time.esp
 dD-No Screen Blood.esp
 dD-More Gore.esp
