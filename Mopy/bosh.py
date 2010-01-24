@@ -2203,6 +2203,82 @@ class MreArmo(MelRecord):
         'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
         'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
     ))
+
+
+
+
+# Alternate Textures (MODS)
+# \x08\x00\x00\x00
+
+# \x04\x00\x00\x00Arms
+# \xa9\x0e\x00\x01
+# \x00\x00\x00\x00
+
+# \t\x00\x00\x00PipBoyOff
+# \xa9\x0e\x00\x01
+# \x01\x00\x00\x00
+
+# \x08\x00\x00\x00PipBoyOn
+# \xa9\x0e\x00\x01
+# \x05\x00\x00\x00
+
+# \t\x00\x00\x00PipBoyOff
+# \xa9\x0e\x00\x01
+# \x06\x00\x00\x00
+
+# \x08\x00\x00\x00PipBoyOn
+# \xa9\x0e\x00\x01
+# \x07\x00\x00\x00
+
+# \x08\x00\x00\x00PipBoyOn
+# \xa9\x0e\x00\x01
+# \x08\x00\x00\x00
+
+# \n\x00\x00\x00UpperBody\t
+# \xa9\x0e\x00\x01
+# \t\x00\x00\x00
+
+# \t\x00\x00\x00buttcover
+# \xa9\x0e\x00\x01
+# \n\x00\x00\x00
+
+    class MelAlternateTextures(MelBase):
+        """Represents a set of alternate textures element."""
+        def __init__(self,type,attr,default=None):
+            """Initialize."""
+            MelBase.__init__(self,type,attr,default)
+        def loadData(self,record,ins,type,size,readId):
+            """Reads data from ins into record attribute."""
+            value = ins.readString(size,readId)
+            record.__setattr__(self.attr,value)
+            if self._debug: print ' ',record.__getattribute__(self.attr)
+        def dumpData(self,record,out):
+            """Dumps data from record to outstream."""
+            value = record.__getattribute__(self.attr)
+            if value != None:
+                out.packSub0(self.subType,value)
+
+    class MelArmoModel(MelGroup):
+        """Represents a model record."""
+        typeSets = (
+            ('MODL','MODT','MODS','MODD'),
+            ('MOD2','MO2T','MO2S','MO2D'),
+            ('MOD3','MO3T','MO3S','MOSD'),
+            ('MOD4','MO4T','MO4S','MO4D'),)
+        def __init__(self,attr='model',index=0):
+            """Initialize. Index is 0,2,3,4 for corresponding type id."""
+            types = self.typeSets[(0,index-1)[index>0]]
+            MelGroup.__init__(self,attr,
+                              MelString(types[0],'modPath'),
+                              MelBase(types[1],'modt_p'), ###Texture Files Hashes, Byte Array
+                              MelStructs(types[2],'=B2I','alternateTextures',
+                                         '3dName',(FID,'newTexture'),'3dIndex'), # Alternate Textures
+                              MelOptStruct(types[3],'B','facegenModelFlags'),)
+
+
+
+
+
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -2211,19 +2287,18 @@ class MreArmo(MelRecord):
         MelString('FULL','full'),
         MelFid('SCRI','script'),
         MelFid('EITM','objectEffect'),
-        MelFid('ENAM','enchantment'),
-        MelOptStruct('ANAM','H','enchantPoints'),
-        MelStruct('BMDT','=2I',(_flags,'flags',0L),(_generalFlags,'generalFlags',0L)),
-        MelModel('maleBody',0),
-        MelModel('maleWorld',2),
+        MelStruct('BMDT','=2I',(_flags,'bipedFlags',0L),(_generalFlags,'generalFlags',0L)),
+        MelArmoModel('maleBody'),
+        MelArmoModel('maleWorld',2),
         MelString('ICON','maleIconPath'),
         MelString('MICO','maleIcon'),
-        MelModel('femaleBody',3),
-        MelModel('femaleWorld',4),
+        MelArmoModel('femaleBody',3),
+        MelArmoModel('femaleWorld',4),
         MelString('ICO2','femaleIconPath'),
+        MelString('MIC2','femaleIcon'),
         MelString('BMCT','ragdollConstraintTemplate'),
-        MelFid('REPL','repairList'),
-        MelFid('BIPL','bipedModelList'),
+        MelFidList('REPL','repairList'),
+        MelFidList('BIPL','bipedModelList'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
@@ -4014,17 +4089,9 @@ class MreWeap(MelRecord):
                   'corner0X','corner0Y','corner0Z',
                   'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
-        MelGroup('model',
-                MelString('MODL','modPath'),
-                MelBase('MODT','modt_p'),
-                MelGroups('alternateTextures',
-                    MelBase('MODS','mods_p') #--Should be a struct. Maybe later.
-                ),
-                MelOptStruct('MODD','B','facegenModelFlag')),
-        MelGroup('icon',
-                 MelString('ICON','iconPath'),
-                 MelString('MICO','mico')
-                 ),
+        MelModel('model'),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
         MelFid('SCRI','script'),
         MelFid('EITM','effect'),
         MelFid('EAMT','enchantment'),
@@ -4037,6 +4104,7 @@ class MreWeap(MelRecord):
         MelModel('shellCasingModel',2),
         MelModel('scopeModel',3),
         MelFid('EFSD','scopeEffect'),
+        MelModel('worldModel',4),
         MelFid('NNAM','embeddedWeaponNode'),
         MelFid('INAM','impactDataset'),
         MelFid('WNAM','firstPersonModel'),
@@ -4119,8 +4187,8 @@ class MreTxst(MelRecord):
         MelString('TX03','growMap'),
         MelString('TX04','parallaxMap'),
         MelString('TX05','environmentMap'),
-        MelStruct('DODT','H', 'decalData'),
-        MelStruct('DNAM','H', 'flags'),
+        MelBase('DODT','decalData'), #--Should be a struct. Maybe later.
+        MelStruct('DNAM','H','flags'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -13552,15 +13620,17 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreWeap, MreTree):
             recAttrs_class[recClass] = ('iconPath','model')
         for recClass in (MreArmo, MreClot):
-            recAttrs_class[recClass] = ('maleBody','maleWorld','maleIconPath','femaleBody','femaleWorld','femaleIconPath','flags')
+            recAttrs_class[recClass] = ('maleBody','maleWorld','maleIconPath','maleIcon','femaleBody','femaleWorld','femaleIconPath','femaleIcon','flags')
         for recClass in (MreCrea,):
             recAttrs_class[recClass] = ('model','bodyParts','nift_p','bloodSprayPath','bloodDecalPath')
         for recClass in (MreMgef,):
             recAttrs_class[recClass] = ('iconPath','model','effectShader','enchantEffect','light')
         for recClass in (MreEfsh,):
             recAttrs_class[recClass] = ('particleTexture','fillTexture')
+        for recClass in (MreTxst,):
+            recAttrs_class[recClass] = ('baseImage','normalMap','environmentMapMask','growMap','parallaxMap','environmentMap','decalData','flags')
         #--Needs Longs
-        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH'))
+        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH','TXST'))
 
     def initData(self,progress):
         """Get graphics from source files."""
@@ -13629,7 +13699,7 @@ class GraphicsPatcher(ImportPatcher):
             type = recClass.classType
             if type not in modFile.tops: continue
             type_count[type] = 0
-            #deprint(recClass,type,type_count[type])
+            deprint(recClass,type,type_count[type])
             for record in modFile.tops[type].records:
                 fid = record.fid
                 if fid not in id_data: continue
