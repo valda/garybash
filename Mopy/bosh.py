@@ -1610,6 +1610,53 @@ class MelBipedFlags(Flags):
         if newNames: names.update(newNames)
         Flags.__init__(self,default,names)
 
+# Alternate textures
+#------------------------------------------------------------------------------
+class MelAlternateTextures(MelBase):
+    """Represents a set of alternate textures element."""
+    def __init__(self,type,attr,default=None):
+        """Initialize."""
+        MelBase.__init__(self,type,attr,default)
+        self._debug = False
+    def hasFids(self,formElements):
+        """Include self if has fids."""
+        formElements.add(self)
+    def loadData(self,record,ins,type,size,readId):
+        """Reads data from ins into record attribute."""
+        textures = []
+        numTextures, = struct.unpack('I',ins.read(4,readId))
+        for count in range(numTextures):
+            size, = struct.unpack('I',ins.read(4,readId))
+            name = ins.readString(size,readId)
+            fid = ins.unpackRef(readId)
+            index, = struct.unpack('I',ins.read(4,readId))
+            textures.append((name,fid,index))
+        record.__setattr__(self.attr,textures)
+        if self._debug: print ' ',record.__getattribute__(self.attr)
+    def dumpData(self,record,out):
+        """Dumps data from record to outstream."""
+        textures = record.__getattribute__(self.attr)
+        if not textures: return
+        data = ''
+        data += struct.pack('=I',len(textures))
+        for name,fid,index in textures:
+            data += struct.pack('=I',len(name))
+            data += name
+            data += struct.pack('=I',fid)
+            data += struct.pack('=I',index)
+        out.packSub(self.subType,data)
+    def mapFids(self,record,function,save=False):
+        """Applies function to fids. If save is true, then fid is set
+        to result of function."""
+        results = []
+        targets = record.__getattribute__(self.attr)
+        if not targets: return
+        for name,fid,index in targets:
+            result = function(fid)
+            results.append((name,result,index))
+        if save:
+            record.__setattr__(self.attr,results)
+
 # Mod Records 0 ---------------------------------------------------------------
 #------------------------------------------------------------------------------
 class MreSubrecord:
@@ -2204,60 +2251,6 @@ class MreArmo(MelRecord):
         'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
     ))
 
-
-
-
-# Alternate Textures (MODS)
-# \x08\x00\x00\x00
-
-# \x04\x00\x00\x00Arms
-# \xa9\x0e\x00\x01
-# \x00\x00\x00\x00
-
-# \t\x00\x00\x00PipBoyOff
-# \xa9\x0e\x00\x01
-# \x01\x00\x00\x00
-
-# \x08\x00\x00\x00PipBoyOn
-# \xa9\x0e\x00\x01
-# \x05\x00\x00\x00
-
-# \t\x00\x00\x00PipBoyOff
-# \xa9\x0e\x00\x01
-# \x06\x00\x00\x00
-
-# \x08\x00\x00\x00PipBoyOn
-# \xa9\x0e\x00\x01
-# \x07\x00\x00\x00
-
-# \x08\x00\x00\x00PipBoyOn
-# \xa9\x0e\x00\x01
-# \x08\x00\x00\x00
-
-# \n\x00\x00\x00UpperBody\t
-# \xa9\x0e\x00\x01
-# \t\x00\x00\x00
-
-# \t\x00\x00\x00buttcover
-# \xa9\x0e\x00\x01
-# \n\x00\x00\x00
-
-    class MelAlternateTextures(MelBase):
-        """Represents a set of alternate textures element."""
-        def __init__(self,type,attr,default=None):
-            """Initialize."""
-            MelBase.__init__(self,type,attr,default)
-        def loadData(self,record,ins,type,size,readId):
-            """Reads data from ins into record attribute."""
-            value = ins.readString(size,readId)
-            record.__setattr__(self.attr,value)
-            if self._debug: print ' ',record.__getattribute__(self.attr)
-        def dumpData(self,record,out):
-            """Dumps data from record to outstream."""
-            value = record.__getattribute__(self.attr)
-            if value != None:
-                out.packSub0(self.subType,value)
-
     class MelArmoModel(MelGroup):
         """Represents a model record."""
         typeSets = (
@@ -2271,13 +2264,8 @@ class MreArmo(MelRecord):
             MelGroup.__init__(self,attr,
                               MelString(types[0],'modPath'),
                               MelBase(types[1],'modt_p'), ###Texture Files Hashes, Byte Array
-                              MelStructs(types[2],'=B2I','alternateTextures',
-                                         '3dName',(FID,'newTexture'),'3dIndex'), # Alternate Textures
+                              MelAlternateTextures(types[2],'alternateTextures'),
                               MelOptStruct(types[3],'B','facegenModelFlags'),)
-
-
-
-
 
     melSet = MelSet(
         MelString('EDID','eid'),
