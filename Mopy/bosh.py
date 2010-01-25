@@ -1534,8 +1534,6 @@ class MelSet:
             if _debug: print type,size
             readId = recType + '.' + type
             try:
-                eid = getattr(record,'eid','<<NO EID>>')
-                print '---Loading: %08X..%s..%s.%s..%d..' % (record.fid,eid,record.recType,type,size)
                 if type not in loaders:
                     raise ModError(ins.inName,_('Unexpected subrecord: ')+readId)
                 #--Hack to handle the fact that there can be two types of FULL in spell/ench/ingr records.
