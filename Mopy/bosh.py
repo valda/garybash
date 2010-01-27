@@ -3939,6 +3939,9 @@ class MreStat(MelRecord):
     classType = 'STAT'
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelModel(),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
