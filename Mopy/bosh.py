@@ -2171,10 +2171,48 @@ class MreActi(MelRecord):
     classType = 'ACTI'
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelModel(),
         MelFid('SCRI','script'),
-        MelFid('SNAM','sound'),
+        MelGroup('destructable',
+                 MelBase('DEST','header'),
+                 MelStruct('DEST','IhH','health','count','flags'),
+                 MelGroups('stages',
+                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
+                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
+                           MelString('DMDL','model'),
+                           # DMDT (000740A9 MQ11JeffersonVertibirdLandingCONTROLTriger)
+                           # \xeb\xec\x0ev\xb8@n;kl\x0ev\xbd@n;
+                           # se\x11t
+                           # )\x81mz
+                           # \xee
+                           # \xdf\x0cv\xab\xb9\xdb\xe6n_\x0cv\xb0\xb9\xdb\xe6
+                           # se\x11t
+                           # )\x81mz
+                           # \xf3
+                           # \xdf\x0cv\xab\xb9\xdb\xe6s_\x0cv\xb0\xb9\xdb\xe6
+                           # se\x11t
+                           # )\x81mz
+                           # \xeb\xec\x0ev9P\xec;kl\x0ev>P\xec;se\x11t)\x81mz
+                           # \xee
+                           # \xdf\x0cv\xac\xb9\xdb\xe6n_\x0cv\xb1\xb9\xdb\xe6
+                           # se\x11t
+                           # )\x81mz
+                           # \xf3
+                           # \xdf\x0cv\xac\xb9\xdb\xe6s_\x0cv\xb1\xb9\xdb\xe6
+                           # se\x11t
+                           # )\x81mz
+                           MelBase('DMDT','dmdt'), #--Should be a struct. Maybe later.
+                           MelBase('DSTF','footer'),
+                           ),
+                 ),
+        MelFid('SNAM','soundLooping'),
+        MelFid('VNAM','soundActivation'),
+        MelFid('RNAM','radioStation'),
+        MelFid('WNAM','waterType'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -4145,10 +4183,14 @@ class MreWeap(MelRecord):
         MelFid('NAM0','ammo'),
         MelGroup('destructable',
                  MelBase('DEST','header'),
-                 MelStructs('DSTD','=4B4I','stages','health','index','damageStage',
-                            'flags','selfDamagePerSecond',(FID,'explosion',None),
-                            (FID,'debris',None),'debrisCount'),
-                 MelBase('DSTF','footer'),
+                 MelStruct('DEST','IhH','health','count','flags'),
+                 MelGroups('stages',
+                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
+                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
+                           MelString('DMDL','model'),
+                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
+                           MelBase('DSTF','footer'),
+                           ),
                  ),
         MelFid('REPL','repairList'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),
