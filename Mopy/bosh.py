@@ -4074,6 +4074,35 @@ class MreWeap(MelRecord):
         'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
         'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
     ))
+    _flags1 = Flags(0L,Flags.getNames(
+            'ignoresNormalWeaponResistance',
+            'isAutomatic',
+            'hasScope',
+            'cantDrop',
+            'hideBackpack',
+            'embeddedWeapon',
+            'dontUse1stPersonIsAnimations',
+            'nonPlayable',
+        ))
+    _flags2 = Flags(0L,Flags.getNames(
+            'playerOnly',
+            'npcsUseAmmo',
+            'noJamAfterReload',
+            'overrideActionPoint',
+            'minorCrime',
+            'rangeFixed',
+            'notUseInNormalCombat',
+            'overrideDamageToWeaponMult',
+            'dontUse3rdPersonIsAnimations',
+            'shortBurst',
+            'RumbleAlternate',
+            'longBurst',
+            'unknown12','unknown13','unknown14','unknown15',
+            'unknown16','unknown17','unknown18','unknown19',
+            'unknown20','unknown21','unknown22','unknown23',
+            'unknown24','unknown25','unknown26','unknown27',
+            'unknown28','unknown29','unknown30','unknown31',
+        ))
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -4085,9 +4114,16 @@ class MreWeap(MelRecord):
         MelString('MICO','smallIconPath'),
         MelFid('SCRI','script'),
         MelFid('EITM','effect'),
-        MelFid('EAMT','enchantment'),
+        MelOptStruct('EAMT','H', 'enchantment'),
         MelFid('NAM0','ammo'),
-        MelFidList('REPL','repairList'),
+        MelGroup('destructable',
+                 MelBase('DEST','header'),
+                 MelStructs('DSTD','=4B4I','stages','health','index','damageStage',
+                            (_flags,'flags',0L),'selfDamagePerSecond',(FID,'explosion',None),
+                            (FID,'debris',None),'debrisCount'),
+                 MelBase('DSTF','footer'),
+                 ),
+        MelFid('REPL','repairList'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),
         MelFid('BIPL','bipedModelList'),
         MelFid('YNAM','soundPickUp'),
@@ -4096,7 +4132,7 @@ class MreWeap(MelRecord):
         MelModel('scopeModel',3),
         MelFid('EFSD','scopeEffect'),
         MelModel('worldModel',4),
-        MelFid('NNAM','embeddedWeaponNode'),
+        MelString('NNAM','embeddedWeaponNode'),
         MelFid('INAM','impactDataset'),
         MelFid('WNAM','firstPersonModel'),
         MelFid('SNAM','soundGunShot3D'),
@@ -4108,8 +4144,15 @@ class MreWeap(MelRecord):
         MelFid('NAM9','equip'),
         MelFid('NAM8','unequip'),
         MelStruct('DATA','2IfHB','value','health','weight','damage','clipsize'),
-        MelBase('DNAM','_dnam'), #--Should be a struct. Maybe later.
-        MelBase('CRDT','_crdt'), #--Should be a struct. Maybe later.
+        MelStruct('DNAM','HffBBIBffffIIBIBffBIfffffffffffHBffHfff',
+                  'animationType','animationMultiplier','reach',(_flags1,'flags1',0L),
+                  'gripAnimation','ammoUse','reloadAnimation','minSpread','spread','unknown','sightFov',(FID,'projectile',None),
+                  'baseVatsToHitChance','attackAnimation','projectileCount','embeddedWeaponActorValue','minRange','maxRange',
+                  'onHit',(_flags2,'flags2',0L),'animationAttackMultiplier','fireRate','overrideActionPoint',
+                  'rumbleLeftMotorStrength','rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult',
+                  'attackShotsPerSec','reloadTime','jamTime','aimArc','skill','rumblePattern','rambleWavelangth','limbDmgMult',
+                  'resistType','sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax'),
+        MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_flags,'flags',0L),(FID,'effect',None)),
         MelBase('VNAM','_vnam','sountLevel'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
@@ -13609,7 +13652,7 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat):
             recAttrs_class[recClass] = ('model',)
         for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreWeap, MreTree):
-            recAttrs_class[recClass] = ('iconPath','model')
+            recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel')
         for recClass in (MreArmo, MreClot):
             recAttrs_class[recClass] = ('maleBody','maleWorld','maleIconPath','maleIcon','femaleBody','femaleWorld','femaleIconPath','femaleIcon','flags')
         for recClass in (MreCrea,):
