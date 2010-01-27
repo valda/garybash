@@ -208,6 +208,12 @@ BoS_DX.esp
 % {{BASH:Graphics}}
 Outcast DX.esp
 % {{BASH:Graphics}}
+GaussCompleteBeta.esp
+% {{BASH:Graphics}}
+Tribal_DX.esp
+% {{BASH:Graphics}}
+WinterizedT51bDX.esp
+% {{BASH:Graphics}}
 
 \---------
 \Overhauls
