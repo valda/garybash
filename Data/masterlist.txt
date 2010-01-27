@@ -45,7 +45,7 @@ ChildrenEmpire.esm
 AngelRaces.esm
 EZCompanion.esm
 EZ_citizens.esm
-MiniVault+.esm
+MiniVault+Race.esm
 
 \-------------
 \NPC face mods
@@ -206,6 +206,8 @@ JM Stealth Suit - Vanilla.esp
 
 BoS_DX.esp
 % {{BASH:Graphics}}
+Outcast DX.esp
+% {{BASH:Graphics}}
 
 \---------
 \Overhauls
@@ -362,6 +364,7 @@ WeaponModKits - BrokenSteel.esp
 WeaponModKits - PointLookout.esp
 WeaponModKits - Zeta.esp
 WMKAA12Shotgun.esp
+% {{BASH:Graphics}}
 
 \EVE (Energy Visuals Enhanced)
 \'''''''''''''''''''''''''''''''''''''''
