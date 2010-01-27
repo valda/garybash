@@ -4074,7 +4074,7 @@ class MreWeap(MelRecord):
         'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
         'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
     ))
-    _flags1 = Flags(0L,Flags.getNames(
+    _dflags1 = Flags(0L,Flags.getNames(
             'ignoresNormalWeaponResistance',
             'isAutomatic',
             'hasScope',
@@ -4084,7 +4084,7 @@ class MreWeap(MelRecord):
             'dontUse1stPersonIsAnimations',
             'nonPlayable',
         ))
-    _flags2 = Flags(0L,Flags.getNames(
+    _dflags2 = Flags(0L,Flags.getNames(
             'playerOnly',
             'npcsUseAmmo',
             'noJamAfterReload',
@@ -4103,6 +4103,33 @@ class MreWeap(MelRecord):
             'unknown24','unknown25','unknown26','unknown27',
             'unknown28','unknown29','unknown30','unknown31',
         ))
+    _cflags = Flags(0L,Flags.getNames(
+            'onDeath',
+            'unknown1','unknown2','unknown3','unknown4',
+            'unknown5','unknown6','unknown7',
+        ))
+
+    class MelWeapDnam(MelStruct):
+        """Handle older trucated DNAM for WEAP subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 136:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 124:
+                #--Else 124 byte record (skips sightUsage, semiAutomaticFireDelayMin and semiAutomaticFireDelayMax...
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffI',size,readId)
+            elif size == 120:
+                #--Else 120 byte record (skips resistType, sightUsage, semiAutomaticFireDelayMin and semiAutomaticFireDelayMax...
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIff',size,readId)
+            else:
+                raise "Unexpected size encountered for WEAP:DNAM subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
+
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -4119,7 +4146,7 @@ class MreWeap(MelRecord):
         MelGroup('destructable',
                  MelBase('DEST','header'),
                  MelStructs('DSTD','=4B4I','stages','health','index','damageStage',
-                            (_flags,'flags',0L),'selfDamagePerSecond',(FID,'explosion',None),
+                            'flags','selfDamagePerSecond',(FID,'explosion',None),
                             (FID,'debris',None),'debrisCount'),
                  MelBase('DSTF','footer'),
                  ),
@@ -4144,15 +4171,16 @@ class MreWeap(MelRecord):
         MelFid('NAM9','equip'),
         MelFid('NAM8','unequip'),
         MelStruct('DATA','2IfHB','value','health','weight','damage','clipsize'),
-        MelStruct('DNAM','HffBBIBffffIIBIBffBIfffffffffffHBffHfff',
-                  'animationType','animationMultiplier','reach',(_flags1,'flags1',0L),
-                  'gripAnimation','ammoUse','reloadAnimation','minSpread','spread','unknown','sightFov',(FID,'projectile',None),
-                  'baseVatsToHitChance','attackAnimation','projectileCount','embeddedWeaponActorValue','minRange','maxRange',
-                  'onHit',(_flags2,'flags2',0L),'animationAttackMultiplier','fireRate','overrideActionPoint',
-                  'rumbleLeftMotorStrength','rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult',
-                  'attackShotsPerSec','reloadTime','jamTime','aimArc','skill','rumblePattern','rambleWavelangth','limbDmgMult',
-                  'resistType','sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax'),
-        MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_flags,'flags',0L),(FID,'effect',None)),
+        MelWeapDnam('DNAM','Iff4B5fI4BffII11fIIffIfff',
+                    'animationType','animationMultiplier','reach',(_dflags1,'dnamFlags1',0L),
+                    'gripAnimation','ammoUse','reloadAnimation','minSpread','spread',
+                    'unknown','sightFov','unknown2',(FID,'projectile',None),
+                    'baseVatsToHitChance','attackAnimation','projectileCount','embeddedWeaponActorValue','minRange','maxRange',
+                    'onHit',(_dflags2,'dnamFlags2',0L),'animationAttackMultiplier','fireRate','overrideActionPoint',
+                    'rumbleLeftMotorStrength','rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult',
+                    'attackShotsPerSec','reloadTime','jamTime','aimArc','skill','rumblePattern','rambleWavelangth','limbDmgMult',
+                    'resistType','sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax'),
+        MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',None)),
         MelBase('VNAM','_vnam','sountLevel'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
@@ -13651,8 +13679,10 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('iconPath',)
         for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat):
             recAttrs_class[recClass] = ('model',)
-        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreWeap, MreTree):
-            recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel')
+        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreTree):
+            recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model')
+        for recClass in (MreWeap,):
+            recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel','animationType','gripAnimation','reloadAnimation')
         for recClass in (MreArmo, MreClot):
             recAttrs_class[recClass] = ('maleBody','maleWorld','maleIconPath','maleIcon','femaleBody','femaleWorld','femaleIconPath','femaleIcon','flags')
         for recClass in (MreCrea,):
