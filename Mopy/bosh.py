@@ -1407,7 +1407,7 @@ class MelModel(MelGroup):
             MelString(types[0],'modPath'),
             MelBase(types[1],'modb_p'), ### Bound Radius, Float
             MelBase(types[2],'modt_p'), ###Texture Files Hashes, Byte Array
-            MelBase(types[3],'mods_p'),
+            MelAlternateTextures(types[3],'alternateTextures'),
             MelBase(types[4],'modd_p'),)
 
     def debug(self,on=True):
@@ -2251,21 +2251,21 @@ class MreArmo(MelRecord):
         'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
     ))
 
-    class MelArmoModel(MelGroup):
-        """Represents a model record."""
-        typeSets = (
-            ('MODL','MODT','MODS','MODD'),
-            ('MOD2','MO2T','MO2S','MO2D'),
-            ('MOD3','MO3T','MO3S','MOSD'),
-            ('MOD4','MO4T','MO4S','MO4D'),)
-        def __init__(self,attr='model',index=0):
-            """Initialize. Index is 0,2,3,4 for corresponding type id."""
-            types = self.typeSets[(0,index-1)[index>0]]
-            MelGroup.__init__(self,attr,
-                              MelString(types[0],'modPath'),
-                              MelBase(types[1],'modt_p'), ###Texture Files Hashes, Byte Array
-                              MelAlternateTextures(types[2],'alternateTextures'),
-                              MelOptStruct(types[3],'B','facegenModelFlags'),)
+    # class MelArmoModel(MelGroup):
+    #     """Represents a model record."""
+    #     typeSets = (
+    #         ('MODL','MODT','MODS','MODD'),
+    #         ('MOD2','MO2T','MO2S','MO2D'),
+    #         ('MOD3','MO3T','MO3S','MOSD'),
+    #         ('MOD4','MO4T','MO4S','MO4D'),)
+    #     def __init__(self,attr='model',index=0):
+    #         """Initialize. Index is 0,2,3,4 for corresponding type id."""
+    #         types = self.typeSets[(0,index-1)[index>0]]
+    #         MelGroup.__init__(self,attr,
+    #                           MelString(types[0],'modPath'),
+    #                           MelBase(types[1],'modt_p'), ###Texture Files Hashes, Byte Array
+    #                           MelAlternateTextures(types[2],'alternateTextures'),
+    #                           MelOptStruct(types[3],'B','facegenModelFlags'),)
 
     melSet = MelSet(
         MelString('EDID','eid'),
@@ -2276,17 +2276,17 @@ class MreArmo(MelRecord):
         MelFid('SCRI','script'),
         MelFid('EITM','objectEffect'),
         MelStruct('BMDT','=2I',(_flags,'bipedFlags',0L),(_generalFlags,'generalFlags',0L)),
-        MelArmoModel('maleBody'),
-        MelArmoModel('maleWorld',2),
+        MelModel('maleBody'),
+        MelModel('maleWorld',2),
         MelString('ICON','maleIconPath'),
         MelString('MICO','maleIcon'),
-        MelArmoModel('femaleBody',3),
-        MelArmoModel('femaleWorld',4),
+        MelModel('femaleBody',3),
+        MelModel('femaleWorld',4),
         MelString('ICO2','femaleIconPath'),
         MelString('MIC2','femaleIcon'),
         MelString('BMCT','ragdollConstraintTemplate'),
-        MelFidList('REPL','repairList'),
-        MelFidList('BIPL','bipedModelList'),
+        MelFid('REPL','repairList'),
+        MelFid('BIPL','bipedModelList'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
