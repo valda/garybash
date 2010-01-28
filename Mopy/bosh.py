@@ -1997,24 +1997,37 @@ class MreLeveledList(MelRecord):
                 record.flags.calcFromAllLevels = True
                 record.chanceNone &= 127
 
-    class MelLevListLvlo(MelStructs):
+    class MelLevListLvlo(MelStruct):
         """Subclass to support alternate format."""
         def loadData(self,record,ins,type,size,readId):
-            target = self.getDefault()
-            record.__getattribute__(self.attr).append(target)
-            target.__slots__ = self.attrs
-            format,attrs = ((self.format,self.attrs),('iI',('level','listId'),))[size==8]####might be h2sI
+            if size == 12:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 8:
+                format,attrs = ('iI',('level','listId'))####might be h2sI
+            else:
+                raise "Unexpected size encountered for LVLO subrecord: %s" % size
             unpacked = ins.unpack(format,size,readId)
-            setter = target.__setattr__
-            map(setter,attrs,unpacked)
+            setter = record.__setattr__
+            for attr,value,action in zip(attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
     #--Element Set
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelLevListLvld('LVLD','B','chanceNone'),
         MelStruct('LVLF','B',(_flags,'flags',0L)),
         MelFid('SCRI','script'),
         MelFid('TNAM','template'),
-        MelLevListLvlo('LVLO','h2sIh2s','entries','level',('unused1',null2),(FID,'listId',None),('count',1),('unused2',null2)),
+        MelFid('LVLG','global'),
+        MelGroups('entries',
+                  MelLevListLvlo('LVLO','h2sIh2s','level',('unused1',null2),(FID,'listId',None),('count',1),('unused2',null2)),
+                  MelOptStruct('COED','IIf',(FID,'owner',None),(FID,'glob',None),('condition',1.0)),
+                  ),
         MelNull('DATA'),
         )
     __slots__ = (MelRecord.__slots__ + melSet.getSlotsUsed() +
