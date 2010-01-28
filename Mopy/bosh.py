@@ -4314,7 +4314,7 @@ class MreWthr(MelRecord):
 #------------------------------------------------------------------------------
 class MreTxst(MelRecord):
     """Texture set record."""
-    classType = 'TXST' 
+    classType = 'TXST'
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -4334,11 +4334,21 @@ class MreTxst(MelRecord):
 #------------------------------------------------------------------------------
 class MreMicn(MelRecord):
     """Menu icon record."""
-    classType = 'MICN' 
+    classType = 'MICN'
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('ICON','icon'),
         MelBase('MICO','mico'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreFlst(MelRecord):
+    """FormID list record."""
+    classType = 'FLST'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelFids('LNAM','fids'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -4351,7 +4361,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreLvlc, MreLvli, MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreRefr,
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
-    MreDial, MreInfo, MreTxst, MreMicn
+    MreDial, MreInfo, MreTxst, MreMicn, MreFlst
     ))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
@@ -12974,7 +12984,7 @@ class PatchFile(ModFile):
         MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreScpt, MreSgst,
         MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr,
         MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp, MreSkil,
-        MreTxst, MreMicn)
+        MreTxst, MreMicn, MreFlst)
 
     @staticmethod
     def modIsMergeable(modInfo,progress=None):
