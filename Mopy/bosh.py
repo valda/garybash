@@ -2821,11 +2821,33 @@ class MreFact(MelRecord):
     """Faction record."""
     classType = 'FACT'
     _flags = Flags(0L,Flags.getNames('hiddenFromPC','evil','specialCombat'))
+
+    class MelFactData(MelStruct):
+        """Handle older trucated DATA for FACT subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 4:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 2:
+                #--Else 2 byte record
+                unpacked = ins.unpack('2B',size,readId)
+            elif size == 1:
+                #--Else 1 byte record
+                unpacked = ins.unpack('B',size,readId)
+            else:
+                raise "Unexpected size encountered for FACT:DATA subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
+
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FULL','full'),
         MelStructs('XNAM','I2i','relations',(FID,'faction'),'mod','groupCombatReaction'),
-        MelStruct('DATA','2BH',(_flags,'flags',0L),'flags2','unknown'),
+        MelFactData('DATA','2BH',(_flags,'flags',0L),'flags2','unknown'),
         MelOptStruct('CNAM','f',('crimeGoldMultiplier',None)),
         MelGroups('ranks',
             MelStruct('RNAM','i','rank'),
