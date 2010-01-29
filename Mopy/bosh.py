@@ -5938,8 +5938,10 @@ class SaveHeader:
             #--Image Data
             ssData = ins.read(3*ssWidth*ssHeight)
             self.image = (ssWidth,ssHeight,ssData)
-            unknown,delim = struct.unpack('Ic',ins.read(5))
             #--Masters
+            unknown,masterListSize = struct.unpack('=BI',ins.read(5))
+            if unknown != 0x15:
+                raise "%s: Unknown byte is not 0x15." % path
             del self.masters[:]
             numMasters,delim = struct.unpack('Bc',ins.read(2))
             for count in range(numMasters):
@@ -5973,8 +5975,10 @@ class SaveHeader:
         out.write(ins.read(size-15))
         #--Image Data
         out.write(ins.read(3*ssWidth*ssHeight))
-        out.write(ins.read(5))
         #--Skip old masters
+        unknown,oldMasterListSize = unpack('=BI',5)
+        if unknown != 0x15:
+            raise "%s: Unknown byte is not 0x15." % path
         numMasters,delim = unpack('Bc',2)
         oldMasters = []
         for count in range(numMasters):
@@ -5982,6 +5986,10 @@ class SaveHeader:
             oldMasters.append(GPath(ins.read(size)))
             delim, = unpack('c',1)
         #--Write new masters
+        newMasterListSize = 2 + (4 * len(self.masters))
+        for master in self.masters:
+            newMasterListSize += len(master)
+        pack('=BI',unknown,newMasterListSize)
         pack('Bc',len(self.masters),'|')
         for master in self.masters:
             pack('Hc',len(master),'|')
