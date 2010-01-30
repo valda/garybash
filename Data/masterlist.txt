@@ -34,10 +34,13 @@ StreetLights.esm
 CRAFT.esm
 CALIBR.esm
 Mart's Mutant Mod.esm
+% {{BASH:Invent,Relations}}
 FOOK2 - Main.esm
+% {{BASH:Invent,Stats,Relations}}
 FOOK2 - [DIK] DLC Improvement Kit.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
 FO3 Wanderers Edition - Main File.esm
+% {{BASH:Invent,Stats,Relations}}
 LingsFinerThings.esm
 RH_IRONSIGHTS.esm
 EnhancedChildren.esm
