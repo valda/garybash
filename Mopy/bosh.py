@@ -2962,9 +2962,23 @@ class MreFurn(MelRecord):
     #--E.g., whether it's a bed, and which of the bed entry/exit animations are available
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelModel(),
         MelFid('SCRI','script'),
+        MelGroup('destructable',
+                 MelBase('DEST','header'),
+                 MelStruct('DEST','IhH','health','count','flags'),
+                 MelGroups('stages',
+                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
+                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
+                           MelString('DMDL','model'),
+                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
+                           MelBase('DSTF','footer'),
+                           ),
+                 ),
         MelStruct('MNAM','I',(_flags,'activeMarkers',0L)), ####ByteArray
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
