@@ -2234,14 +2234,44 @@ class MreAlch(MelRecord,MreHasEffects):
     """ALCH (potion) record."""
     classType = 'ALCH'
     _flags = Flags(0L,Flags.getNames('autoCalc','isFood'))
+    _etype = Flags(0L,Flags.getNames(
+        'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
+        'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
+    ))
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelFull0(),
         MelModel(),
-        MelString('ICON','iconPath'),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
         MelFid('SCRI','script'),
+        MelGroup('destructable',
+                 MelBase('DEST','header'),
+                 MelStruct('DEST','IhH','health','count','flags'),
+                 MelGroups('stages',
+                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
+                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
+                           MelString('DMDL','model'),
+                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
+                           MelBase('DSTF','footer'),
+                           ),
+                 ),
+        MelFid('YNAM','soundPickUp'),
+        MelFid('ZNAM','soundDrop'),
+        MelStruct('ETYP','I',(_etype,'etype',0L)),
         MelStruct('DATA','f','weight'),
-        MelStruct('ENIT','iB3s','value',(_flags,'flags',0L),('unused1',null3)),
+        # 0007C10D..BloatflyMeat..ALCH.ENIT..20..
+        # \x04\x00\x00\x00 value i
+        # \x03 flags B
+        # \xcd\xcd\xcd unused1 3s
+        # \x00\x00\x00\x00 withdrawalEffect fid
+        # \x00\x00\x00\x00 addictionChance f
+        # \x8d\xd4\x02\x00 soundConsume fid
+        MelStruct('ENIT','iB3sIfI','value',(_flags,'flags',0L),('unused1',null3),
+                  (FID,'withdrawalEffect',None),'addictionChance',(FID,'soundConsume',None)),
         MelEffects(),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
