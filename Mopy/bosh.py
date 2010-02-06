@@ -4015,24 +4015,55 @@ class MreSoun(MelRecord):
     classType = 'SOUN'
     _flags = Flags(0L,Flags.getNames('randomFrequencyShift', 'playAtRandom',
         'environmentIgnored', 'randomLocation', 'loop','menuSound', '2d', '360LFE'))
-    class MelSounSndd(MelStruct):
-        """SNDD is an older version of SNDX. Allow it to read in, but not set defaults or write."""
+    class MelSounSndx(MelStruct):
+        """SNDX is a reduced version of SNDD. Allow it to read in, but not set defaults or write."""
         def loadData(self,record,ins,type,size,readId):
             MelStruct.loadData(self,record,ins,type,size,readId)
-            record.staticAtten = 0
-            record.stopTime = 0
-            record.startTime = 0
+            record.point0 = 0
+            record.point1 = 0
+            record.point2 = 0
+            record.point3 = 0
+            record.point4 = 0
+            record.reverb = 0
+            record.priority = 0
+            record.unknown = "\0"*8
         def getSlotsUsed(self):
             return ()
         def setDefault(self,record): return
         def dumpData(self,record,out): return
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FNAM','soundFile'),
-        MelSounSndd('SNDD','=2BbsH2s','minDistance', 'maxDistance', 'freqAdjustment', ('unused1',null1),
-            (_flags,'flags'), ('unused2',null2)),
-        MelOptStruct('SNDX','=2BbsH2sh2B',('minDistance',None), ('maxDistance',None), ('freqAdjustment',None), ('unused1',null1),
-            (_flags,'flags',None), ('unused2',null2), ('staticAtten',None),('stopTime',None),('startTime',None),)
+        # SNDD (0007E719 CSpecialHeavyMetal)
+        # \x1b              minDistance / 5
+        # \x0f              maxDistance / 10
+        # \x00              freqAdjustment
+        # \x00              unused1
+        # \x00\x00\x00\x00  flags
+        # =\x02             staticAttentuation
+        # \x00              stopTime
+        # \x00              startTime
+        # d\x00             point0
+        # 2\x00             point1
+        # \x14\x00          point2
+        # \x05\x00          point3
+        # \x00\x00          point4
+        # \x00\x00          reverb
+        # \xdf\x00\x00\x00  priority
+        # \x00\x00\x00\x00\x00\x00\x00\x00  unknown
+        MelOptStruct('SNDD','=2BbsIh2B6HI8s',('minDistance',None), ('maxDistance',None), ('freqAdjustment',None), ('unused1',null1),
+            (_flags,'flags',None),('staticAtten',None),('stopTime',None),('startTime',None),
+            ('point0',0),('point1',0),('point2',0),('point3',0),('point4',0),('reverb',0),('priority',0),'unknown'),
+        MelSounSndx('SNDX','=2BbsIh2B',('minDistance',None), ('maxDistance',None), ('freqAdjustment',None), ('unused1',null1),
+            (_flags,'flags',None),('staticAtten',None),('stopTime',None),('startTime',None),),
+        # ANAM (000C80B5 DRSRotundaSecretLoadOpen)
+        # d\x002\x00\x14\x00\x05\x00\x00\x00
+        MelBase('ANAM','_anam'), #--Should be a struct. Maybe later.
+        MelBase('GNAM','_gnam'), #--Should be a struct. Maybe later.
+        MelBase('HNAM','_hnam'), #--Should be a struct. Maybe later.
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
