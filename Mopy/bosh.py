@@ -2796,14 +2796,28 @@ class MreDoor(MelRecord):
     _flags = Flags(0,Flags.getNames('fallout3Gate','automatic','hidden','minimalUse'))
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelModel(),
         MelFid('SCRI','script'),
+        MelGroup('destructable',
+                 MelBase('DEST','header'),
+                 MelStruct('DEST','IhH','health','count','flags'),
+                 MelGroups('stages',
+                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
+                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
+                           MelString('DMDL','model'),
+                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
+                           MelBase('DSTF','footer'),
+                           ),
+                 ),
         MelFid('SNAM','soundOpen'),
         MelFid('ANAM','soundClose'),
         MelFid('BNAM','soundLoop'),
         MelStruct('FNAM','B',(_flags,'flags',0L)),
-        MelFids('TNAM','destinations'),
+        #MelFids('TNAM','destinations'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
