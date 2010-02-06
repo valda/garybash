@@ -3020,6 +3020,9 @@ class MreGras(MelRecord):
     _flags = Flags(0,Flags.getNames('vLighting','uScaling','fitSlope'))
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelModel(),
         MelStruct('DATA','3BsH2sI4fB3s','density','minSlope',
                   'maxSlope',('unused1',null1),'waterDistance',('unused2',null2),
