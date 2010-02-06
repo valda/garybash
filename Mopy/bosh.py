@@ -3163,6 +3163,9 @@ class MreLigh(MelRecord):
             if self._debug: print unpacked, record.flags.getTrueAttrs()
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelModel(),
         MelFid('SCRI','script'),
         MelString('FULL','full'),
