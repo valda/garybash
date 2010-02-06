@@ -4187,6 +4187,9 @@ class MreTree(MelRecord):
     classType = 'TREE'
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelModel(),
         MelString('ICON','iconPath'),
         MelStructA('SNAM','I','speedTree','seed'),
