@@ -3106,12 +3106,17 @@ class MreIngr(MelRecord,MreHasEffects):
     """INGR (ingredient) record."""
     classType = 'INGR'
     _flags = Flags(0L,Flags.getNames('noAutoCalc','isFood'))
+    _etype = Flags(0L,Flags.getNames(
+        'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
+        'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
+    ))
     melSet = MelSet(
         MelString('EDID','eid'),
         MelFull0(),
         MelModel(),
         MelString('ICON','iconPath'),
         MelFid('SCRI','script'),
+        MelStruct('ETYP','I',(_etype,'etype',0L)),
         MelStruct('DATA','f','weight'),
         MelStruct('ENIT','iB3s','value',(_flags,'flags',0L),('unused1',null3)),
         MelEffects(),
