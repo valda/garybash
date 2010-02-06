@@ -2420,41 +2420,56 @@ class MreClas(MelRecord):
         ( 0,'Playable'),
         ( 1,'Guard'),
         ))
+    #--AI Service flags
     aiService = Flags(0L,Flags.getNames(
         (0,'weapons'),
         (1,'armor'),
         (2,'clothing'),
         (3,'books'),
-        (4,'ingredients'),
+        (4,'foods'),
+        (5,'chems'),
+        (6,'stimpacks'),
         (7,'lights'),
-        (8,'apparatus'),
         (10,'miscItems'),
-        (11,'spells'),
-        (12,'magicItems'),
         (13,'potions'),
         (14,'training'),
         (16,'recharge'),
         (17,'repair'),))
+    aiTeaches = Flags(0L,Flags.getNames(
+        (0,'barter'),
+        (1,'bigGuns'),
+        (2,'energyWeapons'),
+        (3,'explosives'),
+        (4,'lockpick'),
+        (5,'medicine'),
+        (6,'meleeWeapons'),
+        (7,'none'),
+        (8,'repair'),
+        (9,'science'),
+        (10,'smallGuns'),
+        (11,'sneak'),
+        (12,'throwing'),
+        (13,'unarmed'),))
     class MelClasData(MelStruct):
         """Handle older trucated DATA for CLAS subrecords."""
-        def loadData(self,record,ins,type,size,readId):
-            if size == 52:
-                MelStruct.loadData(self,record,ins,type,size,readId)
-                return
-            #--Else 42 byte record (skips trainSkill, trainLevel,unused1...
-            unpacked = ins.unpack('2iI7i2I',size,readId)
-            unpacked += self.defaults[len(unpacked):]
-            setter = record.__setattr__
-            for attr,value,action in zip(self.attrs,unpacked,self.actions):
-                if callable(action): value = action(value)
-                setter(attr,value)
-            if self._debug: print unpacked, record.flags.getTrueAttrs()
+    #     def loadData(self,record,ins,type,size,readId):
+    #         if size == 28:
+    #             MelStruct.loadData(self,record,ins,type,size,readId)
+    #             return
+    #         #--Else 22 byte record (skips trainSkill, trainLevel...
+    #         unpacked = ins.unpack('4I2IbB2s',size,readId)
+    #         unpacked += self.defaults[len(unpacked):]
+    #         setter = record.__setattr__
+    #         for attr,value,action in zip(self.attrs,unpacked,self.actions):
+    #             if callable(action): value = action(value)
+    #             setter(attr,value)
+    #         if self._debug: print unpacked, record.flags.getTrueAttrs()
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FULL','full'),
         MelString('DESC','description'),
         MelString('ICON','iconPath'),
-        MelClasData('DATA','2iI7i2IbB2s','primary1','primary2','specialization','major1','major2','major3','major4','major5','major6','major7',(_flags,'flags',0L),(aiService,'services',0L),('trainSkill',0),('trainLevel',0),('unused1',null2)),
+        MelClasData('DATA','4I2IbB2s','tagSkill1','tagSkill2','tagSkill3','tagSkill4',(_flags,'flags',0L),(aiService,'services',0L),('trainSkill',0),('trainLevel',0),('unused1',null2)),
         MelTuple('ATTR','7B','attributes',[0]*7),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
