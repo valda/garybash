@@ -2516,10 +2516,27 @@ class MreCont(MelRecord):
     _flags = Flags(0,Flags.getNames(None,'respawns'))
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelModel(),
         MelFid('SCRI','script'),
-        MelStructs('CNTO','Ii','items',(FID,'item'),'count'),
+        MelGroups('items',
+            MelStruct('CNTO','Ii',(FID,'item',None),('count',1)),
+            MelOptStruct('COED','IIf',(FID,'owner',None),(FID,'glob',None),('condition',1.0)),
+        ),
+        MelGroup('destructable',
+                 MelBase('DEST','header'),
+                 MelStruct('DEST','IhH','health','count','flags'),
+                 MelGroups('stages',
+                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
+                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
+                           MelString('DMDL','model'),
+                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
+                           MelBase('DSTF','footer'),
+                           ),
+                 ),
         MelStruct('DATA','=Bf',(_flags,'flags',0L),'weight'),
         MelFid('SNAM','soundOpen'),
         MelFid('QNAM','soundClose'),
@@ -3173,6 +3190,7 @@ class MreLtex(MelRecord):
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('ICON','iconPath'),
+        MelFid('TNAM', 'texture'),
         MelOptStruct('HNAM','3B',(_flags,'flags'),'friction','restitution'), ####flags are actually an enum....
         MelOptStruct('SNAM','B','specular'),
         MelFids('GNAM', 'grass'),
