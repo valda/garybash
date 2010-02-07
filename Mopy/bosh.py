@@ -2534,7 +2534,7 @@ class MreClmt(MelRecord):
     classType = 'CLMT'
     melSet = MelSet(
         MelString('EDID','eid'),
-        MelStructA('WLST','Ii', 'Weather', (FID,'weather'), 'chance'),
+        MelStruct('WLST','IiI', 'Weather', (FID,'weather'), 'chance', (FID,'global')),
         MelString('FNAM','sunPath'),
         MelString('GNAM','glarePath'),
         MelModel(),
