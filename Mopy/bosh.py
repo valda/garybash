@@ -4503,25 +4503,57 @@ class MreWthr(MelRecord):
     classType = 'WTHR'
     melSet = MelSet(
         MelString('EDID','eid'),
-        MelString('CNAM','lowerLayer'),
+        MelFid("\x00IAD", 'sunriseImageSpaceModifier'),
+        MelFid("\x01IAD", 'dayImageSpaceModifier'),
+        MelFid("\x02IAD", 'sunsetImageSpaceModifier'),
+        MelFid("\x03IAD", 'nightImageSpaceModifier'),
         MelString('DNAM','upperLayer'),
+        MelString('CNAM','lowerLayer'),
+        MelString('ANAM','layer2'),
+        MelString('BNAM','layer3'),
         MelModel(),
-        MelStructA('NAM0','3Bs3Bs3Bs3Bs','colors','riseRed','riseGreen','riseBlue',('unused1',null1),
+        MelBase('LNAM','unknown1'),
+        MelStruct('ONAM','4B','cloudSpeed0','cloudSpeed1','cloudSpeed3','cloudSpeed4'),
+        # 0006A076..MegatonFalloutDecay..WTHR.PNAM..64..
+        # \xb5\xb1\x84\x00
+        # \xd1\xec\xdd\x00
+        # tws\x00
+        # \x16 !\x00
+        # \x9e\xa5\x81\x00
+        # \xa3\xbd\xaa\x00
+        # v\x83w\x00
+        # \x1b,)\x00
+        # \x00\x00\x00\x00
+        # \x00\x00\x00\x00
+        # \x95wY\x00
+        # \x00\x00\x00\x00
+        # \x9b\x9by\x00
+        # \xc7\xda\xcf\x00
+        # tvv\x00
+        # \x14\x1d\x1d\x00
+        MelBase('PNAM','_pnam'), #--RGB(3Bs) * 16?
+        MelStructA('NAM0','3Bs3Bs3Bs3Bs','colors',
+                   'riseRed','riseGreen','riseBlue',('unused1',null1),
                    'dayRed','dayGreen','dayBlue',('unused2',null1),
                    'setRed','setGreen','setBlue',('unused3',null1),
                    'nightRed','nightGreen','nightBlue',('unused4',null1),
                    ),
-        MelStruct('FNAM','4f','fogDayNear','fogDayFar','fogNightNear','fogNightFar'),
-        MelStruct('HNAM','14f',
-            'eyeAdaptSpeed', 'blurRadius', 'blurPasses', 'emissiveMult',
-            'targetLum', 'upperLumClamp', 'brightScale', 'brightClamp',
-            'lumRampNoTex', 'lumRampMin', 'lumRampMax', 'sunlightDimmer',
-            'grassDimmer', 'treeDimmer'),
+        MelStruct('FNAM','6f','fogDayNear','fogDayFar','fogNightNear','fogNightFar','fogDayPower','fogNightPower'),
+        # MelStruct('HNAM','14f',
+        #     'eyeAdaptSpeed', 'blurRadius', 'blurPasses', 'emissiveMult',
+        #     'targetLum', 'upperLumClamp', 'brightScale', 'brightClamp',
+        #     'lumRampNoTex', 'lumRampMin', 'lumRampMax', 'sunlightDimmer',
+        #     'grassDimmer', 'treeDimmer'),
+        # 0006A076..MegatonFalloutDecay..WTHR.INAM..304..
+        # \x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
+        MelBase('INAM','_inam'), #--Should be a struct. Maybe later.
         MelStruct('DATA','15B',
             'windSpeed','lowerCloudSpeed','upperCloudSpeed','transDelta',
             'sunGlare','sunDamage','rainFadeIn','rainFadeOut','boltFadeIn',
             'boltFadeOut','boltFrequency','weatherType','boltRed','boltBlue','boltGreen'),
         MelStructs('SNAM','2I','sounds',(FID,'sound'),'type'),
+
+
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
