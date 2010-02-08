@@ -1383,6 +1383,23 @@ class MelEffects(MelGroups):
             )
 
 #------------------------------------------------------------------------------
+class MelDestructable(MelGroup):
+    """Represents a set of destruct record."""
+    def __init__(self,attr='destructable'):
+        """Initialize elements."""
+        MelGroup.__init__(self,attr,
+            MelBase('DEST','header'),
+            MelStruct('DEST','IhH','health','count','flags'),
+            MelGroups('stages',
+                      MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
+                                'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
+                      MelString('DMDL','model'),
+                      MelBase('DMDT','dmdt'), #--Should be a struct. Maybe later.
+                      MelBase('DSTF','footer'),
+                      ),
+            )
+
+#------------------------------------------------------------------------------
 class MelFull0(MelString):
     """Represents the main full. Use this only when there are additional FULLs
     Which means when record has magic effects."""
@@ -2190,38 +2207,7 @@ class MreActi(MelRecord):
         MelString('FULL','full'),
         MelModel(),
         MelFid('SCRI','script'),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           # DMDT (000740A9 MQ11JeffersonVertibirdLandingCONTROLTriger)
-                           # \xeb\xec\x0ev\xb8@n;kl\x0ev\xbd@n;
-                           # se\x11t
-                           # )\x81mz
-                           # \xee
-                           # \xdf\x0cv\xab\xb9\xdb\xe6n_\x0cv\xb0\xb9\xdb\xe6
-                           # se\x11t
-                           # )\x81mz
-                           # \xf3
-                           # \xdf\x0cv\xab\xb9\xdb\xe6s_\x0cv\xb0\xb9\xdb\xe6
-                           # se\x11t
-                           # )\x81mz
-                           # \xeb\xec\x0ev9P\xec;kl\x0ev>P\xec;se\x11t)\x81mz
-                           # \xee
-                           # \xdf\x0cv\xac\xb9\xdb\xe6n_\x0cv\xb1\xb9\xdb\xe6
-                           # se\x11t
-                           # )\x81mz
-                           # \xf3
-                           # \xdf\x0cv\xac\xb9\xdb\xe6s_\x0cv\xb1\xb9\xdb\xe6
-                           # se\x11t
-                           # )\x81mz
-                           MelBase('DMDT','dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         MelFid('SNAM','soundLooping'),
         MelFid('VNAM','soundActivation'),
         MelFid('RNAM','radioStation'),
@@ -2248,17 +2234,7 @@ class MreAlch(MelRecord,MreHasEffects):
         MelString('ICON','largeIconPath'),
         MelString('MICO','smallIconPath'),
         MelFid('SCRI','script'),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),
@@ -2290,17 +2266,7 @@ class MreAmmo(MelRecord):
         MelModel(),
         MelString('ICON','largeIconPath'),
         MelString('MICO','smallIconPath'),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         #MelFid('ENAM','enchantment'),
         #MelOptStruct('ANAM','H','enchantPoints'),
         MelFid('YNAM','soundPickup'),
@@ -2580,17 +2546,7 @@ class MreCont(MelRecord):
             MelStruct('CNTO','Ii',(FID,'item',None),('count',1)),
             MelOptStruct('COED','IIf',(FID,'owner',None),(FID,'glob',None),('condition',1.0)),
         ),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         MelStruct('DATA','=Bf',(_flags,'flags',0L),'weight'),
         MelFid('SNAM','soundOpen'),
         MelFid('QNAM','soundClose'),
@@ -2672,17 +2628,7 @@ class MreCrea(MreActor):
         MelFid('INAM','deathItem'),
         MelFid('VTCK','voice'),
         MelFid('TPLT','template'),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         MelFid('SCRI','script'),
         MelGroups('items',
             MelStruct('CNTO','Ii',(FID,'item',None),('count',1)),
@@ -2856,17 +2802,7 @@ class MreDoor(MelRecord):
         MelString('FULL','full'),
         MelModel(),
         MelFid('SCRI','script'),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         MelFid('SNAM','soundOpen'),
         MelFid('ANAM','soundClose'),
         MelFid('BNAM','soundLoop'),
@@ -3022,17 +2958,7 @@ class MreFurn(MelRecord):
         MelString('FULL','full'),
         MelModel(),
         MelFid('SCRI','script'),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         MelStruct('MNAM','I',(_flags,'activeMarkers',0L)), ####ByteArray
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
@@ -3208,17 +3134,7 @@ class MreKeym(MelRecord):
         MelString('ICON','largeIconPath'),
         MelString('MICO','smallIconPath'),
         MelFid('SCRI','script'),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
         MelStruct('DATA','if','value','weight'),
@@ -4431,17 +4347,7 @@ class MreWeap(MelRecord):
         MelFid('EITM','effect'),
         MelOptStruct('EAMT','H', 'enchantment'),
         MelFid('NAM0','ammo'),
-        MelGroup('destructable',
-                 MelBase('DEST','header'),
-                 MelStruct('DEST','IhH','health','count','flags'),
-                 MelGroups('stages',
-                           MelStruct('DSTD','=4B4I','health','index','damageStage','flags',
-                                     'selfDamagePerSecond',(FID,'explosion',None),(FID,'debris',None),'debrisCount'),
-                           MelString('DMDL','model'),
-                           MelBase('DMDT','_dmdt'), #--Should be a struct. Maybe later.
-                           MelBase('DSTF','footer'),
-                           ),
-                 ),
+        MelDestructable(),
         MelFid('REPL','repairList'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),
         MelFid('BIPL','bipedModelList'),
