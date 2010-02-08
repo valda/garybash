@@ -4029,7 +4029,8 @@ class MreRegn(MelRecord):
 
     melSet = MelSet(
         MelString('EDID','eid'),
-        MelString('ICON','iconPath'),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
         MelStruct('RCLR','3Bs','mapRed','mapBlue','mapGreen',('unused1',null1)),
         MelFid('WNAM','worldspace'),
         MelGroups('areas',
@@ -4047,7 +4048,7 @@ class MreRegn(MelRecord):
             MelRegnStructA('RDGS', 'I4s', 'grasses', (FID,'grass'), ('unk1',null4)),
             MelRegnOptStruct('RDMD', 'I', ('musicType',None)),
             MelRegnStructA('RDSD', '3I', 'sounds', (FID, 'sound'), (sdflags, 'flags'), 'chance'),
-            MelRegnStructA('RDWT', '2I', 'weather', (FID, 'weather'), 'chance')),
+            MelRegnStructA('RDWT', '3I', 'weather', (FID, 'weather', None), 'chance', (FID, 'global', None))),
     )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
