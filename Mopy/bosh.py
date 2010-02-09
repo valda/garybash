@@ -3960,7 +3960,7 @@ class MreRegn(MelRecord):
             'maxHeight', 'sink', 'sinkVar', 'sizeVar', 'angleVarX',
             'angleVarY',  'angleVarZ', ('unused2',null2), ('unk2',null4)),
             MelRegnString('RDMP', 'mapName'),
-            MelRegnString('ICON', 'iconPath'),  ####Obsolete? Only one record in oblivion.esm
+            #MelRegnString('ICON', 'iconPath'),  ####Obsolete? Only one record in oblivion.esm
             MelRegnStructA('RDGS', 'I4s', 'grasses', (FID,'grass'), ('unk1',null4)),
             MelRegnOptStruct('RDMD', 'I', ('musicType',None)),
             MelRegnStructA('RDSD', '3I', 'sounds', (FID, 'sound'), (sdflags, 'flags'), 'chance'),
