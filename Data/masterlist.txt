@@ -24,10 +24,11 @@ PointLookout.esm
 Zeta.esm
 Unofficial Fallout 3 Patch.esm
 
+HairPack.esm
 FaceMe.esm
-% {{BASH:NpcFaces,Hair,Eyes}}
+% {{BASH:NpcFaces,Hair,Eyes,Graphics}}
 Project Beauty HD version.esm
-% {{BASH:NpcFaces,Hair,Eyes}}
+% {{BASH:NpcFaces,Hair,Eyes,Graphics}}
 
 Enhanced Weather - Rain and Snow.esm
 StreetLights.esm
@@ -550,6 +551,7 @@ The Groovatron_DLC_Pitt_Addon.esp
 \--------------------------------
 \Just stuff recommended to be very, VERY late.
 
+CRBSOR.esp
 KH_MMM override.esp
 ? Requires 'Mart's Mutant Mod.esm', 'FO3 Wanderers Edition - Main File.esm'
 
@@ -575,8 +577,8 @@ TimeScaleTo25.esp
 
 \Hair
 \''''
-Choose your own hairstyle (load this last on FOMM).esp
-% {{BASH:NpcFaces,Hair,Eyes}}
+HairPack_2chPlus.esp
+% {{BASH:Hair}}
 
 \Eyes
 \''''
@@ -584,8 +586,13 @@ Choose your own hairstyle (load this last on FOMM).esp
 \Mixed
 \'''''
 
+Choose your own hairstyle (load this last on FOMM).esp
+% {{BASH:NpcFaces,Hair,Eyes}}
+
 \Race additions (+ hair + eyes etc)
 \''''''''''''''''''''''''''''''''''
+Shojo Race.esp
+% {{BASH:NpcFaces,Hair,Eyes,Graphics}}
 
 \----------
 \Companions
