@@ -3426,6 +3426,7 @@ class MreNpc(MreActor):
         MelFid('TPLT','template'),
         MelFid('RNAM','race'),
         MelStruct('EAMT','H', 'eamt'),
+        MelDestructable(),
         MelFids('SPLO','spells'),
         MelFid('SCRI','script'),
         MelGroups('items',
