@@ -4447,6 +4447,9 @@ class CoblExhaustion(bosh.CoblExhaustion,ListPatcher): pass
 class ListsMerger(bosh.ListsMerger,ListPatcher):
 	listLabel = _("Override Delev/Relev Tags")
 
+class FidListsMerger(bosh.FidListsMerger,ListPatcher):
+	listLabel = _("Override Deflst/Reflst Tags")
+
 class MFactMarker(bosh.MFactMarker,ListPatcher): pass
 
 class PowerExhaustion(bosh.PowerExhaustion,Patcher): pass
@@ -4477,6 +4480,7 @@ PatchDialog.patchers.extend((
 	ImportScriptContents(),
 	ImportSpells(),
 	ListsMerger(),
+	FidListsMerger(),
 	MFactMarker(),
 	NamesPatcher(),
 	NamesTweaker(),

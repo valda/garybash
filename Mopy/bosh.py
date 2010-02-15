@@ -4504,7 +4504,63 @@ class MreFlst(MelRecord):
         MelString('EDID','eid'),
         MelFids('LNAM','fids'),
         )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+    __slots__ = (MelRecord.__slots__ + melSet.getSlotsUsed() +
+        ['mergeOverLast','mergeSources','items','deflsts','reflsts'])
+
+    def __init__(self,header,ins=None,unpack=False):
+        """Initialize."""
+        MelRecord.__init__(self,header,ins,unpack)
+        self.mergeOverLast = False #--Merge overrides last mod merged
+        self.mergeSources = None #--Set to list by other functions
+        self.items  = None #--Set of items included in list
+        self.deflsts = None #--Set of items deleted by list (Deflst and Reflst mods)
+        self.reflsts = None #--Set of items reflstelled by list (Reflst mods)
+
+    def mergeFilter(self,modSet):
+        """Filter out items that don't come from specified modSet."""
+        if not self.longFids: raise StateError(_("Fids not in long format"))
+        self.fids = [fid for fid in self.fids if fid in modSet]
+
+    def mergeWith(self,other,otherMod):
+        """Merges newLevl settings and entries with self.
+        Requires that: self.items, other.deflsts and other.reflsts be defined."""
+        if not self.longFids: raise StateError(_("Fids not in long format"))
+        if not other.longFids: raise StateError(_("Fids not in long format"))
+        #--Remove items based on other.removes
+        if other.deflsts or other.reflsts:
+            removeItems = self.items & (other.deflsts | other.reflsts)
+            #self.entries = [entry for entry in self.entries if entry.listId not in removeItems]
+            self.fids = [fid for fid in self.fids if fid not in removeItems]
+            self.items = (self.items | other.deflsts) - other.reflsts
+        hasOldItems = bool(self.items)
+        #--Add new items from other
+        newItems = set()
+        fidsAppend = self.fids.append
+        newItemsAdd = newItems.add
+        for fid in other.fids:
+            if fid not in self.items:
+                fidsAppend(fid)
+                newItemsAdd(fid)
+        if newItems:
+            self.items |= newItems
+            #self.fids.sort(key=attrgetter('level'))
+            self.fids.sort
+        #--Is merged list different from other? (And thus written to patch.)
+        if len(self.fids) != len(other.fids):
+            self.mergeOverLast = True
+        else:
+            for selfEntry,otherEntry in zip(self.fids,other.fids):
+                if selfEntry != otherEntry:
+                    self.mergeOverLast = True
+                    break
+            else:
+                self.mergeOverLast = False
+        if self.mergeOverLast:
+            self.mergeSources.append(otherMod)
+        else:
+            self.mergeSources = [otherMod]
+        #--Done
+        self.setChanged()
 
 #------------------------------------------------------------------------------
 # MreRecord.type_class
@@ -17369,6 +17425,176 @@ class ListsMerger(SpecialPatcher,ListPatcher):
                     log('  * ' + self.getItemLabel(mod))
         #--Discard empty sublists
         for label, type in ((_('Creature'),'LVLC'), (_('Item'),'LVLI'), (_('Spell'),'LVSP')):
+            patchBlock = getattr(self.patchFile,type)
+            levLists = self.type_list[type]
+            #--Empty lists
+            empties = []
+            sub_supers = dict((x,[]) for x in levLists.keys())
+            for record in sorted(levLists.values()):
+                listId = record.fid
+                if not record.items:
+                    empties.append(listId)
+                else:
+                    subLists = [x for x in record.items if x in sub_supers]
+                    for subList in subLists:
+                        sub_supers[subList].append(listId)
+            #--Clear empties
+            removed = set()
+            cleaned = set()
+            while empties:
+                empty = empties.pop()
+                if empty not in sub_supers: continue
+                for super in sub_supers[empty]:
+                    record = levLists[super]
+                    record.entries = [x for x in record.entries if x.listId != empty]
+                    record.items.remove(empty)
+                    patchBlock.setRecord(record)
+                    if not record.items:
+                        empties.append(super)
+                    cleaned.add(record.eid)
+                    removed.add(levLists[empty].eid)
+                    keep(super)
+            log.setHeader(_('=== Empty %s Sublists') % label)
+            for eid in sorted(removed,key=string.lower):
+                log('* '+eid)
+            log.setHeader(_('=== Empty %s Sublists Removed') % label)
+            for eid in sorted(cleaned,key=string.lower):
+                log('* '+eid)
+
+#------------------------------------------------------------------------------
+class FidListsMerger(SpecialPatcher,ListPatcher):
+    """Merged FormID lists mod file."""
+    scanOrder = 46
+    editOrder = 46
+    name = _('FormID Lists')
+    text = _("Merges changes to formid lists from ACTIVE/MERGED MODS ONLY.\n\nAdvanced users may override Reflst/Deflst tags for any mod (active or inactive) using the list below.")
+    tip = _("Merges changes to formid lists from all active mods.")
+    choiceMenu = ('Auto','----','Deflst','Reflst') #--List of possible choices for each config item. Item 0 is default.
+    autoKey = ('Deflst','Reflst')
+    forceAuto = False
+    forceItemCheck = True #--Force configChecked to True for all items
+    iiMode = True
+
+    #--Config Phase -----------------------------------------------------------
+    def getChoice(self,item):
+        """Get default config choice."""
+        choice = self.configChoices.get(item)
+        if not isinstance(choice,set): choice = set(('Auto',))
+        if 'Auto' in choice:
+            if item in modInfos:
+                choice = set(('Auto',))
+                bashTags = modInfos[item].getBashTags()
+                for key in ('Deflst','Reflst'):
+                    if key in bashTags: choice.add(key)
+        self.configChoices[item] = choice
+        return choice
+
+    def getItemLabel(self,item):
+        """Returns label for item to be used in list"""
+        choice = map(itemgetter(0),self.configChoices.get(item,tuple()))
+        if isinstance(item,bolt.Path): item = item.s
+        if choice:
+            return '%s [%s]' % (item,''.join(sorted(choice)))
+        else:
+            return item
+
+    #--Patch Phase ------------------------------------------------------------
+    def initPatchFile(self,patchFile,loadMods):
+        """Prepare to handle specified patch mod. All functions are called after this."""
+        Patcher.initPatchFile(self,patchFile,loadMods)
+        self.listTypes = ('FLST',)
+        self.type_list = dict([(type,{}) for type in self.listTypes])
+        self.masterItems = {}
+        self.mastersScanned = set()
+        self.levelers = None #--Will initialize later
+
+    def getReadClasses(self):
+        """Returns load factory classes needed for reading."""
+        return (MreFlst,)
+
+    def getWriteClasses(self):
+        """Returns load factory classes needed for writing."""
+        return (MreFlst,)
+
+    def scanModFile(self, modFile, progress):
+        """Add lists from modFile."""
+        #--Level Masters (complete initialization)
+        if self.levelers == None:
+            allMods = set(self.patchFile.allMods)
+            self.levelers = [leveler for leveler in self.getConfigChecked() if leveler in allMods]
+            self.deflstMasters = set()
+            for leveler in self.levelers:
+                self.deflstMasters.update(modInfos[leveler].header.masters)
+        #--Begin regular scan
+        modName = modFile.fileInfo.name
+        modFile.convertToLongFids(self.listTypes)
+        #--PreScan for later Reflsts/Deflsts?
+        if modName in self.deflstMasters:
+            for type in self.listTypes:
+                for levList in getattr(modFile,type).getActiveRecords():
+                    masterItems = self.masterItems.setdefault(levList.fid,{})
+                    masterItems[modName] = set(levList.fids)
+            self.mastersScanned.add(modName)
+        #--Reflst/Deflst setup
+        configChoice = self.configChoices.get(modName,tuple())
+        isReflst = ('Reflst' in configChoice)
+        isDeflst = ('Deflst' in configChoice)
+        #--Scan
+        for type in self.listTypes:
+            levLists = self.type_list[type]
+            newLevLists = getattr(modFile,type)
+            for newLevList in newLevLists.getActiveRecords():
+                listId = newLevList.fid
+                isListOwner = (listId[0] == modName)
+                #--Items, deflsts and reflsts sets
+                newLevList.items = items = set(newLevList.fids)
+                if not isListOwner:
+                    #--Reflsts
+                    newLevList.reflsts = (set(),items.copy())[isReflst]
+                    #--Deflsts: all items in masters minus current items
+                    newLevList.deflsts = deflsts = set()
+                    if isDeflst:
+                        id_masterItems = self.masterItems.get(newLevList.fid)
+                        if id_masterItems:
+                            for masterName in modFile.tes4.masters:
+                                if masterName in id_masterItems:
+                                    deflsts |= id_masterItems[masterName]
+                            deflsts -= items
+                            newLevList.items |= deflsts
+                #--Cache/Merge
+                if isListOwner:
+                    levList = copy.deepcopy(newLevList)
+                    levList.mergeSources = []
+                    levLists[listId] = levList
+                elif listId not in levLists:
+                    levList = copy.deepcopy(newLevList)
+                    levList.mergeSources = [modName]
+                    levLists[listId] = levList
+                else:
+                    levLists[listId].mergeWith(newLevList,modName)
+
+    def buildPatch(self,log,progress):
+        """Adds merged lists to patchfile."""
+        keep = self.patchFile.getKeeper()
+        #--Reflsts/Deflsts List
+        log.setHeader('= '+self.__class__.name,True)
+        log.setHeader(_('=== Deflsters/Reflsters'))
+        for leveler in (self.levelers or []):
+            log('* '+self.getItemLabel(leveler))
+        #--Save to patch file
+        for label, type in ((_('FormID'),'FLST'),):
+            log.setHeader(_('=== Merged %s Lists') % label)
+            patchBlock = getattr(self.patchFile,type)
+            levLists = self.type_list[type]
+            for record in sorted(levLists.values(),key=attrgetter('eid')):
+                if not record.mergeOverLast: continue
+                fid = keep(record.fid)
+                patchBlock.setRecord(levLists[fid])
+                log('* '+record.eid)
+                for mod in record.mergeSources:
+                    log('  * ' + self.getItemLabel(mod))
+        #--Discard empty sublists
+        for label, type in ((_('FormID'),'FLST'),):
             patchBlock = getattr(self.patchFile,type)
             levLists = self.type_list[type]
             #--Empty lists
