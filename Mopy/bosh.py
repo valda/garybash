@@ -17725,8 +17725,8 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 patchBlock.setRecord(record.getTypeCopy(mapper))
             for eye in record.eyes:
                 if eye in srcEyes:
-                    eye_mesh[eye] = (record.maleLeftEye.modPath.lower(),record.maleRightEye.modPath.lower(),
-                                     record.femaleLeftEye.modPath.lower(),record.femaleRightEye.modPath.lower())
+                    eye_mesh[eye] = (record.maleRightEye.modPath.lower(),record.femaleRightEye.modPath.lower(),
+                                     record.maleLeftEye.modPath.lower(),record.femaleLeftEye.modPath.lower())
 
     def buildPatch(self,log,progress):
         """Updates races as needed."""
@@ -17750,13 +17750,13 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 race.hairs = raceData['hairs']
                 raceChanged = True
             if 'eyes' in raceData and (
-                race.maleLeftEye.modPath != raceData['maleLeftEye'].modPath or
                 race.maleRightEye.modPath != raceData['maleRightEye'].modPath or
-                race.femaleLeftEye.modPath != raceData['femaleLeftEye'].modPath or
                 race.femaleRightEye.modPath != raceData['femaleRightEye'].modPath or
+                race.maleLeftEye.modPath != raceData['maleLeftEye'].modPath or
+                race.femaleLeftEye.modPath != raceData['femaleLeftEye'].modPath or
                 set(race.eyes) != set(raceData['eyes'])
                 ):
-                for attr in ('maleLeftEye','maleRightEye','femaleLeftEye','femaleRightEye','eyes'):
+                for attr in ('maleRightEye','femaleRightEye','maleLeftEye','femaleLeftEye','eyes'):
                    setattr(race,attr,raceData[attr])
                 raceChanged = True
             #--Gender info (voice, body data)
@@ -17802,73 +17802,73 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 racesPatched.append(race.eid)
                 keep(race.fid)
         #--Eye Mesh filtering
-        eye_mesh = self.eye_mesh
-        hazelEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x4255)]
-        #argonianEyeMesh = eye_mesh[(GPath('Oblivion.esm'),0x3e91e)]
-        if debug:
-            print '== Eye Mesh Filtering'
-            print 'hazelEyeMesh',hazelEyeMesh
-            #print 'argonianEyeMesh',argonianEyeMesh
-        for eye in (
-            (GPath('Fallout3.esm'),0x1a), #--Reanimate
-            #(GPath('Oblivion.esm'),0x54bb9), #--Dark Seducer
-            #(GPath('Oblivion.esm'),0x54bba), #--Golden Saint
-            #(GPath('Oblivion.esm'),0x5fa43), #--Ordered
-            ):
-            eye_mesh.setdefault(eye,hazelEyeMesh)
-        def setRaceEyeMesh(race,maleRightPath,femaleRightPath,femaleLeftPath,maleLeftPath):
-            race.maleLeftEye.modPath = maleLeftPath
-            race.maleRightEye.modPath = maleRightPath
-            race.femaleLeftEye.modPath = femaleLeftPath
-            race.femaleRightEye.modPath = femaleRightPath
-        for race in patchFile.RACE.records:
-            if debug: print '===', race.eid
-            if not race.eyes: continue #--Sheogorath. Assume is handled correctly.
-            if not race.maleLeftEye or not race.maleRightEye or not race.femaleLeftEye or not race.femaleRightEye: continue #--WIPZ race?
-            raceChanged = False
-            mesh_eye = {}
-            for eye in race.eyes:
-                if eye not in eye_mesh:
-                    raise StateError(_('Mesh undefined for eye %s in race %s') % (strFid(eye),race.eid,))
-                mesh = eye_mesh[eye]
-                if mesh not in mesh_eye:
-                    mesh_eye[mesh] = []
-                mesh_eye[mesh].append(eye)
-            currentMesh = (race.maleLeftEye.modPath.lower(),race.maleRightEye.modPath.lower(),
-                           race.femaleLeftEye.modPath.lower(),race.femaleRightEye.modPath.lower())
-            #print race.eid, mesh_eye
-            maxEyesMesh = sorted(mesh_eye.keys(),key=lambda a: len(mesh_eye[a]))[0]
-            #--Single eye mesh, but doesn't match current mesh?
-            if len(mesh_eye) == 1 and currentMesh != maxEyesMesh:
-                setRaceEyeMesh(race,*maxEyesMesh)
-                raceChanged = True
-            #--Multiple eye meshes (and playable)?
-            if debug:
-                for mesh,eyes in mesh_eye.iteritems():
-                    print mesh
-                    for eye in eyes: print ' ',strFid(eye)
-            if len(mesh_eye) > 1 and race.flags.playable:
-                #--If hazelEyeMesh (mesh used for vanilla eyes) is present, use that.
-                if hazelEyeMesh in mesh_eye: #and currentMesh != argonianEyeMesh:
-                    setRaceEyeMesh(race,*hazelEyeMesh)
-                    race.eyes = mesh_eye[hazelEyeMesh]
-                    raceChanged = True
-                #elif argonianEyeMesh in mesh_eye:
-                #    setRaceEyeMesh(race,*argonianEyeMesh)
-                #    race.eyes = mesh_eye[argonianEyeMesh]
-                #    raceChanged = True
-                #--Else figure that current eye mesh is the correct one
-                elif currentMesh in mesh_eye:
-                    race.eyes = mesh_eye[currentMesh]
-                    raceChanged = True
-                #--Else use most popular eye mesh
-                else:
-                    setRaceEyeMesh(race,*maxEyesMeshes)
-                    race.eyes = mesh_eye[maxEyesMesh]
-                    raceChanged = True
-            if raceChanged:
-                racesFiltered.append(race.eid)
-                keep(race.fid)
+        # eye_mesh = self.eye_mesh
+        # hazelEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x4255)]
+        # #argonianEyeMesh = eye_mesh[(GPath('Oblivion.esm'),0x3e91e)]
+        # if debug:
+        #     print '== Eye Mesh Filtering'
+        #     print 'hazelEyeMesh',hazelEyeMesh
+        #     #print 'argonianEyeMesh',argonianEyeMesh
+        # for eye in (
+        #     (GPath('Fallout3.esm'),0x1a), #--Reanimate
+        #     #(GPath('Oblivion.esm'),0x54bb9), #--Dark Seducer
+        #     #(GPath('Oblivion.esm'),0x54bba), #--Golden Saint
+        #     #(GPath('Oblivion.esm'),0x5fa43), #--Ordered
+        #     ):
+        #     eye_mesh.setdefault(eye,hazelEyeMesh)
+        # def setRaceEyeMesh(race,maleRightPath,femaleRightPath,femaleLeftPath,maleLeftPath):
+        #     race.maleRightEye.modPath = maleRightPath
+        #     race.femaleRightEye.modPath = femaleRightPath
+        #     race.maleLeftEye.modPath = maleLeftPath
+        #     race.femaleLeftEye.modPath = femaleLeftPath
+        # for race in patchFile.RACE.records:
+        #     if debug: print '===', race.eid
+        #     if not race.eyes: continue #--Sheogorath. Assume is handled correctly.
+        #     if not race.maleRightEye or not race.femaleRightEye or not race.maleLeftEye or not race.femaleLeftEye: continue #--WIPZ race?
+        #     raceChanged = False
+        #     mesh_eye = {}
+        #     for eye in race.eyes:
+        #         if eye not in eye_mesh:
+        #             raise StateError(_('Mesh undefined for eye %s in race %s') % (strFid(eye),race.eid,))
+        #         mesh = eye_mesh[eye]
+        #         if mesh not in mesh_eye:
+        #             mesh_eye[mesh] = []
+        #         mesh_eye[mesh].append(eye)
+        #     currentMesh = (race.maleRightEye.modPath.lower(),race.femaleRightEye.modPath.lower(),
+        #                    race.maleLeftEye.modPath.lower(),race.femaleLeftEye.modPath.lower())
+        #     #print race.eid, mesh_eye
+        #     maxEyesMesh = sorted(mesh_eye.keys(),key=lambda a: len(mesh_eye[a]))[0]
+        #     #--Single eye mesh, but doesn't match current mesh?
+        #     if len(mesh_eye) == 1 and currentMesh != maxEyesMesh:
+        #         setRaceEyeMesh(race,*maxEyesMesh)
+        #         raceChanged = True
+        #     #--Multiple eye meshes (and playable)?
+        #     if debug:
+        #         for mesh,eyes in mesh_eye.iteritems():
+        #             print mesh
+        #             for eye in eyes: print ' ',strFid(eye)
+        #     if len(mesh_eye) > 1 and race.flags.playable:
+        #         #--If hazelEyeMesh (mesh used for vanilla eyes) is present, use that.
+        #         if hazelEyeMesh in mesh_eye: #and currentMesh != argonianEyeMesh:
+        #             setRaceEyeMesh(race,*hazelEyeMesh)
+        #             race.eyes = mesh_eye[hazelEyeMesh]
+        #             raceChanged = True
+        #         #elif argonianEyeMesh in mesh_eye:
+        #         #    setRaceEyeMesh(race,*argonianEyeMesh)
+        #         #    race.eyes = mesh_eye[argonianEyeMesh]
+        #         #    raceChanged = True
+        #         #--Else figure that current eye mesh is the correct one
+        #         elif currentMesh in mesh_eye:
+        #             race.eyes = mesh_eye[currentMesh]
+        #             raceChanged = True
+        #         #--Else use most popular eye mesh
+        #         else:
+        #             setRaceEyeMesh(race,*maxEyesMeshes)
+        #             race.eyes = mesh_eye[maxEyesMesh]
+        #             raceChanged = True
+        #     if raceChanged:
+        #         racesFiltered.append(race.eid)
+        #         keep(race.fid)
         #--Sort Eyes/Hair
         defaultEyes = {}
         defaultMaleHair = {}
