@@ -25,10 +25,11 @@ Zeta.esm
 Unofficial Fallout 3 Patch.esm
 
 HairPack.esm
+% {{BASH:Hair,Eyes}}
 FaceMe.esm
-% {{BASH:NpcFaces,Hair,Eyes,Graphics}}
+% {{BASH:NpcFaces,Hair,Eyes}}
 Project Beauty HD version.esm
-% {{BASH:NpcFaces,Hair,Eyes,Graphics}}
+% {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth}}
 
 Enhanced Weather - Rain and Snow.esm
 StreetLights.esm
@@ -45,6 +46,7 @@ FO3 Wanderers Edition - Main File.esm
 LingsFinerThings.esm
 RH_IRONSIGHTS.esm
 EnhancedChildren.esm
+% {{BASH:Hair,Eyes}}
 ChildrenEmpire.esm
 AngelRaces.esm
 EZCompanion.esm
