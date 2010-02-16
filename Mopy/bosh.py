@@ -1293,7 +1293,6 @@ class MelConditions(MelStructs):
         unpacked1 = ins.unpack('B3sfI',12,readId)
         (target.operFlag,target.unused1,target.compValue,ifunc) = unpacked1
         #--Get parameters
-        print 'ifunc: %d' % ifunc
         if ifunc not in bush.allConditions:
             raise BoltError(_('Unknown condition function: %d') % ifunc)
         form1 = 'iI'[ifunc in bush.fid1Conditions]
