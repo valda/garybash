@@ -2652,7 +2652,7 @@ class MreCrea(MreActor):
         MelFids('PKID','aiPackages'),
         MelStrings('KFFZ','animations'),
         MelStruct('DATA','=4BIH7B','type','combatSkill','magicSkill','StealthSkill',
-            'health','damage',('attributes',[0]*7)),
+            'health','damage','strength','perception','endurance','charisma','intelligence','agility','luck'),
         MelStruct('RNAM','B','attackReach'),
         MelFid('ZNAM','combatStyle'),
         MelFid('PNAM','bodyPartData'),
