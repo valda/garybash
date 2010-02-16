@@ -1263,18 +1263,18 @@ class MelConditions(MelStructs):
     of parameters depends on function index."""
     def __init__(self):
         """Initialize."""
-        MelStructs.__init__(self,'CTDA','B3sfIii4s','conditions',
-            'operFlag',('unused1',null3),'compValue','ifunc','param1','param2',('unused2',null4))
+        MelStructs.__init__(self,'CTDA','B3sfIiiii','conditions',
+            'operFlag',('unused1',null3),'compValue','ifunc','param1','param2','param3','param4')
 
     def getLoaders(self,loaders):
         """Adds self as loader for type."""
         loaders[self.subType] = self
-        loaders['CTDT'] = self #--Older CTDT type for ai package records.
+        #loaders['CTDT'] = self #--Older CTDT type for ai package records.
 
     def getDefault(self):
         """Returns a default copy of object."""
         target = MelStructs.getDefault(self)
-        target.form12 = 'ii'
+        target.form1234 = 'iiii'
         return target
 
     def hasFids(self,formElements):
@@ -1283,28 +1283,34 @@ class MelConditions(MelStructs):
 
     def loadData(self,record,ins,type,size,readId):
         """Reads data from ins into record attribute."""
-        if type == 'CTDA' and size != 24:
-            raise ModSizeError(ins.inName,readId,24,size,True)
-        if type == 'CTDT' and size != 20:
-            raise ModSizeError(ins.inName,readId,20,size,True)
+        if type == 'CTDA' and size != 28 and size != 20:
+            raise ModSizeError(ins.inName,readId,28,size,True)
+        #if type == 'CTDT' and size != 20:
+        #    raise ModSizeError(ins.inName,readId,20,size,True)
         target = MelObject()
         record.conditions.append(target)
         target.__slots__ = self.attrs
         unpacked1 = ins.unpack('B3sfI',12,readId)
         (target.operFlag,target.unused1,target.compValue,ifunc) = unpacked1
         #--Get parameters
+        print 'ifunc: %d' % ifunc
         if ifunc not in bush.allConditions:
             raise BoltError(_('Unknown condition function: %d') % ifunc)
         form1 = 'iI'[ifunc in bush.fid1Conditions]
         form2 = 'iI'[ifunc in bush.fid2Conditions]
-        form12 = form1+form2
-        unpacked2 = ins.unpack(form12,8,readId)
-        (target.param1,target.param2) = unpacked2
-        if size == 24:
-            target.unused2 = ins.read(4)
+        if size == 28:
+            form3 = 'iI'[ifunc in bush.fid3Conditions]
+            form4 = 'iI'[ifunc in bush.fid4Conditions]
+            form1234 = form1+form2+form3+form4
+            unpacked2 = ins.unpack(form1234,16,readId)
+            (target.param1,target.param2,target.param3,target.param4) = unpacked2
         else:
-            target.unused2 = null4
-        (target.ifunc,target.form12) = (ifunc,form12)
+            form1234 = form1+form2
+            unpacked2 = ins.unpack(form1234,8,readId)
+            (target.param1,target.param2) = unpacked2
+            target.param3 = null4
+            target.param4 = null4
+        (target.ifunc,target.form1234) = (ifunc,form1234)
         if self._debug:
             unpacked = unpacked1+unpacked2
             print ' ',zip(self.attrs,unpacked)
@@ -1314,22 +1320,27 @@ class MelConditions(MelStructs):
     def dumpData(self,record,out):
         """Dumps data from record to outstream."""
         for target in record.conditions:
-##            format = 'B3sfI'+target.form12+'4s'
-            out.packSub('CTDA','B3sfI'+target.form12+'4s',
+            out.packSub('CTDA','B3sfI'+target.form1234,
                 target.operFlag, target.unused1, target.compValue,
-                target.ifunc, target.param1, target.param2, target.unused2)
+                target.ifunc, target.param1, target.param2, target.param3, target.param4)
 
     def mapFids(self,record,function,save=False):
         """Applies function to fids. If save is true, then fid is set
         to result of function."""
         for target in record.conditions:
-            form12 = target.form12
-            if form12[0] == 'I':
+            form1234 = target.form1234
+            if form1234[0] == 'I':
                 result = function(target.param1)
                 if save: target.param1 = result
-            if form12[1] == 'I':
+            if form1234[1] == 'I':
                 result = function(target.param2)
                 if save: target.param2 = result
+            if form1234[2] == 'I':
+                result = function(target.param3)
+                if save: target.param3 = result
+            if form1234[3] == 'I':
+                result = function(target.param4)
+                if save: target.param4 = result
 
 #------------------------------------------------------------------------------
 class MelEffects(MelGroups):
@@ -3558,13 +3569,31 @@ class MreQust(MelRecord):
             self.ctda = self.type_ctda.get(key, self.ctda)
             return self.data[key]
 
+    class MelQustData(MelStruct):
+        """Handle older trucated DATA for QUST subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 8:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 2:
+                #--Else 2 byte record
+                unpacked = ins.unpack('BB',size,readId)
+            else:
+                raise "Unexpected size encountered for QUST:DATA subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
+
     #--MelSet
     melSet = MelSet(
         MelString('EDID','eid'),
         MelFid('SCRI','script'),
         MelString('FULL','full'),
         MelString('ICON','iconPath'),
-        MelStruct('DATA','BB',(_questFlags,'questFlags',0),'priority'),
+        MelQustData('DATA','=BB2sf',(_questFlags,'questFlags',0),('priority',0),('unused2',null2),('questDelay',0.0)),
         MelConditions(),
         MelGroups('stages',
             MelStruct('INDX','h','stage'),
@@ -3575,13 +3604,18 @@ class MreQust(MelRecord):
                 MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
                 MelBase('SCDA','compiled_p'),
                 MelString('SCTX','scriptText'),
-                MelScrxen('SCRV/SCRO','references')
+                MelScrxen('SCRV/SCRO','references'),
+                MelFid('NAM0', 'nextQuest'),
                 ),
             ),
-        MelGroups('targets',
-            MelStruct('QSTA','IB3s',(FID,'targetId'),(targetFlags,'flags'),('unused1',null3)),
-            MelConditions(),
-            ),
+        MelGroups('objectives',
+             MelStruct('QOBJ','i','index'),
+             MelString('NNAM','description'),
+             MelGroups('targets',
+                 MelStruct('QSTA','IB3s',(FID,'targetId'),(targetFlags,'flags'),('unused1',null3)),
+                 MelConditions(),
+                 ),
+             ),
         )
     melSet.loaders = MelQustLoaders(melSet.loaders,*melSet.elements[5:8])
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
