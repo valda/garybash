@@ -1283,8 +1283,11 @@ class MelConditions(MelStructs):
 
     def loadData(self,record,ins,type,size,readId):
         """Reads data from ins into record attribute."""
-        if type == 'CTDA' and size != 28 and size != 20:
-            raise ModSizeError(ins.inName,readId,28,size,True)
+        if type == 'CTDA':
+            if size != 28 and size != 24 and size != 20:
+                raise ModSizeError(ins.inName,readId,28,size,False)
+        else:
+            raise ModError(ins.inName,_('Unexpected subrecord: ')+readId)
         #if type == 'CTDT' and size != 20:
         #    raise ModSizeError(ins.inName,readId,20,size,True)
         target = MelObject()
@@ -1297,18 +1300,25 @@ class MelConditions(MelStructs):
             raise BoltError(_('Unknown condition function: %d') % ifunc)
         form1 = 'iI'[ifunc in bush.fid1Conditions]
         form2 = 'iI'[ifunc in bush.fid2Conditions]
+        form3 = 'iI'[ifunc in bush.fid3Conditions]
+        form4 = 'iI'[ifunc in bush.fid4Conditions]
         if size == 28:
-            form3 = 'iI'[ifunc in bush.fid3Conditions]
-            form4 = 'iI'[ifunc in bush.fid4Conditions]
             form1234 = form1+form2+form3+form4
             unpacked2 = ins.unpack(form1234,16,readId)
             (target.param1,target.param2,target.param3,target.param4) = unpacked2
-        else:
+        elif size == 24:
+            form1234 = form1+form2+form3
+            unpacked2 = ins.unpack(form1234,12,readId)
+            (target.param1,target.param2,target.param3) = unpacked2
+            target.param4 = null4
+        elif size == 20:
             form1234 = form1+form2
             unpacked2 = ins.unpack(form1234,8,readId)
             (target.param1,target.param2) = unpacked2
             target.param3 = null4
             target.param4 = null4
+        else:
+            raise ModSizeError(ins.inName,readId,28,size,False)
         (target.ifunc,target.form1234) = (ifunc,form1234)
         if self._debug:
             unpacked = unpacked1+unpacked2

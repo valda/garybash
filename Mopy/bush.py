@@ -382,6 +382,8 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (392, 'IsPC1stPerson', 0, 0, 0, 0),
     (226, 'GetSandman', 0, 0, 0, 0),
     (428, 'GetPlantedExplosive', 0, 0, 0, 0),
+    (304, 'IsWaterObject', 0, 0, 0, 0),
+    (123, 'IsGreetingPlayer', 0, 0, 0, 0),
     )
 allConditions = set(entry[0] for entry in conditionFunctionData)
 fid1Conditions = set(entry[0] for entry in conditionFunctionData if entry[2] == 2)
