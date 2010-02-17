@@ -3052,12 +3052,30 @@ class MreHair(MelRecord):
 class MreIdle(MelRecord):
     """Idle record."""
     classType = 'IDLE'
+    #--Mel IDLE DATA
+    class MelIdleData(MelStruct):
+        """Handle older trucated DATA for IDLE subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 8:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 6:
+                #--Else 6 byte record (skips flags and unknown2...
+                unpacked = ins.unpack('4BH',size,readId)
+            else:
+                raise "Unexpected size encountered for IDLE:DATA subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked, record.flags.getTrueAttrs()
     melSet = MelSet(
         MelString('EDID','eid'),
         MelModel(),
         MelConditions(),
-        MelStruct('ANAM','B','group'),
-        MelStruct('DATA','II',(FID,'parent'),(FID,'prevId')),####Array?
+        MelStruct('ANAM','II',(FID,'parent'),(FID,'prevId')),
+        MelIdleData('DATA','4BH2B','group','loopMin','loopMax','unknown1','delay','flags','unknown2'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 #------------------------------------------------------------------------------

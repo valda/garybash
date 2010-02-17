@@ -372,6 +372,16 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (382, 'GetHasNote', 2, 1, 1, 2),
     (492, 'GetMapMakerVisible', 1, 1, 1, 2),
     (446, 'GetInZone', 2, 1, 1, 2),
+    ( 25, 'IsMoving', 0, 0, 0, 0),
+    (451, 'IsLastIdlePlayed', 2, 0, 0, 0),
+    (399, 'IsWeaponInList', 2, 0, 0, 0),
+    (408, 'GetVATSValue', 1, 2, 0, 0),
+    (435, 'GetDialogueEmotion', 0, 0, 0, 0),
+    (235, 'GetVatsTargetHeight', 0, 0, 0, 0),
+    (391, 'GetHitLocation', 0, 0, 0, 0),
+    (392, 'IsPC1stPerson', 0, 0, 0, 0),
+    (226, 'GetSandman', 0, 0, 0, 0),
+    (428, 'GetPlantedExplosive', 0, 0, 0, 0),
     )
 allConditions = set(entry[0] for entry in conditionFunctionData)
 fid1Conditions = set(entry[0] for entry in conditionFunctionData if entry[2] == 2)
