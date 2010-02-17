@@ -12065,9 +12065,9 @@ class ItemStats:
         self.type_stats = {'ALCH':{},'AMMO':{},'APPA':{},'ARMO':{},'BOOK':{},'CLOT':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'SGST':{},'SLGM':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'weight', 'value'),
-            'AMMO':('eid', 'weight', 'value', 'damage', 'speed', 'enchantPoints'),
+            'AMMO':('eid', 'value', 'speed', 'value', 'clipRounds'),
             'APPA':('eid', 'weight', 'value', 'quality'),
-            'ARMO':('eid', 'weight', 'value', 'health', 'strength'),
+            'ARMO':('eid', 'weight', 'value', 'health', 'ar'),
             'BOOK':('eid', 'weight', 'value', 'enchantPoints'),
             'CLOT':('eid', 'weight', 'value', 'enchantPoints'),
             'INGR':('eid', 'weight', 'value'),
@@ -12076,7 +12076,10 @@ class ItemStats:
             'MISC':('eid', 'weight', 'value'),
             'SGST':('eid', 'weight', 'value', 'uses'),
             'SLGM':('eid', 'weight', 'value'),
-            'WEAP':('eid', 'weight', 'value', 'health', 'damage', 'speed', 'reach', 'enchantPoints'),
+            'WEAP':('eid', 'weight', 'value', 'health', 'damage',
+                    'clipsize', 'minSpread', 'spread', 'baseVatsToHitChance', 'minRange', 'maxRange',
+                    'fireRate', 'overrideActionPoint', 'overrideDamageToWeaponMult', 'attackShotsPerSec',
+                    'reloadTime', 'jamTime', 'criticalDamage', 'criticalMultiplier'),
             }
         self.aliases = aliases or {} #--For aliasing mod names
 
