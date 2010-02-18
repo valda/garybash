@@ -1397,9 +1397,7 @@ class MelEffects(MelGroups):
             #     MelEffects.MelEffectsScit(),
             #     MelString('FULL','full'),
             #     ),
-            MelGroup('conditions',
-                MelBase('CTDA','_ctda'), #--Should be a struct. Maybe later.
-                ),
+            MelConditions(),
             )
 
 #------------------------------------------------------------------------------
