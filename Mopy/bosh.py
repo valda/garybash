@@ -3533,23 +3533,69 @@ class MrePack(MelRecord):
         'unequipArmor','unequipWeapons','defensiveCombat','useHorse',
         'noIdleAnims',))
     class MelPackPkdt(MelStruct):
-        """Support older 4 byte version."""
+        """Support older 8 byte version."""
         def loadData(self,record,ins,type,size,readId):
-            if size != 4:
+            if size == 12:
                 MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 8:
+                unpacked = ins.unpack('IHH',size,readId)
             else:
-                record.flags,record.aiType,junk = ins.unpack('HBs',4,readId)
-                record.flags = MrePack._flags(record.flags)
-                record.unused1 = null3
-                if self._debug: print (record.flags.getTrueAttrs(),record.aiType,record.unused1)
-    class MelPackLT(MelStruct):
+                raise "Unexpected size encountered for PACK:PKDT subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
+    class MelPackPkdd(MelOptStruct):
+        """Handle older trucated PKDD for PACK subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 24:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 20:
+                unpacked = ins.unpack('fII4sI',size,readId)
+            elif size == 16:
+                unpacked = ins.unpack('fII4s',size,readId)
+            elif size == 12:
+                unpacked = ins.unpack('fII',size,readId)
+            else:
+                raise "Unexpected size encountered for PACK:PKDD subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
+    class MelPackLT(MelOptStruct):
         """For PLDT and PTDT. Second element of both may be either an FID or a long,
         depending on value of first element."""
+        def loadData(self,record,ins,type,size,readId):
+            if ((self.subType == 'PLDT' and size == 12) or
+                (self.subType == 'PLD2' and size == 12) or
+                (self.subType == 'PTDT' and size == 16) or
+                (self.subType == 'PTD2' and size == 16)):
+                MelOptStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif ((self.subType == 'PTDT' and size == 12) or
+                  (self.subType == 'PTD2' and size == 12)):
+                unpacked = ins.unpack('iIi',size,readId)
+            else:
+                raise "Unexpected size encountered for PACK:%s subrecord: %s" % (self.subType, size)
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
         def hasFids(self,formElements):
             formElements.add(self)
         def dumpData(self,record,out):
             if ((self.subType == 'PLDT' and (record.locType or record.locId)) or
-                (self.subType == 'PTDT' and (record.targetType or record.targetId))):
+                (self.subType == 'PLD2' and (record.locType2 or record.locId2)) or
+                (self.subType == 'PTDT' and (record.targetType or record.targetId)) or
+                (self.subType == 'PTD2' and (record.targetType2 or record.targetId2))):
                 MelStruct.dumpData(self,record,out)
         def mapFids(self,record,function,save=False):
             """Applies function to fids. If save is true, then fid is set
@@ -3557,17 +3603,78 @@ class MrePack(MelRecord):
             if self.subType == 'PLDT' and record.locType != 5:
                 result = function(record.locId)
                 if save: record.locId = result
+            elif self.subType == 'PLD2' and record.locType2 != 5:
+                result = function(record.locId2)
+                if save: record.locId2 = result
             elif self.subType == 'PTDT' and record.targetType != 2:
                 result = function(record.targetId)
                 if save: record.targetId = result
+            elif self.subType == 'PTD2' and record.targetType2 != 2:
+                result = function(record.targetId2)
+                if save: record.targetId2 = result
     #--MelSet
     melSet = MelSet(
         MelString('EDID','eid'),
-        MelPackPkdt('PKDT','IB3s',(_flags,'flags'),'aiType',('unused1',null3)),
+        MelPackPkdt('PKDT','IHHI',(_flags,'flags'),'aiType','falloutBehaviorFlags','typeSpecificFlags'),
         MelPackLT('PLDT','iIi','locType','locId','locRadius'),
+        MelPackLT('PLD2','iIi','locType2','locId2','locRadius2'),
         MelStruct('PSDT','2bBbi','month','day','date','time','duration'),
-        MelPackLT('PTDT','iIi','targetType','targetId','targetCount'),
+        MelPackLT('PTDT','iIif','targetType','targetId','targetCount','targetUnknown1'),
         MelConditions(),
+        MelGroup('idleAnimations',
+            MelStruct('IDLF','B','animationFlags'),
+            MelBase('IDLC','animationCount'), # byte or short
+            MelStruct('IDLT','f','idleTimerSetting'),
+            MelFidList('IDLA','animations'),
+            MelBase('IDLB','idlb_p'),
+            ),
+        MelBase('PKED','eatMarker'),
+        MelOptStruct('PKE2','I','escordDistance'),
+        MelFid('CNAM','I','combatStyle'),
+        MelOptStruct('PKFD','f','followStartLocationTrigerRadius'),
+        MelBase('PKPT','patrolFlags'), # byte or short
+        MelOptStruct('PKW3','IBB3Hff4s','weaponFlags','fireRate','fireCount','numBursts',
+                     'shootPerVolleysMin','shootPerVolleysMax','pauseBetweenVolleysMin','pauseBetweenVolleysMax','weaponUnknown'),
+        MelPackLT('PTD2','iIif','targetType2','targetId2','targetCount2','targetUnknown2'),
+        MelBase('PUID','useItemMarker'),
+        MelBase('PKAM','ambushMarker'),
+        MelPackPkdd('PKDD','fII4sI4s','dialFov','dialTopic','dialFlags','dialUnknown1','dialType','dialUnknown2'),
+        MelGroup('onBegin',
+            MelBase('POBA', 'marker'),
+            MelFid('INAM', 'idle'),
+            MelStruct('SCHR','4s3I2H',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType','flags'),
+            MelBase('SCDA','compiled_p'),
+            MelString('SCTX','scriptText'),
+            MelGroups('vars',
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_flags,'flags',0L),('unused2',null4+null3)),
+                MelString('SCVR','name')),
+            MelScrxen('SCRV/SCRO','references'),
+            MelFid('TNAM', 'topic'),
+            ),
+        MelGroup('onEnd',
+            MelBase('POEA', 'marker'),
+            MelFid('INAM', 'idle'),
+            MelStruct('SCHR','4s3I2H',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType','flags'),
+            MelBase('SCDA','compiled_p'),
+            MelString('SCTX','scriptText'),
+            MelGroups('vars',
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_flags,'flags',0L),('unused2',null4+null3)),
+                MelString('SCVR','name')),
+            MelScrxen('SCRV/SCRO','references'),
+            MelFid('TNAM', 'topic'),
+            ),
+        MelGroup('onChange',
+            MelBase('POCA', 'marker'),
+            MelFid('INAM', 'idle'),
+            MelStruct('SCHR','4s3I2H',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType','flags'),
+            MelBase('SCDA','compiled_p'),
+            MelString('SCTX','scriptText'),
+            MelGroups('vars',
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_flags,'flags',0L),('unused2',null4+null3)),
+                MelString('SCVR','name')),
+            MelScrxen('SCRV/SCRO','references'),
+            MelFid('TNAM', 'topic'),
+            ),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
