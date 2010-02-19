@@ -7027,7 +7027,8 @@ class Mod_Face_Import(Link):
 		Link.AppendToMenu(self,menu,window,data)
 		menuItem = wx.MenuItem(menu,self.id,_('Face...'))
 		menu.AppendItem(menuItem)
-		menuItem.Enable(len(data) == 1)
+		#menuItem.Enable(len(data) == 1)
+		menuItem.Enable(False)
 
 	def Execute(self,event):
 		#--Select source face file
@@ -7724,7 +7725,8 @@ class Mod_RemoveWorldOrphans(Link):
 		Link.AppendToMenu(self,menu,window,data)
 		menuItem = wx.MenuItem(menu,self.id,_('Remove World Orphans'))
 		menu.AppendItem(menuItem)
-		menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'Fallout3.esm'))
+		#menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'Fallout3.esm'))
+		menuItem.Enable(False)
 
 	def Execute(self,event):
 		message = _("In some circumstances, editing a mod will leave orphaned cell records in the world group. This command will remove such orphans.")
@@ -7872,7 +7874,8 @@ class Mod_UndeleteRefs(Link):
 		Link.AppendToMenu(self,menu,window,data)
 		menuItem = wx.MenuItem(menu,self.id,_('Undelete Refs'))
 		menu.AppendItem(menuItem)
-		menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'Fallout3.esm'))
+		#menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'Fallout3.esm'))
+		menuItem.Enable(False)
 
 	def Execute(self,event):
 		message = _("Changes deleted refs to ignored. This is a very advanced feature and should only be used by modders who know exactly what they're doing.")
@@ -8104,7 +8107,8 @@ class Save_ImportFace(Link):
 		Link.AppendToMenu(self,menu,window,data)
 		menuItem = wx.MenuItem(menu,self.id,_('Import Face...'))
 		menu.AppendItem(menuItem)
-		if len(data) != 1: menuItem.Enable(False)
+		#if len(data) != 1: menuItem.Enable(False)
+		menuItem.Enable(False)
 
 	def Execute(self,event):
 		#--File Info
@@ -8692,7 +8696,8 @@ class Save_Stats(Link):
 		Link.AppendToMenu(self,menu,window,data)
 		menuItem = wx.MenuItem(menu,self.id,_('Statistics'))
 		menu.AppendItem(menuItem)
-		if len(data) != 1: menuItem.Enable(False)
+		#if len(data) != 1: menuItem.Enable(False)
+		menuItem.Enable(False)
 
 	def Execute(self,event):
 		fileName = GPath(self.data[0])
@@ -8717,7 +8722,8 @@ class Save_Unbloat(Link):
 		Link.AppendToMenu(self,menu,window,data)
 		menuItem = wx.MenuItem(menu,self.id,_('Remove Bloat...'))
 		menu.AppendItem(menuItem)
-		if len(data) != 1: menuItem.Enable(False)
+		#if len(data) != 1: menuItem.Enable(False)
+		menuItem.Enable(False)
 
 	def Execute(self,event):
 		#--File Info
@@ -8766,7 +8772,8 @@ class Save_UpdateNPCLevels(Link):
 		Link.AppendToMenu(self,menu,window,data)
 		menuItem = wx.MenuItem(menu,self.id,_('Update NPC Levels...'))
 		menu.AppendItem(menuItem)
-		menuItem.Enable(bool(data and bosh.modInfos.ordered))
+		#menuItem.Enable(bool(data and bosh.modInfos.ordered))
+		menuItem.Enable(False)
 
 	def Execute(self,event):
 		debug = True
@@ -9685,8 +9692,8 @@ def InitModLinks():
 	ModList.itemMenu.append(Mod_FlipSelf())
 	ModList.itemMenu.append(Mod_FlipMasters())
 	ModList.itemMenu.append(Mod_RemoveWorldOrphans())
-	ModList.itemMenu.append(Mod_CleanMod())
-	ModList.itemMenu.append(Mod_SetVersion())
+	#ModList.itemMenu.append(Mod_CleanMod())
+	#ModList.itemMenu.append(Mod_SetVersion())
 	ModList.itemMenu.append(Mod_UndeleteRefs())
 
 def InitSaveLinks():
@@ -9743,19 +9750,19 @@ def InitSaveLinks():
 	SaveList.itemMenu.append(Save_Stats())
 	#--------------------------------------------
 	SaveList.itemMenu.append(SeparatorLink())
-	SaveList.itemMenu.append(Save_EditPCSpells())
+	#SaveList.itemMenu.append(Save_EditPCSpells())
 	SaveList.itemMenu.append(Save_ImportFace())
-	SaveList.itemMenu.append(Save_EditCreated('ENCH'))
-	SaveList.itemMenu.append(Save_EditCreated('ALCH'))
-	SaveList.itemMenu.append(Save_EditCreated('SPEL'))
-	SaveList.itemMenu.append(Save_ReweighPotions())
+	#SaveList.itemMenu.append(Save_EditCreated('ENCH'))
+	#SaveList.itemMenu.append(Save_EditCreated('ALCH'))
+	#SaveList.itemMenu.append(Save_EditCreated('SPEL'))
+	#SaveList.itemMenu.append(Save_ReweighPotions())
 	SaveList.itemMenu.append(Save_UpdateNPCLevels())
 	#--------------------------------------------
 	SaveList.itemMenu.append(SeparatorLink())
 	SaveList.itemMenu.append(Save_Unbloat())
-	SaveList.itemMenu.append(Save_RepairAbomb())
-	SaveList.itemMenu.append(Save_RepairFactions())
-	SaveList.itemMenu.append(Save_RepairHair())
+	#SaveList.itemMenu.append(Save_RepairAbomb())
+	#SaveList.itemMenu.append(Save_RepairFactions())
+	#SaveList.itemMenu.append(Save_RepairHair())
 
 def InitScreenLinks():
 	"""Initialize screens tab menus."""
