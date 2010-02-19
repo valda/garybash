@@ -2750,6 +2750,10 @@ class MreCsty(MelRecord):
                      'dodgeFAtkMult', 'dodgeFNAtkMult', 'blockMult', 'blockBase',
                      'blockAtkMult', 'blockNAtkMult', 'atkMult','atkBase', 'atkAtkMult',
                      'atkNAtkMult', 'atkBlockMult', 'pAtkFBase', 'pAtkFMult'),
+        MelOptStruct('CSSD', '9fII5f', 'coverSearchRadius', 'takeCoverChance', 'waitTimerMin', 'waitTimerMax',
+                     'waitToFireTimerMin', 'waitToFireTimerMax', 'fireTimerMin', 'fireTimerMax'
+                     'rangedWeaponRangeMultMin','weaponRestrictions','unknown1','rangedWeaponRangeMultMax',
+                     'maxTargetingFov','combatRadius','semiAutomaticFireDelayMultMin','semiAutomaticFireDelayMultMax'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 #------------------------------------------------------------------------------
