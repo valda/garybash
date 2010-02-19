@@ -4381,34 +4381,25 @@ class MreWatr(MelRecord):
     class MelWatrData(MelStruct):
         """Handle older trucated DATA for WATR subrecord."""
         def loadData(self,record,ins,type,size,readId):
-            if size == 102:
+            if size == 186:
                 MelStruct.loadData(self,record,ins,type,size,readId)
                 return
-            elif size == 86:
-                #--Else 86 byte record (skips dispVelocity,
-                #-- dispFalloff, dispDampner, dispSize, and damage
-                #-- Two junk? bytes are tacked onto the end
-                #-- Hex editing and the CS confirms that it is NOT
-                #-- damage, so it is probably just filler
-                unpacked = ins.unpack('11f3Bs3Bs3BsB3s6f2s',size,readId)
-            elif size == 62:
-                #--Else 62 byte record (skips most everything
-                #-- Two junk? bytes are tacked onto the end
-                #-- No testing done, but assumed that its the same as the
-                #-- previous truncated record.
-                unpacked = ins.unpack('11f3Bs3Bs3BsB3s2s',size,readId)
-            elif size == 42:
-                #--Else 42 byte record (skips most everything
-                #-- Two junk? bytes are tacked onto the end
-                #-- No testing done, but assumed that its the same as the
-                #-- previous truncated record.
-                unpacked = ins.unpack('10f2s',size,readId)
             elif size == 2:
-                #--Else 2 byte record (skips everything
-                #-- Two junk? bytes are tacked onto the end
-                #-- No testing done, but assumed that its the same as the
-                #-- previous truncated record.
-                unpacked = ins.unpack('2s',size,readId)
+                record.damage = ins.unpack('H',size,readId)
+                return
+            else:
+                raise "Unexpected size encountered for WATR subrecord: %s" % size
+        def dumpData(self,record,out):
+            out.packSub(self.subType,'H',record.damage)
+
+    class MelWatrDnam(MelStruct):
+        """Handle older trucated DNAM for WATR subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 196:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 184:
+                unpacked = ins.unpack('10f3Bs3Bs3BsI32f',size,readId)
             else:
                 raise "Unexpected size encountered for WATR subrecord: %s" % size
             unpacked = unpacked[:-1]
@@ -4421,21 +4412,52 @@ class MreWatr(MelRecord):
 
     melSet = MelSet(
         MelString('EDID','eid'),
-        MelString('TNAM','texture'),
+        MelString('FULL','full'),
+        MelString('NNAM','texture'),
         MelStruct('ANAM','B','opacity'),
         MelStruct('FNAM','B',(_flags,'flags',0)),
         MelString('MNAM','material'),
         MelFid('SNAM','sound'),
-        MelWatrData('DATA', '11f3Bs3Bs3BsB3s10fH',('windVelocity',0.100),
-                    ('windDirection',90.0),('waveAmp',0.5),('waveFreq',1.0),('sunPower',50.0),
-                    ('reflectAmt',0.5),('fresnelAmt',0.0250),('xSpeed',0.0),('ySpeed',0.0),
-                    ('fogNear',27852.8),('fogFar',163840.0),('shallowRed',0),('shallowGreen',128),
-                    ('shallowBlue',128),('unused1',null1),('deepRed',0),('deepGreen',0),
-                    ('deepBlue',25),('unused2',null1),('reflRed',255),('reflGreen',255),
-                    ('reflBlue',255),('unused3',null1),('blend',50),('unused4',null3),('rainForce',0.1000),
-                    ('rainVelocity',0.6000),('rainFalloff',0.9850),('rainDampner',2.0000),
-                    ('rainSize',0.0100),('dispForce',0.4000),('dispVelocity', 0.6000),
-                    ('dispFalloff',0.9850),('dispDampner',10.0000),('dispSize',0.0500),('damage',0)),
+        MelFid('XNAM','effect'),
+        MelWatrData('DATA','10f3Bs3Bs3BsI32fH',('windVelocity',0.100),('windDirection',90.0),
+            ('waveAmp',0.5),('waveFreq',1.0),('sunPower',50.0),('reflectAmt',0.5),
+            ('fresnelAmt',0.0250),('unknown1',0.0),('fogNear',27852.8),('fogFar',163840.0),
+            ('shallowRed',0),('shallowGreen',128),('shallowBlue',128),('unused1',null1),
+            ('deepRed',0),('deepGreen',0),('deepBlue',25),('unused2',null1),
+            ('reflRed',255),('reflGreen',255),('reflBlue',255),('unused3',null1),
+            ('unknown2',0),
+            ('rainForce',0.1000),('rainVelocity',0.6000),('rainFalloff',0.9850),('rainDampner',2.0000),('rainSize',0.0100),
+            ('dispForce',0.4000),('dispVelocity', 0.6000),('dispFalloff',0.9850),('dispDampner',10.0000),('dispSize',0.0500),
+            ('noiseNormalsScale',1.8000),('noiseLayer1WindDirection',0.0000),('noiseLayer2WindDirection',-431602080.0500),
+            ('noiseLayer3WindDirection',-431602080.0500),('noiseLayer1WindVelocity',0.0000),
+            ('noiseLayer2WindVelocity',-431602080.0500),('noiseLayer3WindVelocity',-431602080.0500),
+            ('noiseNormalsDepthFalloffStart',0.00000),('noiseNormalsDepthFalloffEnd',0.10000),
+            ('fogAboveWaterAmount',1.00000),('noiseNormalsUvScale',500.00000),
+            ('fogUnderWaterAmount',1.00000),('fogUnderWaterNear',0.00000),('fogUnderWaterFar',1000.00000),
+            ('distortionAmount',250.00000),('shininess',100.00000),('reflectHdrMult',1.00000),
+            ('lightRadius',10000.00000),('lightBrightness',1.00000),
+            ('noiseLayer1UvScale',100.00000),('noiseLayer2UvScale',100.00000),('noiseLayer3UvScale',100.00000),
+            ('damage',0)),
+        MelWatrDnam('DNAM','10f3Bs3Bs3BsI35f',('windVelocity',0.100),('windDirection',90.0),
+            ('waveAmp',0.5),('waveFreq',1.0),('sunPower',50.0),('reflectAmt',0.5),
+            ('fresnelAmt',0.0250),('unknown1',0.0),('fogNear',27852.8),('fogFar',163840.0),
+            ('shallowRed',0),('shallowGreen',128),('shallowBlue',128),('unused1',null1),
+            ('deepRed',0),('deepGreen',0),('deepBlue',25),('unused2',null1),
+            ('reflRed',255),('reflGreen',255),('reflBlue',255),('unused3',null1),
+            ('unknown2',0),
+            ('rainForce',0.1000),('rainVelocity',0.6000),('rainFalloff',0.9850),('rainDampner',2.0000),('rainSize',0.0100),
+            ('dispForce',0.4000),('dispVelocity', 0.6000),('dispFalloff',0.9850),('dispDampner',10.0000),('dispSize',0.0500),
+            ('noiseNormalsScale',1.8000),('noiseLayer1WindDirection',0.0000),('noiseLayer2WindDirection',-431602080.0500),
+            ('noiseLayer3WindDirection',-431602080.0500),('noiseLayer1WindVelocity',0.0000),
+            ('noiseLayer2WindVelocity',-431602080.0500),('noiseLayer3WindVelocity',-431602080.0500),
+            ('noiseNormalsDepthFalloffStart',0.00000),('noiseNormalsDepthFalloffEnd',0.10000),
+            ('fogAboveWaterAmount',1.00000),('noiseNormalsUvScale',500.00000),
+            ('fogUnderWaterAmount',1.00000),('fogUnderWaterNear',0.00000),('fogUnderWaterFar',1000.00000),
+            ('distortionAmount',250.00000),('shininess',100.00000),('reflectHdrMult',1.00000),
+            ('lightRadius',10000.00000),('lightBrightness',1.00000),
+            ('noiseLayer1UvScale',100.00000),('noiseLayer2UvScale',100.00000),('noiseLayer3UvScale',100.00000),
+            ('noiseLayer1Amp',0.00000),('noiseLayer2Amp',0.00000),('noiseLayer3Amp',0.00000),
+            ),
         MelFidList('GNAM','relatedWaters'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
