@@ -3551,6 +3551,7 @@ class MrePack(MelRecord):
         None,'alwaysSneak','allowSwimming','allowFalls',
         'unequipArmor','unequipWeapons','defensiveCombat','useHorse',
         'noIdleAnims',))
+    _variableFlags = Flags(0L,Flags.getNames('isLongOrShort'))
     class MelPackPkdt(MelStruct):
         """Support older 8 byte version."""
         def loadData(self,record,ins,type,size,readId):
@@ -3665,7 +3666,7 @@ class MrePack(MelRecord):
             MelBase('SCDA','compiled_p'),
             MelString('SCTX','scriptText'),
             MelGroups('vars',
-                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_flags,'flags',0L),('unused2',null4+null3)),
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
                 MelString('SCVR','name')),
             MelScrxen('SCRV/SCRO','references'),
             MelFid('TNAM', 'topic'),
@@ -3677,7 +3678,7 @@ class MrePack(MelRecord):
             MelBase('SCDA','compiled_p'),
             MelString('SCTX','scriptText'),
             MelGroups('vars',
-                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_flags,'flags',0L),('unused2',null4+null3)),
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
                 MelString('SCVR','name')),
             MelScrxen('SCRV/SCRO','references'),
             MelFid('TNAM', 'topic'),
@@ -3689,7 +3690,7 @@ class MrePack(MelRecord):
             MelBase('SCDA','compiled_p'),
             MelString('SCTX','scriptText'),
             MelGroups('vars',
-                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_flags,'flags',0L),('unused2',null4+null3)),
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
                 MelString('SCVR','name')),
             MelScrxen('SCRV/SCRO','references'),
             MelFid('TNAM', 'topic'),
@@ -3702,6 +3703,7 @@ class MreQust(MelRecord):
     """Quest record."""
     classType = 'QUST'
     _questFlags = Flags(0,Flags.getNames('startGameEnabled',None,'repeatedTopics','repeatedStages'))
+    _variableFlags = Flags(0L,Flags.getNames('isLongOrShort'))
     stageFlags = Flags(0,Flags.getNames('complete'))
     targetFlags = Flags(0,Flags.getNames('ignoresLocks'))
 
@@ -3755,6 +3757,9 @@ class MreQust(MelRecord):
                 MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
                 MelBase('SCDA','compiled_p'),
                 MelString('SCTX','scriptText'),
+                MelGroups('vars',
+                    MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
+                    MelString('SCVR','name')),
                 MelScrxen('SCRV/SCRO','references'),
                 MelFid('NAM0', 'nextQuest'),
                 ),
