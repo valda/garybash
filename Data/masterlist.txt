@@ -427,6 +427,7 @@ Mart's Mutant Mod - DLC Zeta.esp
 Mart's Mutant Mod - FOOK2.esp
 Mart's Mutant Mod - FOOK2 - DIK.esp
 Mart's Mutant Mod - FWE Master Release.esp
+% {{BASH:Invent,Relations}}
 Mart's Mutant Mod - FWE with EVE.esp
 
 \FWE-FOOK Merger (Optional)

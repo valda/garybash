@@ -11909,7 +11909,7 @@ class FactionRelations:
     """Faction relations."""
     def __init__(self,aliases=None):
         """Initialize."""
-        self.id_relations = {} #--(otherLongid,otherDisp) = id_relation[longid]
+        self.id_relations = {} #--(otherLongid,otherDisp,groupCombatReaction) = id_relation[longid]
         self.id_eid = {} #--For all factions.
         self.aliases = aliases or {}
         self.gotFactions = set()
@@ -11941,11 +11941,11 @@ class FactionRelations:
                 relations = self.id_relations[record.fid] = []
             other_index = dict((y[0],x) for x,y in enumerate(relations))
             for relation in record.relations:
-                other,disp = relation.faction,relation.mod
+                other,disp,groupCombatReaction = relation.faction,relation.mod,relation.groupCombatReaction
                 if other in other_index:
-                    relations[other_index[other]] = (other,disp)
+                    relations[other_index[other]] = (other,disp,groupCombatReaction)
                 else:
-                    relations.append((other,disp))
+                    relations.append((other,disp,groupCombatReaction))
 
     def readFromText(self,textPath):
         """Imports faction relations from specified text file."""
@@ -11953,34 +11953,35 @@ class FactionRelations:
         aliases = self.aliases
         ins = bolt.CsvReader(textPath)
         for fields in ins:
-            if len(fields) < 7 or fields[2][:2] != '0x': continue
-            med,mmod,mobj,oed,omod,oobj,disp = fields[:9]
+            if len(fields) < 8 or fields[2][:2] != '0x': continue
+            med,mmod,mobj,oed,omod,oobj,disp,groupCombatReaction = fields[:8]
             mid = (GPath(aliases.get(mmod,mmod)),int(mobj[2:],16))
             oid = (GPath(aliases.get(omod,omod)),int(oobj[2:],16))
             disp = int(disp)
+            groupCombatReaction = int(groupCombatReaction)
             relations = id_relations.get(mid)
             if relations is None:
                 relations = id_relations[mid] = []
             for index,entry in enumerate(relations):
                 if entry[0] == oid:
-                    relations[index] = (oid,disp)
+                    relations[index] = (oid,disp,groupCombatReaction)
                     break
             else:
-                relations.append((oid,disp))
+                relations.append((oid,disp,groupCombatReaction))
         ins.close()
 
     def writeToText(self,textPath):
         """Exports faction relations to specified text file."""
         id_relations,id_eid = self.id_relations, self.id_eid
-        headFormat = '%s","%s","%s","%s","%s","%s","%s"\n'
-        rowFormat = '"%s","%s","0x%06X","%s","%s","0x%06X","%s"\n'
+        headFormat = '%s","%s","%s","%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","%s","0x%06X","%s","%s","0x%06X","%s","%s"\n'
         out = textPath.open('w')
-        out.write(headFormat % (_('Main Eid'),_('Main Mod'),_('Main Object'),_('Other Eid'),_('Other Mod'),_('Other Object'),_('Disp')))
+        out.write(headFormat % (_('Main Eid'),_('Main Mod'),_('Main Object'),_('Other Eid'),_('Other Mod'),_('Other Object'),_('Disp'),_('GroupCombatReaction')))
         for main in sorted(id_relations,key = lambda x: id_eid.get(x)):
             mainEid = id_eid.get(main,'Unknown')
-            for other, disp in sorted(id_relations[main],key=lambda x: id_eid.get(x[0])):
+            for other,disp,groupCombatReaction in sorted(id_relations[main],key=lambda x: id_eid.get(x[0])):
                 otherEid = id_eid.get(other,'Unknown')
-                out.write(rowFormat % (mainEid,main[0].s,main[1],otherEid,other[0].s,other[1],disp))
+                out.write(rowFormat % (mainEid,main[0].s,main[1],otherEid,other[0].s,other[1],disp,groupCombatReaction))
         out.close()
 
 #------------------------------------------------------------------------------
@@ -14430,7 +14431,7 @@ class ImportRelations(ImportPatcher):
     def initPatchFile(self,patchFile,loadMods):
         """Prepare to handle specified patch mod. All functions are called after this."""
         Patcher.initPatchFile(self,patchFile,loadMods)
-        self.id_relations= {} #--[(otherLongid0,disp0),(...)] = id_relations[mainLongid].
+        self.id_relations= {} #--[(otherLongid0,disp0,groupCombatReaction0),(...)] = id_relations[mainLongid].
         self.srcFiles = self.getConfigChecked()
         self.isActive = bool(self.srcFiles)
 
@@ -14493,15 +14494,16 @@ class ImportRelations(ImportPatcher):
                 fid = record.fid
                 if fid in id_relations:
                     newRelations = set(id_relations[fid])
-                    curRelations = set((x.faction,x.mod) for x in record.relations)
+                    curRelations = set((x.faction,x.mod,x.groupCombatReaction) for x in record.relations)
                     changed = newRelations - curRelations
                     if not changed: continue
                     doKeep = False
-                    for faction,disp in changed:
+                    for faction,disp,groupCombatReaction in changed:
                         for entry in record.relations:
                             if entry.faction == faction:
-                                if entry.mod != disp:
+                                if (entry.mod != disp or entry.groupCombatReaction != groupCombatReaction):
                                     entry.mod = disp
+                                    entry.groupCombatReaction = groupCombatReaction
                                     doKeep = True
                                     keep(fid)
                                 break
@@ -14509,6 +14511,7 @@ class ImportRelations(ImportPatcher):
                             entry = MelObject()
                             entry.faction = faction
                             entry.mod = disp
+                            entry.groupCombatReaction = groupCombatReaction
                             record.relations.append(entry)
                             doKeep = True
                     if doKeep:
