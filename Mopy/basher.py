@@ -3076,7 +3076,7 @@ class BashFrame(wx.Frame):
 	def SetTitle(self,title=None):
 		"""Set title. Set to default if no title supplied."""
 		if not title:
-			title = "Wrye Bash %s: " % (settings['bash.readme'][1],)
+			title = "Wrye Bash for Fallout3 %s: " % (settings['bash.readme'][1],)
 			maProfile = re.match(r'Saves\\(.+)\\$',bosh.saveInfos.localSave)
 			if maProfile:
 				title += maProfile.group(1)
@@ -3741,7 +3741,7 @@ class BashApp(wx.App):
 		#--Current Version
 		settings['bash.version'] = 43
 		#--Version from readme
-		readme = bosh.dirs['app'].join('Mopy','Wrye Bash.txt')
+		readme = bosh.dirs['app'].join('Mopy','Gary Bash.txt')
 		if readme.exists() and readme.mtime != settings['bash.readme'][0]:
 			reVersion = re.compile("^=== ([\.\d]+) \[")
 			for line in readme.open():
