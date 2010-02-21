@@ -1,5 +1,9 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 3 [2/22/2010]
+* Bugfixes
+  * Fix typo, and replace s/BOSS.bat/BOSS-F.bat/.
+
 === 2 [2/21/2010]
 * Bugfixes
   * Fixed a Import Relations bug that threw an error.

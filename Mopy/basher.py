@@ -9461,7 +9461,7 @@ def InitStatusBar():
 			_("Launch FO3View")))
 	BashStatusBar.buttons.append(
 		App_Tes4View(
-			bosh.dirs['app'].join('FO34Edit.exe'),
+			bosh.dirs['app'].join('FO3Edit.exe'),
 			Image(r'images/brick.png'),
 			_("Launch FO3Edit")))
 	BashStatusBar.buttons.append(
@@ -9476,12 +9476,12 @@ def InitStatusBar():
 			_("Launch Tes4LODGen")))
 	BashStatusBar.buttons.append(
 		App_BOSS(
-			bosh.dirs['app'].join('Data\\BOSS.bat'),
+			bosh.dirs['app'].join('Data\\BOSS-F.bat'),
 			Image(r'images/Boss1.png'),
 			_("Launch BOSS")))
 	BashStatusBar.buttons.append(
 		App_BOSS(
-			bosh.dirs['app'].join('Data\\BOSS.bat'),
+			bosh.dirs['app'].join('Data\\BOSS-F.bat'),
 			Image(r'images/boss2.png'),
 			_("Launch BOSS")))
 	BashStatusBar.buttons.append(App_BashMon())
