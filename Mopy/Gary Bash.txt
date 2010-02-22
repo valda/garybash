@@ -1,5 +1,11 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 4 [2/22/2010]
+* Bugfixes
+  * Fixed path to "FO3Edit.exe" and "fomm.exe".
+* Changed version indicator of fallout3.esm.
+* Renamed "masterlist.txt" to "masterlist.txt.example".
+
 === 3 [2/22/2010]
 * Bugfixes
   * Fix typo, and replace s/BOSS.bat/BOSS-F.bat/.
