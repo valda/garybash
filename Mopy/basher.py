@@ -9447,33 +9447,33 @@ def InitStatusBar():
 			'-editor'))
 	BashStatusBar.buttons.append(
 		App_Button(
-			bosh.dirs['app'].join('fomm.exe'),
+			bosh.dirs['app'].join('fomm\\fomm.exe'),
 			Image(r'images/database_connect.png'),
 			_("Launch FOMM")))
-	BashStatusBar.buttons.append(
-		App_Tes4Gecko(None,
-			Image(r'images/cog.png'),
-			_("Launch Tes4Gecko")))
+	# BashStatusBar.buttons.append(
+	# 	App_Tes4Gecko(None,
+	# 		Image(r'images/cog.png'),
+	# 		_("Launch Tes4Gecko")))
 	BashStatusBar.buttons.append(
 		App_Tes4View(
-			(bosh.dirs['app'].join('FO3Edit.exe'), '-view'),
+			(bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'), '-view'),
 			Image(r'images/brick_edit.png'),
 			_("Launch FO3View")))
 	BashStatusBar.buttons.append(
 		App_Tes4View(
-			bosh.dirs['app'].join('FO3Edit.exe'),
+			bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'),
 			Image(r'images/brick.png'),
 			_("Launch FO3Edit")))
 	BashStatusBar.buttons.append(
 		App_Tes4View(
-			(bosh.dirs['app'].join('FO3Edit.exe'),'-translate'),
+			(bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'),'-translate'),
 			Image(r'images/brick_error.png'),
 			_("Launch FO3Trans")))
-	BashStatusBar.buttons.append(
-		App_Button(
-			bosh.dirs['app'].join('Tes4LodGen.exe'),
-			Image(r'images/brick_go.png'),
-			_("Launch Tes4LODGen")))
+	# BashStatusBar.buttons.append(
+	# 	App_Button(
+	# 		bosh.dirs['app'].join('Tes4LodGen.exe'),
+	# 		Image(r'images/brick_go.png'),
+	# 		_("Launch Tes4LODGen")))
 	BashStatusBar.buttons.append(
 		App_BOSS(
 			bosh.dirs['app'].join('Data\\BOSS-F.bat'),
