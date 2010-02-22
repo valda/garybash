@@ -9192,6 +9192,10 @@ class ConfigHelpers:
         self.patchesLLPath = dirs['patches'].join('Leveled Lists.csv')
         self.patchesLLTime = 0
         self.patchesLLTags = {}
+        #--Bash Patches\FormID Lists.csv
+        self.patchesFLPath = dirs['patches'].join('FormID Lists.csv')
+        self.patchesFLTime = 0
+        self.patchesFLTags = {}
         #--Boss Master List
         self.bossMasterPath = dirs['mods'].join('masterlist.txt')
         self.bossMasterTime = 0
@@ -9212,6 +9216,17 @@ class ConfigHelpers:
                     tags[GPath(fields[0])] = tuple(mapper[x] for x in fields[1])
             reader.close()
             self.patchesLLTime = path.mtime
+        #--Bash Patches\FormID Lists.csv
+        path,mtime,tags = (self.patchesFLPath, self.patchesFLTime, self.patchesFLTags,)
+        if path.exists() and path.mtime != mtime:
+            tags.clear()
+            mapper = {'D':'Deflst','R':'Reflst'}
+            reader = bolt.CsvReader(path)
+            for fields in reader:
+                if len(fields) >= 2 and fields[0] and fields[1] in ('DR','R','D','RD',''):
+                    tags[GPath(fields[0])] = tuple(mapper[x] for x in fields[1])
+            reader.close()
+            self.patchesFLTime = path.mtime
         #--Boss Master List
         path,mtime,tags = (self.bossMasterPath, self.bossMasterTime, self.bossMasterTags,)
         if path.exists() and path.mtime != mtime:
@@ -9240,8 +9255,12 @@ class ConfigHelpers:
         """Retrieves bash tags for given file."""
         if modName in self.bossMasterTags:
             return set(self.bossMasterTags[modName])
+        patchesTags = set()
         if modName in self.patchesLLTags:
-            return set(self.patchesLLTags[modName])
+            patchesTags |= set(self.patchesLLTags[modName])
+        if modName in self.patchesFLTags:
+            patchesTags |= set(self.patchesFLTags[modName])
+        return patchesTags
 
     #--Mod Checker ------------------------------------------------------------
     def refreshRuleSets(self):
@@ -17668,6 +17687,20 @@ class FidListsMerger(SpecialPatcher,ListPatcher):
     forceAuto = False
     forceItemCheck = True #--Force configChecked to True for all items
     iiMode = True
+
+    #--Static------------------------------------------------------------------
+    @staticmethod
+    def getDefaultTags():
+        tags = {}
+        for fileName in ('FormID Lists.csv','My FormId Lists.csv'):
+            textPath = dirs['patches'].join(fileName)
+            if textPath.exists():
+                reader = bolt.CsvReader(textPath)
+                for fields in reader:
+                    if len(fields) < 2 or not fields[0] or fields[1] not in ('DR','R','D','RD',''): continue
+                    tags[GPath(fields[0])] = fields[1]
+                reader.close()
+        return tags
 
     #--Config Phase -----------------------------------------------------------
     def getChoice(self,item):

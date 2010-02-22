@@ -42,7 +42,7 @@ FOOK2 - Main.esm
 FOOK2 - [DIK] DLC Improvement Kit.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
 FO3 Wanderers Edition - Main File.esm
-% {{BASH:Invent,Stats,Relations,Reflst,Deflst}}
+% {{BASH:Invent,Stats,Relations}}
 LingsFinerThings.esm
 RH_IRONSIGHTS.esm
 EnhancedChildren.esm
@@ -209,6 +209,7 @@ teddybear_brothers.esp
 StealthArmorHelmLess.esp
 JM Stealth Suit.esp
 JM Stealth Suit - Vanilla.esp
+FrenchMaid.esp
 
 BoS_DX.esp
 % {{BASH:Graphics}}
@@ -360,7 +361,6 @@ CALIBR Ammo Schematics - CRAFT.esp
 \Weapon Mod Kits
 \'''''''''''''''''''''''''''''''''''''''
 WeaponModKits.esp
-% {{BASH:Reflst}}
 
 \FOIP-WMK
 \'''''''''''''''''''''''''''''''''''''''
