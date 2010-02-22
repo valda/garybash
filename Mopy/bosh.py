@@ -8229,7 +8229,7 @@ class ModInfos(FileInfos):
         self.version_voSize = {
             '1.0':int(_("288769595")),
             '1.1':int(_("288771181")),
-            '1.4':int(_("288771262"))}
+            '1.4~':int(_("288771262"))}
         self.size_voVersion = bolt.invertDict(self.version_voSize)
         self.voCurrent = None
         self.voAvailable = set()

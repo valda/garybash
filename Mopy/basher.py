@@ -9605,8 +9605,9 @@ def InitModLinks():
 		ModList.mainMenu.append(sortMenu)
 	if True: #--Versions
 		versionsMenu = MenuLink("Fallout3.esm")
+		versionsMenu.links.append(Mods_Fallout3Version('1.0'))
 		versionsMenu.links.append(Mods_Fallout3Version('1.1'))
-		versionsMenu.links.append(Mods_Fallout3Version('SI'))
+		versionsMenu.links.append(Mods_Fallout3Version('1.4~'))
 		ModList.mainMenu.append(versionsMenu)
 	#--------------------------------------------
 	ModList.mainMenu.append(SeparatorLink())
@@ -9710,8 +9711,9 @@ def InitSaveLinks():
 		SaveList.mainMenu.append(sortMenu)
 	if True: #--Versions
 		versionsMenu = MenuLink("Fallout3.esm")
+		versionsMenu.links.append(Mods_Fallout3Version('1.0',True))
 		versionsMenu.links.append(Mods_Fallout3Version('1.1',True))
-		versionsMenu.links.append(Mods_Fallout3Version('SI',True))
+		versionsMenu.links.append(Mods_Fallout3Version('1.4~',True))
 		SaveList.mainMenu.append(versionsMenu)
 	if True: #--Save Profiles
 		subDirMenu = MenuLink(_("Profile"))
