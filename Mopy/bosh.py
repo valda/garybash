@@ -1256,7 +1256,6 @@ class MelTuple(MelBase):
 
 #------------------------------------------------------------------------------
 # Common/Special Elements
-
 #------------------------------------------------------------------------------
 class MelConditions(MelStructs):
     """Represents a set of quest/dialog conditions. Difficulty is that FID state
@@ -4775,6 +4774,149 @@ class MreFlst(MelRecord):
         self.setChanged()
 
 #------------------------------------------------------------------------------
+class MrePerk(MelRecord):
+    """Perk record."""
+    classType = 'PERK'
+    class MelPerkData(MelStruct):
+        """Handle older trucated DATA for PERK subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 5:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 4:
+                unpacked = ins.unpack('BBBB',size,readId)
+            else:
+                raise "Unexpected size encountered for DATA subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked, record.flagsA.getTrueAttrs()
+    class MelPerkEffectData(MelBase):
+        def hasFids(self,formElements):
+            formElements.add(self)
+        def loadData(self,record,ins,type,size,readId):
+            target = MelObject()
+            record.__setattr__(self.attr,target)
+            if record.type == 0:
+                format,attrs = ('II',('quest','queststage'))
+            elif record.type == 1:
+                format,attrs = ('I',('ability',))
+            elif record.type == 2:
+                format,attrs = ('HB',('entrypoint','function'))
+            else:
+                raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+            unpacked = ins.unpack(format,size,readId)
+            setter = target.__setattr__
+            for attr,value in zip(attrs,unpacked):
+                setter(attr,value)
+            if self._debug: print unpacked
+        def dumpData(self,record,out):
+            target = record.__getattribute__(self.attr,None)
+            if not target: return
+            if record.type == 0:
+                format,attrs = ('II',('quest','queststage'))
+            elif record.type == 1:
+                format,attrs = ('I',('ability',))
+            elif record.type == 2:
+                format,attrs = ('HB',('entrypoint','function'))
+            else:
+                raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+            values = []
+            valuesAppend = values.append
+            getter = target.__getattribute__
+            for attr in attrs:
+                value = getter(attr)
+                valuesAppend(value)
+            try:
+                out.packSub(self.subType,format,*values)
+            except struct.error:
+                print self.subType,format,values
+                raise
+        def mapFids(self,record,function,save=False):
+            target = record.__getattribute__(self.attr,None)
+            if not target: return
+            if record.type == 0:
+                result = function(target.quest)
+                if save: target.quest = result
+            elif record.type == 1:
+                result = function(target.ability)
+                if save: target.ability = result
+    class MelPerkEffects(MelGroups):
+        def __init__(self,attr,*elements):
+            MelGroups.__init__(self,attr,*elements)
+        def setMelSet(self,melSet):
+            self.melSet = melSet
+            self.attrLoaders = {}
+            for element in melSet.elements:
+                attr = element.__dict__.get('attr',None)
+                if attr: self.attrLoaders[attr] = element
+        def loadData(self,record,ins,type,size,readId):
+            if type == 'DATA' or type == 'CTDA':
+                effects = record.__getattribute__(self.attr)
+                if not effects:
+                    if type == 'DATA':
+                        element = self.attrLoaders['_data']
+                    elif type == 'CTDA':
+                        element = self.attrLoaders['conditions']
+                    element.loadData(record,ins,type,size,readId)
+                    return
+            MelGroups.loadData(self,record,ins,type,size,readId)
+    class MelPerkEffectParams(MelGroups):
+        def loadData(self,record,ins,type,size,readId):
+            target = self.getDefault()
+            record.__getattribute__(self.attr).append(target)
+            element = self.loaders[type]
+            slots = ['recordType']
+            slots.extend(element.getSlotsUsed())
+            target.__slots__ = slots
+            target.recordType = type
+            element.loadData(target,ins,type,size,readId)
+        def dumpData(self,record,out):
+            target = record.__getattribute__(self.attr)
+            if not target: return
+            element = self.loaders[target.recordType]
+            if not element:
+                raise ModError(ins.inName,_('Unexpected type: %d') % target.recordType)
+            element.dumpData(target,out)
+
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelString('DESC','description'),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
+        MelConditions(),
+        MelGroup('_data',
+            MelPerkData('DATA', 'BBBBB', ('trait',0), ('minLevel',0), ('ranks',0), ('playable',0), ('hidden',0)),
+            ),
+        MelPerkEffects('effects',
+            MelStruct('PRKE', 'BBB', 'type', 'rank', 'priority'),
+            MelPerkEffectData('DATA','effectData'),
+            MelGroups('effectConditions',
+                MelStruct('PRKC', 'B', 'runOn'),
+                MelConditions(),
+            ),
+            MelPerkEffectParams('effectParams',
+                MelStruct('EPFD','f','float'),
+                MelStruct('EPFT','B','_epft'),
+                MelString('EPF2','buttonLabel'),
+                MelStruct('EPF3','H','scriptFlag'),
+                MelGroup('embeddedScript',
+                    MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
+                    MelBase('SCDA','compiled_p'),
+                    MelString('SCTX','scriptText'),
+                    MelScrxen('SCRV/SCRO','references'),
+                ),
+            ),
+            MelBase('PRKF','footer'),
+            ),
+        )
+    melSet.elements[-1].setMelSet(melSet)
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -4783,7 +4925,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreLvlc, MreLvli, MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreRefr,
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
-    MreDial, MreInfo, MreTxst, MreMicn, MreFlst
+    MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk,
     ))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
