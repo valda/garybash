@@ -5542,15 +5542,15 @@ class InstallerArchive_Unpack(InstallerLink):
 
 # InstallerProject Links ------------------------------------------------------
 #------------------------------------------------------------------------------
-class InstallerProject_OmodConfigDialog(wx.Frame):
-	"""Dialog for editing omod configuration data."""
+class InstallerProject_FomodConfigDialog(wx.Frame):
+	"""Dialog for editing fomod configuration data."""
 	def __init__(self,parent,data,project):
 		#--Data
 		self.data = data
 		self.project = project
-		self.config = config = data[project].getOmodConfig(project)
+		self.config = config = data[project].getFomodConfig(project)
 		#--GUI
-		wx.Frame.__init__(self,parent,-1,_('Omod Config: ')+project.s,
+		wx.Frame.__init__(self,parent,-1,_('Fomod Config: ')+project.s,
 			style=(wx.RESIZE_BORDER | wx.CAPTION | wx.CLIP_CHILDREN))
 		self.SetIcons(bashBlue)
 		self.SetSizeHints(300,300)
@@ -5615,22 +5615,22 @@ class InstallerProject_OmodConfigDialog(wx.Frame):
 		else:
 			config.vMajor,config.vMinor = (0,0)
 		#--Done
-		self.data[self.project].writeOmodConfig(self.project,self.config)
+		self.data[self.project].writeFomodConfig(self.project,self.config)
 		self.Destroy()
 
 #------------------------------------------------------------------------------
-class InstallerProject_OmodConfig(InstallerLink):
+class InstallerProject_FomodConfig(InstallerLink):
 	"""Install selected packages."""
 	def AppendToMenu(self,menu,window,data):
 		Link.AppendToMenu(self,menu,window,data)
-		self.title = _('Omod Info...')
+		self.title = _('Fomod Info...')
 		menuItem = wx.MenuItem(menu,self.id,self.title)
 		menu.AppendItem(menuItem)
 		menuItem.Enable(self.isSingleProject())
 
 	def Execute(self,event):
 		project = self.selected[0]
-		dialog = InstallerProject_OmodConfigDialog(self.gTank,self.data,project)
+		dialog = InstallerProject_FomodConfigDialog(self.gTank,self.data,project)
 		dialog.Show()
 
 #------------------------------------------------------------------------------
@@ -9573,7 +9573,7 @@ def InitInstallerLinks():
 	InstallersPanel.itemMenu.append(InstallerArchive_Unpack())
 	InstallersPanel.itemMenu.append(InstallerProject_ReleasePack())
 	InstallersPanel.itemMenu.append(InstallerProject_Sync())
-	InstallersPanel.itemMenu.append(InstallerProject_OmodConfig())
+	InstallersPanel.itemMenu.append(InstallerProject_FomodConfig())
 
 def InitReplacerLinks():
 	"""Initialize replacer tab menus."""
