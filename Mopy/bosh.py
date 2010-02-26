@@ -2900,7 +2900,7 @@ class MreEfsh(MelRecord):
 
 #------------------------------------------------------------------------------
 class MreEnch(MelRecord,MreHasEffects):
-    """Enchantment record."""
+    """Enchantment (Object Effect) record."""
     classType = 'ENCH'
     _flags = Flags(0L,Flags.getNames('noAutoCalc'))
     melSet = MelSet(
