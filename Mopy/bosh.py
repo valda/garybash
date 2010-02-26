@@ -4813,7 +4813,7 @@ class MrePerk(MelRecord):
                 setter(attr,value)
             if self._debug: print unpacked
         def dumpData(self,record,out):
-            target = record.__getattribute__(self.attr,None)
+            target = record.__getattribute__(self.attr)
             if not target: return
             if record.type == 0:
                 format,attrs = ('II',('quest','queststage'))
@@ -4835,7 +4835,7 @@ class MrePerk(MelRecord):
                 print self.subType,format,values
                 raise
         def mapFids(self,record,function,save=False):
-            target = record.__getattribute__(self.attr,None)
+            target = record.__getattribute__(self.attr)
             if not target: return
             if record.type == 0:
                 result = function(target.quest)
@@ -4865,8 +4865,11 @@ class MrePerk(MelRecord):
             MelGroups.loadData(self,record,ins,type,size,readId)
     class MelPerkEffectParams(MelGroups):
         def loadData(self,record,ins,type,size,readId):
-            target = self.getDefault()
-            record.__getattribute__(self.attr).append(target)
+            if type in ('EPFD','EPFT','EPF2','EPF3','SCHR'):
+                target = self.getDefault()
+                record.__getattribute__(self.attr).append(target)
+            else:
+                target = record.__getattribute__(self.attr)[-1]
             element = self.loaders[type]
             slots = ['recordType']
             slots.extend(element.getSlotsUsed())
@@ -4874,12 +4877,11 @@ class MrePerk(MelRecord):
             target.recordType = type
             element.loadData(target,ins,type,size,readId)
         def dumpData(self,record,out):
-            target = record.__getattribute__(self.attr)
-            if not target: return
-            element = self.loaders[target.recordType]
-            if not element:
-                raise ModError(ins.inName,_('Unexpected type: %d') % target.recordType)
-            element.dumpData(target,out)
+            for target in record.__getattribute__(self.attr):
+                element = self.loaders[target.recordType]
+                if not element:
+                    raise ModError(ins.inName,_('Unexpected type: %d') % target.recordType)
+                element.dumpData(target,out)
 
     melSet = MelSet(
         MelString('EDID','eid'),
