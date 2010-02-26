@@ -1,5 +1,11 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 5 [2/27/2010]
+* Replace "Mopy/Extras/Bashed Patch, 0.esp" skeleton esp. This file included in the previous release was still Oblivion specification (incompatible with Fallout3).
+* Add "Data/Bash Patches/FormID Lists.csv". This file is a preset for the FormID Lists Merger.
+* Some major mods were added to "Data/Bash Patches/Leveled Lists.csv".
+* Add support for perk record read/write.
+
 === 4 [2/22/2010]
 * Bugfixes
   * Fixed path to "FO3Edit.exe" and "fomm.exe".
