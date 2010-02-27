@@ -209,7 +209,13 @@ teddybear_brothers.esp
 StealthArmorHelmLess.esp
 JM Stealth Suit.esp
 JM Stealth Suit - Vanilla.esp
+BunnySuit.esp
+SchoolUniforms.esp
+MicroBikini.esp
 FrenchMaid.esp
+Dark_Temptress.esp
+Tonibiatch.esp
+
 
 BoS_DX.esp
 % {{BASH:Graphics}}
@@ -596,7 +602,8 @@ Choose your own hairstyle (load this last on FOMM).esp
 \Race additions (+ hair + eyes etc)
 \''''''''''''''''''''''''''''''''''
 Shojo Race.esp
-% {{BASH:NpcFaces,Hair,Eyes,Graphics}}
+% {{BASH:Hair,Eyes}}
+ShojoDollishEyes.esp
 
 \----------
 \Companions
