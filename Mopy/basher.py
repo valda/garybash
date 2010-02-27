@@ -1259,8 +1259,7 @@ class ModDetails(wx.Window):
 		self.save.Disable()
 		self.cancel.Disable()
 		#--Bash tags
-		self.allTags = sorted(('Body-F', 'Body-M', 'C.Climate', 'C.Light', 'C.Owner', 'C.Water', 'Delev', 'Eyes', 'Factions', 'Relations', 'Filter', 'Graphics', 'Hair', 'IIM', 'Invent', 'NPC.Ai', 'NPC.Stats', 'Names', 'NoMerge', 'NpcFaces', 'R.Relations', 'Relev', 'Scripts', 'ScriptContents', 'Sound', 'SpellStats', 'Stats', 'Voice-F', 'Voice-M','R.Teeth','R.Mouth','Roads'))
-		#allTags = sorted(('R.BodyF', 'R.BodyM', 'C.Climate', 'C.Light', 'C.Owner', 'C.Water', 'L.Delev', 'R.Eyes', 'A.Factions', 'F.Relations', '+Filter', 'A.Graphics', 'R.Hair', '+IIM', 'A.Invent', 'A.Names', '+NoMerge', 'N.Faces', 'R.Relations', 'L.Relev', 'A.Sound', 'A.Stats', 'R.VoiceF', 'R.VoiceM','-Cells', 'NPC.Attr'))
+		self.allTags = sorted(('Body-F', 'Body-M', 'C.Climate', 'C.Light', 'C.Owner', 'C.Water', 'Deflst', 'Delev', 'Eyes', 'Factions', 'Relations', 'Filter', 'Graphics', 'Hair', 'IIM', 'Invent', 'NPC.Ai', 'NPC.Stats', 'Names', 'NoMerge', 'NpcFaces', 'R.Relations', 'Reflst', 'Relev', 'Scripts', 'ScriptContents', 'Sound', 'SpellStats', 'Stats', 'Voice-F', 'Voice-M','R.Teeth','R.Mouth','Roads'))
 		id = self.tagsId = wx.NewId()
 		self.gTags = (
 			wx.TextCtrl(self,id,"",size=(textWidth,100),style=wx.TE_MULTILINE|wx.TE_READONLY))
