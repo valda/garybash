@@ -1,5 +1,10 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 6 [3/3/2010]
+* Added some function definitions into conditionFunctionData.
+* Added "masterlist.txt..." to direct open to that file.
+* Modify GUI to support Deflst/Reflst tag selection.
+
 === 5 [2/27/2010]
 * Replace "Mopy/Extras/Bashed Patch, 0.esp" skeleton esp. This file included in the previous release was still Oblivion specification (incompatible with Fallout3).
 * Add "Data/Bash Patches/FormID Lists.csv". This file is a preset for the FormID Lists Merger.
