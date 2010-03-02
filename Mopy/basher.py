@@ -6307,6 +6307,20 @@ class Mods_Fallout3Ini(Link):
 		self.path.start()
 
 #------------------------------------------------------------------------------
+class Mods_BossMasterList(Link):
+	"""Open Data/masterlist.txt."""
+	def AppendToMenu(self,menu,window,data):
+		Link.AppendToMenu(self,menu,window,data)
+		menuItem = wx.MenuItem(menu,self.id,_('masterlist.txt...'))
+		menu.AppendItem(menuItem)
+                self.path = bosh.dirs['mods'].join('masterlist.txt')
+		menuItem.Enable(self.path.exists())
+
+	def Execute(self,event):
+		"""Handle selection."""
+		self.path.start()
+
+#------------------------------------------------------------------------------
 class Mods_Fallout3Version(Link):
 	"""Specify/set Fallout3 version."""
 	def __init__(self,key,setProfile=False):
@@ -9617,6 +9631,7 @@ def InitModLinks():
 	ModList.mainMenu.append(Mods_IniTweaks())
 	ModList.mainMenu.append(SeparatorLink())
 	ModList.mainMenu.append(Mods_ListMods())
+	ModList.mainMenu.append(Mods_BossMasterList())
 	ModList.mainMenu.append(SeparatorLink())
 	ModList.mainMenu.append(Mods_AutoGhost())
 	ModList.mainMenu.append(Mods_AutoGroup())
