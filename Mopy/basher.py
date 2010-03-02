@@ -255,8 +255,8 @@ settingDefaults = {
 		'Date':150,
 		},
 	'bash.messages.colAligns': {},
-	#--Tes4View/Edit/Trans
-	'tes4View.iKnowWhatImDoing':False,
+	#--FO3Edit
+	'fo3Edit.iKnowWhatImDoing':False,
 	}
 
 # Exceptions ------------------------------------------------------------------
@@ -6331,16 +6331,16 @@ class Mods_Fallout3Version(Link):
 		bashFrame.SetTitle()
 
 #------------------------------------------------------------------------------
-class Mods_Tes4ViewExpert(Link):
+class Mods_FO3EditExpert(Link):
 	"""Turn on deprint/delist."""
 	def AppendToMenu(self,menu,window,data):
 		Link.AppendToMenu(self,menu,window,data)
-		menuItem = wx.MenuItem(menu,self.id,_('Tes4Edit Expert'),kind=wx.ITEM_CHECK)
+		menuItem = wx.MenuItem(menu,self.id,_('FO3Edit Expert'),kind=wx.ITEM_CHECK)
 		menu.AppendItem(menuItem)
-		menuItem.Check(settings['tes4View.iKnowWhatImDoing'])
+		menuItem.Check(settings['fo3Edit.iKnowWhatImDoing'])
 
 	def Execute(self,event):
-		settings['tes4View.iKnowWhatImDoing'] ^= True
+		settings['fo3Edit.iKnowWhatImDoing'] ^= True
 
 #------------------------------------------------------------------------------
 class Mods_UpdateInvalidator(Link):
@@ -9211,14 +9211,14 @@ class App_Tes4Gecko(App_Button):
 		cwd.setcwd()
 
 #------------------------------------------------------------------------------
-class App_Tes4View(App_Button):
-	"""Allow some extra args for Tes4View."""
+class App_FO3Edit(App_Button):
+	"""Allow some extra args for FO3Edit."""
 
 	def Execute(self,event):
 		extraArgs = []
 		if wx.GetKeyState(wx.WXK_CONTROL):
 			extraArgs.append('-FixupPGRD')
-		if settings['tes4View.iKnowWhatImDoing']:
+		if settings['fo3Edit.iKnowWhatImDoing']:
 			extraArgs.append('-IKnowWhatImDoing')
 		App_Button.Execute(self,event,tuple(extraArgs))
 
@@ -9454,17 +9454,17 @@ def InitStatusBar():
 	# 		Image(r'images/cog.png'),
 	# 		_("Launch Tes4Gecko")))
 	BashStatusBar.buttons.append(
-		App_Tes4View(
+		App_FO3Edit(
 			(bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'), '-view'),
 			Image(r'images/brick_edit.png'),
 			_("Launch FO3View")))
 	BashStatusBar.buttons.append(
-		App_Tes4View(
+		App_FO3Edit(
 			bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'),
 			Image(r'images/brick.png'),
 			_("Launch FO3Edit")))
 	BashStatusBar.buttons.append(
-		App_Tes4View(
+		App_FO3Edit(
 			(bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'),'-translate'),
 			Image(r'images/brick_error.png'),
 			_("Launch FO3Trans")))
@@ -9625,7 +9625,7 @@ def InitModLinks():
 	ModList.mainMenu.append(SeparatorLink())
 	ModList.mainMenu.append(Mods_Deprint())
 	ModList.mainMenu.append(Mods_DumpTranslator())
-	ModList.mainMenu.append(Mods_Tes4ViewExpert())
+	ModList.mainMenu.append(Mods_FO3EditExpert())
 
 	#--ModList: Item Links
 	if True: #--File
