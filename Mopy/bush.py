@@ -413,6 +413,10 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (454, 'GetPlayerTeammate', 0, 0, 0, 0),
     (522, 'GetIsLockBroken', 0, 0, 0, 0),
     (433, 'GetIsObjectType', 1, 0, 0, 0),
+    (500, 'GetWeaponHealthPerc', 0, 0, 0, 0),
+    (368, 'IsPlayerActionActive', 1, 0, 0, 0),
+    (416, 'GetGroupMemberCount', 0, 0, 0, 0),
+    (510, 'GetLastHitCritical', 0, 0, 0, 0),
     )
 allConditions = set(entry[0] for entry in conditionFunctionData)
 fid1Conditions = set(entry[0] for entry in conditionFunctionData if entry[2] == 2)
