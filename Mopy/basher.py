@@ -9463,30 +9463,21 @@ def InitStatusBar():
 			bosh.dirs['app'].join('fomm\\fomm.exe'),
 			Image(r'images/database_connect.png'),
 			_("Launch FOMM")))
-	# BashStatusBar.buttons.append(
-	# 	App_Tes4Gecko(None,
-	# 		Image(r'images/cog.png'),
-	# 		_("Launch Tes4Gecko")))
 	BashStatusBar.buttons.append(
 		App_FO3Edit(
-			(bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'), '-view'),
+			(bosh.dirs['FO3EditPath'], '-view'),
 			Image(r'images/brick_edit.png'),
 			_("Launch FO3View")))
 	BashStatusBar.buttons.append(
 		App_FO3Edit(
-			bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'),
+			dirs['FO3EditPath']),
 			Image(r'images/brick.png'),
 			_("Launch FO3Edit")))
 	BashStatusBar.buttons.append(
 		App_FO3Edit(
-			(bosh.dirs['app'].join('FO3Edit\\FO3Edit.exe'),'-translate'),
+			(dirs['FO3EditPath'],'-translate'),
 			Image(r'images/brick_error.png'),
 			_("Launch FO3Trans")))
-	# BashStatusBar.buttons.append(
-	# 	App_Button(
-	# 		bosh.dirs['app'].join('Tes4LodGen.exe'),
-	# 		Image(r'images/brick_go.png'),
-	# 		_("Launch Tes4LODGen")))
 	BashStatusBar.buttons.append(
 		App_BOSS(
 			bosh.dirs['app'].join('Data\\BOSS-F.bat'),
@@ -9497,6 +9488,95 @@ def InitStatusBar():
 			bosh.dirs['app'].join('Data\\BOSS-F.bat'),
 			Image(r'images/boss2.png'),
 			_("Launch BOSS")))
+    if bosh.inisettings['showmodelingtoollaunchers']:
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['BlenderPath'],
+                Image(r'images/blender.png'),
+                _("Launch Blender")))
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['GmaxPath'],
+                Image(r'images/gmax.png'),
+                _("Launch Gmax")))
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['MayaPath'],
+                Image(r'images/maya.png'),
+                _("Launch Maya")))
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['MaxPath'],
+                Image(r'images/max.png'),
+                _("Launch 3dsMax")))
+    if bosh.inisettings['showmodelingtoollaunchers'] or bosh.inisettings['showtexturetoollaunchers']:
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['NifskopePath'],
+                Image(r'images/nifskope.png'),
+                _("Launch Nifskope")))
+    if bosh.inisettings['showtexturetoollaunchers']:
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['GIMP'],
+                Image(r'images/gimp.png'),
+                _("Launch GIMP")))
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['Photoshop'],
+                Image(r'images/photoshop.png'),
+                _("Launch Photoshop")))
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['Artweaver'],
+                Image(r'images/artweaver.png'),
+                _("Launch Artweaver")))
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['PaintNET'],
+                Image(r'images/paint.net.png'),
+                _("Launch Paint.NET")))
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['DDSConverter'],
+                Image(r'images/ddsconverter.png'),
+                _("Launch DDSConverter")))
+    if bosh.inisettings['showaudiotoollaunchers']:
+        BashStatusBar.buttons.append(
+            App_Button(
+                bosh.dirs['Audacity'],
+                Image(r'images/audacity.png'),
+                _("Launch Audacity")))
+    BashStatusBar.buttons.append(
+        App_Button(
+            bosh.dirs['Fraps'],
+            Image(r'images/fraps.png'),
+            _("Launch Fraps")))
+    BashStatusBar.buttons.append(
+        App_Button(
+            bosh.dirs['NPP'],
+            Image(r'images/notepad++.png'),
+            _("Launch Notepad++")))
+    BashStatusBar.buttons.append(
+        App_Button(
+            bosh.dirs['Custom1'],
+            Image(r'images/custom1.png'),
+            _(bosh.inisettings['custom1txt'])))
+    BashStatusBar.buttons.append(
+        App_Button(
+            bosh.dirs['Custom2'],
+            Image(r'images/custom2.png'),
+            _(bosh.inisettings['custom2txt'])))
+    BashStatusBar.buttons.append(
+        App_Button(
+            bosh.dirs['Custom3'],
+            Image(r'images/custom3.png'),
+            _(bosh.inisettings['custom3txt'])))
+    BashStatusBar.buttons.append(
+        App_Button(
+            bosh.dirs['Custom4'],
+            Image(r'images/custom4.png'),
+            _(bosh.inisettings['custom4txt'])))
 	BashStatusBar.buttons.append(App_BashMon())
 	BashStatusBar.buttons.append(App_DocBrowser())
 	BashStatusBar.buttons.append(App_ModChecker())

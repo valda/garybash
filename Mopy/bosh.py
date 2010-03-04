@@ -91,6 +91,7 @@ configHelpers = None #--Config Helper files (Boss Master List, etc.)
 
 #--Settings
 dirs = {} #--app, user, mods, saves, userApp
+inisettings = {}
 defaultExt = '.7z'
 writeExts = dict({'.7z':'7z','.zip':'zip'})
 readExts = set(('.rar',))
@@ -18854,6 +18855,101 @@ def initDirs(personal='',localAppData=''):
     dirs['builds'] = dirs['app'].join('Builds')
     dirs['patches'] = dirs['mods'].join('Bash Patches')
 
+    #-- Other tool directories 
+    #   First to default path
+    dirs['FO3EditPath'] = dirs['app'].join('FO3Edit.exe')
+    dirs['NifskopePath'] = GPath(r'C:\Program Files\NifTools\NifSkope\Nifskope.exe')
+    dirs['BlenderPath'] = GPath(r'C:\Program Files\Blender Foundation\Blender\blender.exe')
+    dirs['GmaxPath'] = GPath(r'C:\GMAX\gmax.exe')
+    dirs['MaxPath'] = GPath('C:\something\dunnothedefaultpath.exe')
+    dirs['MayaPath'] = GPath('C:\something\dunnothedefaultpath.exe')
+    dirs['Photoshop'] = GPath(r'C:\Program Files\Adobe\Adobe Photoshop CS3\Photoshop.exe')
+    dirs['GIMP'] = GPath('C:\something\dunnothedefaultpath.exe')
+    dirs['NPP'] = GPath(r'C:\Program Files\Notepad++\notepad++.exe')
+    dirs['Fraps'] = GPath(r'C:\Fraps\Fraps.exe')
+    dirs['Audacity'] = GPath(r'C:\Audacity\Audacity.exe')
+    dirs['Artweaver'] = GPath(r'C:\Program Files\Artweaver 1.0\Artweaver.exe')
+    dirs['DDSConverter'] = GPath(r'C:\Program Files\DDSConverter\DDSConverter.exe')
+    dirs['PaintNET'] = GPath(r'C:\Program Files\Paint.NET\PaintDOTnet.exe')
+    dirs['Custom1'] = GPath(r'C:\not\a\valid\path.exe')
+    dirs['Custom2'] = GPath(r'C:\not\a\valid\path.exe')
+    dirs['Custom3'] = GPath(r'C:\not\a\valid\path.exe')
+    dirs['Custom4'] = GPath(r'C:\not\a\valid\path.exe')
+    # Then if bash.ini exists set from the settings in there:
+    if bashIni:
+        if bashIni.has_option('Tool Options','sFO3EditPath'):
+            dirs['FO3EditPath'] = GPath(bashIni.get('Tool Options','sFO3EditPath').strip())
+            if not dirs['FO3EditPath'].isabs():
+                dirs['FO3EditPath'] = dirs['app'].join(dirs['FO3EditPath'])           
+        if bashIni.has_option('Tool Options','sNifskopePath'):
+            dirs['NifskopePath'] = GPath(bashIni.get('Tool Options','sNifskopePath').strip())
+            if not dirs['NifskopePath'].isabs():
+                dirs['NifskopePath'] = dirs['app'].join(dirs['NifskopePath'])                
+        if bashIni.has_option('Tool Options','sBlenderPath'):
+            dirs['BlenderPath'] = GPath(bashIni.get('Tool Options','sBlenderPath').strip())
+            if not dirs['BlenderPath'].isabs():
+                dirs['BlenderPath'] = dirs['app'].join(dirs['BlenderPath'])
+        if bashIni.has_option('Tool Options','sGmaxPath'):
+            dirs['GmaxPath'] = GPath(bashIni.get('Tool Options','sGmaxPath').strip())
+            if not dirs['GmaxPath'].isabs():
+                dirs['GmaxPath'] = dirs['app'].join(dirs['GmaxPath'])
+        if bashIni.has_option('Tool Options','sMaxPath'):
+            dirs['MaxPath'] = GPath(bashIni.get('Tool Options','sMaxPath').strip())
+            if not dirs['MaxPath'].isabs():
+                dirs['MaxPath'] = dirs['app'].join(dirs['MaxPath'])                
+        if bashIni.has_option('Tool Options','sMayaPath'):
+            dirs['MayaPath'] = GPath(bashIni.get('Tool Options','sMayaPath').strip())
+            if not dirs['MayaPath'].isabs():
+                dirs['MayaPath'] = dirs['app'].join(dirs['MayaPath'])            
+        if bashIni.has_option('Tool Options','sPhotoshopPath'):
+            dirs['Photoshop'] = GPath(bashIni.get('Tool Options','sPhotoshopPath').strip())
+            if not dirs['Photoshop'].isabs():
+                dirs['Photoshop'] = dirs['app'].join(dirs['Photoshop'])            
+        if bashIni.has_option('Tool Options','sGIMP'):
+            dirs['GIMP'] = GPath(bashIni.get('Tool Options','sGIMP').strip())
+            if not dirs['GIMP'].isabs():
+                dirs['GIMP'] = dirs['app'].join(dirs['GIMP'])
+        if bashIni.has_option('Tool Options','sNPP'):
+            dirs['NPP'] = GPath(bashIni.get('Tool Options','sNPP').strip())
+            if not dirs['NPP'].isabs():
+                dirs['NPP'] = dirs['app'].join(dirs['NPP'])
+        if bashIni.has_option('Tool Options','sFraps'):
+            dirs['Fraps'] = GPath(bashIni.get('Tool Options','sFraps').strip())
+            if not dirs['Fraps'].isabs():
+                dirs['Fraps'] = dirs['app'].join(dirs['Fraps'])
+        if bashIni.has_option('Tool Options','sAudacity'):
+            dirs['Audacity'] = GPath(bashIni.get('Tool Options','sAudacity').strip())
+            if not dirs['Audacity'].isabs():
+                dirs['Audacity'] = dirs['app'].join(dirs['Audacity'])
+        if bashIni.has_option('Tool Options','sArtweaver'):
+            dirs['Artweaver'] = GPath(bashIni.get('Tool Options','sArtweaver').strip())
+            if not dirs['Artweaver'].isabs():
+                dirs['Artweaver'] = dirs['app'].join(dirs['Artweaver'])
+        if bashIni.has_option('Tool Options','sDDSConverter'):
+            dirs['DDSConverter'] = GPath(bashIni.get('Tool Options','sDDSConverter').strip())
+            if not dirs['DDSConverter'].isabs():
+                dirs['DDSConverter'] = dirs['app'].join(dirs['DDSConverter'])
+        if bashIni.has_option('Tool Options','sCustom1'):
+            dirs['Custom1'] = GPath(bashIni.get('Tool Options','sCustom1').strip())
+            if not dirs['Custom1'].isabs():
+                dirs['Custom1'] = dirs['app'].join(dirs['Custom1'])
+        if bashIni.has_option('Tool Options','sCustom2'):
+            dirs['Custom2'] = GPath(bashIni.get('Tool Options','sCustom2').strip())
+            if not dirs['Custom2'].isabs():
+                dirs['Custom2'] = dirs['app'].join(dirs['Custom2'])
+        if bashIni.has_option('Tool Options','sCustom3'):
+            dirs['Custom3'] = GPath(bashIni.get('Tool Options','sCustom3').strip())
+            if not dirs['Custom3'].isabs():
+                dirs['Custom3'] = dirs['app'].join(dirs['Custom3'])
+        if bashIni.has_option('Tool Options','sCustom4'):
+            dirs['Custom4'] = GPath(bashIni.get('Tool Options','sCustom4').strip())
+            if not dirs['Custom4'].isabs():
+                dirs['Custom4'] = dirs['app'].join(dirs['Custom4'])
+        if bashIni.has_option('Tool Options','sPaintNET'):
+            dirs['PaintNET'] = GPath(bashIni.get('Tool Options','sPaintNET').strip())
+            if not dirs['PaintNET'].isabs():
+                dirs['PaintNET'] = dirs['app'].join(dirs['PaintNET'])
+            
     #--Mod Data, Installers
     if bashIni and bashIni.has_option('General','sFallout3Mods'):
         fallout3Mods = GPath(bashIni.get('General','sFallout3Mods').strip())
@@ -18880,6 +18976,29 @@ def initDirs(personal='',localAppData=''):
     if not dirs['app'].join('Fallout3.exe').exists():
         print dirs['app'].join('Fallout3.exe')
         raise BoltError(_("Install Error\nFailed to find Fallout3.exe in %s.\nNote that the Mopy folder should be in the same folder as Fallout3.exe.") % dirs['app']) 
+    #other settings from the INI:
+    inisettings['showtexturetoollaunchers'] = 1
+    inisettings['showmodelingtoollaunchers'] = 1
+    inisettings['showaudiotoollaunchers'] = 1
+    inisettings['custom1txt'] = 'Not Set in INI'
+    inisettings['custom2txt'] = 'Not Set in INI'
+    inisettings['custom3txt'] = 'Not Set in INI'
+    inisettings['custom4txt'] = 'Not Set in INI'
+    if bashIni:
+        if bashIni.has_option('Tool Options','bshowtexturetoollaunchers'):
+            inisettings['showtexturetoollaunchers'] = bashIni.get('Tool Options','bshowtexturetoollaunchers').strip()
+        if bashIni.has_option('Tool Options','bshowmodelingtoollaunchers'):
+            inisettings['showmodelingtoollaunchers'] = bashIni.get('Tool Options','bshowmodelingtoollaunchers').strip()
+        if bashIni.has_option('Tool Options','bshowaudiotoollaunchers'):
+            inisettings['showaudiotoollaunchers'] = bashIni.get('Tool Options','bshowaudiotoollaunchers').strip()
+        if bashIni.has_option('Tool Options','sCustom1txt'):
+            inisettings['custom1txt'] = str(bashIni.get('Tool Options','sCustom1txt')).strip()
+        if bashIni.has_option('Tool Options','sCustom2txt'):
+            inisettings['custom2txt'] = str(bashIni.get('Tool Options','sCustom2txt')).strip()
+        if bashIni.has_option('Tool Options','sCustom3txt'):
+            inisettings['custom3txt'] = str(bashIni.get('Tool Options','sCustom3txt')).strip()
+        if bashIni.has_option('Tool Options','sCustom4txt'):
+            inisettings['custom4txt'] = str(bashIni.get('Tool Options','sCustom4txt')).strip()
 
 def initSettings(readOnly=False):
     global settings
