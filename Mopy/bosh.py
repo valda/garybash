@@ -3649,7 +3649,7 @@ class MrePack(MelRecord):
             ),
         MelBase('PKED','eatMarker'),
         MelOptStruct('PKE2','I','escordDistance'),
-        MelFid('CNAM','I','combatStyle'),
+        MelFid('CNAM','combatStyle'),
         MelOptStruct('PKFD','f','followStartLocationTrigerRadius'),
         MelBase('PKPT','patrolFlags'), # byte or short
         MelOptStruct('PKW3','IBB3Hff4s','weaponFlags','fireRate','fireCount','numBursts',
