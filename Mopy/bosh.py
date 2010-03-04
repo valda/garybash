@@ -3631,6 +3631,32 @@ class MrePack(MelRecord):
             elif self.subType == 'PTD2' and record.targetType2 != 2:
                 result = function(record.targetId2)
                 if save: record.targetId2 = result
+    class MelPackDistributor(MelNull):
+        """Handles embedded script records. Distributes load
+        duties to other elements as needed."""
+        def __init__(self):
+            self._debug = False
+        def getLoaders(self,loaders):
+            """Self as loader for structure types."""
+            for type in ('POBA','POEA','POCA'):
+                loaders[type] = self
+        def setMelSet(self,melSet):
+            """Set parent melset. Need this so that can reassign loaders later."""
+            self.melSet = melSet
+            self.loaders = {}
+            for element in melSet.elements:
+                attr = element.__dict__.get('attr',None)
+                if attr: self.loaders[attr] = element
+        def loadData(self,record,ins,type,size,readId):
+            if type == 'POBA':
+                element = self.loaders['onBegin']
+            elif type == 'POEA':
+                element = self.loaders['onEnd']
+            elif type == 'POCA':
+                element = self.loaders['onChange']
+            for subtype in ('INAM','SCHR','SCDA','SCTX','SLSD','SCVR','SCRV','SCRO','TNAM'):
+                self.melSet.loaders[subtype] = element
+            element.loadData(record,ins,type,size,readId)
     #--MelSet
     melSet = MelSet(
         MelString('EDID','eid'),
@@ -3659,7 +3685,7 @@ class MrePack(MelRecord):
         MelBase('PKAM','ambushMarker'),
         MelPackPkdd('PKDD','fII4sI4s','dialFov','dialTopic','dialFlags','dialUnknown1','dialType','dialUnknown2'),
         MelGroup('onBegin',
-            MelBase('POBA', 'marker'),
+            MelBase('POBA', 'marker', ''), #### onBegin Marker, wbEmpty
             MelFid('INAM', 'idle'),
             MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
             MelBase('SCDA','compiled_p'),
@@ -3671,7 +3697,7 @@ class MrePack(MelRecord):
             MelFid('TNAM', 'topic'),
             ),
         MelGroup('onEnd',
-            MelBase('POEA', 'marker'),
+            MelBase('POEA', 'marker', ''), #### onEnd Marker, wbEmpty
             MelFid('INAM', 'idle'),
             MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
             MelBase('SCDA','compiled_p'),
@@ -3683,7 +3709,7 @@ class MrePack(MelRecord):
             MelFid('TNAM', 'topic'),
             ),
         MelGroup('onChange',
-            MelBase('POCA', 'marker'),
+            MelBase('POCA', 'marker', ''), #### onChange Marker, wbEmpty
             MelFid('INAM', 'idle'),
             MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
             MelBase('SCDA','compiled_p'),
@@ -3694,7 +3720,10 @@ class MrePack(MelRecord):
             MelScrxen('SCRV/SCRO','references'),
             MelFid('TNAM', 'topic'),
             ),
+        #--Distributor for embedded script entries.
+        MelPackDistributor(),
         )
+    melSet.elements[-1].setMelSet(melSet)
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
