@@ -5410,20 +5410,20 @@ class Installer_Open(balt.Tank_Open):
 		menuItem.Enable(bool(self.selected))
 
 #------------------------------------------------------------------------------
-class Installer_OpenTesNexus(InstallerLink):
+class Installer_OpenFallout3Nexus(InstallerLink):
 	"""Open selected file(s)."""
 	def AppendToMenu(self,menu,window,data):
 		Link.AppendToMenu(self,menu,window,data)
-		menuItem = wx.MenuItem(menu,self.id,_('Open at TesNexus'))
+		menuItem = wx.MenuItem(menu,self.id,_('Open at Fallout3Nexus'))
 		menu.AppendItem(menuItem)
-		menuItem.Enable(bool(self.isSingleArchive() and bosh.reTesNexus.search(data[0].s)))
+		menuItem.Enable(bool(self.isSingleArchive() and bosh.reFallout3Nexus.search(data[0].s)))
 
 	def Execute(self,event):
 		"""Handle selection."""
-		message = _("Attempt to open this as a mod at TesNexus? This assumes that the trailing digits in the package's name are actually the id number of the mod at TesNexus. If this assumption is wrong, you'll just get a random mod page (or error notice) at TesNexus.")
-		if balt.askContinue(self.gTank,message,'bash.installers.openTesNexus',_('Open at TesNexus')):
-			id = bosh.reTesNexus.search(self.selected[0].s).group(1)
-			os.startfile('http://tesnexus.com/downloads/file.php?id='+id)
+		message = _("Attempt to open this as a mod at Fallout3Nexus? This assumes that the trailing digits in the package's name are actually the id number of the mod at Fallout3Nexus. If this assumption is wrong, you'll just get a random mod page (or error notice) at Fallout3Nexus.")
+		if balt.askContinue(self.gTank,message,'bash.installers.openFallout3Nexus',_('Open at Fallout3Nexus')):
+			id = bosh.reFallout3Nexus.search(self.selected[0].s).group(1)
+			os.startfile('http://fallout3nexus.com/downloads/file.php?id='+id)
 
 #------------------------------------------------------------------------------
 class Installer_Refresh(InstallerLink):
@@ -9561,7 +9561,7 @@ def InitInstallerLinks():
 	InstallersPanel.itemMenu.append(Installer_Open())
 	InstallersPanel.itemMenu.append(Installer_Duplicate())
 	InstallersPanel.itemMenu.append(Installer_Delete())
-	InstallersPanel.itemMenu.append(Installer_OpenTesNexus())
+	InstallersPanel.itemMenu.append(Installer_OpenFallout3Nexus())
 	#--Install, uninstall, etc.
 	InstallersPanel.itemMenu.append(SeparatorLink())
 	InstallersPanel.itemMenu.append(Installer_Refresh())

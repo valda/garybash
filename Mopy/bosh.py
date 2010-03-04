@@ -287,7 +287,7 @@ reSaveExt = re.compile(r'(quicksave(\.bak)+|autosave(\.bak)+|\.fo[rs])$',re.I)
 reCsvExt  = re.compile(r'\.csv$',re.I)
 reQuoted  = re.compile(r'^"(.*)"$')
 reGroupHeader = re.compile(r'^(\+\+|==)')
-reTesNexus = re.compile(r'-(\d{4,6})(\.tessource)?(-bain)?\.(7z|zip|rar)$',re.I)
+reFallout3Nexus = re.compile(r'-(\d{4,6})(-bain)?\.(7z|zip|rar)$',re.I)
 
 # Util Functions --------------------------------------------------------------
 # .Net strings
