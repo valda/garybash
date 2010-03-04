@@ -1,4 +1,4 @@
-S\ Leading symbol code:
+\ Leading symbol code:
 \
 \ \ A silent comment - will be ignored by the program.
 \ % A Bashed Patch suggestion for the mod above.
@@ -52,6 +52,7 @@ AngelRaces.esm
 EZCompanion.esm
 EZ_citizens.esm
 MiniVault+Race.esm
+DCInteriors_ComboEdition.esm
 
 \-------------
 \NPC face mods
