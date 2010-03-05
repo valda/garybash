@@ -4949,6 +4949,33 @@ class MrePerk(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreExpl(MelRecord):
+    """Explosion record."""
+    classType = 'EXPL'
+    _flags = Flags(0,Flags.getNames('unknown1',
+                                    'alwaysUsesWorldOrientation',
+                                    'knockDownAlways',
+                                    'knockDownByFormular',
+                                    'IgnoreLosCheck',
+                                    'pushExplosionSourceRefOnly',
+                                    'ignoreImageSpaceSwap'))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelFid('EITM','objectEffect'),
+        MelFid('MNAM','imageSpaceModifier'),
+        MelStruct('DATA','fffIIHfIIfffI','force','damage','radius',(FID,'light',None),
+                  (FID,'sound1',None),(_flags,'flags'),'isRadius',(FID,'impactDataset',None),
+                  (FID,'sound2',None),'radiationLevel','radiationTime','radiationRadius','soundLevel'),
+        MelFid('INAM','placedImpactObject'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -4957,7 +4984,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreLvlc, MreLvli, MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreRefr,
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
-    MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk,
+    MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl,
     ))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
