@@ -5023,6 +5023,60 @@ class MreIpds(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreProj(MelRecord):
+    """Projectile record."""
+    classType = 'PROJ'
+    _flags = Flags(0,Flags.getNames('hitscan',
+                                    'explosive',
+                                    'altTriger',
+                                    'muzzleFlash',
+                                    'unknown4',
+                                    'canbeDisable',
+                                    'canbePickedUp',
+                                    'superSonic',
+                                    'pinsLimbs',
+                                    'passThroughSmallTransparent'))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelDestructable(),
+        MelStruct('DATA','HHfffIIfffIIfffIII',(_flags,'flags'),'type',
+                  ('gravity',0.00000),('speed',10000.00000),('range',10000.00000),
+                  (FID,'light',0),(FID,'muzzleFlash',0),('tracerChance',0.00000),
+                  ('explosionAltTrigerProximity',0.00000),('explosionAltTrigerTimer',0.00000),
+                  (FID,'explosion',0),(FID,'sound',0),('muzzleFlashDuration',0.00000),
+                  ('fadeDuration',0.00000),('impactForce',0.00000),
+                  (FID,'soundCountDown',0),(FID,'soundDisable',0),(FID,'defaultWeaponSource',0.00000)),
+        MelString('NAM1','muzzleFlashPath'),
+        ## Loading: 00014B0F..BeamLaserProjectile..PROJ.NAM2..72..
+        # \xf9\xf7\x0ff
+        # \x84\xe6\x121
+        # yw\x0ff
+        # \x89\xe6\x121
+        # st\x10t
+        # \xb3\xe1\xc9m
+        # \xf3\xeb\x0cf
+        # \xcbno\xfd
+        # sk\x0cf
+        # \xd0no\xfd
+        # st\x10t
+        # \xb3\xe1\xc9m
+        # \xf4\xec\tf
+        # #\x7f\xec)
+        # tl\tf
+        # (\x7f\xec)
+        # st\x10t
+        # \xb3\xe1\xc9m
+        MelBase('NAM2','_nam2'), #--Should be a struct. Maybe later.
+        MelStruct('VNAM','I','soundlevel'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5031,7 +5085,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreLvlc, MreLvli, MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreRefr,
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
-    MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds,
+    MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
     ))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
