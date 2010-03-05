@@ -4976,6 +4976,23 @@ class MreExpl(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreIpct(MelRecord):
+    """Impact record."""
+    classType = 'IPCT'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelModel(),
+        MelStruct('DATA','fIffII','effectDuration','effectOrientation','angleThreshold','placementRadius',
+                  'soundLevel','flags'),
+        MelStruct('DODT','7fBB2s3Bs','minWidth','maxWidth','minHeight','maxHeight','depth','shininess',
+                  'parallaxScale','parallaxPasses','decalFlags',('unused1',null2),'red','green','blue',('unused2',null1)),
+        MelFid('DNAM','textureSet'),
+        MelFid('SNAM','sound1'),
+        MelFid('NAM1','sound2'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -4984,7 +5001,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreLvlc, MreLvli, MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreRefr,
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
-    MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl,
+    MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct,
     ))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
