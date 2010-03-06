@@ -14536,6 +14536,8 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('baseImage','normalMap','environmentMapMask','growMap','parallaxMap','environmentMap','decalData','flags')
         for recClass in (MreExpl,):
             recAttrs_class[recClass] = ('imageSpaceModifier','light','impactDataset','placedImpactObject')
+        for recClass in (MreTxst,):
+            recAttrs_class[recClass] = ('baseImage','normalMap','environmentMapMask','growMap','parallaxMap','environmentMap','minWidth','maxWidth','minHeight','maxHeight','depth','shininess','parallaxScale','parallaxPasses','decalFlags','red','green','blue','flags')
         for recClass in (MreIpct,):
             recAttrs_class[recClass] = ('model','effectDuration','effectOrientation','angleThreshold','placementRadius','flags','minWidth','maxWidth','minHeight','maxHeight','depth','shininess','parallaxScale','parallaxPasses','decalFlags','red','green','blue','textureSet')
         for recClass in (MreIpds,):
