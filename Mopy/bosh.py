@@ -4719,7 +4719,8 @@ class MreTxst(MelRecord):
         MelString('TX03','growMap'),
         MelString('TX04','parallaxMap'),
         MelString('TX05','environmentMap'),
-        MelBase('DODT','decalData'), #--Should be a struct. Maybe later.
+        MelOptStruct('DODT','7fBB2s3Bs','minWidth','maxWidth','minHeight','maxHeight','depth','shininess',
+                     'parallaxScale','parallaxPasses','decalFlags',('unused1',null2),'red','green','blue',('unused2',null1)),
         MelStruct('DNAM','H','flags'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
@@ -4982,8 +4983,8 @@ class MreIpct(MelRecord):
         MelModel(),
         MelStruct('DATA','fIffII','effectDuration','effectOrientation','angleThreshold','placementRadius',
                   'soundLevel','flags'),
-        MelStruct('DODT','7fBB2s3Bs','minWidth','maxWidth','minHeight','maxHeight','depth','shininess',
-                  'parallaxScale','parallaxPasses','decalFlags',('unused1',null2),'red','green','blue',('unused2',null1)),
+        MelOptStruct('DODT','7fBB2s3Bs','minWidth','maxWidth','minHeight','maxHeight','depth','shininess',
+                     'parallaxScale','parallaxPasses','decalFlags',('unused1',null2),'red','green','blue',('unused2',null1)),
         MelFid('DNAM','textureSet'),
         MelFid('SNAM','sound1'),
         MelFid('NAM1','sound2'),
