@@ -4432,7 +4432,7 @@ class MreWatr(MelRecord):
                 MelStruct.loadData(self,record,ins,type,size,readId)
                 return
             elif size == 2:
-                record.damage = ins.unpack('H',size,readId)
+                (record.damage,) = ins.unpack('H',size,readId)
                 return
             else:
                 raise "Unexpected size encountered for WATR subrecord: %s" % size
