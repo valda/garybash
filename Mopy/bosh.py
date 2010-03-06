@@ -3369,15 +3369,13 @@ class MreMisc(MelRecord):
                   'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelModel(),
-        MelString('ICON','iconPath'),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
         MelFid('SCRI','script'),
+        MelDestructable(),
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
         MelStruct('DATA','if','value','weight'),
-        MelBase('DEST','_dest'),
-        MelBase('DSTD','_dstd'),
-        MelBase('DSTF','_dstf'),
-        MelString('MICO','mico'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
