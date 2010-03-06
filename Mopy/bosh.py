@@ -14535,8 +14535,16 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('particleTexture','fillTexture')
         for recClass in (MreTxst,):
             recAttrs_class[recClass] = ('baseImage','normalMap','environmentMapMask','growMap','parallaxMap','environmentMap','decalData','flags')
+        for recClass in (MreExpl,):
+            recAttrs_class[recClass] = ('imagespaceModifier','light','impactdataset','placedImpactObject')
+        for recClass in (MreIpct,):
+            recAttrs_class[recClass] = ('model','effectDuration','effectOrientation','angleThreshold','placementRadius','flags','minWidth','maxWidth','minHeight','maxHeight','depth','shininess','parallaxScale','parallaxPasses','decalFlags','red','green','blue','textureSet')
+        for recClass in (MreIpds,):
+            recAttrs_class[recClass] = ('stone','dirt','grass','metal','wood','organic','cloth','water','hollowMetal','organicBug','organicGlow')
+        for recClass in (MreProj,):
+            recAttrs_class[recClass] = ('model','light','muzzleFlash','explosion','muzzleFlashDuration','fadeDuration','muzzleFlashPath')
         #--Needs Longs
-        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH','TXST'))
+        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ'))
 
     def initData(self,progress):
         """Get graphics from source files."""
