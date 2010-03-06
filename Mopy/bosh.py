@@ -14526,15 +14526,15 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreArmo, MreClot):
             recAttrs_class[recClass] = ('maleBody','maleWorld','maleIconPath','maleIcon','femaleBody','femaleWorld','femaleIconPath','femaleIcon','flags')
         for recClass in (MreCrea,):
-            recAttrs_class[recClass] = ('model','bodyParts','nift_p','bloodSprayPath','bloodDecalPath')
+            recAttrs_class[recClass] = ('model','bodyParts','nift_p','bodyPartData','impactDataset')
         for recClass in (MreMgef,):
-            recAttrs_class[recClass] = ('iconPath','model','effectShader','enchantEffect','light')
+            recAttrs_class[recClass] = ('iconPath','model','effectShader','objectDisplayShader','light')
         for recClass in (MreEfsh,):
             recAttrs_class[recClass] = ('particleTexture','fillTexture')
         for recClass in (MreTxst,):
             recAttrs_class[recClass] = ('baseImage','normalMap','environmentMapMask','growMap','parallaxMap','environmentMap','decalData','flags')
         for recClass in (MreExpl,):
-            recAttrs_class[recClass] = ('imagespaceModifier','light','impactdataset','placedImpactObject')
+            recAttrs_class[recClass] = ('imageSpaceModifier','light','impactDataset','placedImpactObject')
         for recClass in (MreIpct,):
             recAttrs_class[recClass] = ('model','effectDuration','effectOrientation','angleThreshold','placementRadius','flags','minWidth','maxWidth','minHeight','maxHeight','depth','shininess','parallaxScale','parallaxPasses','decalFlags','red','green','blue','textureSet')
         for recClass in (MreIpds,):
