@@ -5071,7 +5071,7 @@ class MreProj(MelRecord):
         # st\x10t
         # \xb3\xe1\xc9m
         MelBase('NAM2','_nam2'), #--Should be a struct. Maybe later.
-        MelStruct('VNAM','I','soundlevel'),
+        MelStruct('VNAM','I','soundLevel'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -15618,15 +15618,19 @@ class SoundPatcher(ImportPatcher):
         for recClass in (MreMgef,):
             recAttrs_class[recClass] = ('castingSound','boltSound','hitSound','areaSound')
         for recClass in (MreActi,MreLigh):
-            recAttrs_class[recClass] = ('sound',)
+            recAttrs_class[recClass] = ('soundLooping','soundActivation')
         for recClass in (MreWthr,):
             recAttrs_class[recClass] = ('sound','sounds')
         for recClass in (MreCont,):
             recAttrs_class[recClass] = ('soundOpen','soundClose')
         for recClass in (MreDoor,):
             recAttrs_class[recClass] = ('soundOpen','soundClose','soundLoop')
+        for recClass in (MreExpl,MreIpct,):
+            recAttrs_class[recClass] = ('soundLevel','sound1','sound2')
+        for recClass in (MreProj,):
+            recAttrs_class[recClass] = ('sound','soundCountDown','soundDisable','soundLevel')
         #--Needs Longs
-        self.longTypes = set(('MGEF','ACTI','LIGH','WTHR','CONT','DOOR'))
+        self.longTypes = set(('MGEF','ACTI','LIGH','WTHR','CONT','DOOR','EXPL','IPCT','PROJ'))
 
     def initData(self,progress):
         """Get sounds from source files."""

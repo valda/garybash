@@ -392,9 +392,9 @@ WMKAA12Shotgun.esp
 \'''''''''''''''''''''''''''''''''''''''
 
 EVE.esp
-% {{BASH:Graphics}}
+% {{BASH:Graphics,Sound}}
 EVE Operation Anchorage.esp
-% {{BASH:Graphics}}
+% {{BASH:Graphics,Sound}}
 
 \FOIP-EVE
 \'''''''''''''''''''''''''''''''''''''''
