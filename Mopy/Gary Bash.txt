@@ -1,5 +1,17 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 7 [3/7/2010]
+* Backports from Wrye Bash 275-278.
+  * port of my implementation of ini settable tool directories from OB version. also launchers for quite a few external tools (by PacificMorrowind).
+* BAIN: changes to not "Open at TesNexus" but "Open at Fallout3Nexus".
+* Import Graphics/Sound: Added support for projectile, explosion and impact (better support for EVE).
+* Bugfixes
+  * Fixed a PACK(AI package) loader that was incorrectly reading embedded script record.
+  * Fixed an error of the attribute name in GraphicsPatcher.
+  * Fixed a WATR.DATA subrecord loader.
+  * Fixed a CLMT.WLST subrecord structure.
+  * Fixed a MISC record structure.
+
 === 6 [3/3/2010]
 * Added some function definitions into conditionFunctionData.
 * Added "masterlist.txt..." to direct open to that file.
