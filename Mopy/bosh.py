@@ -69,6 +69,7 @@ import struct
 import sys
 from types import *
 from operator import attrgetter,itemgetter
+from xml.etree import ElementTree
 
 #--Local
 import bolt
@@ -11159,30 +11160,35 @@ class InstallerProject(Installer):
         """Tiny little fomod config class."""
         def __init__(self,name):
             self.name = name.s
-            self.vMajor = 0
-            self.vMinor = 1
-            self.vBuild = 0
+            self.version = ''
+            self.machineVersion = ''
             self.author = ''
             self.email = ''
             self.website = ''
-            self.abstract = ''
+            self.description = ''
+            self.minFommVersion = ''
+            self.groups = []
 
     def getFomodConfig(self,name):
         """Get fomm config file for project."""
         config = InstallerProject.FomodConfig(name)
-        configPath = dirs['installers'].join(name,'fomod conversion data','config')
+        configPath = dirs['installers'].join(name,'fomod','info.xml')
         if configPath.exists():
-            ins = bolt.StructFile(configPath.s,'rb')
-            ins.read(1) #--Skip first four bytes
-            config.name = ins.readNetString()
-            config.vMajor, = ins.unpack('i',4)
-            config.vMinor, = ins.unpack('i',4)
-            for attr in ('author','email','website','abstract'):
-                setattr(config,attr,ins.readNetString())
-            ins.read(8) #--Skip date-time
-            ins.read(1) #--Skip zip-compression
-            #config['vBuild'], = ins.unpack('I',4)
-            ins.close()
+            doc = ElementTree.parse(configPath.s)
+            def find_text(xpath, default=''):
+                element = doc.find(xpath)
+                return element.text if element is not None else default
+            config.name = find_text('//Name')
+            version = doc.find('//Version')
+            if version is not None:
+                config.version = version.text
+                config.machineVersion = version.get('MachineVersion','')
+            config.author = find_text('//Author')
+            config.email = find_text('//Email')
+            config.website = find_text('//Website')
+            config.description = find_text('//Description')
+            config.minFommVersion = find_text('//MinFommVersion')
+            config.groups = [group.text for group in doc.findall('//Groups/element')]
         return config
 
     def writeFomodConfig(self,name,config):

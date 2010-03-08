@@ -5556,18 +5556,18 @@ class InstallerProject_FomodConfigDialog(wx.Frame):
         self.SetBackgroundColour(wx.NullColour)
         #--Fields
         self.gName = wx.TextCtrl(self,-1,config.name)
-        self.gVersion = wx.TextCtrl(self,-1,'%d.%02d' % (config.vMajor,config.vMinor))
+        self.gVersion = wx.TextCtrl(self,-1,config.version)
         self.gWebsite = wx.TextCtrl(self,-1,config.website)
         self.gAuthor = wx.TextCtrl(self,-1,config.author)
         self.gEmail = wx.TextCtrl(self,-1,config.email)
-        self.gAbstract = wx.TextCtrl(self,-1,config.abstract,style=wx.TE_MULTILINE)
+        self.gDescription = wx.TextCtrl(self,-1,config.description,style=wx.TE_MULTILINE)
         #--Max Lenght
         self.gName.SetMaxLength(100)
         self.gVersion.SetMaxLength(32)
         self.gWebsite.SetMaxLength(512)
         self.gAuthor.SetMaxLength(512)
         self.gEmail.SetMaxLength(512)
-        self.gAbstract.SetMaxLength(4*1024)
+        self.gDescription.SetMaxLength(4*1024)
         #--Layout
         fgSizer = wx.FlexGridSizer(0,2,4,4)
         fgSizer.AddGrowableCol(1,1)
@@ -5580,8 +5580,8 @@ class InstallerProject_FomodConfigDialog(wx.Frame):
             ])
         sizer = vSizer(
             (fgSizer,0,wx.EXPAND|wx.ALL^wx.BOTTOM,4),
-            (staticText(self,_("Abstract")),0,wx.LEFT|wx.RIGHT,4),
-            (self.gAbstract,1,wx.EXPAND|wx.ALL^wx.BOTTOM,4),
+            (staticText(self,_("Description")),0,wx.LEFT|wx.RIGHT,4),
+            (self.gDescription,1,wx.EXPAND|wx.ALL^wx.BOTTOM,4),
             (hSizer(
                 spacer,
                 (button(self,id=wx.ID_SAVE,onClick=self.DoSave),0,),
@@ -5606,13 +5606,8 @@ class InstallerProject_FomodConfigDialog(wx.Frame):
         config.website = self.gWebsite.GetValue().strip()
         config.author = self.gAuthor.GetValue().strip()
         config.email = self.gEmail.GetValue().strip()
-        config.abstract = self.gAbstract.GetValue().strip()
-        #--Version
-        maVersion = re.match(r'(\d+)\.(\d+)',self.gVersion.GetValue().strip())
-        if maVersion:
-            config.vMajor,config.vMinor = map(int,maVersion.groups())
-        else:
-            config.vMajor,config.vMinor = (0,0)
+        config.description = self.gDescription.GetValue().strip()
+        config.version = self.gVersion.GetValue().strip()
         #--Done
         self.data[self.project].writeFomodConfig(self.project,self.config)
         self.Destroy()
