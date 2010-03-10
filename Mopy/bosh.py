@@ -3293,8 +3293,14 @@ class MreLvli(MreLeveledList):
 
 #------------------------------------------------------------------------------
 class MreLvsp(MreLeveledList):
-    """LVSP record. Leveled list for items."""
+    """LVSP record. Leveled list for spell."""
     classType = 'LVSP'
+    __slots__ = MreLeveledList.__slots__
+
+#------------------------------------------------------------------------------
+class MreLvln(MreLeveledList):
+    """LVLN record. Leveled list for NPC."""
+    classType = 'LVLN'
     __slots__ = MreLeveledList.__slots__
 
 #------------------------------------------------------------------------------
@@ -5086,7 +5092,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    ))
+    MreLvln, ))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
@@ -13744,7 +13750,7 @@ class PatchFile(ModFile):
         MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreScpt, MreSgst,
         MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr,
         MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp, MreSkil,
-        MreTxst, MreMicn, MreFlst)
+        MreTxst, MreMicn, MreFlst, MreLvln, )
 
     @staticmethod
     def modIsMergeable(modInfo,progress=None):
@@ -13906,7 +13912,7 @@ class PatchFile(ModFile):
         modFile.convertToLongFids()
         badForm = (GPath("Fallout3.esm"),0xA31D) #--DarkPCB record
         for blockType,block in modFile.tops.iteritems():
-            iiSkipMerge = iiMode and blockType not in ('LVLC','LVLI','LVSP')
+            iiSkipMerge = iiMode and blockType not in ('LVLC','LVLI','LVSP','LVLN')
             #--Make sure block type is also in read and write factories
             if blockType not in self.loadFactory.recTypes:
                 recClass = self.mergeFactory.type_class[blockType]
@@ -17866,7 +17872,7 @@ class ListsMerger(SpecialPatcher,ListPatcher):
     def initPatchFile(self,patchFile,loadMods):
         """Prepare to handle specified patch mod. All functions are called after this."""
         Patcher.initPatchFile(self,patchFile,loadMods)
-        self.listTypes = ('LVLC','LVLI','LVSP')
+        self.listTypes = ('LVLC','LVLI','LVSP','LVLN')
         self.type_list = dict([(type,{}) for type in self.listTypes])
         self.masterItems = {}
         self.mastersScanned = set()
@@ -17874,11 +17880,11 @@ class ListsMerger(SpecialPatcher,ListPatcher):
 
     def getReadClasses(self):
         """Returns load factory classes needed for reading."""
-        return (MreLvlc,MreLvli,MreLvsp)
+        return (MreLvlc,MreLvli,MreLvsp,MreLvln)
 
     def getWriteClasses(self):
         """Returns load factory classes needed for writing."""
-        return (MreLvlc,MreLvli,MreLvsp)
+        return (MreLvlc,MreLvli,MreLvsp,MreLvln)
 
     def scanModFile(self, modFile, progress):
         """Add lists from modFile."""
@@ -17946,7 +17952,7 @@ class ListsMerger(SpecialPatcher,ListPatcher):
         for leveler in (self.levelers or []):
             log('* '+self.getItemLabel(leveler))
         #--Save to patch file
-        for label, type in ((_('Creature'),'LVLC'), (_('Item'),'LVLI'), (_('Spell'),'LVSP')):
+        for label, type in ((_('Creature'),'LVLC'), (_('Item'),'LVLI'), (_('Spell'),'LVSP'), (_('NPC'),'LVLN')):
             log.setHeader(_('=== Merged %s Lists') % label)
             patchBlock = getattr(self.patchFile,type)
             levLists = self.type_list[type]
@@ -17958,7 +17964,7 @@ class ListsMerger(SpecialPatcher,ListPatcher):
                 for mod in record.mergeSources:
                     log('  * ' + self.getItemLabel(mod))
         #--Discard empty sublists
-        for label, type in ((_('Creature'),'LVLC'), (_('Item'),'LVLI'), (_('Spell'),'LVSP')):
+        for label, type in ((_('Creature'),'LVLC'), (_('Item'),'LVLI'), (_('Spell'),'LVSP'), (_('NPC'),'LVLN')):
             patchBlock = getattr(self.patchFile,type)
             levLists = self.type_list[type]
             #--Empty lists
@@ -18848,7 +18854,8 @@ class ContentsChecker(SpecialPatcher,Patcher):
         Patcher.initPatchFile(self,patchFile,loadMods)
         self.contType_entryTypes = {
             'LVSP':'LVSP,SPEL,'.split(','),
-            'LVLC':'LVLC,NPC_,CREA'.split(','),
+            'LVLC':'LVLC,CREA,'.split(','),
+            'LVLN':'LVLC,NPC_,'.split(','),
             #--LVLI will also be applied for containers.
             'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP'.split(','),
             }
@@ -18907,7 +18914,7 @@ class ContentsChecker(SpecialPatcher,Patcher):
         log.setHeader('= '+self.__class__.name)
         #--Lists
         for cAttr,eAttr,types in (
-            ('entries','listId',('LVSP','LVLI','LVLC')),
+            ('entries','listId',('LVSP','LVLI','LVLC','LVLN')),
             ('items','item',('CONT','CREA','NPC_')),
             ):
             for type in types:
