@@ -35,14 +35,14 @@ Enhanced Weather - Rain and Snow.esm
 StreetLights.esm
 CRAFT.esm
 CALIBR.esm
+FO3 Wanderers Edition - Main File.esm
+% {{BASH:Delev,Invent,Relations,Relev,Stats}}
 Mart's Mutant Mod.esm
 % {{BASH:Invent,Relations}}
 FOOK2 - Main.esm
 % {{BASH:Invent,Stats,Relations}}
 FOOK2 - [DIK] DLC Improvement Kit.esm
 FOOK2 - [WANK] World And Neighbourhood Kit.esm
-FO3 Wanderers Edition - Main File.esm
-% {{BASH:Invent,Stats,Relations}}
 LingsFinerThings.esm
 RH_IRONSIGHTS.esm
 EnhancedChildren.esm
@@ -282,6 +282,7 @@ FO3 Wanderers Edition - Optional VATS Halftime.esp
 FO3 Wanderers Edition - Optional VATS Realtime.esp
 ? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
 FO3 Wanderers Edition - Optional Worn Weapons.esp
+% {{BASH:Delev,Relev}}
 FO3 Wanderers Edition - UFP Support.esp
 
 
@@ -481,6 +482,7 @@ ChildrenEmpire Enemies.esp
 ChildrenEmpire Enemies - MMM.esp
 
 MiniVault+.esp
+99+2.esp
 EZ_MoreVoices.esp
 EZ_TempleOfCant.esp
 EZ_Ammo_Restriction.esp
