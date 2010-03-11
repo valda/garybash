@@ -282,7 +282,6 @@ FO3 Wanderers Edition - Optional VATS Halftime.esp
 FO3 Wanderers Edition - Optional VATS Realtime.esp
 ? Use either 'FO3 Wanderers Edition - Optional VATS Realtime.esp' or 'FO3 Wanderers Edition - Optional VATS Halftime.esp' but not both together.
 FO3 Wanderers Edition - Optional Worn Weapons.esp
-% {{BASH:Delev,Relev}}
 FO3 Wanderers Edition - UFP Support.esp
 
 
@@ -401,9 +400,13 @@ EVE Operation Anchorage.esp
 \'''''''''''''''''''''''''''''''''''''''
 
 EVE - FWE Master Release.esp
+% {{BASH:Graphics,Sound}}
 EVE - FWE Master Release (Follower Enhanced).esp
+% {{BASH:Graphics,Sound}}
 EVE Anchorage - FWE DLC Anchorage.esp
+% {{BASH:Graphics,Sound}}
 EVE - FWE with WeaponModKits.esp
+% {{BASH:Graphics,Sound}}
 
 \MMM
 \'''''''''''''''''''''''''''''''''''''''
