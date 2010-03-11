@@ -6650,7 +6650,7 @@ class SaveHeader:
             ins.seek(11) # FO3SAVEGAME
             headerSize, = struct.unpack('I',ins.read(4))
             unknown,delim = struct.unpack('Ic',ins.read(5))
-            ssWidth,delim1,ssHeight,delim2,ssDepth,delim3 = struct.unpack('=IcIcIc',ins.read(15))
+            ssWidth,delim1,ssHeight,delim2,saveNum,delim3 = struct.unpack('=IcIcIc',ins.read(15))
             #--Name, nickname, level, location, playtime
             size,delim = struct.unpack('Hc',ins.read(3))
             self.pcName = cstrip(ins.read(size))
@@ -6771,8 +6771,18 @@ class SaveFile:
         #--Masters
         self.masters = []
         #--Global
-        self.globals = []
-        self.created = []
+        self.globals0 = []
+        self.globals1 = []
+        self.globals2 = []
+        self.globals3 = []
+        self.globals4 = []
+        self.globals5 = []
+        self.globals6 = []
+        self.globals7 = []
+        self.globals8 = []
+        self.globals9 = []
+        self.globalsA = []
+        self.createdB = []
         self.fid_createdNum = None
         self.preGlobals = None #--Pre-records, pre-globals
         self.preCreated = None #--Pre-records, pre-created
@@ -6796,33 +6806,52 @@ class SaveFile:
         progress.setFull(self.fileInfo.size)
         #--Header
         progress(0,_('Reading Header.'))
-        self.header = ins.read(34)
+        self.header = ins.read(11)
 
         #--Save Header, pcName
         gameHeaderSize, = ins.unpack('I',4)
-        self.saveNum,pcNameSize, = ins.unpack('=IB',5)
+        self.unknown1,delim = ins.unpack('Ic',5)
+        self.ssWidth,delim = ins.unpack('Ic',5)
+        self.ssHeight,delim = ins.unpack('Ic',5)
+        self.saveNum,delim = ins.unpack('Ic',5)
+        pcNameSize,delim = ins.unpack('Hc',3)
         self.pcName = cstrip(ins.read(pcNameSize))
-        self.postNameHeader = ins.read(gameHeaderSize-5-pcNameSize)
-
+        self.postNameHeader = ins.read(gameHeaderSize-23-pcNameSize)
+        #--Image Data
+        self.ssData = ins.read(3*self.ssWidth*self.ssHeight)
         #--Masters
+        self.unknown2,masterListSize = ins.unpack('=BI',5)
+        if self.unknown2 != 0x15:
+            raise "%s: Unknown byte is not 0x15." % path
         del self.masters[:]
-        numMasters, = ins.unpack('B',1)
+        numMasters,delim = ins.unpack('Bc',2)
         for count in range(numMasters):
-            size, = ins.unpack('B',1)
+            size,delim = ins.unpack('Hc',3)
             self.masters.append(GPath(ins.read(size)))
-
+            delim, = ins.unpack('c',1)
         #--Pre-Records copy buffer
         def insCopy(buff,size,backSize=0):
             if backSize: ins.seek(-backSize,1)
             buff.write(ins.read(size+backSize))
 
         #--"Globals" block
-        fidsPointer,recordsNum = ins.unpack('2I',8)
+        fidsPointer,lastChunkPointer = ins.unpack('2I',8)
+        unknown3 = ins.unpack('I',4)
+        unknown4 = ins.unpack('I',4)
+        unknown5 = ins.unpack('I',4)
+        unknown6 = ins.unpack('I',4)
+        unknown7 = ins.unpack('I',4)
+        unknown8 = ins.unpack('I',4)
         #--Pre-globals
-        self.preGlobals = ins.read(8*4)
+        self.preGlobals = ins.read(78)
         #--Globals
-        globalsNum, = ins.unpack('H',2)
-        self.globals = [ins.unpack('If',8) for num in xrange(globalsNum)]
+        index, = ins.unpack('I',4)
+        size, = ins.unpack('I',4)
+        globalsNum,delim = ins.unpack('Ic',5)
+        del self.globals0[:]
+        for num in range(globalsNum):
+            value,delim = ins.unpack('Ic',5)
+            self.globals0.append(value)
         #--Pre-Created (Class, processes, spectator, sky)
         buff = cStringIO.StringIO()
         for count in range(4):
@@ -6861,11 +6890,13 @@ class SaveFile:
         self.fids.fromfile(ins,num)
         for iref,fid in enumerate(self.fids):
             self.irefs[fid] = iref
-
         #--WorldSpaces
         num, = ins.unpack('I',4)
         self.worldSpaces = array.array('I')
         self.worldSpaces.fromfile(ins,num)
+        #--LastChunk
+        size, = ins.unpack('I',4)
+        self.lastChunk = ins.read(size)
         #--Done
         ins.close()
         progress(progress.full,_('Finished reading.'))
