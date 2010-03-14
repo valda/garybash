@@ -5083,6 +5083,91 @@ class MreProj(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreNote(MelRecord):
+    """Note record."""
+    classType = 'NOTE'
+    _type = Flags(0,Flags.getNames(
+            ( 0,'sound' ),
+            ( 1,'text' ),
+            ( 2,'image' ),
+            ( 3,'voice' ),
+            ))
+    class MelNoteTnam(MelBase):
+        """text or topic"""
+        def hasFids(self,formElements):
+            formElements.add(self)
+        def loadData(self,record,ins,type,size,readId):
+            if record.dataType == 1: # text (string)
+                value = ins.readString(size,readId)
+                record.__setattr__(self.attr, (False, value))
+            elif record.dataType == 3: # voice (fid:DIAL)
+                (value,) = ins.unpack('I',size,readId)
+                record.__setattr__(self.attr, (True, value))
+            else:
+                raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+            if self._debug: print unpacked
+        def dumpData(self,record,out):
+            try:
+                (isFid, value) = record.__getattribute__(self.attr)
+            except AttributeError:
+                value = None
+            if value is not None:
+                if record.dataType == 1: # text (string)
+                    out.packSub0(self.subType,value)
+                elif record.dataType == 3: # voice (fid:DIAL)
+                    out.packRef(self.subType,value)
+                else:
+                    raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+        def mapFids(self,record,function,save=False):
+            (isFid, value) = record.__getattribute__(self.attr)
+            if isFid:
+                result = function(value)
+                if save: record.__setattr__(self.attr,result)
+    class MelNoteSnam(MelBase):
+        """sound or npc"""
+        def hasFids(self,formElements):
+            formElements.add(self)
+        def loadData(self,record,ins,type,size,readId):
+            if record.dataType == 0: # sound (fid:SOUN)
+                (value,) = ins.unpack('I',size,readId)
+                record.__setattr__(self.attr, (True, value))
+            elif record.dataType == 3: # voice (fid:NPC_)
+                (value,) = ins.unpack('I',size,readId)
+                record.__setattr__(self.attr, (True, value))
+            else:
+                raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+            if self._debug: print unpacked
+        def dumpData(self,record,out):
+            try:
+                (isFid, value) = record.__getattribute__(self.attr)
+            except AttributeError:
+                value = None
+            if value is not None: out.packRef(self.subType,value)
+        def mapFids(self,record,function,save=False):
+            (isFid, value) = record.__getattribute__(self.attr)
+            if isFid:
+                result = function(value)
+                if save: record.__setattr__(self.attr,result)
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
+        MelFid('YNAM','soundPickUp'),
+        MelFid('ZNAM','soundDrop'),
+        MelStruct('DATA','B','dataType'),
+        MelFidList('ONAM','quests'),
+        MelString('XNAM','texture'),
+        MelNoteTnam('TNAM', 'textTopic'),
+        MelNoteSnam('SNAM', 'soundNpc'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5092,7 +5177,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, ))
+    MreLvln, MreNote))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
@@ -14545,7 +14630,7 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('iconPath',)
         for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat):
             recAttrs_class[recClass] = ('model',)
-        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreTree):
+        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreTree, MreNote):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model')
         for recClass in (MreWeap,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel','animationType','gripAnimation','reloadAnimation')
