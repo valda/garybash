@@ -5107,10 +5107,9 @@ class MreNote(MelRecord):
                 raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
             if self._debug: print unpacked
         def dumpData(self,record,out):
-            try:
-                (isFid, value) = record.__getattribute__(self.attr)
-            except AttributeError:
-                value = None
+            value = record.__getattribute__(self.attr)
+            if value is None: return
+            (isFid, value) = value
             if value is not None:
                 if record.dataType == 1: # text (string)
                     out.packSub0(self.subType,value)
@@ -5119,7 +5118,9 @@ class MreNote(MelRecord):
                 else:
                     raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
         def mapFids(self,record,function,save=False):
-            (isFid, value) = record.__getattribute__(self.attr)
+            value = record.__getattribute__(self.attr)
+            if value is None: return
+            (isFid, value) = value
             if isFid:
                 result = function(value)
                 if save: record.__setattr__(self.attr,result)
@@ -5138,13 +5139,14 @@ class MreNote(MelRecord):
                 raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
             if self._debug: print unpacked
         def dumpData(self,record,out):
-            try:
-                (isFid, value) = record.__getattribute__(self.attr)
-            except AttributeError:
-                value = None
+            value = record.__getattribute__(self.attr)
+            if value is None: return
+            (isFid, value) = value
             if value is not None: out.packRef(self.subType,value)
         def mapFids(self,record,function,save=False):
-            (isFid, value) = record.__getattribute__(self.attr)
+            value = record.__getattribute__(self.attr)
+            if value is None: return
+            (isFid, value) = value
             if isFid:
                 result = function(value)
                 if save: record.__setattr__(self.attr,result)
@@ -14630,8 +14632,10 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('iconPath',)
         for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat):
             recAttrs_class[recClass] = ('model',)
-        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreTree, MreNote):
+        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreTree):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model')
+        for recClass in (MreNote,):
+            recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','texture')
         for recClass in (MreWeap,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel','animationType','gripAnimation','reloadAnimation')
         for recClass in (MreArmo, MreClot):
@@ -14655,7 +14659,7 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreProj,):
             recAttrs_class[recClass] = ('model','light','muzzleFlash','explosion','muzzleFlashDuration','fadeDuration','muzzleFlashPath')
         #--Needs Longs
-        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ'))
+        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL'))
 
     def initData(self,progress):
         """Get graphics from source files."""
