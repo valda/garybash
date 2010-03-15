@@ -2397,11 +2397,11 @@ class MreBook(MelRecord):
                   'corner1X','corner1Y','corner1Z'),
         MelString('FULL','full'),
         MelModel(),
-        MelString('ICON','iconPath'),
-        MelString('DESC','text'),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
         MelFid('SCRI','script'),
-        MelFid('ENAM','enchantment'),
-        MelOptStruct('ANAM','H','enchantPoints'),
+        MelString('DESC','text'),
+        MelDestructable(),
         MelStruct('DATA', '=BbIf',(_flags,'flags',0L),('teaches',-1),'value','weight'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed() + ['modb']
@@ -4937,7 +4937,7 @@ class MrePerk(MelRecord):
                 MelConditions(),
             ),
             MelPerkEffectParams('effectParams',
-                MelStruct('EPFD','f','float'),
+                MelBase('EPFD', 'floats'), # [Float] or [Float,Float], todo rewrite specific class
                 MelStruct('EPFT','B','_epft'),
                 MelString('EPF2','buttonLabel'),
                 MelStruct('EPF3','H','scriptFlag'),
