@@ -11166,9 +11166,9 @@ class InstallerProject(Installer):
         """Tiny little fomod config class."""
         def __init__(self,name):
             self.name = name.s
-            self.version = ''
-            self.machineVersion = ''
-            self.author = ''
+            self.version = '1.0'
+            self.machineVersion = '1.0'
+            self.author = 'DEFAULT'
             self.email = ''
             self.website = ''
             self.description = ''
@@ -11199,18 +11199,31 @@ class InstallerProject(Installer):
 
     def writeFomodConfig(self,name,config):
         """Write fomm config file for project."""
-        configPath = dirs['installers'].join(name,'fomod conversion data','config')
+        configPath = dirs['installers'].join(name,'fomod','info.xml')
         configPath.head.makedirs()
-        out = bolt.StructFile(configPath.temp.s,'wb')
-        out.pack('B',4)
-        out.writeNetString(config.name)
-        out.pack('i',config.vMajor)
-        out.pack('i',config.vMinor)
-        for attr in ('author','email','website','abstract'):
-            out.writeNetString(getattr(config,attr))
-        out.write('\x74\x1a\x74\x67\xf2\x7a\xca\x88') #--Random date time
-        out.pack('b',0) #--zip compression (will be ignored)
-        out.write('\xFF\xFF\xFF\xFF')
+        out = configPath.temp.open('wb')
+        enc = 'UTF-16'
+        info = '<?xml version="1.0" encoding="%s"?>\n' % enc
+        info += '<fomod>\n'
+        info += '  <Name>%s</Name>\n' % config.name
+        if config.author:
+            info += '  <Author>%s</Author>\n' % config.author
+        info += '  <Version MachineVersion="%s">%s</Version>\n' % (config.machineVersion, config.version)
+        if config.description:
+            info += '  <Description>%s</Description>\n' % config.description
+        if config.email:
+            info += '  <Email>%s</Email>\n' % config.email
+        if config.website:
+            info += '  <Website>%s</Website>\n' % config.website
+        if config.minFommVersion:
+            info += '  <MinFommVersion>%s</MinFommVersion>\n' % config.minFommVersion
+        if config.groups:
+            info += '  <Groups>\n'
+            for group in config.Groups:
+                info += '    <element>%s</element>\n' % group
+            info += '  </Groups>\n'
+        info += '</fomod>\n'
+        out.write(info.encode(enc))
         out.close()
         configPath.untemp()
 
