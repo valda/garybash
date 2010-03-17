@@ -4490,7 +4490,7 @@ PatchDialog.patchers.extend((
     SoundPatcher(),
     StatsPatcher(),
     #SEWorldEnforcer(),
-    ContentsChecker(),
+    #ContentsChecker(), # temporary remove
     ))
 
 # Files Links -----------------------------------------------------------------
