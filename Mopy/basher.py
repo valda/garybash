@@ -3066,7 +3066,7 @@ class BashFrame(wx.Frame):
         #--Data
         self.inRefreshData = False #--Prevent recursion while refreshing.
         self.knownCorrupted = set()
-        self.fallout3IniCorrupted = False
+        self.falloutIniCorrupted = False
         self.incompleteInstallError = False
         #--Layout
         sizer = vSizer((notebook,1,wx.GROW))
@@ -3165,11 +3165,11 @@ class BashFrame(wx.Frame):
             message += listFiles(sorted(corruptSaves))
             self.knownCorrupted |= corruptSaves
         if message: balt.showWarning(self,message)
-        #--Corrupt Fallout3.ini
-        if self.fallout3IniCorrupted != bosh.fallout3Ini.isCorrupted:
-            self.fallout3IniCorrupted = bosh.fallout3Ini.isCorrupted
-            if self.fallout3IniCorrupted:
-                message = _('Your Fallout3.ini should begin with a section header (e.g. "[General]"), but does not. You should edit the file to correct this.')
+        #--Corrupt FALLOUT.INI
+        if self.falloutIniCorrupted != bosh.falloutIni.isCorrupted:
+            self.falloutIniCorrupted = bosh.falloutIni.isCorrupted
+            if self.falloutIniCorrupted:
+                message = _('Your FALLOUT.INI should begin with a section header (e.g. "[General]"), but does not. You should edit the file to correct this.')
                 balt.showWarning(self,fill(message))
         #--Any Y2038 Resets?
         if bolt.Path.mtimeResets:
@@ -3695,7 +3695,7 @@ class BashApp(wx.App):
         progress.Update(5,_("Initializing ModInfos"))
         bosh.configHelpers = bosh.ConfigHelpers()
         bosh.configHelpers.refresh()
-        bosh.fallout3Ini = bosh.Fallout3Ini()
+        bosh.falloutIni = bosh.FalloutIni()
         bosh.modInfos = bosh.ModInfos()
         bosh.modInfos.refresh(doAutoGroup=True)
         progress.Update(30,_("Initializing SaveInfos"))
@@ -5005,7 +5005,7 @@ class Installers_BsaRedirection(Link):
             bsaFile.scan()
             resetCount = bsaFile.reset()
             #balt.showOk(self,_("BSA Hashes reset: %d") % (resetCount,))
-        bosh.fallout3Ini.setBsaRedirection(settings['bash.bsaRedirection'])
+        bosh.falloutIni.setBsaRedirection(settings['bash.bsaRedirection'])
 
 #------------------------------------------------------------------------------
 class Installers_ConflictsReportShowsInactive(Link):
@@ -6234,7 +6234,7 @@ class Mods_DumpTranslator(Link):
 
 #------------------------------------------------------------------------------
 class Mods_IniTweaks(Link):
-    """Applies ini tweaks to Fallout3.ini."""
+    """Applies ini tweaks to FALLOUT.INI."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
         menuItem = wx.MenuItem(menu,self.id,_('INI Tweaks...'))
@@ -6244,7 +6244,7 @@ class Mods_IniTweaks(Link):
         """Handle menu selection."""
         window = getattr(self,'gTank',None) or self.window
         #--Continue Query
-        message = _("Apply an ini tweak to Fallout3.ini?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
+        message = _("Apply an ini tweak to FALLOUT.INI?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
         if not balt.askContinue(window,message,'bash.iniTweaks.continue',_("INI Tweaks")):
             return
         #--File dialog
@@ -6252,7 +6252,7 @@ class Mods_IniTweaks(Link):
         tweakDir.makedirs()
         tweakPath = balt.askOpen(window,_('INI Tweaks'),tweakDir,'', '*.ini')
         if not tweakPath: return
-        bosh.fallout3Ini.applyTweakFile(tweakPath)
+        bosh.falloutIni.applyTweakFile(tweakPath)
         balt.showInfo(window,tweakPath.stail+_(' applied.'),_('INI Tweaks'))
 
 #------------------------------------------------------------------------------
@@ -6288,13 +6288,13 @@ class Mods_LockTimes(Link):
         modList.RefreshUI()
 
 #------------------------------------------------------------------------------
-class Mods_Fallout3Ini(Link):
-    """Open Fallout3.ini."""
+class Mods_FalloutIni(Link):
+    """Open FALLOUT.INI."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Fallout3.ini...'))
+        menuItem = wx.MenuItem(menu,self.id,_('FALLOUT.INI...'))
         menu.AppendItem(menuItem)
-        self.path = bosh.dirs['saveBase'].join('Fallout3.ini')
+        self.path = bosh.dirs['saveBase'].join('FALLOUT.INI')
         menuItem.Enable(self.path.exists())
 
     def Execute(self,event):
@@ -8872,9 +8872,9 @@ class Screens_NextScreenShot(Link):
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
-        fallout3Ini = bosh.fallout3Ini
-        base = fallout3Ini.getSetting('Display','sScreenShotBaseName','ScreenShot')
-        next = fallout3Ini.getSetting('Display','iScreenShotIndex','0')
+        falloutIni = bosh.falloutIni
+        base = falloutIni.getSetting('Display','sScreenShotBaseName','ScreenShot')
+        next = falloutIni.getSetting('Display','iScreenShotIndex','0')
         rePattern = re.compile(r'^(.+?)(\d*)$',re.I)
         pattern = balt.askText(self.window,_("Screenshot base name, optionally with next screenshot number.\nE.g. ScreenShot or ScreenShot_101 or Subdir\\ScreenShot_201."),_("Next Shot..."),base+next)
         if not pattern: return
@@ -8889,7 +8889,7 @@ class Screens_NextScreenShot(Link):
         if screensDir:
             if not screensDir.isabs(): screensDir = bosh.dirs['app'].join(screensDir)
             screensDir.makedirs()
-        fallout3Ini.saveSettings(settings)
+        falloutIni.saveSettings(settings)
         bosh.screensData.refresh()
         self.window.RefreshUI()
 
@@ -9702,7 +9702,7 @@ def InitModLinks():
     ModList.mainMenu.append(Files_Open())
     ModList.mainMenu.append(Files_Unhide('mod'))
     ModList.mainMenu.append(SeparatorLink())
-    ModList.mainMenu.append(Mods_Fallout3Ini())
+    ModList.mainMenu.append(Mods_FalloutIni())
     ModList.mainMenu.append(Mods_IniTweaks())
     ModList.mainMenu.append(SeparatorLink())
     ModList.mainMenu.append(Mods_ListMods())

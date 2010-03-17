@@ -83,7 +83,7 @@ from bolt import _, LString, GPath, Flags, DataDict, SubProgress, cstrip, deprin
 oiMask = 0xFFFFFFL
 
 #--File Singletons
-fallout3Ini = None
+falloutIni = None
 modInfos  = None  #--ModInfos singleton
 saveInfos = None #--SaveInfos singleton
 screensData = None #--ScreensData singleton
@@ -7482,17 +7482,17 @@ class BsaFile:
         return (reset,inval,intxt)
 
 #--------------------------------------------------------------------------------
-class Fallout3Ini:
-    """Fallout3.ini file."""
+class FalloutIni:
+    """FALLOUT.INI file."""
     bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa',r'..\fomm\bsaredirection.bsa'))
 
     def __init__(self):
         """Initialize."""
-        self.path = dirs['saveBase'].join('Fallout3.ini')
+        self.path = dirs['saveBase'].join('FALLOUT.INI')
         self.isCorrupted = False
 
     def ensureExists(self):
-        """Ensures that Fallout3.ini file exists. Copies from default fallout.ini if necessary."""
+        """Ensures that FALLOUT.INI file exists. Copies from default fallout.ini if necessary."""
         if self.path.exists(): return
         srcPath = dirs['app'].join('Fallout_default.ini')
         srcPath.copyTo(self.path)
@@ -7570,7 +7570,7 @@ class Fallout3Ini:
         self.path.untemp()
 
     def applyTweakFile(self,tweakPath):
-        """Read Ini tweak file and apply its settings to fallout3.ini.
+        """Read Ini tweak file and apply its settings to FALLOUT.INI.
         Note: Will ONLY apply settings that already exist."""
         reComment = re.compile(';.*')
         reSection = re.compile(r'^\[\s*(.+?)\s*\]$')
@@ -9269,19 +9269,19 @@ class SaveInfos(FileInfos):
         self.localSave = getattr(self,'localSave','Saves\\')
         self.dir = dirs['saveBase'].join(self.localSave)
         self.bashDir = self.getBashDir()
-        if fallout3Ini.path.exists() and (fallout3Ini.path.mtime != self.iniMTime):
-            self.localSave = fallout3Ini.getSetting('General','SLocalSavePath','Saves\\')
-            self.iniMTime = fallout3Ini.path.mtime
+        if falloutIni.path.exists() and (falloutIni.path.mtime != self.iniMTime):
+            self.localSave = falloutIni.getSetting('General','SLocalSavePath','Saves\\')
+            self.iniMTime = falloutIni.path.mtime
             return True
         else:
             return False
 
     def setLocalSave(self,localSave):
-        """Sets SLocalSavePath in Fallout3.ini."""
+        """Sets SLocalSavePath in FALLOUT.INI."""
         self.table.save()
         self.localSave = localSave
-        fallout3Ini.saveSetting('General','SLocalSavePath',localSave)
-        self.iniMTime = fallout3Ini.path.mtime
+        falloutIni.saveSetting('General','SLocalSavePath',localSave)
+        self.iniMTime = falloutIni.path.mtime
         bashDir = dirs['saveBase'].join(localSave,'Bash')
         self.table = bolt.Table(PickleDict(bashDir.join('Table.dat')))
         self.refresh()
@@ -10017,7 +10017,7 @@ class ScreensData(DataDict):
     def refresh(self):
         """Refresh list of screenshots."""
         self.dir = dirs['app']
-        ssBase = GPath(fallout3Ini.getSetting('Display','SScreenShotBaseName','ScreenShot'))
+        ssBase = GPath(falloutIni.getSetting('Display','SScreenShotBaseName','ScreenShot'))
         if ssBase.head:
             self.dir = self.dir.join(ssBase.head)
         newData = {}
@@ -11273,7 +11273,7 @@ class InstallersData(bolt.TankData, DataDict):
         self.bashDir.makedirs()
         #--Archive invalidation
         if settings.get('bash.bsaRedirection'):
-            fallout3Ini.setBsaRedirection(True)
+            falloutIni.setBsaRedirection(True)
         #--Refresh Data
         changed = False
         if not self.loaded:
