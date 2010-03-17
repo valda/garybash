@@ -12593,7 +12593,7 @@ class ItemStats:
             'AMMO':('eid', 'value', 'speed', 'value', 'clipRounds'),
             'APPA':('eid', 'weight', 'value', 'quality'),
             'ARMO':('eid', 'weight', 'value', 'health', 'ar'),
-            'BOOK':('eid', 'weight', 'value', 'enchantPoints'),
+            'BOOK':('eid', 'weight', 'value'),
             'CLOT':('eid', 'weight', 'value', 'enchantPoints'),
             'INGR':('eid', 'weight', 'value'),
             'KEYM':('eid', 'weight', 'value'),
