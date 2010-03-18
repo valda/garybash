@@ -1,5 +1,15 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 8 [3/18/2010]
+* Bashed Patch:
+  * Leveled List Merging now supported LVLN (Leveled list for NPC).
+  * Fix structure for BOOK and PERK subrecord.
+  * Added some condition function definition (and supported for More Perks).
+  * Preset tags were added to FWE-Optional Worn Weapons.
+  * ContentsChecker is removed temporarily.
+* BAIN: Fomod info.xml read/write support (except genre).
+* INI Tweaks worked.
+
 === 7 [3/7/2010]
 * Backports from Wrye Bash 275-278.
   * port of my implementation of ini settable tool directories from OB version. also launchers for quite a few external tools (by PacificMorrowind).
