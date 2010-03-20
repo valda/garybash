@@ -5116,6 +5116,71 @@ class MreDebr(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreImad(MelRecord):
+    """Image space modifier record."""
+    classType = 'IMAD'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelBase('DNAM','dnam_p'),
+        MelBase('BNAM','bnam_p'),
+        MelBase('VNAM','vnam_p'),
+        MelBase('TNAM','tnam_p'),
+        MelBase('NAM3','nam3_p'),
+        MelBase('RNAM','rnam_p'),
+        MelBase('SNAM','snam_p'),
+        MelBase('UNAM','unam_p'),
+        MelBase('NAM1','nam1_p'),
+        MelBase('NAM2','nam2_p'),
+        MelBase('WNAM','wnam_p'),
+        MelBase('XNAM','xnam_p'),
+        MelBase('YNAM','ynam_p'),
+        MelBase('NAM4','nam4_p'),
+        MelBase('aIAD','_aiad_p'),
+        MelBase('@IAD','atiad_p'),
+        MelBase('bIAD','_biad_p'),
+        MelBase('AIAD','aiad_p'),
+        MelBase('cIAD','_ciad_p'),
+        MelBase('BIAD','biad_p'),
+        MelBase('dIAD','_diad_p'),
+        MelBase('CIAD','ciad_p'),
+        MelBase('eIAD','_eiad_p'),
+        MelBase('DIAD','diad_p'),
+        MelBase('fIAD','_fiad_p'),
+        MelBase('EIAD','eiad_p'),
+        MelBase('gIAD','_giad_p'),
+        MelBase('FIAD','fiad_p'),
+        MelBase('hIAD','_hiad_p'),
+        MelBase('GIAD','giad_p'),
+        MelBase('iIAD','_iiad_p'),
+        MelBase('HIAD','hiad_p'),
+        MelBase('jIAD','_jiad_p'),
+        MelBase('IIAD','iiad_p'),
+        MelBase('kIAD','_kiad_p'),
+        MelBase('JIAD','jiad_p'),
+        MelBase('lIAD','_liad_p'),
+        MelBase('KIAD','kiad_p'),
+        MelBase('mIAD','_miad_p'),
+        MelBase('LIAD','liad_p'),
+        MelBase('nIAD','_niad_p'),
+        MelBase('MIAD','miad_p'),
+        MelBase('oIAD','_oiad_p'),
+        MelBase('NIAD','niad_p'),
+        MelBase('pIAD','_piad_p'),
+        MelBase('OIAD','oiad_p'),
+        MelBase('qIAD','_qiad_p'),
+        MelBase('PIAD','piad_p'),
+        MelBase('rIAD','_riad_p'),
+        MelBase('QIAD','qiad_p'),
+        MelBase('sIAD','_siad_p'),
+        MelBase('RIAD','riad_p'),
+        MelBase('tIAD','_tiad_p'),
+        MelBase('SIAD','siad_p'),
+        MelBase('uIAD','_uiad_p'),
+        MelBase('TIAD','tiad_p'),
+    )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5125,7 +5190,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, MreDebr))
+    MreLvln, MreDebr, MreImad))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
