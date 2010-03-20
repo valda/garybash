@@ -5083,6 +5083,39 @@ class MreProj(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreDebr(MelRecord):
+    """Debris record."""
+    classType = 'DEBR'
+    class MelDebrData(MelStruct):
+        def __init__(self):
+            """Initialize."""
+            MelStruct.__init__(self,'DATA','IsI',('percentage',0),('modPath',null1),('flags',0))
+        def loadData(self,record,ins,type,size,readId):
+            """Reads data from ins into record attribute."""
+            data = ins.read(size,readId)
+            (record.percentage,) = struct.unpack('B',data[0:1])
+            record.modPath = data[1:-2]
+            if data[-2] != null1:
+                raise ModError(ins.inName,_('Unexpected subrecord: ')+readId)
+            (record.flags,) = struct.unpack('B',data[-1])
+        def dumpData(self,record,out):
+            """Dumps data from record to outstream."""
+            data = ''
+            data += struct.pack('B',record.percentage)
+            data += record.modPath
+            data += null1
+            data += struct.pack('B',record.flags)
+            out.packSub('DATA',data)
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelGroups('models',
+            MelDebrData(),
+            MelBase('MODT','modt_p'),
+        ),
+    )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5092,7 +5125,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, ))
+    MreLvln, MreDebr))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
