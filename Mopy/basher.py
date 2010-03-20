@@ -4427,6 +4427,8 @@ class ImportScriptContents(bosh.ImportScriptContents,ListPatcher):pass
 
 class ImportSpells(bosh.SpellsPatcher,ListPatcher):pass
 
+class DestructionPatcher(bosh.DestructionPatcher,ListPatcher): pass
+
 # Patchers 30 ------------------------------------------------------------------
 class AssortedTweaker(bosh.AssortedTweaker,TweakPatcher): pass
 
@@ -4478,6 +4480,7 @@ PatchDialog.patchers.extend((
     ImportScripts(),
     ImportScriptContents(),
     #ImportSpells(),
+    DestructionPatcher(),
     ListsMerger(),
     FidListsMerger(),
     #MFactMarker(),
