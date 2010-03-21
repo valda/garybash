@@ -1392,7 +1392,7 @@ class MelEffects(MelGroups):
     def __init__(self,attr='effects'):
         """Initialize elements."""
         MelGroups.__init__(self,attr,
-            MelStruct('EFID','4s',('name','REHE')),
+            MelFid('EFID','baseEffect'),
             MelStruct('EFIT','5i','magnitude','area','duration','recipient','actorValue'),
             # MelGroup('scriptEffect',
             #     MelEffects.MelEffectsScit(),
