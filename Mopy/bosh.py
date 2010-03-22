@@ -5181,6 +5181,23 @@ class MreImad(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreMstt(MelRecord):
+    """Moveable static record."""
+    classType = 'MSTT'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelDestructable(),
+        MelBase('DATA','data_p'),
+        MelFid('SNAM','sound'),
+    )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5190,7 +5207,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, MreDebr, MreImad))
+    MreLvln, MreDebr, MreImad, MreMstt))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
@@ -14641,7 +14658,7 @@ class GraphicsPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreBsgn,MreLscr, MreClas, MreLtex, MreRegn):
             recAttrs_class[recClass] = ('iconPath',)
-        for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat):
+        for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat, MreMstt):
             recAttrs_class[recClass] = ('model',)
         for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreTree):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model')
@@ -16069,13 +16086,13 @@ class SpellsPatcher(ImportPatcher):
                 log("  * %s: %d" % (modName.s,counts[modName]))
 
 #------------------------------------------------------------------------------
-class DestructionPatcher(ImportPatcher):
+class DestructablePatcher(ImportPatcher):
     """Merges changes to destructable records to work with Destruction Environment mod."""
-    name = _("Import Destructions")
+    name = _("Import Destructable")
     text = _("Merges changes to destructable records.\n\nWill have to use if Destruction Environment mod is installed and active.")
     tip = text
     autoRe = re.compile(r"^(Destruction - |FOOK2 - \[DESTRUCTION\] ).*\.es(m|p)$",re.I)
-    autoKey = 'Destruction'
+    autoKey = 'Destructable'
 
     #--Patch Phase ------------------------------------------------------------
     def initPatchFile(self,patchFile,loadMods):
@@ -16087,7 +16104,7 @@ class DestructionPatcher(ImportPatcher):
         self.isActive = len(self.sourceMods) != 0
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
-        for recClass in (MreActi,MreAlch,MreAmmo,MreFurn,MreMisc,MreProj,MreWeap): # TODO: MreMstt
+        for recClass in (MreActi,MreAlch,MreAmmo,MreFurn,MreMisc,MreMstt,MreProj,MreWeap):
             recAttrs_class[recClass] = ('destructable',)
         for recClass in (MreCont,MreDoor,): # TODO: MreTerm
             recAttrs_class[recClass] = ('destructable','script',)
@@ -16095,7 +16112,7 @@ class DestructionPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('script',)
         for recClass in (MreStat,):
             recAttrs_class[recClass] = ('model',)
-        self.longTypes = set(('ACTI','ALCH','AMMO','FURN','MISC','PROJ','WEAP','CONT','DOOR','LIGH','STAT',
+        self.longTypes = set(('ACTI','ALCH','AMMO','FURN','MISC','MSTT','PROJ','WEAP','CONT','DOOR','LIGH','STAT',
             'DEBR','EXPL','MGEF','SCPT','SPEL','SOUN','NPC_','WATR','TXST','ENCH','FLST','IPDS','STAT',''))
 
     def initData(self,progress):
