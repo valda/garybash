@@ -16272,14 +16272,14 @@ class DestructablePatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreActi,MreAlch,MreAmmo,MreFurn,MreMisc,MreMstt,MreProj,MreWeap):
             recAttrs_class[recClass] = ('destructable',)
-        for recClass in (MreCont,MreDoor,): # TODO: MreTerm
+        for recClass in (MreCont,MreDoor,MreTerm):
             recAttrs_class[recClass] = ('destructable','script',)
         for recClass in (MreLigh,):
             recAttrs_class[recClass] = ('script',)
         for recClass in (MreStat,):
             recAttrs_class[recClass] = ('model',)
         self.longTypes = set(('ACTI','ALCH','AMMO','FURN','MISC','MSTT','PROJ','WEAP','CONT','DOOR','LIGH','STAT',
-            'DEBR','EXPL','MGEF','SCPT','SPEL','SOUN','NPC_','WATR','TXST','ENCH','FLST','IPDS','STAT',''))
+            'DEBR','EXPL','MGEF','SCPT','SPEL','SOUN','NPC_','WATR','TXST','ENCH','FLST','IPDS','STAT','NOTE','QUST'))
 
     def initData(self,progress):
         """Get graphics from source files."""
