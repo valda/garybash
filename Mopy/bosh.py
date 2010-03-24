@@ -5287,6 +5287,60 @@ class MreNote(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreTerm(MelRecord):
+    """Terminal record."""
+    classType = 'TERM'
+    _flags = Flags(0L,Flags.getNames('leveled','unlocked','alternateColors','hideWellcomeTextWhenDisplayingImage'))
+    _menuFlags = Flags(0L,Flags.getNames('addNote','forceRedraw'))
+    _variableFlags = Flags(0L,Flags.getNames('isLongOrShort'))
+    class MelTermDnam(MelStruct):
+        """Handle older trucated DNAM for TERM subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 4:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 3:
+                unpacked = ins.unpack('BBB',size,readId)
+            else:
+                raise "Unexpected size encountered for TERM:DNAM subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelFid('SCRI','script'),
+        MelDestructable(),
+        MelString('DESC','description'),
+        MelFid('SNAM','soundLooping'),
+        MelFid('PNAM','passwordNote'),
+        MelTermDnam('DNAM','BBH','baseHackingDifficulty',(_flags,'flags'),'serverType'),
+        MelGroups('menuItems',
+            MelString('ITXT','itemText'),
+            MelString('RNAM','resultText'),
+            MelStruct('ANAM','B',(_menuFlags,'menuFlags')),
+            MelFid('INAM','displayNote'),
+            MelFid('TNAM','subMenu'),
+            MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
+            MelBase('SCDA','compiled_p'),
+            MelString('SCTX','scriptText'),
+            MelGroups('vars',
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
+                MelString('SCVR','name')),
+            MelScrxen('SCRV/SCRO','references'),
+            MelConditions(),
+        ),
+    )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5296,7 +5350,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, MreDebr, MreImad, MreMstt, MreNote, ))
+    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
