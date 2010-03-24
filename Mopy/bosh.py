@@ -15465,7 +15465,7 @@ class NpcFacePatcher(ImportPatcher):
     """NPC Faces patcher, for use with Project Beauty or similar mods."""
     name = _('Import NPC Faces')
     text = _("Import NPC face/eyes/hair from source mods. For use with Project Beauty, FaceMe and similar mods.")
-    autoRe = re.compile(r"^Project Beauty.*.es(m|p)$",re.I)
+    autoRe = re.compile(r"^(Project Beauty|PB MMM|FaceMe).*\.es[mp]$",re.I)
     autoKey = 'NpcFaces'
 
     #--Patch Phase ------------------------------------------------------------
@@ -16093,7 +16093,7 @@ class DestructablePatcher(ImportPatcher):
     name = _("Import Destructable")
     text = _("Merges changes to destructable records.\n\nWill have to use if Destruction Environment mod is installed and active.")
     tip = text
-    autoRe = re.compile(r"^(Destruction - |FOOK2 - \[DESTRUCTION\] ).*\.es(m|p)$",re.I)
+    autoRe = re.compile(r"^(Destruction - |FOOK2 - \[DESTRUCTION\] ).*\.es[mp]$",re.I)
     autoKey = 'Destructable'
 
     #--Patch Phase ------------------------------------------------------------
