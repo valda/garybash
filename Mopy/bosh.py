@@ -19274,7 +19274,7 @@ class ContentsChecker(SpecialPatcher,Patcher):
             'LVLC':'LVLC,CREA,'.split(','),
             'LVLN':'LVLC,NPC_,'.split(','),
             #--LVLI will also be applied for containers.
-            'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP'.split(','),
+            'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP,NOTE'.split(','),
             }
         self.contType_entryTypes['CONT'] = self.contType_entryTypes['LVLI']
         self.contType_entryTypes['CREA'] = self.contType_entryTypes['LVLI']
