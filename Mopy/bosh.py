@@ -5261,7 +5261,7 @@ class MreNote(MelRecord):
             (isFid, value) = value
             if isFid:
                 result = function(value)
-                if save: record.__setattr__(self.attr,result)
+                if save: record.__setattr__(self.attr,(isFid,result))
     class MelNoteSnam(MelBase):
         """sound or npc"""
         def hasFids(self,formElements):
@@ -5287,7 +5287,7 @@ class MreNote(MelRecord):
             (isFid, value) = value
             if isFid:
                 result = function(value)
-                if save: record.__setattr__(self.attr,result)
+                if save: record.__setattr__(self.attr,(isFid,result))
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
