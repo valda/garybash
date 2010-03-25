@@ -19272,9 +19272,9 @@ class ContentsChecker(SpecialPatcher,Patcher):
         self.contType_entryTypes = {
             'LVSP':'LVSP,SPEL,'.split(','),
             'LVLC':'LVLC,CREA,'.split(','),
-            'LVLN':'LVLC,NPC_,'.split(','),
+            'LVLN':'LVLN,NPC_,'.split(','),
             #--LVLI will also be applied for containers.
-            'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP,NOTE'.split(','),
+            'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP,NOTE,MSTT,STAT'.split(','),
             }
         self.contType_entryTypes['CONT'] = self.contType_entryTypes['LVLI']
         self.contType_entryTypes['CREA'] = self.contType_entryTypes['LVLI']
