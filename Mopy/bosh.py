@@ -16281,7 +16281,8 @@ class DestructablePatcher(ImportPatcher):
         self.longTypes = set(('ACTI','ALCH','AMMO','ARMO','BOOK','CONT','CREA','DEBR','DIAL',
                               'DOOR','ENCH','EXPL','FACT','FLOR','FLST','FURN','INFO','INGR',
                               'IPDS','KEYM','LIGH','MGEF','MISC','MSTT','NOTE','NPC_','PROJ',
-                              'QUST','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR','WEAP'))
+                              'QUST','REFR','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR',
+                              'WEAP'))
 
     def initData(self,progress):
         """Get graphics from source files."""
