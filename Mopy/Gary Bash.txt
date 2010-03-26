@@ -1,5 +1,17 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 9 [3/26/2010]
+* Bashed Patch:
+  * New: DestructablePatcher (work with Destroyable Environments mod).
+  * ContentsChecker is revived.
+  * Add support for NOTE (note) records.
+  * Add support for TERM (terminal) records.
+  * Add support for MSTT (moveable static) records.
+  * Add support for IMAD (image space modifier) records.
+  * Add support for DEBR (debris) records.
+  * Fix a bug with NPC_ record.
+  * Fix a bug with effects subrecord.
+
 === 8 [3/18/2010]
 * Bashed Patch:
   * Leveled List Merging now supported LVLN (Leveled list for NPC).
