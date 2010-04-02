@@ -14096,7 +14096,7 @@ class PatchFile(ModFile):
         self.unFilteredMods = []
         self.compiledAllMods = []
         #--Config
-        self.bodyTags = 'ARGHTCCPBS' #--Default bodytags
+        self.bodyTags = 'HAGPBFE' #--Default bodytags
         #--Mods
         patchTime = modInfo.mtime
         self.setMods([name for name in modInfos.ordered if modInfos[name].mtime < patchTime],[])
@@ -17550,10 +17550,9 @@ class NamesTweak_BodyTags(MultiTweakItem):
     #--Config Phase -----------------------------------------------------------
     def __init__(self):
         MultiTweakItem.__init__(self,_("Body Part Codes"),
-            _('Sets body part codes used by Armor/Clothes name tweaks. A: Amulet, R: Ring, etc.'),
+            _('Sets body part codes used by Armor/Clothes name tweaks. H: Head, A: Armor, etc.'),
             'bodyTags',
-            ('ARGHTCCPBS','ARGHTCCPBS'),
-            ('ABGHINOPSL','ABGHINOPSL'),
+            ('HAGPBFE','HAGPBFE'),
             )
 
     def getReadClasses(self):
@@ -17603,28 +17602,26 @@ class NamesTweak_Body(MultiTweakItem):
         format = self.choiceValues[self.chosen][0]
         showStat = '%02d' in format
         keep = patchFile.getKeeper()
-        codes = getattr(patchFile,'bodyTags','ARGHTCCPBS')
-        amulet,ring,gloves,head,tail,robe,chest,pants,shoes,shield = [
+        codes = getattr(patchFile,'bodyTags','HAGPBFE')
+        head,body,gloves,pipboy,backpack,fancy,accessory = [
             x for x in codes]
         for record in getattr(patchFile,self.key).records:
             if not record.full: continue
             if record.full[0] in '+-=.()[]': continue
-            flags = record.flags
-            if flags.head or flags.hair: type = head
-            elif flags.rightRing or flags.leftRing: type = ring
-            elif flags.amulet: type = amulet
-            elif flags.upperBody and flags.lowerBody: type = robe
-            elif flags.upperBody: type = chest
-            elif flags.lowerBody: type = pants
-            elif flags.hand: type = gloves
-            elif flags.foot: type = shoes
-            elif flags.tail: type = tail
-            elif flags.shield: type = shield
+            flags = record.bipedFlags
+            if flags.head or flags.hair or flags.headband or flags.hat : type = head
+            elif flags.upperBody: type = body
+            elif flags.leftHand or flags.rightHand: type = gloves
+            elif flags.pipboy: type = pipboy
+            elif flags.backpack: type = backpack
+            elif flags.necklace or flags.eyeGlasses or flags.noseRing or flags.earrings or flags.mask or flags.choker or flags.mouthObject: type = fancy
+            elif flags.bodyAddOn1 or flags.bodyAddOn2 or flags.bodyAddOn3: type = accessory
             else: continue
             if record.recType == 'ARMO':
-                type += 'LH'[record.flags.heavyArmor]
+                if record.generalFlags.powerArmor: type += 'P'
+                if record.generalFlags.heavyArmor: type += 'H'
             if showStat:
-                record.full = format % (type,record.strength/100) + record.full
+                record.full = format % (type,record.ar/100) + record.full
             else:
                 record.full = format % type + record.full
             keep(record.fid)
@@ -17962,17 +17959,17 @@ class NamesTweaker(MultiTweaker):
     name = _('Tweak Names')
     text = _("Tweak object names to show type and/or quality.")
     tweaks = sorted([
-        # NamesTweak_Body(_("Armor"),_("Rename armor to sort by type."),'ARMO',
-        #     (_('BL Leather Boots'),  '%s '),
-        #     (_('BL. Leather Boots'), '%s. '),
-        #     (_('BL - Leather Boots'),'%s - '),
-        #     (_('(BL) Leather Boots'),'(%s) '),
-        #     ('----','----'),
-        #     (_('BL02 Leather Boots'),  '%s%02d '),
-        #     (_('BL02. Leather Boots'), '%s%02d. '),
-        #     (_('BL02 - Leather Boots'),'%s%02d - '),
-        #     (_('(BL02) Leather Boots'),'(%s%02d) '),
-        #     ),
+        NamesTweak_Body(_("Armor/Clothes"),_("Rename armor to sort by type."),'ARMO',
+            (_('BL Leather Boots'),  '%s '),
+            (_('BL. Leather Boots'), '%s. '),
+            (_('BL - Leather Boots'),'%s - '),
+            (_('(BL) Leather Boots'),'(%s) '),
+            ('----','----'),
+            (_('BL02 Leather Boots'),  '%s%02d '),
+            (_('BL02. Leather Boots'), '%s%02d. '),
+            (_('BL02 - Leather Boots'),'%s%02d - '),
+            (_('(BL02) Leather Boots'),'(%s%02d) '),
+            ),
         # NamesTweak_Body(_("Clothes"),_("Rename clothes to sort by type."),'CLOT',
         #     (_('P Grey Trowsers'),  '%s '),
         #     (_('P. Grey Trowsers'), '%s. '),
