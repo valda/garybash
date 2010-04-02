@@ -18586,7 +18586,8 @@ class FidListsMerger(SpecialPatcher,ListPatcher):
                 if empty not in sub_supers: continue
                 for super in sub_supers[empty]:
                     record = levLists[super]
-                    record.entries = [x for x in record.entries if x.listId != empty]
+                    #record.entries = [x for x in record.entries if x.listId != empty]
+                    record.fids = [x for x in record.fids if x != empty] # maybe
                     record.items.remove(empty)
                     patchBlock.setRecord(record)
                     if not record.items:
