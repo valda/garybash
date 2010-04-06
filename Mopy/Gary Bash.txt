@@ -1,5 +1,9 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 10 [4/7/2010]
+* Fixed a FormID lists merger bug that threw an error.
+* Tweak names (Armor/Clothes,Ingentibles,Weapons) worked.
+
 === 9 [3/26/2010]
 * Bashed Patch:
   * New: DestructablePatcher (work with Destroyable Environments mod).
