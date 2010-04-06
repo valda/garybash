@@ -4523,10 +4523,6 @@ class MreWeap(MelRecord):
     """Weapon record."""
     classType = 'WEAP'
     _flags = Flags(0L,Flags.getNames('notNormalWeapon'))
-    _etype = Flags(0L,Flags.getNames(
-        'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
-        'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
-    ))
     _dflags1 = Flags(0L,Flags.getNames(
             'ignoresNormalWeaponResistance',
             'isAutomatic',
@@ -4598,7 +4594,8 @@ class MreWeap(MelRecord):
         MelFid('NAM0','ammo'),
         MelDestructable(),
         MelFid('REPL','repairList'),
-        MelStruct('ETYP','I',(_etype,'etype',0L)),
+        #0:bigGuns,1:energyWeapons,2:smallGuns,3:meleeWeapons,4:unarmedWeapon,5:thrownWeapons,6:mine,
+        MelStruct('ETYP','I','etype'),
         MelFid('BIPL','bipedModelList'),
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
@@ -14097,6 +14094,7 @@ class PatchFile(ModFile):
         self.compiledAllMods = []
         #--Config
         self.bodyTags = 'HAGPBFE' #--Default bodytags
+        self.weaponTags = 'BESMUTL' #--Default weaponTags
         #--Mods
         patchTime = modInfo.mtime
         self.setMods([name for name in modInfos.ordered if modInfos[name].mtime < patchTime],[])
@@ -17609,7 +17607,7 @@ class NamesTweak_Body(MultiTweakItem):
             if not record.full: continue
             if record.full[0] in '+-=.()[]': continue
             flags = record.bipedFlags
-            if flags.head or flags.hair or flags.headband or flags.hat : type = head
+            if flags.head or flags.hair or flags.headband or flags.hat: type = head
             elif flags.upperBody: type = body
             elif flags.leftHand or flags.rightHand: type = gloves
             elif flags.pipboy: type = pipboy
@@ -17912,7 +17910,8 @@ class NamesTweak_Weapons(MultiTweakItem):
         """Scans specified mod file to extract info. May add record to patch mod,
         but won't alter it."""
         mapper = modFile.getLongMapper()
-        for blockType in ('AMMO','WEAP'):
+        #for blockType in ('AMMO','WEAP'):
+        for blockType in ('WEAP',):
             modBlock = getattr(modFile,blockType)
             patchBlock = getattr(patchFile,blockType)
             id_records = patchBlock.id_records
@@ -17927,22 +17926,28 @@ class NamesTweak_Weapons(MultiTweakItem):
         format = self.choiceValues[self.chosen][0]
         showStat = '%02d' in format
         keep = patchFile.getKeeper()
-        for record in patchFile.AMMO.records:
-            if not record.full: continue
-            if record.full[0] in '+-=.()[]': continue
-            if showStat:
-                record.full = format % ('A',record.damage) + record.full
-            else:
-                record.full = format % 'A' + record.full
-            keep(record.fid)
-            srcMod = record.fid[0]
-            count[srcMod] = count.get(srcMod,0) + 1
+        codes = getattr(patchFile,'weaponTags','BESMUTL')
+        biggun,energy,smallgun,melee,unarmed,thrown,landmine = [
+            x for x in codes]
+        #ammoFormat = format.replace('%02d','',1)
+        # for record in patchFile.AMMO.records:
+        #     if not record.full: continue
+        #     if record.full[0] in '+-=.()[]': continue
+        #     record.full = ammoFormat % 'A' + record.full
+        #     keep(record.fid)
+        #     srcMod = record.fid[0]
+        #     count[srcMod] = count.get(srcMod,0) + 1
         for record in patchFile.WEAP.records:
             if not record.full: continue
+            if record.full[0] in '+-=.()[]': continue
+            try:
+                type = codes[record.etype]
+            except:
+                continue
             if showStat:
-                record.full = format % ('CDEFGB'[record.weaponType],record.damage) + record.full
+                record.full = format % (type,record.damage) + record.full
             else:
-                record.full = format % 'CDEFGB'[record.weaponType] + record.full
+                record.full = format % type + record.full
             keep(record.fid)
             srcMod = record.fid[0]
             count[srcMod] = count.get(srcMod,0) + 1
@@ -17976,10 +17981,10 @@ class NamesTweaker(MultiTweaker):
         #     (_('P - Grey Trowsers'),'%s - '),
         #     (_('(P) Grey Trowsers'),'(%s) '),
         #     ),
-        # NamesTweak_Potions(),
+        NamesTweak_Potions(),
         # NamesTweak_Scrolls(),
         # NamesTweak_Spells(),
-        # NamesTweak_Weapons(),
+        NamesTweak_Weapons(),
         ],key=lambda a: a.label.lower())
     tweaks.insert(0,NamesTweak_BodyTags())
 
