@@ -2239,10 +2239,6 @@ class MreAlch(MelRecord,MreHasEffects):
     """ALCH (potion) record."""
     classType = 'ALCH'
     _flags = Flags(0L,Flags.getNames('autoCalc','isFood'))
-    _etype = Flags(0L,Flags.getNames(
-        'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
-        'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
-    ))
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -2256,7 +2252,8 @@ class MreAlch(MelRecord,MreHasEffects):
         MelDestructable(),
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
-        MelStruct('ETYP','I',(_etype,'etype',0L)),
+        #--10:chems,11:stimpack,12:food,13:alcohol
+        MelStruct('ETYP','I','etype'),
         MelStruct('DATA','f','weight'),
         # 0007C10D..BloatflyMeat..ALCH.ENIT..20..
         # \x04\x00\x00\x00 value i
@@ -17551,6 +17548,7 @@ class NamesTweak_BodyTags(MultiTweakItem):
             _('Sets body part codes used by Armor/Clothes name tweaks. H: Head, A: Armor, etc.'),
             'bodyTags',
             ('HAGPBFE','HAGPBFE'),
+            ('HBGPEFE','HBGPEFE'),
             )
 
     def getReadClasses(self):
@@ -17634,13 +17632,13 @@ class NamesTweak_Body(MultiTweakItem):
 class NamesTweak_Potions(MultiTweakItem):
     #--Config Phase -----------------------------------------------------------
     def __init__(self):
-        MultiTweakItem.__init__(self,_("Potions"),
-            _('Label potions to sort by type and effect.'),
+        MultiTweakItem.__init__(self,_("Ingestibles"),
+            _('Label ingestibles to sort by type. C: Chems, F: Food, S: Stimpack, A: Alcohol.'),
             'ALCH',
-            (_('XD Illness'),  '%s '),
-            (_('XD. Illness'), '%s. '),
-            (_('XD - Illness'),'%s - '),
-            (_('(XD) Illness'),'(%s) '),
+            (_('F Radroach Meat'),  '%s '),
+            (_('F. Radroach Meat'), '%s. '),
+            (_('F - Radroach Meat'),'%s - '),
+            (_('(F) Radroach Meat'),'(%s) '),
             )
 
     #--Config Phase -----------------------------------------------------------
@@ -17668,38 +17666,13 @@ class NamesTweak_Potions(MultiTweakItem):
         """Edits patch file as desired. Will write to log."""
         count = {}
         format = self.choiceValues[self.chosen][0]
-        poisonEffects = bush.poisonEffects
         keep = patchFile.getKeeper()
-        reOldLabel = re.compile('^(-|X) ')
-        reOldEnd = re.compile(' -$')
-        mgef_school = patchFile.getMgefSchool()
         for record in patchFile.ALCH.records:
             if not record.full: continue
-            school = 6 #--Default to 6 (U: unknown)
-            for index,effect in enumerate(record.effects):
-                effectId = effect.name
-                if index == 0:
-                    if effect.scriptEffect:
-                        school = effect.scriptEffect.school
-                    else:
-                        school = mgef_school.get(effectId,6)
-                #--Non-hostile effect?
-                if effect.scriptEffect:
-                    if not effect.scriptEffect.flags.hostile:
-                        isPoison = False
-                        break
-                elif effectId not in poisonEffects:
-                    isPoison = False
-                    break
-            else:
-                isPoison = True
-            full = reOldLabel.sub('',record.full) #--Remove existing label
-            full = reOldEnd.sub('',full)
-            if record.flags.isFood:
-                record.full = '.'+full
-            else:
-                label = ('','X')[isPoison] + 'ACDIMRU'[school]
-                record.full = format % label + full
+            if record.full[0] in '+-=.()[]': continue
+            if not record.etype in range(10,14): continue
+            label = 'CSFA'[record.etype-10]
+            record.full = format % label + record.full
             keep(record.fid)
             srcMod = record.fid[0]
             count[srcMod] = count.get(srcMod,0) + 1
@@ -17885,15 +17858,15 @@ class NamesTweak_Weapons(MultiTweakItem):
         MultiTweakItem.__init__(self,_("Weapons"),
             _('Label ammo and weapons to sort by type and damage.'),
             'WEAP',
-            (_('B Iron Bow'),  '%s '),
-            (_('B. Iron Bow'), '%s. '),
-            (_('B - Iron Bow'),'%s - '),
-            (_('(B) Iron Bow'),'(%s) '),
+            (_('S BB Gun'),  '%s '),
+            (_('S. BB Gun'), '%s. '),
+            (_('S - BB Gun'),'%s - '),
+            (_('(S) BB Gun'),'(%s) '),
             ('----','----'),
-            (_('B08 Iron Bow'),  '%s%02d '),
-            (_('B08. Iron Bow'), '%s%02d. '),
-            (_('B08 - Iron Bow'),'%s%02d - '),
-            (_('(B08) Iron Bow'),'(%s%02d) '),
+            (_('S10 BB Gun'),  '%s%02d '),
+            (_('S10. BB Gun'), '%s%02d. '),
+            (_('S10 - BB Gun'),'%s%02d - '),
+            (_('(S10) BB Gun'),'(%s%02d) '),
             )
 
     #--Config Phase -----------------------------------------------------------
@@ -17927,8 +17900,6 @@ class NamesTweak_Weapons(MultiTweakItem):
         showStat = '%02d' in format
         keep = patchFile.getKeeper()
         codes = getattr(patchFile,'weaponTags','BESMUTL')
-        biggun,energy,smallgun,melee,unarmed,thrown,landmine = [
-            x for x in codes]
         #ammoFormat = format.replace('%02d','',1)
         # for record in patchFile.AMMO.records:
         #     if not record.full: continue
@@ -17940,10 +17911,8 @@ class NamesTweak_Weapons(MultiTweakItem):
         for record in patchFile.WEAP.records:
             if not record.full: continue
             if record.full[0] in '+-=.()[]': continue
-            try:
-                type = codes[record.etype]
-            except:
-                continue
+            if not record.etype in range(0,7): continue
+            type = codes[record.etype]
             if showStat:
                 record.full = format % (type,record.damage) + record.full
             else:
@@ -17965,15 +17934,15 @@ class NamesTweaker(MultiTweaker):
     text = _("Tweak object names to show type and/or quality.")
     tweaks = sorted([
         NamesTweak_Body(_("Armor/Clothes"),_("Rename armor to sort by type."),'ARMO',
-            (_('BL Leather Boots'),  '%s '),
-            (_('BL. Leather Boots'), '%s. '),
-            (_('BL - Leather Boots'),'%s - '),
-            (_('(BL) Leather Boots'),'(%s) '),
+            (_('A Naughty Nightwear'),  '%s '),
+            (_('A. Naughty Nightwear'), '%s. '),
+            (_('A - Naughty Nightwear'),'%s - '),
+            (_('(A) Naughty Nightwear'),'(%s) '),
             ('----','----'),
-            (_('BL02 Leather Boots'),  '%s%02d '),
-            (_('BL02. Leather Boots'), '%s%02d. '),
-            (_('BL02 - Leather Boots'),'%s%02d - '),
-            (_('(BL02) Leather Boots'),'(%s%02d) '),
+            (_('A01 Naughty Nightwear'),  '%s%02d '),
+            (_('A01. Naughty Nightwear'), '%s%02d. '),
+            (_('A01 - Naughty Nightwear'),'%s%02d - '),
+            (_('(A01) Naughty Nightwear'),'(%s%02d) '),
             ),
         # NamesTweak_Body(_("Clothes"),_("Rename clothes to sort by type."),'CLOT',
         #     (_('P Grey Trowsers'),  '%s '),
