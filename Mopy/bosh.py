@@ -18833,7 +18833,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
     tip = _("Merge race eyes, hair, body, voice from mods.")
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = ('Hair','Eyes-D','Eyes-R','Eyes-E','Eyes','Body-M','Body-F',
-        'Voice-M','Voice-F','R.Relations','R.Teeth','R.Mouth')
+        'Voice-M','Voice-F','R.Teeth','R.Mouth')
     forceAuto = True
 
     #--Config Phase -----------------------------------------------------------
@@ -18905,10 +18905,6 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 if 'R.Mouth' in bashTags:
                     for key in ('maleMouth','femaleMouth','maleTongue','femaleTongue'):
                         raceData[key] = getattr(race,key)
-                #if 'R.Relations' in bashTags:
-                #    relations = raceData.setdefault('relations',{})
-                #    for x in race.relations:
-                #        relations[x.faction] = x.mod
             progress.plus()
 
     def getReadClasses(self):
