@@ -2422,29 +2422,72 @@ class MreCell(MelRecord):
     classType = 'CELL'
     cellFlags = Flags(0L,Flags.getNames((0, 'isInterior'),(1,'hasWater'),(2,'invertFastTravel'),
         (3,'forceHideLand'),(5,'publicPlace'),(6,'handChanged'),(7,'behaveLikeExterior')))
+    inheritFlags = Flags(0L,Flags.getNames('ambientColor','directionalColor','fogColor','fogNear','fogFar',
+        'directionalRotation','directionalFade','clipDistance','fogPower'))
     class MelCoordinates(MelOptStruct):
+        """Handle older trucated XCLC for CELL subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 12:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 8:
+                unpacked = ins.unpack('ii',size,readId)
+            else:
+                raise "Unexpected size encountered for XCLC subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked, record.flags.getTrueAttrs()
         def dumpData(self,record,out):
             if not record.flags.isInterior:
                 MelOptStruct.dumpData(self,record,out)
-
+    class MelCellXcll(MelOptStruct):
+        """Handle older trucated XCLL for CELL subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 40:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 36:
+                unpacked = ins.unpack('=3Bs3Bs3Bs2f2i2f',size,readId)
+            else:
+                raise "Unexpected size encountered for XCLL subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked, record.flags.getTrueAttrs()
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FULL','full'),
         MelStruct('DATA','B',(cellFlags,'flags',0L)),
-        MelOptStruct('XCLL','=3Bs3Bs3Bs2f2i2f','ambientRed','ambientGreen','ambientBlue',
+        MelCoordinates('XCLC','iiI',('posX',None),('posY',None),('forceHideLand',0L)),
+        MelCellXcll('XCLL','=3Bs3Bs3Bs2f2i3f','ambientRed','ambientGreen','ambientBlue',
             ('unused1',null1),'directionalRed','directionalGreen','directionalBlue',
             ('unused2',null1),'fogRed','fogGreen','fogBlue',
             ('unused3',null1),'fogNear','fogFar','directionalXY','directionalZ',
-            'directionalFade','fogClip'),
-        MelOptStruct('XCMT','B','music'),
-        MelOwnership(),
-        MelFid('XCCM','climate'),
+            'directionalFade','fogClip','fogPower'),
+        MelBase('IMPF','footstepMaterials'), #--todo rewrite specific class.
+        MelGroup('lightTemplate',
+            MelFid('LTMP','template'),
+            MelStruct('LNAM','I',(inheritFlags,'inheritFlags',0L)),
+            ),
         #--CS default for water is -2147483648, but by setting default here to -2147483649,
         #  we force the bashed patch to retain the value of the last mod.
         MelOptStruct('XCLW','f',('waterHeight',-2147483649)),
+        MelString('XNAM','waterNoiseTexture'),
         MelFidList('XCLR','regions'),
-        MelCoordinates('XCLC','ii',('posX',None),('posY',None)),
+        MelOptStruct('XCMT','B','xcmt_p'),
+        MelFid('XCIM','imageSpace'),
+        MelOptStruct('XCET','B','xcet_p'),
+        MelFid('XEZN','encounterZone'),
+        MelFid('XCCM','climate'),
         MelFid('XCWT','water'),
+        MelOwnership(),
+        MelFid('XCAS','acousticSpace'),
+        MelFid('XCMO','music'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -4630,19 +4673,32 @@ class MreWeap(MelRecord):
 class MreWrld(MelRecord):
     """Worldspace record."""
     classType = 'WRLD'
-    _flags = Flags(0L,Flags.getNames('smallWorld','noFastTravel','oblivionWorldspace',None,'noLODWater'))
+    _flags = Flags(0L,Flags.getNames('smallWorld','noFastTravel','oblivionWorldspace',None,'noLODWater','noLODNoise','noAllowNPCFallDamage'))
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FULL','full'),
-        MelFid('WNAM','parent'),
+        MelFid('XEZN','encounterZone'),
+        MelGroup('parent',
+            MelFid('WNAM','worldspace'),
+            MelStruct('PNAM','BB','flags','unknown'),
+            ),
         MelFid('CNAM','climate'),
         MelFid('NAM2','water'),
+        MelFid('NAM3','lodWaterType'),
+        MelStruct('NAM4','f','lodWaterHeight'),
+        MelStruct('DNAM','ff','defaultLandHeight','defaultWaterHeight'),
         MelString('ICON','mapPath'),
         MelOptStruct('MNAM','2i4h',('dimX',None),('dimY',None),('NWCellX',None),('NWCellY',None),('SECellX',None),('SECellY',None)),
+        MelStruct('ONAM','fff','worldMapScale','cellXOffset','cellYOffset'),
+        MelFid('INAM','imageSpace'),
         MelStruct('DATA','B',(_flags,'flags',0L)),
         MelTuple('NAM0','ff','unknown0',(None,None)),
         MelTuple('NAM9','ff','unknown9',(None,None)),
-        MelOptStruct('SNAM','I','sound'),
+        MelFid('ZNAM','music'),
+        MelString('NNAM','canopyShadow'),
+        MelString('XNAM','waterNoiseTexture'),
+        MelStructs('IMPS','III','swappedImpacts', 'materialType',(FID,'old'),(FID,'new')),
+        MelBase('IMPF','footstepMaterials'), #--todo rewrite specific class.
         MelBase('OFST','ofst_p'),
     )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
@@ -14609,7 +14665,7 @@ class CellImporter(ImportPatcher):
             'directionalRed','directionalGreen','directionalBlue','unused2',
             'fogRed','fogGreen','fogBlue','unused3',
             'fogNear','fogFar','directionalXY','directionalZ',
-            'directionalFade','fogClip'),
+            'directionalFade','fogClip','fogPower'),
             }
         self.recFlags = {
             'C.Climate': 'behaveLikeExterior',
