@@ -93,6 +93,7 @@ configHelpers = None #--Config Helper files (Boss Master List, etc.)
 #--Settings
 dirs = {} #--app, user, mods, saves, userApp
 inisettings = {}
+inisettings['AutoItemCheck'] = False
 defaultExt = '.7z'
 writeExts = dict({'.7z':'7z','.zip':'zip'})
 readExts = set(('.rar',))
@@ -1345,10 +1346,10 @@ class MelConditions(MelStructs):
             if form1234[1] == 'I':
                 result = function(target.param2)
                 if save: target.param2 = result
-            if form1234[2] == 'I':
+            if len(form1234) > 2 and form1234[2] == 'I':
                 result = function(target.param3)
                 if save: target.param3 = result
-            if form1234[3] == 'I':
+            if len(form1234) > 3 and form1234[3] == 'I':
                 result = function(target.param4)
                 if save: target.param4 = result
 
@@ -14426,7 +14427,7 @@ class ListPatcher(Patcher):
     #--Get/Save Config
     choiceMenu = None #--List of possible choices for each config item. Item 0 is default.
     defaultConfig = {'isEnabled':False,'autoIsChecked':True,'configItems':[],'configChecks':{},'configChoices':{}}
-    defaultItemCheck = True #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
     forceItemCheck = False #--Force configChecked to True for all items
     autoRe = re.compile('^UNDEFINED$') #--Compiled re used by getAutoItems
     autoKey = None
@@ -14606,7 +14607,7 @@ class PatchMerger(ListPatcher):
     text = _("Merge patch mods into Bashed Patch.")
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = 'Merge'
-    defaultItemCheck = True #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
 
     def getAutoItems(self):
         """Returns list of items to be used for automatic configuration."""
@@ -14647,8 +14648,8 @@ class CellImporter(ImportPatcher):
     text = _("Import cells (climate, lighting, and water) from source mods.")
     tip = text
     autoRe = re.compile(r"^UNDEFINED$",re.I)
-    autoKey = ('C.Climate','C.Light','C.Water','C.Owner')
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    autoKey = ('C.Climate','C.Light','C.Water','C.Owner','C.Name','C.RecordFlags')
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
 
     #--Patch Phase ------------------------------------------------------------
     def initPatchFile(self,patchFile,loadMods):
@@ -14659,6 +14660,7 @@ class CellImporter(ImportPatcher):
         self.isActive = bool(self.sourceMods)
         self.recAttrs = {
             'C.Climate': ('climate',),
+            'C.Name': ('full',),
             'C.Owner': ('ownership',),
             'C.Water': ('water','waterHeight'),
             'C.Light': ('ambientRed','ambientGreen','ambientBlue','unused1',
@@ -14666,12 +14668,15 @@ class CellImporter(ImportPatcher):
             'fogRed','fogGreen','fogBlue','unused3',
             'fogNear','fogFar','directionalXY','directionalZ',
             'directionalFade','fogClip','fogPower'),
+            'C.RecordFlags': ('flags1',), # Yes seems funky but thats the way it is
             }
         self.recFlags = {
             'C.Climate': 'behaveLikeExterior',
+            'C.Name': '',
             'C.Owner': 'publicPlace',
             'C.Water': 'hasWater',
             'C.Light': '',
+            'C.RecordFlags': '',
             }
 
     def getReadClasses(self):
@@ -14688,23 +14693,40 @@ class CellImporter(ImportPatcher):
         def importCellBlockData(cellBlock):
             if not cellBlock.cell.flags1.ignored:
                 fid = cellBlock.cell.fid
+                if fid not in tempCellData:
+                    tempCellData[fid] = {}
+                    tempCellData[fid+('flags',)] = {}
+                for attr in attrs:
+                    tempCellData[fid][attr] = cellBlock.cell.__getattribute__(attr)
+                for flag in flags:
+                    tempCellData[fid+('flags',)][flag] = cellBlock.cell.flags.__getattr__(flag)
+        def checkMasterCellBlockData(cellBlock):
+            if not cellBlock.cell.flags1.ignored:
+                fid = cellBlock.cell.fid
+                if fid not in tempCellData: return
                 if fid not in cellData:
                     cellData[fid] = {}
                     cellData[fid+('flags',)] = {}
                 for attr in attrs:
-                    cellData[fid][attr] = cellBlock.cell.__getattribute__(attr)
+                    if tempCellData[fid][attr] != cellBlock.cell.__getattribute__(attr):
+                        cellData[fid][attr] = tempCellData[fid][attr]
                 for flag in flags:
-                    cellData[fid+('flags',)][flag] = cellBlock.cell.flags.__getattr__(flag)
+                    if tempCellData[fid+('flags',)][flag] != cellBlock.cell.flags.__getattr__(flag):
+                        cellData[fid+('flags',)][flag] = tempCellData[fid+('flags',)][flag]
         cellData = self.cellData
+        tempCellData = {}
         loadFactory = LoadFactory(False,MreCell,MreWrld)
         progress.setFull(len(self.sourceMods))
+        cachedMasters = {}
         for srcMod in self.sourceMods:
             if srcMod not in modInfos: continue
             srcInfo = modInfos[srcMod]
             srcFile = ModFile(srcInfo,loadFactory)
             srcFile.load(True)
             srcFile.convertToLongFids(('CELL','WRLD'))
-            attrs = set(reduce(operator.add, (self.recAttrs[bashKey] for bashKey in srcInfo.getBashTags() if bashKey in self.recAttrs)))
+            masters = modInfos[srcMod].header.masters
+            attrs = set(reduce(operator.add, (self.recAttrs[bashKey] for bashKey in srcInfo.getBashTags() if
+                bashKey in self.recAttrs)))
             flags = tuple(self.recFlags[bashKey] for bashKey in srcInfo.getBashTags() if
                 bashKey in self.recAttrs and self.recFlags[bashKey] != '')
             if 'CELL' in srcFile.tops:
@@ -14714,6 +14736,24 @@ class CellImporter(ImportPatcher):
                 for worldBlock in srcFile.WRLD.worldBlocks:
                     for cellBlock in worldBlock.cellBlocks:
                         importCellBlockData(cellBlock)
+            for master in masters:
+                if not master in modInfos: continue # or break filter mods
+                if master in cachedMasters:
+                    masterFile = cachedMasters[master]
+                else:
+                    masterInfo = modInfos[master]
+                    masterFile = ModFile(masterInfo,loadFactory)
+                    masterFile.load(True)
+                    masterFile.convertToLongFids(('CELL','WRLD'))
+                    cachedMasters[master] = masterFile
+                if 'CELL' in srcFile.tops:
+                    for cellBlock in masterFile.CELL.cellBlocks:
+                        checkMasterCellBlockData(cellBlock)
+                if 'WRLD' in srcFile.tops:
+                    for worldBlock in masterFile.WRLD.worldBlocks:
+                        for cellBlock in worldBlock.cellBlocks:
+                            checkMasterCellBlockData(cellBlock)
+            tempCellData = {}
             progress.plus()
 
     def scanModFile(self, modFile, progress):
@@ -14785,7 +14825,7 @@ class MapImporter(ImportPatcher):
     tip = text
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = ('W.Maps',)
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
 
     #--Patch Phase ------------------------------------------------------------
     def initPatchFile(self,patchFile,loadMods):
@@ -14997,7 +15037,7 @@ class ImportFactions(ImportPatcher):
     """Import factions to creatures and NPCs."""
     name = _('Import Factions')
     text = _("Import factions from source mods/files.")
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
     autoKey = 'Factions'
 
     #--Patch Phase ------------------------------------------------------------
@@ -15111,7 +15151,7 @@ class ImportRelations(ImportPatcher):
     """Import faction relations to factions."""
     name = _('Import Relations')
     text = _("Import relations from source mods/files.")
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
     autoKey = 'Relations'
 
     #--Patch Phase ------------------------------------------------------------
@@ -15227,6 +15267,7 @@ class ImportScripts(ImportPatcher):
         self.srcClasses = set() #--Record classes actually provided by src mods/files.
         self.sourceMods = self.getConfigChecked()
         self.isActive = len(self.sourceMods) != 0
+     #   self.masters = {}
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreWeap,MreActi,MreAlch,MreAppa,MreArmo,MreBook,MreClot,MreCont,MreCrea,MreDoor,MreFlor,MreFurn,MreIngr,MreKeym,MreLigh,MreMisc,MreNpc,MreQust,MreSgst,MreSlgm,):
@@ -15234,27 +15275,59 @@ class ImportScripts(ImportPatcher):
         self.longTypes = set(('WEAP','ACTI','ALCH','APPA','ARMO','BOOK','CLOT','CONT','CREA','DOOR','FLOR','FURN','INGR','KEYM','LIGH','MISC','NPC_','QUST','SGST','SLGM'))
 
     def initData(self,progress):
-        """Get graphics from source files."""
+        """Get script links from source files."""
         if not self.isActive: return
+        self.classestemp = set()
         id_data = self.id_data
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
         progress.setFull(len(self.sourceMods))
+        cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
+            temp_id_data = {}
             if srcMod not in modInfos: continue
             srcInfo = modInfos[srcMod]
             srcFile = ModFile(srcInfo,loadFactory)
+            bashTags = srcFile.fileInfo.getBashTags()
+            masters = modInfos[srcMod].header.masters
             srcFile.load(True)
             srcFile.convertToLongFids(longTypes)
             mapper = srcFile.getLongMapper()
             for recClass,recAttrs in recAttrs_class.iteritems():
                 if recClass.classType not in srcFile.tops: continue
                 self.srcClasses.add(recClass)
+                self.classestemp.add(recClass)
                 for record in srcFile.tops[recClass.classType].getActiveRecords():
                     fid = mapper(record.fid)
-                    id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+                    temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+            for master in masters:
+                if not master in modInfos: continue # or break filter mods
+                if master in cachedMasters:
+                    masterFile = cachedMasters[master]
+                else:
+                    masterInfo = modInfos[master]
+                    masterFile = ModFile(masterInfo,loadFactory)
+                    masterFile.load(True)
+                    masterFile.convertToLongFids(longTypes)
+                    cachedMasters[master] = masterFile
+                mapper = masterFile.getLongMapper()
+                for recClass,recAttrs in recAttrs_class.iteritems():
+                    if recClass.classType not in masterFile.tops: continue
+                    if recClass not in self.classestemp: continue
+                    for record in masterFile.tops[recClass.classType].getActiveRecords():
+                        fid = mapper(record.fid)
+                        if fid not in temp_id_data: continue
+                        for attr, value in temp_id_data[fid].iteritems():
+                            if value == record.__getattribute__(attr): continue
+                            else: 
+                                if fid not in id_data: id_data[fid] = dict()
+                                try:
+                                    id_data[fid][attr] = temp_id_data[fid][attr]
+                                except KeyError:
+                                    id_data[fid].setdefault(attr,value)      
             progress.plus()
+        temp_id_data = None
         self.longTypes = self.longTypes & set(x.classType for x in self.srcClasses)
         self.isActive = bool(self.srcClasses)
 
@@ -15300,7 +15373,6 @@ class ImportScripts(ImportPatcher):
             type = recClass.classType
             if type not in modFile.tops: continue
             type_count[type] = 0
-            #deprint(recClass,type,type_count[type])
             for record in modFile.tops[type].records:
                 fid = record.fid
                 if fid not in id_data: continue
@@ -15313,12 +15385,15 @@ class ImportScripts(ImportPatcher):
                     record.__setattr__(attr,value)
                 keep(fid)
                 type_count[type] += 1
+        #cleanup to save memory
+        id_data = None 
+        #logging
         log.setHeader('= '+self.__class__.name)
         log(_("=== Source Mods"))
         for mod in self.sourceMods:
             log("* " +mod.s)
         log(_("\n=== Modified Records"))
-        for type,count in sorted(type_count.items()):
+        for type,count in sorted(type_count.iteritems()):
             if count: log("* %s: %d" % (type,count))
 #------------------------------------------------------------------------------
 class ImportScriptContents(ImportPatcher):
@@ -15337,6 +15412,7 @@ class ImportScriptContents(ImportPatcher):
         self.srcClasses = set() #--Record classes actually provided by src mods/files.
         self.sourceMods = self.getConfigChecked()
         self.isActive = len(self.sourceMods) != 0
+        self.classestemp = set()
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreScpt,):
@@ -15367,20 +15443,51 @@ class ImportScriptContents(ImportPatcher):
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
         progress.setFull(len(self.sourceMods))
+        cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
+            temp_id_data = {}
             if srcMod not in modInfos: continue
             srcInfo = modInfos[srcMod]
             srcFile = ModFile(srcInfo,loadFactory)
+            bashTags = srcFile.fileInfo.getBashTags()
+            masters = modInfos[srcMod].header.masters
             srcFile.load(True)
             srcFile.convertToLongFids(longTypes)
             mapper = srcFile.getLongMapper()
             for recClass,recAttrs in recAttrs_class.iteritems():
                 if recClass.classType not in srcFile.tops: continue
                 self.srcClasses.add(recClass)
+                self.classestemp.add(recClass)
                 for record in srcFile.tops[recClass.classType].getActiveRecords():
                     fid = mapper(record.fid)
-                    id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+                    temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+            for master in masters:
+                if not master in modInfos: continue # or break filter mods
+                if master in cachedMasters:
+                    masterFile = cachedMasters[master]
+                else:
+                    masterInfo = modInfos[master]
+                    masterFile = ModFile(masterInfo,loadFactory)
+                    masterFile.load(True)
+                    masterFile.convertToLongFids(longTypes)
+                    cachedMasters[master] = masterFile
+                mapper = masterFile.getLongMapper()
+                for recClass,recAttrs in recAttrs_class.iteritems():
+                    if recClass.classType not in masterFile.tops: continue
+                    if recClass not in self.classestemp: continue
+                    for record in masterFile.tops[recClass.classType].getActiveRecords():
+                        fid = mapper(record.fid)
+                        if fid not in temp_id_data: continue
+                        for attr, value in temp_id_data[fid].iteritems():
+                            if value == record.__getattribute__(attr): continue
+                            else: 
+                                if fid not in id_data: id_data[fid] = dict()
+                                try:
+                                    id_data[fid][attr] = temp_id_data[fid][attr]
+                                except KeyError:
+                                    id_data[fid].setdefault(attr,value)      
             progress.plus()
+        temp_id_data = None
         self.longTypes = self.longTypes & set(x.classType for x in self.srcClasses)
         self.isActive = bool(self.srcClasses)
 
@@ -15439,12 +15546,13 @@ class ImportScriptContents(ImportPatcher):
                     record.__setattr__(attr,value)
                 keep(fid)
                 type_count[type] += 1
+        id_data = None
         log.setHeader('= '+self.__class__.name)
         log(_("=== Source Mods"))
         for mod in self.sourceMods:
             log("* " +mod.s)
         log(_("\n=== Modified Records"))
-        for type,count in sorted(type_count.items()):
+        for type,count in sorted(type_count.iteritems()):
             if count: log("* %s: %d" % (type,count))
 #------------------------------------------------------------------------------
 class ImportInventory(ImportPatcher):
@@ -15452,7 +15560,7 @@ class ImportInventory(ImportPatcher):
     name = _('Import Inventory')
     text = _("Merges changes to NPC, creature and container inventories.")
     autoKey = ('Invent','InventOnly')
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
     iiMode = True
 
     #--Patch Phase ------------------------------------------------------------
@@ -15580,7 +15688,7 @@ class NamesPatcher(ImportPatcher):
     """Merged leveled lists mod file."""
     name = _('Import Names')
     text = _("Import names from source mods/files.")
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
     autoRe = re.compile(r"^Fallout3.esm$",re.I)
     autoKey = 'Names'
 
@@ -15880,7 +15988,7 @@ class RoadImporter(ImportPatcher):
     tip = text
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = 'Roads'
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
 
     #--Patch Phase ------------------------------------------------------------
     def initPatchFile(self,patchFile,loadMods):
@@ -15960,7 +16068,7 @@ class SoundPatcher(ImportPatcher):
     tip = text
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = 'Sound'
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
 
     #--Patch Phase ------------------------------------------------------------
     def initPatchFile(self,patchFile,loadMods):
@@ -16084,7 +16192,7 @@ class StatsPatcher(ImportPatcher):
     editOrder = 28 #--Run ahead of bow patcher
     name = _('Import Stats')
     text = _("Import stats from any pickupable items from source mods/files.")
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = 'Stats'
 
@@ -16196,7 +16304,7 @@ class SpellsPatcher(ImportPatcher):
     editOrder = 29 #--Run ahead of bow patcher
     name = _('Import Spell Stats')
     text = _("Import stats from any spells from source mods/files.")
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = 'Spells'
 
@@ -18161,7 +18269,7 @@ class CoblExhaustion(SpecialPatcher,ListPatcher):
     name = _('Cobl Exhaustion')
     text = _("Modify greater powers to use Cobl's Power Exhaustion feature.\n\nWill only run if Cobl Main v1.66 (or higher) is active.")
     autoKey = 'Exhaust'
-    defaultItemCheck = False #--GUI: Whether new items are checked by default or not.
+    defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
 
     #--Config Phase -----------------------------------------------------------
     #--Patch Phase ------------------------------------------------------------
@@ -19579,7 +19687,10 @@ def initDirs(personal='',localAppData=''):
     inisettings['custom2txt'] = 'Not Set in INI'
     inisettings['custom3txt'] = 'Not Set in INI'
     inisettings['custom4txt'] = 'Not Set in INI'
+    inisettings['AutoItemCheck'] = False
     if bashIni:
+        if bashIni.has_option('Settings','sAutoItemCheck'):
+            inisettings['AutoItemCheck'] = bashIni.get('Settings','sAutoItemCheck').strip()
         if bashIni.has_option('Tool Options','bshowtexturetoollaunchers'):
             inisettings['showtexturetoollaunchers'] = bashIni.get('Tool Options','bshowtexturetoollaunchers').strip()
         if bashIni.has_option('Tool Options','bshowmodelingtoollaunchers'):
