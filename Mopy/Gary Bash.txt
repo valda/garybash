@@ -6,6 +6,8 @@
   * Fixed a WRLD(worldspace) record structure.
   * Fixed a MelConditions dumpData bug.
   * Remove 'R.Relations', 'SpellStats' bashtag.
+  * Added some record types into mergeable classes.
+  * Fixed the AMMO subrecords of name patcher.
 * Backports from latest Wrye Bash.
   * Fix CellImporter.
   * Fix ImportScripts and ImportScriptContents.
