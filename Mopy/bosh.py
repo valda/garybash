@@ -12920,7 +12920,7 @@ class ItemStats:
         self.type_stats = {'ALCH':{},'AMMO':{},'APPA':{},'ARMO':{},'BOOK':{},'CLOT':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'SGST':{},'SLGM':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'weight', 'value'),
-            'AMMO':('eid', 'value', 'speed', 'value', 'clipRounds'),
+            'AMMO':('eid', 'speed', 'flags', 'value', 'clipRounds'),
             'APPA':('eid', 'weight', 'value', 'quality'),
             'ARMO':('eid', 'weight', 'value', 'health', 'ar'),
             'BOOK':('eid', 'weight', 'value'),
