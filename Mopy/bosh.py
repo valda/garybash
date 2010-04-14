@@ -14093,7 +14093,8 @@ class PatchFile(ModFile):
         MreLvsp, MreMgef, MreMisc, MreNpc,  MrePack, MreQust, MreRace, MreScpt, MreSgst,
         MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr,
         MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp, MreSkil,
-        MreTxst, MreMicn, MreFlst, MreLvln, )
+        MreTxst, MreMicn, MreFlst, MreLvln, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
+        MreDebr, MreImad, MreMstt, MreNote, MreTerm)
 
     @staticmethod
     def modIsMergeable(modInfo,progress=None):
