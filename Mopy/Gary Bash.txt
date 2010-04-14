@@ -1,5 +1,17 @@
 = Gary Bash ====================================================================
 == Versions ===================================================================
+=== 11 [4/14/2010]
+* Bashed Patch:
+  * Fixed a CELL record structure.
+  * Fixed a WRLD(worldspace) record structure.
+  * Fixed a MelConditions dumpData bug.
+  * Remove 'R.Relations', 'SpellStats' bashtag.
+* Backports from latest Wrye Bash.
+  * Fix CellImporter.
+  * Fix ImportScripts and ImportScriptContents.
+  * Add ActorImporter, KFFZPatcher and NPCAIPackagePatcher.
+  * Add inisettings['AutoItemCheck']
+
 === 10 [4/7/2010]
 * Fixed a FormID lists merger bug that threw an error.
 * Tweak names (Armor/Clothes,Ingentibles,Weapons) worked.
