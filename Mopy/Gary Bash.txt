@@ -28,6 +28,7 @@ Gary Bash is released under Version 2 of the GNU General Public License. See enc
   * fix for Ctrl-Up/Down on installer tab not scrolling
   * Ctrl-A (select all) support added for all tabs except People.
   * Mergeable mods with NoMerge tag are now colour coded (purple) in the mods tab instead of being green like fully mergeable mods or black like unmergeables (depending on version)
+  * Fixed(?) potential table.dat fix.
 
 === 10 [4/7/2010]
 * Fixed a FormID lists merger bug that threw an error.

@@ -6582,7 +6582,7 @@ class ModFile:
         and then save if the answer is yes. If hasSaved == False, then does nothing."""
         if not hasChanged: return
         fileName = self.fileInfo.name
-        if re.match(r'\s*[yY]',raw_input('\nSave changes to '+fileName.s+' [y/n]?: ')):
+        if re.match(r'\s*[yY]',raw_input('\nSave changes to '+fileName.s+' [y\n]?: ')):
             self.safeSave()
             print fileName.s,'saved.'
         else:
@@ -9067,9 +9067,12 @@ class ModInfos(FileInfos):
             progress(index,name.s)
             modInfo = self[name]
             canMerge = PatchFile.modIsMergeable(modInfo) == True
-            name_mergeInfo[name] = (modInfo.size,canMerge)
-            if canMerge: self.mergeable.add(name)
-            else: self.mergeable.discard(name)
+            if canMerge:
+                self.mergeable.add(name)
+                name_mergeInfo[name] = (modInfo.size,True)
+            else:   
+                self.mergeable.discard(name)
+                name_mergeInfo[name] = (modInfo.size,False)
 
     #--Full Balo --------------------------------------------------------------
     def updateBaloHeaders(self):
@@ -14099,36 +14102,42 @@ class PatchFile(ModFile):
     @staticmethod
     def modIsMergeable(modInfo,progress=None):
         """Returns True or error message indicating whether specified mod is mergeable."""
+        reasons = ''
         if reEsmExt.search(modInfo.name.s):
-            return _("Is esm.")
+            reasons += _("\n.    Is esm.")
         #--Bashed Patch
         if modInfo.header.author == "BASHED PATCH":
-            return _("Is Bashed Patch.")
+            reasons += _("\n.    Is Bashed Patch.")
         #--Bsa?
         reBsa = re.compile(re.escape(modInfo.name.sroot)+'.*bsa$',re.I)
         for file in modInfos.dir.list():
             if reBsa.match(file.s):
-                return _("Has BSA archive.")
+                reasons += _("\n.    Has BSA archive.")
+        #-- Check to make sure NoMerge tag not in tags - if in tags don't show up as mergeable.
+        if 'NoMerge' in modInfos[GPath(modInfo.name.s)].getBashTags(): reasons += "\n.    Has 'NoMerge' tag."
         #--Load test
         mergeTypes = set([recClass.classType for recClass in PatchFile.mergeClasses])
         modFile = ModFile(modInfo,LoadFactory(False,*mergeTypes))
         try:
             modFile.load(True)
         except ModError, error:
-            return str(error)
+            reasons += '\n.    ' + str(error)+'.'
         #--Skipped over types?
         if modFile.topsSkipped:
-            return _("Unsupported types: ") + ', '.join(sorted(modFile.topsSkipped))
+            reasons += (_("\n.    Unsupported types: ") + ', '.join(sorted(modFile.topsSkipped))+'.')
         #--Empty mod
         if not modFile.tops:
-            return _("Empty mod.")
+            reasons += _("\n.    Empty mod.")
         #--New record
         lenMasters = len(modFile.tes4.masters)
+        newblocks = []
         for type,block in modFile.tops.iteritems():
             for record in block.getActiveRecords():
                 if record.fid >> 24 >= lenMasters:
-                    return _("New record %08X in block %s.") % (record.fid,type)
-        #--Else
+                    newblocks.append(type)
+                    break
+        if newblocks: reasons += (_("\n.    New record(s) in block(s): ") + ', '.join(sorted(newblocks))+'.')
+        if reasons: return reasons
         return True
 
     #--Instance
@@ -14634,6 +14643,7 @@ class ImportPatcher(ListPatcher):
     group = _('Importers')
     scanOrder = 20
     editOrder = 20
+    masters = {}
 
     def saveConfig(self,configs):
         """Save config to configs dictionary."""

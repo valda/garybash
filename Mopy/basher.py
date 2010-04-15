@@ -3274,7 +3274,7 @@ class BashFrame(wx.Frame):
         """Handle Close event. Save application data."""
         self.CleanSettings()
         if docBrowser: docBrowser.DoSave()
-        if not self.IsIconized() and not self.IsMaximized():
+        if not self.IsIconized():
             settings['bash.framePos'] = self.GetPositionTuple()
             settings['bash.frameSize'] = self.GetSizeTuple()
         settings['bash.page'] = self.notebook.GetSelection()
@@ -5008,6 +5008,7 @@ class Installers_AnnealAll(Link):
             progress.Destroy()
             self.data.refresh(what='NS')
             gInstallers.RefreshUIMods()
+            bashFrame.RefreshData()
 
 #------------------------------------------------------------------------------
 class Installers_AutoAnneal(Link):
@@ -5323,6 +5324,7 @@ class Installer_Anneal(InstallerLink):
             progress.Destroy()
             self.data.refresh(what='NS')
             gInstallers.RefreshUIMods()
+            bashFrame.RefreshData()
 
 #------------------------------------------------------------------------------
 class Installer_Delete(balt.Tank_Delete):
@@ -5330,7 +5332,7 @@ class Installer_Delete(balt.Tank_Delete):
     def Execute(self,event):
         balt.Tank_Delete.Execute(self,event)
         self.data.refreshOrder()
-        self.data.refresh(what='N')
+        self.data.refresh(what='ION')
         self.gTank.RefreshUI()
 
 #------------------------------------------------------------------------------
@@ -5376,7 +5378,7 @@ class Installer_Duplicate(InstallerLink):
             self.data.copy(curName,newName)
         finally:
             wx.EndBusyCursor()
-        self.data.refresh(what='N')
+        self.data.refresh(what='ION')
         self.gTank.RefreshUI()
 
 #------------------------------------------------------------------------------
@@ -5428,6 +5430,7 @@ class Installer_Install(InstallerLink):
             progress.Destroy()
             self.data.refresh(what='N')
             gInstallers.RefreshUIMods()
+            bashFrame.RefreshData()
 
 #------------------------------------------------------------------------------
 class Installer_ListPackages(InstallerLink):
@@ -5560,6 +5563,7 @@ class Installer_Uninstall(InstallerLink):
             progress.Destroy()
             self.data.refresh(what='NS')
             gInstallers.RefreshUIMods()
+            bashFrame.RefreshData()
 
 # InstallerArchive Links ------------------------------------------------------
 #------------------------------------------------------------------------------

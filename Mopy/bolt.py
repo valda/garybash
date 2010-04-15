@@ -673,7 +673,11 @@ class DataDict:
     def __contains__(self,key):
         return key in self.data
     def __getitem__(self,key):
-        return self.data[key]
+        if self.data.has_key(key):
+            return self.data[key]
+        else:
+            if isinstance(key, Path):
+                return self.data[Path('Fallout3.esm')]
     def __setitem__(self,key,value):
         self.data[key] = value
     def __delitem__(self,key):
