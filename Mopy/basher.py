@@ -4532,6 +4532,9 @@ PatchDialog.patchers.extend((
     AssortedTweaker(),
     PatchMerger(),
     #AlchemicalCatalogs(),
+    ActorAnimPatcher(),
+    ActorImporter(),
+    NPCAIPackagePatcher(),
     #CoblExhaustion(),
     CellImporter(),
     ClothesTweaker(),
@@ -7040,11 +7043,13 @@ class Mod_MarkMergeable(Link):
                 descTags.discard('Merge')
                 fileInfo.setBashTagsDesc(descTags)
             canMerge = bosh.PatchFile.modIsMergeable(fileInfo)
-            mod_mergeInfo[fileName] = (fileInfo.size,canMerge == True)
             if canMerge == True:
+                mod_mergeInfo[fileName] = (fileInfo.size,True)
                 yes.append(fileName)
             else:
-                no.append("%s (%s)" % (fileName.s,canMerge))
+                if canMerge == "\n.    Has 'NoMerge' tag.":
+                    mod_mergeInfo[fileName] = (fileInfo.size,True)
+                no.append("%s:%s" % (fileName.s,canMerge))
         message = ''
         if yes:
             message += _('=== Mergeable\n* ') + '\n* '.join(x.s for x in yes)
