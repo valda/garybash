@@ -538,6 +538,10 @@ class List(wx.Panel):
         for itemDex in range(self.list.GetItemCount()):
             self.list.SetItemState(itemDex, 0, wx.LIST_STATE_SELECTED)
 
+    def SelectAll(self):
+        for itemDex in range(self.list.GetItemCount()):
+            self.list.SetItemState(itemDex,wx.LIST_STATE_SELECTED,wx.LIST_STATE_SELECTED)
+
     def GetSelected(self):
         """Return list of items selected (hilighted) in the interface."""
         #--No items?
@@ -1055,8 +1059,12 @@ class ModList(List):
             item.SetTextColour(wx.BLUE)
             mouseText = _("Master file.")
         elif fileName in bosh.modInfos.mergeable:
-            item.SetTextColour(colors['bash.mods.isMergeable'])
-            mouseText = _("Can be merged into Bashed Patch.")
+            if 'NoMerge' in bosh.modInfos[fileName].getBashTags():
+                item.SetTextColour(colors['bash.mods.isSemiMergeable'])
+                mouseText = _("Technically mergeable but has NoMerge tag.")
+            else:
+                item.SetTextColour(colors['bash.mods.isMergeable'])
+                mouseText = _("Can be merged into Bashed Patch.")
         else:
             item.SetTextColour(wx.BLACK)
         #--Image messages
@@ -1153,8 +1161,10 @@ class ModList(List):
 
     def OnChar(self,event):
         """Char event: Delete, Reorder, Check/Uncheck."""
+        ##Delete
         if (event.GetKeyCode() == 127):
             self.DeleteSelected()
+        ##Ctrl+Up and Ctrl+Down
         elif ((event.ControlDown() and event.GetKeyCode() in (wx.WXK_UP,wx.WXK_DOWN)) and
             (settings['bash.mods.sort'] == 'Load Order')
             ):
@@ -1178,7 +1188,10 @@ class ModList(List):
                         bosh.modInfos.refreshInfoLists()
                         self.RefreshUI()
         event.Skip()
+
     def OnKeyUp(self,event):
+        """Char event: Activate selected items, select all items"""
+        ##Space
         if (event.GetKeyCode() == wx.WXK_SPACE):
             selected = self.GetSelected()
             toActivate = [item for item in selected if not self.data.isSelected(GPath(item))]
@@ -1188,6 +1201,10 @@ class ModList(List):
             else:
                 #--Check all that aren't
                 self.checkUncheckMod(*toActivate)
+        ##Ctrl+A
+        elif event.ControlDown() and event.GetKeyCode() in (65,97):
+            self.SelectAll()
+        event.Skip()
 
     def OnColumnResize(self,event):
         """Column resize: Stored modified column widths."""
@@ -1584,6 +1601,7 @@ class SaveList(List):
         #--Events
         self.list.Bind(wx.EVT_CHAR, self.OnChar)
         wx.EVT_LIST_ITEM_SELECTED(self,self.listId,self.OnItemSelected)
+        self.list.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
         #--ScrollPos
         self.list.ScrollLines(settings.get('bash.saves.scrollPos',0))
         self.vScrollPos = self.list.GetScrollPos(wx.VERTICAL)
@@ -1684,6 +1702,12 @@ class SaveList(List):
         self.colWidths[colName] = self.list.GetColumnWidth(colDex)
         settings.setChanged('bash.saves.colWidths')
 
+    def OnKeyUp(self,event):
+        """Char event: select all items"""
+        ##Ctrl+A
+        if event.ControlDown() and event.GetKeyCode() in (65,97):
+            self.SelectAll()
+        event.Skip()
     #--Event: Left Down
     def OnLeftDown(self,event):
         (hitItem,hitFlag) = self.list.HitTest((event.GetX(),event.GetY()))
@@ -1926,19 +1950,39 @@ class InstallersList(balt.Tank):
         balt.Tank.__init__(self,parent,data,icons,mainMenu,itemMenu,
             details,id,style)
         self.gList.Bind(wx.EVT_CHAR, self.OnChar)
-
+        self.gList.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+    def SelectAll(self):
+        for itemDex in range(self.gList.GetItemCount()):
+            self.gList.SetItemState(itemDex,wx.LIST_STATE_SELECTED,wx.LIST_STATE_SELECTED)
     def OnChar(self,event):
         """Char event: Reorder."""
         if ((event.ControlDown() and event.GetKeyCode() in (wx.WXK_UP,wx.WXK_DOWN))):
+            if len(self.GetSelected()) < 1: return
             orderKey = lambda x: self.data.data[x].order
             maxPos = max(self.data.data[x].order for x in self.data.data)
-            moveMod = (-1,1)[event.GetKeyCode() == wx.WXK_DOWN]
+            if(event.GetKeyCode() == wx.WXK_DOWN):
+                moveMod = 1
+                visibleIndex = self.GetIndex(sorted(self.GetSelected(),key=orderKey)[-1]) + 2
+            else:
+                moveMod = -1
+                visibleIndex = self.GetIndex(sorted(self.GetSelected(),key=orderKey)[0]) - 2
             for thisFile in sorted(self.GetSelected(),key=orderKey,reverse=(moveMod != -1)):
                 newPos = self.data.data[thisFile].order + moveMod
                 if newPos < 0 or maxPos < newPos: break
                 self.data.moveArchives([thisFile],newPos)
             self.data.refresh(what='N')
             self.RefreshUI()
+            if visibleIndex > maxPos: visibleIndex = maxPos
+            elif visibleIndex < 0: visibleIndex = 0
+            self.gList.EnsureVisible(visibleIndex)
+        else:
+            event.Skip()
+
+    def OnKeyUp(self,event):
+        """Char event: select all items"""
+        ##Ctrl+A
+        if event.ControlDown() and event.GetKeyCode() in (65,97):
+            self.SelectAll()
         event.Skip()
 #------------------------------------------------------------------------------
 class InstallersPanel(SashTankPanel):
@@ -2485,6 +2529,7 @@ class ScreensList(List):
         List.__init__(self,parent,-1,ctrlStyle=(wx.LC_REPORT|wx.SUNKEN_BORDER))
         #--Events
         wx.EVT_LIST_ITEM_SELECTED(self,self.listId,self.OnItemSelected)
+        self.list.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
 
     def RefreshUI(self,files='ALL',detail='SAME'):
         """Refreshes UI for specified files."""
@@ -2547,6 +2592,12 @@ class ScreensList(List):
         if reverse: self.items.reverse()
 
     #--Events ---------------------------------------------
+    def OnKeyUp(self,event):
+        """Char event: Activate selected items, select all items"""
+        ##Ctrl-A
+        if event.ControlDown() and event.GetKeyCode() in (65,97):
+            self.SelectAll()
+        event.Skip()
     #--Column Resize
     def OnColumnResize(self,event):
         colDex = event.GetColumn()
@@ -2633,6 +2684,7 @@ class MessageList(List):
         List.__init__(self,parent,-1,ctrlStyle=(wx.LC_REPORT|wx.SUNKEN_BORDER))
         #--Events
         wx.EVT_LIST_ITEM_SELECTED(self,self.listId,self.OnItemSelected)
+        self.list.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
 
     def GetItems(self):
         """Set and return self.items."""
@@ -2708,6 +2760,13 @@ class MessageList(List):
         if reverse: self.items.reverse()
 
     #--Events ---------------------------------------------
+    def OnKeyUp(self,event):
+        """Char event: Activate selected items, select all items"""
+        ##Ctrl-A
+        if event.ControlDown() and event.GetKeyCode() in (65,97):
+            self.SelectAll()
+        event.Skip()
+
     #--Column Resize
     def OnColumnResize(self,event):
         colDex = event.GetColumn()
@@ -9407,6 +9466,7 @@ def InitImages():
     colors['bash.masters.remapped'] = (100,255,100)
     colors['bash.masters.changed'] = (220,255,220)
     colors['bash.mods.isMergeable'] = (0x00,0x99,0x00)
+    colors['bash.mods.isSemiMergeable'] = (153,0,153)
     colors['bash.mods.groupHeader'] = (0xD8,0xD8,0xD8)
     colors['bash.mods.isGhost'] = (0xe8,0xe8,0xe8)
     colors['bash.installers.skipped'] = (0xe0,0xe0,0xe0)

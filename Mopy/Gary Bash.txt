@@ -13,6 +13,8 @@
   * Fix ImportScripts and ImportScriptContents.
   * Add ActorImporter, KFFZPatcher and NPCAIPackagePatcher.
   * Add inisettings['AutoItemCheck']
+  * fix for Ctrl-Up/Down on installer tab not scrolling
+  * Ctrl-A (select all) support added for all tabs except People.
 
 === 10 [4/7/2010]
 * Fixed a FormID lists merger bug that threw an error.
