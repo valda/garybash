@@ -85,32 +85,18 @@ class Colors:
     Provides dictionary syntax access (colors[key]) and predefined colours."""
     def __init__(self):
         self.data = {}
-        self.database = None
 
     def __setitem__(self,key,value):
         """Add a color to the database."""
-        #--Add to pending?
-        if not self.database:
-            self.data[key] = value
-        #--Else add it to the database
-        elif isinstance(value,str):
-            self.data[key] = self.database.Find(value)
-        else:
+        if not isinstance(value,str):
             self.data[key] = wx.Colour(*value)
 
     def __getitem__(self,key):
         """Dictionary syntax: color = colours[key]."""
-        if not self.database:
-            self.database = wx.TheColourDatabase
-            for key,value in self.data.items():
-                if isinstance(value,str):
-                    self.data[key] = self.database.Find(value)
-                else:
-                    self.data[key] = wx.Colour(*value)
         if key in self.data:
             return self.data[key]
         else:
-            return self.database.Find(key)
+            return wx.TheColourDatabase.Find(key)
 
 #--Singleton
 colors = Colors()
@@ -336,7 +322,7 @@ def askDirectory(parent,message=_('Choose a directory.'),defaultPath=''):
         dialog.Destroy()
         return None
     else:
-        path = dialog.GetPath()
+        path = GPath(dialog.GetPath())
         dialog.Destroy()
         return path
 
@@ -418,9 +404,9 @@ def askOk(parent,message,title=''):
     """Shows a modal error message."""
     return askStyled(parent,message,title,wx.OK|wx.CANCEL)
 
-def askYes(parent,message,title='',default=True):
-    """Shows a modal warning message."""
-    style = wx.YES_NO|wx.ICON_EXCLAMATION|((wx.NO_DEFAULT,wx.YES_DEFAULT)[default])
+def askYes(parent,message,title='',default=True,icon=wx.ICON_EXCLAMATION):
+    """Shows a modal warning or question message."""
+    style = wx.YES_NO|icon|((wx.NO_DEFAULT,wx.YES_DEFAULT)[default])
     return askStyled(parent,message,title,style)
 
 def askWarning(parent,message,title=_('Warning')):
@@ -462,11 +448,12 @@ def showLogClose(evt=None):
         _settings['balt.LogMessage.size'] = window.GetSizeTuple()
     window.Destroy()
 
-def showLog(parent,logText,title='',style=0,asDialog=True,fixedFont=False,icons=None):
+def showLog(parent,logText,title='',style=0,asDialog=True,fixedFont=False,icons=None,size=True):
     """Display text in a log window"""
     #--Sizing
     pos = _settings.get('balt.LogMessage.pos',defPos)
-    size = _settings.get('balt.LogMessage.size',(400,400))
+    if size:
+        size = _settings.get('balt.LogMessage.size',(400,400))
     #--Dialog or Frame
     if asDialog:
         window = wx.Dialog(parent,defId,title,pos=pos,size=size,
@@ -1030,7 +1017,7 @@ class Tank(wx.Panel):
         else: gItem.SetTextColour(gList.GetTextColour())
         if backKey: gItem.SetBackgroundColour(colors[backKey])
         else: gItem.SetBackgroundColour(self.defaultTextBackground)
-        gItem.SetState((0,wx.LIST_STATE_SELECTED)[item in selected])
+##        gItem.SetState((0,wx.LIST_STATE_SELECTED)[item in selected])
         gItem.SetData(self.GetId(item))
         gList.SetItem(gItem)
 
