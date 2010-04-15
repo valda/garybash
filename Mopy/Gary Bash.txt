@@ -1,4 +1,16 @@
 = Gary Bash ====================================================================
+== Credits and Contact ========================================================
+=== Authors
+* **Porting**
+  * Valda: Hentai gentlemen in D.C.wasteland.
+
+=== Contact
+* If you have a question/comment about Gary Bash, it's best to post it on the current RELZ topic on the Bethesda Game Studios (BGS) forums.
+* Please **NEVER** post a question about Gary Bash in the topic of original Wrye Bash.
+
+== License ===================================================================
+Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license details.
+
 == Versions ===================================================================
 === 11 [4/14/2010]
 * Bashed Patch:
@@ -9,12 +21,13 @@
   * Added some record types into mergeable classes.
   * Fixed the AMMO subrecords of name patcher.
 * Backports from latest Wrye Bash.
-  * Fix CellImporter.
-  * Fix ImportScripts and ImportScriptContents.
-  * Add ActorImporter, KFFZPatcher and NPCAIPackagePatcher.
+  * CellImporter
+  * ImportScripts and ImportScriptContents.
+  * ActorImporter, KFFZPatcher and NPCAIPackagePatcher.
   * Add inisettings['AutoItemCheck']
   * fix for Ctrl-Up/Down on installer tab not scrolling
   * Ctrl-A (select all) support added for all tabs except People.
+  * Mergeable mods with NoMerge tag are now colour coded (purple) in the mods tab instead of being green like fully mergeable mods or black like unmergeables (depending on version)
 
 === 10 [4/7/2010]
 * Fixed a FormID lists merger bug that threw an error.
