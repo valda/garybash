@@ -15082,7 +15082,7 @@ class ActorImporter(ImportPatcher):
                 'Actors.ACBS': ('fatigue','barterGold','level','calcMin','calcMax','speedMultiplier','karma','dispotionBase','templateFlags','flags'),
                 'NPC.Class': (),
                 'Actors.CombatStyle': ('combatStyle',),
-                'Creatures.Blood': ('impactDataset'),
+                'Creatures.Blood': ('impactDataset',),
                 }
         #--Needs Longs
         self.longTypes = set(('CREA','NPC_'))
@@ -15102,7 +15102,7 @@ class ActorImporter(ImportPatcher):
             srcInfo = modInfos[srcMod]
             srcFile = ModFile(srcInfo,loadFactory)
             bashTags = srcFile.fileInfo.getBashTags()
-            masters = modInfos[srcMod].header.masters
+            masters = srcInfo.header.masters
             srcFile.load(True)
             srcFile.convertToLongFids(longTypes)
             mapper = srcFile.getLongMapper()
@@ -15133,12 +15133,12 @@ class ActorImporter(ImportPatcher):
                         if fid not in temp_id_data: continue
                         for attr, value in temp_id_data[fid].iteritems():
                             if value == record.__getattribute__(attr): continue
-                            else: 
+                            else:
                                 if fid not in id_data: id_data[fid] = dict()
                                 try:
                                     id_data[fid][attr] = temp_id_data[fid][attr]
                                 except KeyError:
-                                    id_data[fid].setdefault(attr,value)      
+                                    id_data[fid].setdefault(attr,value)
             progress.plus()
         temp_id_data = None
         self.longTypes = self.longTypes & set(x.classType for x in self.srcClasses)
