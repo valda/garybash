@@ -12,7 +12,7 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license details.
 
 == Versions ===================================================================
-=== 11 [4/14/2010]
+=== 11 [4/17/2010]
 * Bashed Patch:
   * Fixed a CELL record structure.
   * Fixed a WRLD(worldspace) record structure.
