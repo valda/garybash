@@ -2471,10 +2471,8 @@ class MreCell(MelRecord):
             ('unused3',null1),'fogNear','fogFar','directionalXY','directionalZ',
             'directionalFade','fogClip','fogPower'),
         MelBase('IMPF','footstepMaterials'), #--todo rewrite specific class.
-        MelGroup('lightTemplate',
-            MelFid('LTMP','template'),
-            MelStruct('LNAM','I',(inheritFlags,'inheritFlags',0L)),
-            ),
+        MelFid('LTMP','lightTemplate'),
+        MelStruct('LNAM','I',(inheritFlags,'lightInheritFlags',0L)),
         #--CS default for water is -2147483648, but by setting default here to -2147483649,
         #  we force the bashed patch to retain the value of the last mod.
         MelOptStruct('XCLW','f',('waterHeight',-2147483649)),
@@ -4679,10 +4677,8 @@ class MreWrld(MelRecord):
         MelString('EDID','eid'),
         MelString('FULL','full'),
         MelFid('XEZN','encounterZone'),
-        MelGroup('parent',
-            MelFid('WNAM','worldspace'),
-            MelStruct('PNAM','BB','flags','unknown'),
-            ),
+        MelFid('WNAM','parent'),
+        MelOptStruct('PNAM','BB','parentFlags',('unknownff',0xff)),
         MelFid('CNAM','climate'),
         MelFid('NAM2','water'),
         MelFid('NAM3','waterType'),
@@ -14678,7 +14674,8 @@ class CellImporter(ImportPatcher):
             'directionalRed','directionalGreen','directionalBlue','unused2',
             'fogRed','fogGreen','fogBlue','unused3',
             'fogNear','fogFar','directionalXY','directionalZ',
-            'directionalFade','fogClip','fogPower'),
+            'directionalFade','fogClip','fogPower',
+            'lightTemplate','lightInheritFlags'),
             'C.RecordFlags': ('flags1',), # Yes seems funky but thats the way it is
             }
         self.recFlags = {
