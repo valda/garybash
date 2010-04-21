@@ -50,8 +50,8 @@ class Data:
         #--Init bosh stuff
         bosh.initDirs()
         bosh.initSettings(readOnly=True)
-        bosh.oblivionIni = bosh.OblivionIni()
-        bosh.oblivionIni.mtime = 0
+        bosh.falloutIni = bosh.FalloutIni()
+        bosh.falloutIni.mtime = 0
         bosh.modInfos = bosh.ModInfos()
         bosh.saveInfos = bosh.SaveInfos() #--Create, but don't fill
         self.savesDir = None
@@ -60,7 +60,7 @@ class Data:
 
     def update(self):
         """Check to see if saves directory has changed. If so, update paths."""
-        ini = bosh.oblivionIni
+        ini = bosh.falloutIni
         if not self.savesDir or ini.mtime != ini.path.mtime:
             ini.mtime = ini.path.mtime
             savesDir = bosh.dirs['saveBase'].join(ini.getSetting('General','SLocalSavePath','Saves\\'))
@@ -281,7 +281,7 @@ def monitor(sleepSeconds=0.25):
             running = False
             continue
         except IOError:
-            print time.strftime('\n%H:%M:%S',time.localtime()),_("Oblivion.ini is busy.")
+            print time.strftime('\n%H:%M:%S',time.localtime()),_("Fallout.ini is busy.")
             continue
         except:
             data.failed.touch()

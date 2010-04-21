@@ -41,6 +41,9 @@ bethDataFiles = set((
     #-- DLC
     'anchorage.esm',
     'thepitt.esm',
+    'brokensteel.esm',
+    'pointlookout.esm',
+    'zeta.esm',
     ))
 
 # Balo Canonical Groups -------------------------------------------------------

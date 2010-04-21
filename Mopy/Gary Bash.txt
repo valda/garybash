@@ -1,4 +1,4 @@
-= Gary Bash ====================================================================
+= Gary Bash (Wrye Bash for Fallout 3) =========================================
 == Credits and Contact ========================================================
 === Authors
 * **Porting**
@@ -12,6 +12,10 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license details.
 
 == Versions ===================================================================
+=== 12 [4/22/2010]
+* Rebase to latest Wrye Bash (https://oblivionworks.svn.sourceforge.net/svnroot/oblivionworks/Programs/Wrye Bash@284)
+  * Many new great features were taken in. but adjusting for wasteland may be insufficient...
+
 === 11 [4/17/2010]
 * Bashed Patch:
   * Fixed a CELL record structure.
@@ -20,7 +24,7 @@ Gary Bash is released under Version 2 of the GNU General Public License. See enc
   * Remove 'R.Relations', 'SpellStats' bashtag.
   * Added some record types into mergeable classes.
   * Fixed the AMMO subrecords of name patcher.
-* Backports from latest Wrye Bash.
+* Ports from latest Wrye Bash.
   * CellImporter
   * ImportScripts and ImportScriptContents.
   * ActorImporter, KFFZPatcher and NPCAIPackagePatcher.
@@ -57,7 +61,7 @@ Gary Bash is released under Version 2 of the GNU General Public License. See enc
 * INI Tweaks worked.
 
 === 7 [3/7/2010]
-* Backports from Wrye Bash 275-278.
+* Ports from Wrye Bash 275-278.
   * port of my implementation of ini settable tool directories from OB version. also launchers for quite a few external tools (by PacificMorrowind).
 * BAIN: changes to not "Open at TesNexus" but "Open at Fallout3Nexus".
 * Import Graphics/Sound: Added support for projectile, explosion and impact (better support for EVE).

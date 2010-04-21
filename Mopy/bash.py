@@ -22,7 +22,7 @@
 """This module starts the Wrye Bash application. Basically, it runs some
 initialization functions, and then starts the main application loop.
 
-bash [-o OblivionPath] [-u userPath] [-p personalPath] [-l localAppDataPath] [-d] [0]
+bash [-o Fallout3Path] [-u userPath] [-p personalPath] [-l localAppDataPath] [-d] [0]
 ----
 For all arguments:
 Note that Python reads the backslash "\" as an escape character,
@@ -35,10 +35,10 @@ Arguments have precedence over ini settings.
 You can use a mix of arguments and ini settings.
 Ini settings don't require a double backslash and can have relative paths.
 ----
-Oblivion directory argument (-o).
--o OblivionPath: Specify Oblivion directory (containing Oblivion.exe).
-Use this argument if Bash is located outside of the Oblivion directory.
-Example: -o "C:\\Games\\Oblivion\\"
+Fallout3 directory argument (-o).
+-o Fallout3Path: Specify Fallout3 directory (containing Fallout3.exe).
+Use this argument if Bash is located outside of the Fallout3 directory.
+Example: -o "C:\\Games\\Fallout 3\\"
 ----
 User directory arguments (-u, -p, and -l).
 These arguments allow you to specify your user directories in several ways. These
@@ -77,7 +77,7 @@ optlist,args = getopt.getopt(sys.argv[1:],'o:u:p:l:d')
 #--Initialize Directories and some settings
 #  required before the rest has imported
 opts = dict(optlist)
-oblivionPath = opts.get('-o')
+falloutPath = opts.get('-o')
 if '-u' in opts:
     drive,path = os.path.splitdrive(opts['-u'])
     os.environ['HOMEDRIVE'] = drive
@@ -92,7 +92,7 @@ elif os.path.exists('bash.ini'):
         os.environ['HOMEPATH'] = path
 personal = opts.get('-p')
 localAppData = opts.get('-l')
-bosh.initDirs(personal,localAppData,oblivionPath)
+bosh.initDirs(personal,localAppData,falloutPath)
 import basher
 import bolt
 

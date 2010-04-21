@@ -33,7 +33,7 @@ Practice:
 
 Rational Names:
     Rational names is a mod that "Rationalizes" names of many objects in the
-    Fallout3 world. Many of those names were generated here by functions working
+    Fallout 3 world. Many of those names were generated here by functions working
     on the basis of the eid or pre-existing name. Naturally these tend to be
     use-once functions, but they also tended to be modified and then used again.
 """
@@ -195,16 +195,6 @@ def readRecord(record, melSet=0, skipLabel=0):
         longest = 0
         print ''
 
-def readDiffs(newRecord, oldRecord, melSet=0, skipLabel=0):
-##    if oldRecord == None: return (newRecord, None, None)
-    differences = []
-    if hasattr(newRecord, 'melSet'):
-        melSet = newRecord.melSet.getSlotsUsed() + ['flags1','flags2']
-        if newRecord.recType == 'DIAL':
-            melSet += ['infoStamp','infos']
-    differences = [(attr, getattr(oldRecord,attr,None), getattr(newRecord,attr,None)) for attr in melSet if getattr(newRecord,attr,None) != getattr(oldRecord,attr,None)]
-    return differences
-
 # Common ----------------------------------------------------------------------
 #------------------------------------------------------------------------------
 @mainfunc
@@ -296,7 +286,7 @@ def diffScripts(oldFile,newFile):
         modFile = bosh.ModFile(modInfo,loadFactory)
         modFile.load(True)
         scripts.update(dict((record.eid, record.scriptText) for record in modFile.SCPT.records))
-    oldDump,newDump = [(GPath(fileName).root()+'.mws').open('w') for fileName in (oldFile,newFile)]
+    oldDump,newDump = ((GPath(fileName)+'.mws').open('w') for fileName in (oldFile,newFile))
     for eid in sorted(oldScripts):
         if eid in newScripts and oldScripts[eid] != newScripts[eid]:
             print 'Modified:',eid
@@ -306,6 +296,29 @@ def diffScripts(oldFile,newFile):
             newDump.write(newScripts[eid]+'\n\n')
     oldDump.close()
     newDump.close()
+    newScriptKeys = set(newScripts) - set(oldScripts)
+#------------------------------------------------------------------------------
+@mainfunc
+def diffScripts2(oldFile,newFile):
+    """As diffScripts, however returns lists of changes between the old version and new.
+    Creates two text files in ..\Mopy\ - "oldFile" to "newFile" - Modified/Added.txt"""
+    init(3)
+    oldScripts, newScripts = {},{}
+    for scripts,fileName in ((oldScripts,oldFile),(newScripts,newFile)):
+        loadFactory = bosh.LoadFactory(False,bosh.MreScpt)
+        modInfo = bosh.modInfos[GPath(fileName)]
+        modFile = bosh.ModFile(modInfo,loadFactory)
+        modFile.load(True)
+        scripts.update(dict((record.eid, record.scriptText) for record in modFile.SCPT.records))
+    modDump = (GPath(oldFile)+' to '+GPath(newFile)+' - Modified Scripts'+'.txt').open('w')
+    addDump = (GPath(oldFile)+' to '+GPath(newFile)+' - Added Scripts'+'.txt').open('w')
+    for eid in sorted(newScripts):
+        if eid in oldScripts and newScripts[eid] != oldScripts[eid]:
+            modDump.write('%s\n' %( eid))
+        elif not (eid in oldScripts):
+            addDump.write('%s\n' %( eid))
+    modDump.close()
+    addDump.close()
     newScriptKeys = set(newScripts) - set(oldScripts)
 
 #------------------------------------------------------------------------------
@@ -1047,136 +1060,6 @@ def temp1(fileName):
     #saveFile.weather = ''
     #saveFile.safeSave()
 
-@mainfunc
-def testOverRefr(fileName=None):
-    #Oscuro's_Oblivion_Overhaul.esp
-    import psyco
-    psyco.full()
-    f = open('Unofficial Oblivion Patch.esp.txt', 'r')
-    ChangedPos = dict(cPickle.load(f))
-    f.close()
-    print ChangedPos
-    sys.exit()
-    init(3)
-    testClasses = (bosh.MreWrld,bosh.MreCell,bosh.MreRefr)
-    loadFactory = bosh.LoadFactory(False,*testClasses)
-    modInfo = bosh.modInfos[GPath(fileName)]
-    modFile = bosh.ModFile(modInfo,loadFactory)
-    modFile.load(True)
-    strf = bosh.strFid
-    id_position = {}
-    newRecords = set()
-    mapper = modFile.getLongMapper()
-    for cb in modFile.CELL.CellBlocks:
-        for attr in ('Persistent','Temp','Distant'):
-            for record in getattr(cb,attr):
-                if mapper(record.fid) in ChangedPos and (record.posX, record.posY, record.posZ) != ChangedPos[mapper(record.fid)]:
-                    record.posX = ChangedPos[mapper(record.fid)][0]
-                    record.posY = ChangedPos[mapper(record.fid)][1]
-                    record.posZ = ChangedPos[mapper(record.fid)][2]
-                    record.setChanged()
-                    newRecords.add(record.fid)
-                    #id_position[mapper(record.fid)] = (record.posX, record.posY, record.posZ)
-    modFile.CELL.keepRecords(newRecords)
-    modFile.WRLD.keepRecords(newRecords)
-    outInfo = bosh.ModInfo(modInfo.dir,GPath("War Dump2.esp"))
-    modFile.fileInfo = outInfo
-    loadFactory.keepAll = True
-    modFile.askSave()
-    return
-    mapper = modFile.getLongMapper()
-    newRecords = []
-    ChangedPosDiff = [(fid, position) for fid, position in ChangedPos if fid in id_position and id_position[fid] != position]
-    print ChangedPosDiff
-
-@mainfunc
-def diffMasterRefr(fileName='Unofficial Oblivion Patch.esp'):
-    #diffMasterRefr "Cliff_BetterLetters.esp"
-    import psyco
-    psyco.full()
-    init(3)
-    skipPrint = False
-    tempDict = dict()
-    diffDict = dict()
-    skipPrint = True
-##    #All complex records
-##    testClasses = [bosh.MreRecord.type_class[x] for x in (set(bosh.MreRecord.type_class) - bosh.MreRecord.simpleTypes)] ##'LAND', 'PGRD'
-##    #All simple records
-##    testClasses = [bosh.MreRecord.type_class[x] for x in bosh.MreRecord.simpleTypes]
-    #All Records
-    testClasses = bosh.MreRecord.type_class.values()
-    loadFactory = bosh.LoadFactory(False,*testClasses)
-    modInfo = bosh.modInfos[GPath(fileName)]
-    modFile = bosh.ModFile(modInfo,loadFactory)
-    modFile.load(True)
-    modFile.convertToLongFids()
-    class disablePrint:
-        def write(self,text):
-            pass
-    if skipPrint == True:
-        oOut = sys.stdout
-        sys.stdout = disablePrint()
-    for master in modFile.tes4.masters:
-        masterInfo = bosh.modInfos[master]
-        for typed in bush.topTypes:
-            if typed not in loadFactory.recTypes or typed not in modFile.tops: continue
-            masterFactory = bosh.LoadFactory(False,bosh.MreRecord.type_class[typed])
-            masterFile = bosh.ModFile(masterInfo,masterFactory)
-            masterFile.load(True)
-            if typed in masterFile.tops:
-                masterFile.convertToLongFids()
-                if typed == 'GMST':
-                    for newRecord in getattr(modFile,typed).records:
-                        oldRecord = getattr(masterFile,typed).getRecordByEid(newRecord.eid)
-                        delta = newRecord.getDelta(oldRecord)
-                        if len(delta) > 0:
-                            tempDict[newRecord.eid] = delta
-##                            print newRecord.eid, ':', tempDict[newRecord.eid]
-                    diffDict[typed] = tempDict.copy()
-                    tempDict.clear()
-                elif typed in ['SPEL']:#'GLOB','CLAS','FACT','HAIR','MGEF','SCPT','LTEX','ENCH']:
-                    for newRecord in getattr(modFile,typed).records:
-                        oldRecord = getattr(masterFile,typed).getRecord(newRecord.fid)
-                        delta = newRecord.getDelta(oldRecord)
-                        if len(delta) > 0:
-                            tempDict[newRecord.fid] = delta
-                            print '\n',bosh.strFid(newRecord.fid), ':', tempDict[newRecord.fid]
-                    diffDict[typed] = tempDict.copy()
-                    tempDict.clear()
-##                elif typed == 'CELL':
-##                    for cb in getattr(modFile,typed).cellBlocks: readDiffs(cb,masterFile)
-##                elif typed == 'WRLD':
-##                    for wb in getattr(modFile,typed).worldBlocks: readDiffs(wb,masterFile)
-                else:
-                    continue
-                    f = open('Unofficial Oblivion Patch.esp.txt', 'w')
-                    cPickle.dump(diffDict,f)
-                    f.close()
-                    sys.exit()
-                    for diff in diffDict['FACT']:
-                        print '\n', diff
-                        for change in diffDict['FACT'][diff]:
-                            print change, ''
-                    sys.exit()
-                    if hasattr(getattr(modFile,typed), 'melSet'): readDiffs(getattr(modFile,typed),masterFile)
-                    elif hasattr(getattr(modFile,typed), 'records'):
-                        for record in getattr(modFile,typed).records:
-                            if hasattr(record, 'melSet'): readDiffs(record,masterFile)
-                            else:
-                                print record
-                                print dir(record)
-                                for item in dir(record):
-                                    print item
-                                print "Blergh", typed
-                                sys.exit()
-                                return
-                    else:
-                        print typed
-                        return
-
-    if skipPrint == True:
-        sys.stdout = oOut
-    return
 
 # Zip Stuff --------------------------------------------------------------------
 class Archive:
