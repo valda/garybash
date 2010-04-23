@@ -14,9 +14,12 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license details.
 
 == Versions ===================================================================
-=== 12 [4/22/2010]
+=== 13 [4/23/2010]
 * Rebase to latest Wrye Bash (https://oblivionworks.svn.sourceforge.net/svnroot/oblivionworks/Programs/Wrye Bash@284)
   * Many new great features were taken in. but adjusting for wasteland may be insufficient...
+
+=== 12 [4/23/2010]
+* Fixed a bug that fails in startup by bash.py (thanks TheRowan!).
 
 === 11 [4/17/2010]
 * Bashed Patch:

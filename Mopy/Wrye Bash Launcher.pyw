@@ -77,7 +77,7 @@ optlist,args = getopt.getopt(sys.argv[1:],'o:u:p:l:d')
 #--Initialize Directories and some settings
 #  required before the rest has imported
 opts = dict(optlist)
-fallout3Path = opts.get('-o')
+falloutPath = opts.get('-o')
 if '-u' in opts:
     drive,path = os.path.splitdrive(opts['-u'])
     os.environ['HOMEDRIVE'] = drive
@@ -92,7 +92,7 @@ elif os.path.exists('bash.ini'):
         os.environ['HOMEPATH'] = path
 personal = opts.get('-p')
 localAppData = opts.get('-l')
-bosh.initDirs(personal,localAppData,fallout3Path)
+bosh.initDirs(personal,localAppData,falloutPath)
 import basher
 import bolt
 
