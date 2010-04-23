@@ -1945,7 +1945,7 @@ class MreLeveledList(MelRecord):
         MelStruct('LVLF','B',(_flags,'flags',0L)),
         MelFid('SCRI','script'),
         MelFid('TNAM','template'),
-        MelFid('LVLG','global'),
+        MelFid('LVLG','glob'),
         MelGroups('entries',
                   MelLevListLvlo('LVLO','h2sIh2s','level',('unused1',null2),(FID,'listId',None),('count',1),('unused2',null2)),
                   MelOptStruct('COED','IIf',(FID,'owner',None),(FID,'glob',None),('condition',1.0)),
@@ -1980,11 +1980,13 @@ class MreLeveledList(MelRecord):
             self.script = other.script
             self.template = other.template
             self.flags = other.flags()
+            self.glob = other.glob
         else:
             self.chanceNone = other.chanceNone or self.chanceNone
             self.script   = other.script or self.script
             self.template = other.template or self.template
             self.flags |= other.flags
+            self.glob = other.glob or self.glob
         #--Remove items based on other.removes
         if other.delevs or other.relevs:
             removeItems = self.items & (other.delevs | other.relevs)
@@ -2007,6 +2009,7 @@ class MreLeveledList(MelRecord):
             self.script != other.script or
             self.template != other.template or
             #self.flags != other.flags or
+            self.glob != other.glob or
             len(self.entries) != len(other.entries)
             ):
             self.mergeOverLast = True
