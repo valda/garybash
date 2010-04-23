@@ -1,8 +1,6 @@
-\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 849.
+\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 850.
 \ % A Bashed Patch suggestion for the mod above.
 
-BrokenSteel.esm
-% {{BASH:Deflst,Delev,Reflst,Relev}}
 Unofficial Fallout 3 Patch.esm
 % {{BASH:Delev,Relev}}
 HairPack.esm
@@ -18,7 +16,7 @@ FOOK2 - Main.esm
 FO3 Wanderers Edition - Main File.esm
 % {{BASH:Delev,Invent,Relations,Relev,Stats}}
 Mart's Mutant Mod.esm
-% {{BASH:Invent,Relations}}
+% {{BASH:Invent,Relations,Delev}}
 Shojo Race.esm
 % {{BASH:Hair,Eyes}}
 EnhancedChildren.esm
@@ -50,17 +48,19 @@ FO3 Wanderers Edition - Main File.esp
 % {{BASH:Deflst,Delev,Reflst,Relev}}
 FO3 Wanderers Edition - DLC Anchorage.esp
 % {{BASH:Deflst}}
+FO3 Wanderers Edition - DLC Point Lookout.esp
+% {{BASH:Relev,Delev}}
 FO3 Wanderers Edition - Optional Worn Weapons.esp
-% {{BASH:Delev,sRelev}}
+% {{BASH:Delev,Relev}}
 
 WeaponModKits.esp
-% {{BASH:Deflst,Delev,Reflst,Relev}}
+% {{BASH:Deflst,Reflst}}
 WeaponModKits - FOOK.esp
-% {{BASH:Deflst,Delev,Reflst,Relev}}
+% {{BASH:Deflst,Reflst}}
 WeaponModKits - FWE Master Release.esp
-% {{BASH:Deflst,Delev,Reflst,Relev}}
+% {{BASH:Deflst,Reflst}}
 WeaponModKits - FWE Optional Worn Weapons.esp
-% {{BASH:Deflst,Delev,Reflst,Relev}}
+% {{BASH:Deflst,Reflst}}
 
 WMKAA12Shotgun.esp
 % {{BASH:Graphics}}
@@ -89,7 +89,7 @@ EVE Anchorage - FWE DLC Anchorage.esp
 % {{BASH:Graphics,Sound}}
 
 Mart's Mutant Mod.esp
-% {{BASH:Delev,Relev}}
+% {{BASH:Delev}}
 Mart's Mutant Mod - UF3P.esp
 % {{BASH:Invent}}
 PB MMM HD.esp
@@ -97,7 +97,7 @@ PB MMM HD.esp
 PB MMM.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
 Mart's Mutant Mod - DLC The Pitt.esp
-% {{BASH:Delev,Relev}}
+% {{BASH:Delev}}
 Mart's Mutant Mod - DLC Broken Steel.esp
 % {{BASH:Delev,Relev}}
 Mart's Mutant Mod - DLC Point Lookout.esp
@@ -127,13 +127,6 @@ Project Beauty- MMM Raiders.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
 Mart's Mutant Mod - FWE Master Release.esp
 % {{BASH:Invent,Relations}}
-
-ChildrenEmpire Enemies.esp
-% {{BASH:Delev,Relev}}
-Fallout 3 Sexus Enemies.esp
-% {{BASH:Delev,Relev}}
-Fallout 3 Sexus with Children Empire.esp
-% {{BASH:Delev,Relev}}
 
 FelloutWithLightingOverhual-1.0.esp
 % {{BASH:C.Light}}
