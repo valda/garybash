@@ -1,6 +1,8 @@
 = Gary Bash (Wrye Bash for Fallout 3) =========================================
 == Credits and Contact ========================================================
 === Authors
+* **Original Code**
+  * Wrye Team: The great gurus of Oblivion modding.
 * **Porting**
   * Valda: Hentai gentlemen in D.C.wasteland.
 
