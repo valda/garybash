@@ -11078,6 +11078,7 @@ class Installer(object):
         reReadMe = self.reReadMe
         docExts = self.docExts
         imageExts = self.imageExts
+        scriptExts = self.scriptExts
         docDirs = self.docDirs
         dataDirsPlus = self.dataDirsPlus
         dataDirsMinus = self.dataDirsMinus
@@ -20605,7 +20606,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
     tip = _("Merge race eyes, hair, body, voice from mods.")
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = ('Hair','Eyes-D','Eyes-R','Eyes-E','Eyes','Body-M','Body-F',
-        'Voice-M','Voice-F','R.Teeth','R.Mouth')
+        'Voice-M','Voice-F','R.Teeth','R.Mouth','R.Ears')
     forceAuto = True
 
     #--Config Phase -----------------------------------------------------------
@@ -20628,7 +20629,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
         #--Restrict srcMods to active/merged mods.
         self.srcMods = [x for x in self.getConfigChecked() if x in patchFile.allSet]
         self.isActive = True #--Always enabled to support eye filtering
-        self.bodyKeys = ('Height','Weight','UpperBody','RightHand','LeftHand','UpperBodyTexture')
+        self.bodyKeys = set(('Height','Weight','UpperBody','RightHand','LeftHand','UpperBodyTexture'))
         self.eyeKeys = set(('Eyes-D','Eyes-R','Eyes-E','Eyes'))
         #--Mesh tuple for each defined eye. Derived from race records.
         #defaultMesh = (r'characters\imperial\eyerighthuman.nif', r'characters\imperial\eyelefthuman.nif')
@@ -20682,6 +20683,9 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 if 'R.Mouth' in bashTags:
                     for key in ('maleMouth','femaleMouth','maleTongue','femaleTongue'):
                         tempRaceData[key] = getattr(race,key)
+                if 'R.Ears' in bashTags:
+                    for key in ('maleEars','femaleEars'):
+                        tempRaceData[key] = getattr(race,key)
             for master in masters:
                 if not master in modInfos: continue # or break filter mods
                 if master in cachedMasters:
@@ -20697,37 +20701,9 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                     if race.fid not in self.tempRaceData: continue
                     tempRaceData = self.tempRaceData[race.fid]
                     raceData = self.raceData[race.fid]
-                    if self.eyeKeys & bashTags:
-                        if not tempRaceData['femaleRightEye'] == race.femaleRightEye:
-                            raceData['femaleRightEye'] = tempRaceData['femaleRightEye']
-                        if not tempRaceData['femaleLeftEye'] == race.femaleLeftEye:
-                            raceData['femaleLeftEye'] = tempRaceData['femaleLeftEye']
-                        if not tempRaceData['maleRightEye'] == race.maleRightEye:
-                            raceData['maleRightEye'] = tempRaceData['maleRightEye']
-                        if not tempRaceData['maleLeftEye'] == race.maleLeftEye:
-                            raceData['maleLeftEye'] = tempRaceData['maleLeftEye']
-                    if 'Voice-M' in bashTags:
-                        if not tempRaceData['maleVoice'] == race.maleVoice:
-                            raceData['maleVoice'] = tempRaceData['maleVoice']
-                    if 'Voice-F' in bashTags:
-                        if not tempRaceData['femaleVoice'] == race.femaleVoice:
-                            raceData['femaleVoice'] = tempRaceData['femaleVoice']
-                    if 'Body-M' in bashTags:
-                        for key in ['male'+key for key in self.bodyKeys]:
-                            if not tempRaceData[key] == getattr(race,key):
-                                raceData[key] = tempRaceData[key]
-                    if 'Body-F' in bashTags:
-                        for key in ['female'+key for key in self.bodyKeys]:
-                            if not tempRaceData[key] == getattr(race,key):
-                                raceData[key] = tempRaceData[key]
-                    if 'R.Teeth' in bashTags:
-                        for key in ('femaleTeethLower','femaleTeethUpper','maleTeethLower','maleTeethUpper'):
-                            if not tempRaceData[key] == getattr(race,key):
-                                raceData[key] = tempRaceData[key]
-                    if 'R.Mouth' in bashTags:
-                        for key in ('femaleMouth','femaleTongue','maleMouth','maleTongue'):
-                            if not tempRaceData[key] == getattr(race,key):
-                                raceData[key] = tempRaceData[key]
+                    for key in tempRaceData:
+                        if not tempRaceData[key] == getattr(race,key):
+                            raceData[key] = tempRaceData[key]
             progress.plus()
 
     def getReadClasses(self):
@@ -20827,7 +20803,8 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                     if getattr(race,voiceKey) != raceData[voiceKey]:
                         setattr(race,voiceKey,raceData[voiceKey])
                         raceChanged = True
-                bodyKeys = [gender+key for key in self.bodyKeys]
+                bodyKeys = self.bodyKeys.union('ears')
+                bodyKeys = [gender+key for key in bodyKeys]
                 for key in bodyKeys:
                     if key in raceData:
                         if getattr(race,key) != raceData[key]:
@@ -20941,7 +20918,6 @@ class RacePatcher(SpecialPatcher,ListPatcher):
         for npc in patchFile.NPC_.records:
             raceEyes = defaultEyes.get(npc.race)
             if not npc.eye and raceEyes:
-                #random.seed(npc.fid)
                 npc.eye = random.choice(raceEyes)
                 srcMod = npc.fid[0]
                 if srcMod not in mod_npcsFixed: mod_npcsFixed[srcMod] = set()
@@ -20949,12 +20925,20 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 keep(npc.fid)
             raceHair = ((defaultMaleHair,defaultFemaleHair)[npc.flags.female]).get(npc.race)
             if not npc.hair and raceHair:
-                #random.seed(npc.fid)
                 npc.hair = random.choice(raceHair)
                 srcMod = npc.fid[0]
                 if srcMod not in mod_npcsFixed: mod_npcsFixed[srcMod] = set()
                 mod_npcsFixed[srcMod].add(npc.fid)
                 keep(npc.fid)
+            if not npc.hairLength or npc.hairLength == 0.0:
+                npc.hairLength = random.random()
+                srcMod = npc.fid[0]
+                if srcMod not in mod_npcsFixed: mod_npcsFixed[srcMod] = set()
+                keep(npc.fid)
+                if npc.fid in mod_npcsFixed[srcMod]: continue
+                mod_npcsFixed[srcMod].add(npc.fid)
+
+                
         #--Done
         log.setHeader('= '+self.__class__.name)
         log(_("=== Source Mods"))
