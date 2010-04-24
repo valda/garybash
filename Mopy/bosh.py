@@ -17867,6 +17867,7 @@ class DestructablePatcher(ImportPatcher):
         self.srcClasses = set() #--Record classes actually provided by src mods/files.
         self.sourceMods = self.getConfigChecked()
         self.isActive = len(self.sourceMods) != 0
+        self.classestemp = set()
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreActi,MreAlch,MreAmmo,MreFurn,MreMisc,MreMstt,MreProj,MreWeap):
@@ -17891,20 +17892,51 @@ class DestructablePatcher(ImportPatcher):
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
         progress.setFull(len(self.sourceMods))
+        cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
+            temp_id_data = {}
             if srcMod not in modInfos: continue
             srcInfo = modInfos[srcMod]
             srcFile = ModFile(srcInfo,loadFactory)
+            bashTags = srcFile.fileInfo.getBashTags()
+            masters = srcInfo.header.masters
             srcFile.load(True)
             srcFile.convertToLongFids(longTypes)
             mapper = srcFile.getLongMapper()
             for recClass,recAttrs in recAttrs_class.iteritems():
                 if recClass.classType not in srcFile.tops: continue
                 self.srcClasses.add(recClass)
+                self.classestemp.add(recClass)
                 for record in srcFile.tops[recClass.classType].getActiveRecords():
                     fid = mapper(record.fid)
-                    id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+                    temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+            for master in masters:
+                if not master in modInfos: continue # or break filter mods
+                if master in cachedMasters:
+                    masterFile = cachedMasters[master]
+                else:
+                    masterInfo = modInfos[master]
+                    masterFile = ModFile(masterInfo,loadFactory)
+                    masterFile.load(True)
+                    masterFile.convertToLongFids(longTypes)
+                    cachedMasters[master] = masterFile
+                mapper = masterFile.getLongMapper()
+                for recClass,recAttrs in recAttrs_class.iteritems():
+                    if recClass.classType not in masterFile.tops: continue
+                    if recClass not in self.classestemp: continue
+                    for record in masterFile.tops[recClass.classType].getActiveRecords():
+                        fid = mapper(record.fid)
+                        if fid not in temp_id_data: continue
+                        for attr, value in temp_id_data[fid].iteritems():
+                            if value == record.__getattribute__(attr): continue
+                            else:
+                                if fid not in id_data: id_data[fid] = dict()
+                                try:
+                                    id_data[fid][attr] = temp_id_data[fid][attr]
+                                except KeyError:
+                                    id_data[fid].setdefault(attr,value)
             progress.plus()
+        temp_id_data = None
         self.longTypes = self.longTypes & set(x.classType for x in self.srcClasses)
         self.isActive = bool(self.srcClasses)
 
@@ -17950,7 +17982,6 @@ class DestructablePatcher(ImportPatcher):
             type = recClass.classType
             if type not in modFile.tops: continue
             type_count[type] = 0
-            deprint(recClass,type,type_count[type])
             for record in modFile.tops[type].records:
                 fid = record.fid
                 if fid not in id_data: continue
@@ -17963,12 +17994,13 @@ class DestructablePatcher(ImportPatcher):
                     record.__setattr__(attr,value)
                 keep(fid)
                 type_count[type] += 1
+        id_data = None
         log.setHeader('= '+self.__class__.name)
         log(_("=== Source Mods"))
         for mod in self.sourceMods:
             log("* " +mod.s)
         log(_("\n=== Modified Records"))
-        for type,count in sorted(type_count.items()):
+        for type,count in sorted(type_count.iteritems()):
             if count: log("* %s: %d" % (type,count))
 
 # Patchers: 30 ----------------------------------------------------------------
