@@ -295,6 +295,7 @@ reFosExt  = re.compile(r'\.fos$',re.I)
 reSaveExt = re.compile(r'(quicksave(\.bak)+|autosave(\.bak)+|\.fo[rs])$',re.I)
 reCsvExt  = re.compile(r'\.csv$',re.I)
 reINIExt  = re.compile(r'\.ini$',re.I)
+rePrefsINIExt  = re.compile(r'\.prefs\.ini$',re.I)
 reQuoted  = re.compile(r'^"(.*)"$')
 reGroupHeader = re.compile(r'^(\+\+|==)')
 reFallout3Nexus = re.compile(r'-(\d{4,6})(-bain)?\.(7z|zip|rar)$',re.I)
@@ -8222,6 +8223,14 @@ class FalloutIni:
         sArchives = ', '.join(archives)
         self.saveSetting('Archive','sArchiveList',sArchives)
 
+#--------------------------------------------------------------------------------
+class FalloutPrefsIni(FalloutIni):
+    """FalloutPrefs.ini file."""
+    def __init__(self):
+        """Initialize."""
+        self.path = dirs['saveBase'].join('FalloutPrefs.ini')
+        self.isCorrupted = False
+
 #------------------------------------------------------------------------------
 class PluginsFullError(BoltError):
     """Usage Error: Attempt to add a mod to plugins when plugins is full."""
@@ -8778,6 +8787,9 @@ class INIInfo(FileInfo):
     def getHeader(self):
         pass
 
+    def isPrefsIni(self):
+        return rePrefsINIExt.search(self.name.s)
+
     def getStatus(self):
         """Returns status of the ini tweak:
         20: installed (green)
@@ -8785,8 +8797,12 @@ class INIInfo(FileInfo):
         0: not installed (white)
         -10: invalid tweak file (red)."""
         path = self.getPath()
-        tweak = falloutIni.getTweakFileSettings(path)
-        settings = falloutIni.getSettings()
+        if self.isPrefsIni:
+            ini = falloutPrefsIni
+        else:
+            ini = falloutIni
+        tweak = ini.getTweakFileSettings(path)
+        settings = ini.getSettings()
         status = 20
         if len(tweak) == 0: status = -10
         for key in tweak:
@@ -8809,8 +8825,12 @@ class INIInfo(FileInfo):
         """Returns ini tweak errors as text."""
         #--Setup
         path = self.getPath()
-        tweak = falloutIni.getTweakFileSettings(path)
-        settings = falloutIni.getSettings()
+        if self.isPrefsIni:
+            ini = falloutPrefsIni
+        else:
+            ini = falloutIni
+        tweak = ini.getTweakFileSettings(path)
+        settings = ini.getSettings()
         text = ['%s:' % path.stail]
 
         if len(tweak) == 0:

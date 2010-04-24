@@ -3645,6 +3645,7 @@ class BashFrame(wx.Frame):
         self.inRefreshData = False #--Prevent recursion while refreshing.
         self.knownCorrupted = set()
         self.falloutIniCorrupted = False
+        self.falloutPrefsIniCorrupted = False
         self.incompleteInstallError = False
         #--Layout
         sizer = vSizer((notebook,1,wx.GROW))
@@ -3753,6 +3754,12 @@ class BashFrame(wx.Frame):
             self.falloutIniCorrupted = bosh.falloutIni.isCorrupted
             if self.falloutIniCorrupted:
                 message = _('Your FALLOUT.INI should begin with a section header (e.g. "[General]"), but does not. You should edit the file to correct this.')
+                balt.showWarning(self,fill(message))
+        #--Corrupt FalloutPrefs.ini
+        if self.falloutPrefsIniCorrupted != bosh.falloutPrefsIni.isCorrupted:
+            self.falloutPrefsIniCorrupted = bosh.falloutPrefsIni.isCorrupted
+            if self.falloutPrefsIniCorrupted:
+                message = _('Your FalloutPrefs.ini should begin with a section header (e.g. "[General]"), but does not. You should edit the file to correct this.')
                 balt.showWarning(self,fill(message))
         #--Any Y2038 Resets?
         if bolt.Path.mtimeResets:
@@ -4282,6 +4289,7 @@ class BashApp(wx.App):
         bosh.configHelpers = bosh.ConfigHelpers()
         bosh.configHelpers.refresh()
         bosh.falloutIni = bosh.FalloutIni()
+        bosh.falloutPrefsIni = bosh.FalloutPrefsIni()
         bosh.modInfos = bosh.ModInfos()
         bosh.modInfos.refresh(doAutoGroup=True)
         progress.Update(30,_("Initializing SaveInfos"))
@@ -7105,13 +7113,16 @@ class INI_Apply(Link):
     def Execute(self,event):
         """Handle applying INI Tweaks."""
         window = getattr(self,'gTank',None) or self.window
-        message = _("Apply an ini tweak to Fallout.ini?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
+        message = _("Apply an ini tweak to Fallout.ini/FalloutPrefs.ini?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
         if not balt.askContinue(window,message,'bash.iniTweaks.continue',_("INI Tweaks")):
             return
         dir = self.window.data.dir
         for item in self.data:
             file = dir.join(item)
-            bosh.falloutIni.applyTweakFile(file)
+            if bosh.iniInfos[item].isPrefsIni:
+                bosh.falloutPrefsIni.applyTweakFile(file)
+            else:
+                bosh.falloutIni.applyTweakFile(file)
             iniList.RefreshUI()
 #------------------------------------------------------------------------------
 class Mods_EsmsFirst(Link):
@@ -7292,6 +7303,20 @@ class Mods_FalloutIni(Link):
         menuItem = wx.MenuItem(menu,self.id,_('FALLOUT.INI...'))
         menu.AppendItem(menuItem)
         self.path = bosh.dirs['saveBase'].join('FALLOUT.INI')
+        menuItem.Enable(self.path.exists())
+
+    def Execute(self,event):
+        """Handle selection."""
+        self.path.start()
+
+#------------------------------------------------------------------------------
+class Mods_FalloutPrefsIni(Link):
+    """Open FalloutPrefs.ini."""
+    def AppendToMenu(self,menu,window,data):
+        Link.AppendToMenu(self,menu,window,data)
+        menuItem = wx.MenuItem(menu,self.id,_('FalloutPrefs.ini...'))
+        menu.AppendItem(menuItem)
+        self.path = bosh.dirs['saveBase'].join('FalloutPrefs.ini')
         menuItem.Enable(self.path.exists())
 
     def Execute(self,event):
@@ -11334,6 +11359,7 @@ def InitINILinks():
     """Initialize INI Edits tab menus."""
     #--Column Links
     INIList.mainMenu.append(Mods_FalloutIni())
+    INIList.mainMenu.append(Mods_FalloutPrefsIni())
     INIList.mainMenu.append(INI_SortValid())
 
     #--Item menu
