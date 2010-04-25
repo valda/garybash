@@ -11,12 +11,15 @@
 * Please **NEVER** post a question about Gary Bash in the topic of original Wrye Bash.
 
 == License ===================================================================
-Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license details.
+Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
-=== 13 [4/23/2010]
-* Rebase to latest Wrye Bash (https://oblivionworks.svn.sourceforge.net/svnroot/oblivionworks/Programs/Wrye Bash@284)
+=== 13 [4/25/2010]
+* Rebase to latest Wrye Bash 283
   * Many new great features were taken in. but adjusting for wasteland may be insufficient...
+* Change to green icons (thanks Sativarg!).
+* LVLG subrecord in leveled lists came to be merged.
+* Add supports ini tweak to FalloutPrefs.ini.
 
 === 12 [4/23/2010]
 * Fixed a bug that fails in startup by bash.py (thanks TheRowan!).
