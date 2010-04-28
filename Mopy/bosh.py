@@ -17856,7 +17856,7 @@ class DestructablePatcher(ImportPatcher):
     name = _("Import Destructable")
     text = _("Merges changes to destructable records.\n\nWill have to use if Destruction Environment mod is installed and active.")
     tip = text
-    autoRe = re.compile(r"^(Destruction - |FOOK2 - \[DESTRUCTION\] ).*\.es[mp]$",re.I)
+    autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = 'Destructable'
 
     #--Patch Phase ------------------------------------------------------------
@@ -17870,19 +17870,9 @@ class DestructablePatcher(ImportPatcher):
         self.classestemp = set()
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
-        for recClass in (MreActi,MreAlch,MreAmmo,MreFurn,MreMisc,MreMstt,MreProj,MreWeap):
+        for recClass in (MreActi,MreAlch,MreAmmo,MreBook,MreCont,MreCrea,MreDoor,MreFurn,MreKeym,MreMisc,MreNpc,MreWeap,MreProj,MreMstt,MreTerm):
             recAttrs_class[recClass] = ('destructable',)
-        for recClass in (MreCont,MreDoor,MreTerm):
-            recAttrs_class[recClass] = ('destructable','script',)
-        for recClass in (MreLigh,):
-            recAttrs_class[recClass] = ('script',)
-        for recClass in (MreStat,):
-            recAttrs_class[recClass] = ('model',)
-        self.longTypes = set(('ACTI','ALCH','AMMO','ARMO','BOOK','CONT','CREA','DEBR','DIAL',
-                              'DOOR','ENCH','EXPL','FACT','FLOR','FLST','FURN','INFO','INGR',
-                              'IPDS','KEYM','LIGH','MGEF','MISC','MSTT','NOTE','NPC_','PROJ',
-                              'QUST','REFR','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR',
-                              'WEAP'))
+        self.longTypes = set(('ACTI','ALCH','AMMO','ARMO','BOOK','CONT','CREA','DEBR','DIAL','DOOR','ENCH','EXPL','FACT','FLOR','FLST','FURN','INFO','INGR','IPDS','KEYM','LIGH','MGEF','MISC','MSTT','NOTE','NPC_','PROJ','QUST','REFR','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR','WEAP'))
 
     def initData(self,progress):
         """Get graphics from source files."""
