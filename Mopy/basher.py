@@ -11484,7 +11484,7 @@ def InitModLinks():
     ModList.itemMenu.append(Mod_FlipSelf())
     ModList.itemMenu.append(Mod_FlipMasters())
     ModList.itemMenu.append(Mod_RemoveWorldOrphans())
-    ModList.itemMenu.append(Mod_CleanMod())
+#    ModList.itemMenu.append(Mod_CleanMod())
     ModList.itemMenu.append(Mod_SetVersion())
     ModList.itemMenu.append(Mod_UndeleteRefs())
 #    if bosh.inisettings['showadvanced'] == 1:
