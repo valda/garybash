@@ -14970,7 +14970,7 @@ class CleanMod:
         while not ins.atEnd():
             progress(ins.tell())
             (type,size,str0,fid,uint2,uint3) = ins.unpackRecHeader()
-            copyPrev(20)
+            copyPrev(recHeaderSize)
             if type == 'GRUP':
                 if fid != 0: #--Ignore sub-groups
                     pass
@@ -14985,11 +14985,17 @@ class CleanMod:
                     if type != 'XCLL':
                         copy(size)
                     else:
-                        color,near,far,rotXY,rotZ,fade,clip = ins.unpack('=12s2f2l2f',size,'CELL.XCLL')
+                        if size == 40:
+                            color,near,far,rotXY,rotZ,fade,clip,power = ins.unpack('=12s2f2l3f',size,'CELL.XCLL')
+                        else:
+                            color,near,far,rotXY,rotZ,fade,clip = ins.unpack('=12s2f2l2f',size,'CELL.XCLL')
                         if not (near or far or clip):
                             near = 0.0001
                             fixedCells.add(fid)
-                        out.write(struct.pack('=12s2f2l2f',color,near,far,rotXY,rotZ,fade,clip))
+                        if size == 40:
+                            out.write(struct.pack('=12s2f2l3f',color,near,far,rotXY,rotZ,fade,clip,power))
+                        else:
+                            out.write(struct.pack('=12s2f2l2f',color,near,far,rotXY,rotZ,fade,clip))
             #--Non-Cells
             else:
                 copy(size)
@@ -15030,7 +15036,7 @@ class UndeleteRefs:
         while not ins.atEnd():
             progress(ins.tell())
             (type,size,flags,fid,uint2,uint3) = ins.unpackRecHeader()
-            copyPrev(20)
+            copyPrev(recHeaderSize)
             if type == 'GRUP':
                 if fid != 0: #--Ignore sub-groups
                     pass
@@ -18711,7 +18717,7 @@ class AssortedTweaker(MultiTweaker):
         #AssortedTweak_BowReach(),
         #AssortedTweak_ConsistentRings(),
         #AssortedTweak_DarnBooks(),
-        #AssortedTweak_FogFix(),
+        AssortedTweak_FogFix(),
         AssortedTweak_NoLightFlicker(),
         #AssortedTweak_PotionWeight(),
         #AssortedTweak_PotionWeightMinimum(),
