@@ -15985,7 +15985,9 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('iconPath',)
         for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat, MreMstt):
             recAttrs_class[recClass] = ('model',)
-        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreLigh, MreMisc, MreSgst, MreSlgm, MreTree):
+        for recClass in (MreLigh,):
+            recAttrs_class[recClass] = ('iconPath','model')
+        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreMisc, MreSgst, MreSlgm, MreTree):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model')
         for recClass in (MreNote,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','texture')
