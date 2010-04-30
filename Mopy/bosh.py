@@ -4458,7 +4458,7 @@ class MreWeap(MelRecord):
             'cantDrop',
             'hideBackpack',
             'embeddedWeapon',
-            'dontUse1stPersonIsAnimations',
+            'dontUse1stPersonISAnimations',
             'nonPlayable',
         ))
     _dflags2 = Flags(0L,Flags.getNames(
@@ -4470,7 +4470,7 @@ class MreWeap(MelRecord):
             'rangeFixed',
             'notUseInNormalCombat',
             'overrideDamageToWeaponMult',
-            'dontUse3rdPersonIsAnimations',
+            'dontUse3rdPersonISAnimations',
             'shortBurst',
             'RumbleAlternate',
             'longBurst',
@@ -18689,6 +18689,55 @@ class AssortedTweak_StaffWeight(MultiTweakItem):
             log('  * %s: %d' % (srcMod.s,count[srcMod]))
 
 #------------------------------------------------------------------------------
+class AssortedTweak_GunsUseISAnimation(MultiTweakItem):
+    """Set all guns to use ironsight animation."""
+
+    #--Config Phase -----------------------------------------------------------
+    def __init__(self):
+        MultiTweakItem.__init__(self,_("All Guns Use Ironsight Animation"),
+            _('Set all guns to use ironsight animation.'),
+            'GunsUseIronSight',
+            ('1.0',  '1.0'),
+            )
+
+    #--Patch Phase ------------------------------------------------------------
+    def getReadClasses(self):
+        """Returns load factory classes needed for reading."""
+        return (MreWeap,)
+
+    def getWriteClasses(self):
+        """Returns load factory classes needed for writing."""
+        return (MreWeap,)
+
+    def scanModFile(self,modFile,progress,patchFile):
+        """Scans specified mod file to extract info. May add record to patch mod,
+        but won't alter it."""
+        mapper = modFile.getLongMapper()
+        patchRecords = patchFile.WEAP
+        for record in modFile.WEAP.getActiveRecords():
+            if record.dnamFlags1.dontUse1stPersonISAnimations:
+                record = record.getTypeCopy(mapper)
+                patchRecords.setRecord(record)
+
+    def buildPatch(self,log,progress,patchFile):
+        """Edits patch file as desired. Will write to log."""
+        count = {}
+        keep = patchFile.getKeeper()
+        for record in patchFile.WEAP.records:
+            if record.dnamFlags1.dontUse1stPersonISAnimations:
+                if (record.etype == 1 or record.etype == 2) and record.dnamFlags1.hasScope == 0:
+                    name = record.full
+                    record.dnamFlags1.dontUse1stPersonISAnimations = 0
+                    keep(record.fid)
+                    srcMod = record.fid[0]
+                    count[srcMod] = count.get(srcMod,0) + 1
+        #--Log
+        log.setHeader(_('=== Use Ironsight Animation'))
+        log(_('* Guns set to use ironsight: %d') % (sum(count.values()),))
+        for srcMod in modInfos.getOrdered(count.keys()):
+            log('  * %s: %d' % (srcMod.s,count[srcMod]))
+
+#------------------------------------------------------------------------------
 class AssortedTweaker(MultiTweaker):
     """Tweaks assorted stuff. Sub-tweaks behave like patchers themselves."""
     scanOrder = 32
@@ -18696,6 +18745,7 @@ class AssortedTweaker(MultiTweaker):
     name = _('Tweak Assorted')
     text = _("Tweak various records in miscellaneous ways.")
     tweaks = sorted([
+        AssortedTweak_GunsUseISAnimation(),
         # AssortedTweak_ArmorShows(_("Armor Shows Amulets"),
         #     _("Prevents armor from hiding amulets."),
         #     'armorShowsAmulets',
