@@ -3289,7 +3289,7 @@ class MreMgef(MelRecord):
             (FID,'light',0),'projectileSpeed',(FID,'effectShader',0),(FID,'objectDisplayShader',0),
             (FID,'castingSound',0),(FID,'boltSound',0),(FID,'hitSound',0),(FID,'areaSound',0),
             ('cefEnchantment',0.0),('cefBarter',0.0),'archType','actorValue'),
-        #MelStructA('ESCE','4s','counterEffects','effect'),
+        MelStructA('ESCE','4s','counterEffects','effect'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
