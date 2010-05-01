@@ -2361,7 +2361,7 @@ class MreCell(MelRecord):
             'directionalFade','fogClip','fogPower'),
         MelBase('IMPF','footstepMaterials'), #--todo rewrite specific class.
         MelFid('LTMP','lightTemplate'),
-        MelStruct('LNAM','I',(inheritFlags,'lightInheritFlags',0L)),
+        MelOptStruct('LNAM','I',(inheritFlags,'lightInheritFlags',0L)),
         #--CS default for water is -2147483648, but by setting default here to -2147483649,
         #  we force the bashed patch to retain the value of the last mod.
         MelOptStruct('XCLW','f',('waterHeight',-2147483649)),
