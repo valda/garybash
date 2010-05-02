@@ -11774,8 +11774,9 @@ class InstallerArchive(Installer):
                     #  assume file is encoded in cp437 and that we want to decode to cp1252.
                     #--Hopefully this will mostly resolve problem with german umlauts, etc.
                     #  It won't solve problems with non-european characters though.
-                    try: file = value.decode('cp437').encode('cp1252')
-                    except: pass
+                    #try: file = value.decode('cp437').encode('cp1252')
+                    #except: pass
+                    file = value
                 elif key == 'Size': size = int(value)
                 elif key == 'Attributes': isdir = (value[0] == 'D')
                 elif key == 'CRC' and value:
@@ -11902,8 +11903,9 @@ class InstallerArchive(Installer):
                     #  assume file is encoded in cp437 and that we want to decode to cp1252.
                     #--Hopefully this will mostly resolve problem with german umlauts, etc.
                     #  It won't solve problems with non-european characters though.
-                    try: file = value.decode('cp437').encode('cp1252')
-                    except: pass
+                    #try: file = value.decode('cp437').encode('cp1252')
+                    #except: pass
+                    file = value
                 elif key == 'Attributes':
                     isdir = (value[0] == 'D')
                     text.append(('%s' % (file), isdir))
