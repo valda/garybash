@@ -101,18 +101,22 @@ Delete Items
 === balt.py, 1304
 Open
 >>>>
+開く
 
 === balt.py, 1319
 Delete
 >>>>
+削除
 
 === balt.py, 1350
 Duplicate
 >>>>
+複製
 
 === balt.py, 1359
 Duplicate as
 >>>>
+名前をつけて複製
 
 === balt.py, 1363
 Files cannot be duplicated to themselves!
@@ -3348,7 +3352,7 @@ Installer
 === basher.py, 150
 Load Order
 >>>>
-ロード順
+ロードオーダー
 
 === basher.py, 152
 MI
