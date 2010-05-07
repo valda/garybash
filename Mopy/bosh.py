@@ -9280,7 +9280,7 @@ class ModInfos(FileInfos):
         self.version_voSize = {
             '1.0':int(_("288769595")),
             '1.1':int(_("288771181")),
-            '1.4~':int(_("288771262"))}
+            '1.4':int(_("288771262"))}
         self.size_voVersion = bolt.invertDict(self.version_voSize)
         self.voCurrent = None
         self.voAvailable = set()
@@ -9897,7 +9897,7 @@ class ModInfos(FileInfos):
     #--Fallout3 1.0/1.1/1.4 Swapping -----------------------------------------------
     def getFallout3Versions(self):
         """Returns tuple of Fallout3 versions."""
-        reFallout3 = re.compile('^Fallout3(|_1.0|_1.1||_1.4).esm$')
+        reFallout3 = re.compile('^Fallout3(|_1.0|_1.1|_1.4).esm$')
         self.voAvailable.clear()
         for name,info in self.data.iteritems():
             maFallout3 = reFallout3.match(name.s)
