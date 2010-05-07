@@ -2,9 +2,9 @@
 == Credits and Contact ========================================================
 === Authors
 * **Original Code**
-  * Wrye Team: The great gurus of Oblivion modding.
+  * Wrye Team: Gurus of Oblivion modding.
 * **Porting**
-  * Valda: Hentai gentlemen in D.C.wasteland.
+  * Valda: Hentai gentleman in wasteland.
 
 === Contact
 * If you have a question/comment about Gary Bash, it's best to post it on the current RELZ topic on the Bethesda Game Studios (BGS) forums.
@@ -14,6 +14,20 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 14 [5/8/2010]
+* Bashed Patch:
+  * Destructable tag did merge only Destructable subrecord.
+  * Fixed a GraphicsPatcher import element from the MreLigh (thanks Sativarg!).
+  * AssortedTweak: ArmorPlayable did not make pipboy playable.
+  * Add tweak to set all guns to use ironsight animation.
+  * Fixed a MGEF.ESCE subrecords.
+  * Added 'IsActorTalkingThroughActivator' to conditionFunctionData (thanks Zenball!).
+  * Added 'GetWeaponHasScope'(FOSE function) to conditionFunctionData (thanks Wonder Dog!).
+* BAIN
+  * The archive that contained multibyte filename was able to be handled. (but, the multibyte character-set support isn't perfect yet.)
+* Fixed the bug that "nVidia fog fix" and "Undelete refs" destroyed esp (thanks Sativarg!).
+* Fixed a bug that fails to swaps Fallout3.esm to specified version (thanks Sativarg!).
+
 === 13 [4/25/2010]
 * Rebase to latest Wrye Bash 283
   * Many new great features were taken in. but adjusting for wasteland may be insufficient...
