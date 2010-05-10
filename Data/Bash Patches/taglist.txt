@@ -1,20 +1,22 @@
-\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 850.
+\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 915.
 \ % A Bashed Patch suggestion for the mod above.
 
 Unofficial Fallout 3 Patch.esm
 % {{BASH:Delev,Relev}}
 HairPack.esm
 % {{BASH:Hair,Eyes}}
-Project Beauty HD version.esm
+Project Beauty.esm
 % {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth}}
 FaceMe.esm
 % {{BASH:NpcFaces,Hair,Eyes}}
+Destruction.esm
+% {{BASH:Destructable,Script}}
 xCALIBR.esm
 % {{BASH:Names,Graphics,Stats}}
 FOOK2 - Main.esm
 % {{BASH:Hair,Invent,Stats,Relations}}
 FO3 Wanderers Edition - Main File.esm
-% {{BASH:Delev,Invent,Relations,Relev,Stats}}
+% {{BASH:Deflst,Delev,Invent,Relations,Relev,Stats}}
 Mart's Mutant Mod.esm
 % {{BASH:Invent,Relations,Delev}}
 Shojo Race.esm
@@ -23,9 +25,9 @@ EnhancedChildren.esm
 % {{BASH:Hair,Eyes}}
 AliciasCuteShop.esm
 % {{BASH:Stats}}
+Abbreviated Effects.esm
+% {{BASH:Names}}
 
-Project Beauty.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
 Project Beauty- Broken Steel.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
 Project Beauty- Point Lookout.esp
@@ -40,12 +42,30 @@ Shojo NPC.esp
 % {{BASH:Invent,NpcFaces}}
 Moira-EXSP.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
+BatteriesPlusV1_2.esp
+% {{BASH:Graphics}}
+Realistic icons.esp
+% {{BASH:Graphics}}
+
+FF_DestructibleRadios.esp
+% {{BASH:Destructable}}
+Destruction - Main.esp
+% {{BASH:Destructable,Script,Graphics}}
+Destruction - DLC.esp
+% {{BASH:Destructable,Script}}
 
 FOOK2 - Main.esp
 % {{BASH:Delev,Relev}}
 
+FOOK2 - [DESTRUCTION] Main.esp
+% {{BASH:Destructable,Script}}
+FOOK2 - [DESTRUCTION] DIK.esp
+% {{BASH:Destructable,Script}}
+FOOK2 - [DESTRUCTION] Mothership Zeta.esp
+% {{BASH:Destructable,Script}}
+
 FO3 Wanderers Edition - Main File.esp
-% {{BASH:Deflst,Delev,Reflst,Relev}}
+% {{BASH:Deflst,Delev,Relev}}
 FO3 Wanderers Edition - DLC Anchorage.esp
 % {{BASH:Deflst}}
 FO3 Wanderers Edition - DLC Point Lookout.esp
@@ -53,14 +73,10 @@ FO3 Wanderers Edition - DLC Point Lookout.esp
 FO3 Wanderers Edition - Optional Worn Weapons.esp
 % {{BASH:Delev,Relev}}
 
-WeaponModKits.esp
-% {{BASH:Deflst,Reflst}}
-WeaponModKits - FOOK.esp
-% {{BASH:Deflst,Reflst}}
 WeaponModKits - FWE Master Release.esp
-% {{BASH:Deflst,Reflst}}
+% {{BASH:Deflst}}
 WeaponModKits - FWE Optional Worn Weapons.esp
-% {{BASH:Deflst,Reflst}}
+% {{BASH:Delev}}
 
 WMKAA12Shotgun.esp
 % {{BASH:Graphics}}
@@ -72,8 +88,14 @@ Outcast DX.esp
 % {{BASH:Graphics}}
 Tribal_DX.esp
 % {{BASH:Deflst,Graphics}}
+BoS_FOOKedition_Armor.esp
+% {{BASH:Graphics}}
 Test-Weapon_additional armor.esp
 % {{BASH:Invent}}
+COL Enclave VER2.esp
+% {{BASH:Graphics}}
+COL Enclave Hell.esp
+% {{BASH:Graphics}}
 
 EVE.esp
 % {{BASH:Graphics,Sound}}
@@ -88,14 +110,23 @@ EVE - FWE with WeaponModKits.esp
 EVE Anchorage - FWE DLC Anchorage.esp
 % {{BASH:Graphics,Sound}}
 
+PlasmaWeaponsRedesignRebalance.esp
+% {{BASH:Graphics,Sound}}
+PlasmaRifleRedesign.esp
+% {{BASH:Graphics,Sound}}
+PlasmaRifleRedesign_A321only.esp
+% {{BASH:Graphics,Sound}}
+PlasmaRifleRedesign_standardonly.esp
+% {{BASH:Graphics,Sound}}
+PlasmaPistolRedesign.esp
+% {{BASH:Graphics,Sound}}
+
 Mart's Mutant Mod.esp
 % {{BASH:Delev}}
 Mart's Mutant Mod - UF3P.esp
 % {{BASH:Invent}}
-PB MMM HD.esp
+Mart's Mutant Mod - Project Beauty.esp
 % {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth}}
-PB MMM.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
 Mart's Mutant Mod - DLC The Pitt.esp
 % {{BASH:Delev}}
 Mart's Mutant Mod - DLC Broken Steel.esp
@@ -122,9 +153,10 @@ Mart's Mutant Mod - Natural Selection.esp
 % {{BASH:Relations,NoMerge}} and deactivate.
 Mart's Mutant Mod - Reduced Wasteland Spawns.esp
 % {{BASH:Delev,Relev}}
-
-Project Beauty- MMM Raiders.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+Mart's Mutant Mod - FOOK2.esp
+% {{BASH:Relations}}
+Mart's Mutant Mod - FOOK2 - DIK.esp
+% {{BASH:Relations}}
 Mart's Mutant Mod - FWE Master Release.esp
 % {{BASH:Invent,Relations}}
 
