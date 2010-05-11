@@ -13525,30 +13525,28 @@ class ItemStats:
         #--AMMO: (eid, weight, value, damage, speed, epoints)
         #--ARMO: (eid, weight, value, health, strength)
         #--WEAP: (eid, weight, value, health, damage, speed, reach, epoints)
-        self.type_stats = {'ALCH':{},'AMMO':{},'APPA':{},'ARMO':{},'BOOK':{},'CLOT':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'SGST':{},'SLGM':{},'WEAP':{}}
+        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'weight', 'value'),
-            'AMMO':('eid', 'speed', 'flags', 'value', 'clipRounds'),
-            'APPA':('eid', 'weight', 'value', 'quality'),
+            'AMMO':('eid', 'speed',  'value', 'clipRounds'),
             'ARMO':('eid', 'weight', 'value', 'health', 'ar'),
             'BOOK':('eid', 'weight', 'value'),
-            'CLOT':('eid', 'weight', 'value', 'enchantPoints'),
             'INGR':('eid', 'weight', 'value'),
             'KEYM':('eid', 'weight', 'value'),
             'LIGH':('eid', 'weight', 'value', 'duration'),
             'MISC':('eid', 'weight', 'value'),
-            'SGST':('eid', 'weight', 'value', 'uses'),
-            'SLGM':('eid', 'weight', 'value'),
-            'WEAP':('eid', 'weight', 'value', 'health', 'damage',
-                    'clipsize', 'minSpread', 'spread', 'baseVatsToHitChance', 'minRange', 'maxRange',
-                    'fireRate', 'overrideActionPoint', 'overrideDamageToWeaponMult', 'attackShotsPerSec',
-                    'reloadTime', 'jamTime', 'criticalDamage', 'criticalMultiplier'),
+            'WEAP':('eid', 'weight', 'value', 'health', 'damage','clipsize',
+                    'reach','ammoUse','minSpread','spread','sightFov','baseVatsToHitChance','projectileCount',
+                    'minRange','maxRange','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
+                    'rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult','attackShotsPerSec',
+                    'reloadTime','jamTime','aimArc','rambleWavelangth','limbDmgMult','sightUsage',
+                    'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax','criticalDamage','criticalMultiplier'),
             }
         self.aliases = aliases or {} #--For aliasing mod names
 
     def readFromMod(self,modInfo):
         """Reads stats from specified mod."""
-        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreAppa,MreArmo,MreBook,MreClot,MreIngr,MreKeym,MreLigh,MreMisc,MreSgst,MreSlgm,MreWeap)
+        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -13561,7 +13559,7 @@ class ItemStats:
 
     def writeToMod(self,modInfo):
         """Writes stats to specified mod."""
-        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreAppa,MreArmo,MreBook,MreClot,MreIngr,MreKeym,MreLigh,MreMisc,MreSgst,MreSlgm,MreWeap)
+        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -13580,7 +13578,7 @@ class ItemStats:
 
     def readFromText(self,textPath):
         """Reads stats from specified text file."""
-        alch, ammo, appa, armor, books, clothing, ingredients, keys, lights, misc, sigilstones, soulgems, weapons = [self.type_stats[type] for type in ('ALCH','AMMO','APPA','ARMO','BOOK','CLOT','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP')]
+        alch, ammo, armor, books, ingredients, keys, lights, misc, weapons = [self.type_stats[type] for type in ('ALCH','AMMO','ARMO','BOOK','INGR','KEYM','LIGH','MISC','WEAP')]
         aliases = self.aliases
         ins = bolt.CsvReader(textPath)
         pack,unpack = struct.pack,struct.unpack
@@ -13596,20 +13594,16 @@ class ItemStats:
                     zip((sfloat,int),fields[4:6]))
             elif type == 'AMMO':
                 ammo[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, damage, speed, enchantPoints)
-                    zip((sfloat,int,int,sfloat,int),fields[4:9]))
+                    #--(speed, value, clipRounds)
+                    zip((sfloat,int,int),fields[4:7]))
             elif type == 'ARMO':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, health, strength)
+                    #--(weight, value, health, ar)
                     zip((sfloat,int,int,int),fields[4:8]))
             elif type == 'BOOK':
                books[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, echantPoints)
-                    zip((sfloat,int,int,),fields[4:7]))
-            elif type == 'CLOT':
-                armor[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, echantPoints)
-                    zip((sfloat,int,int,),fields[4:7]))
+                    #--(weight, value)
+                    zip((sfloat,int),fields[4:6]))
             elif type == 'INGR':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
@@ -13626,18 +13620,20 @@ class ItemStats:
                 keys[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
                     zip((sfloat,int),fields[4:6]))
-            elif type == 'SGST':
-               books[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, uses)
-                    zip((sfloat,int,int,),fields[4:7]))
-            elif type == 'SLGM':
-                keys[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value)
-                    zip((sfloat,int),fields[4:6]))
             elif type == 'WEAP':
                 weapons[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, health, damage, speed, reach, epoints)
-                    zip((sfloat,int,int,int,sfloat,sfloat,int),fields[4:11]))
+                    #--(weight, value, health, damage, clipsize,
+                    #-- reach, ammoUse, minSpread, spread, sightFov, baseVatsToHitChance, projectileCount,
+                    #-- minRange, maxRange, fireRate, overrideActionPoint, rumbleLeftMotorStrength,
+                    #-- rumbleRightMotorStrength, rumbleDuration, overrideDamageToWeaponMult, attackShotsPerSec,
+                    #-- reloadTime, jamTime, aimArc, rambleWavelangth, limbDmgMult, sightUsage,
+                    #-- semiAutomaticFireDelayMin, semiAutomaticFireDelayMax, criticalDamage, criticalMultiplier)
+                    zip((sfloat,int,int,int,int,
+                         sfloat,int,sfloat,sfloat,sfloat,int,int,
+                         sfloat,sfloat,sfloat,sfloat,sfloat,
+                         sfloat,sfloat,sfloat,sfloat,
+                         sfloat,sfloat,sfloat,sfloat,sfloat,sfloat,
+                         sfloat,sfloat,int,sfloat),fields[4:35]))
         ins.close()
 
     def writeToText(self,textPath):
@@ -13654,21 +13650,17 @@ class ItemStats:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'))) + '"\n')),
             #Ammo
-            ('AMMO', bolt.csvFormat('sfiifi')+'\n',
+            ('AMMO', bolt.csvFormat('sfii')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('Damage'),_('Speed'),_('EPoints'))) + '"\n')),
+                _('Editor Id'),_('Speed'),_('Value'),_('Clip Rounds'))) + '"\n')),
             #--Armor
             ('ARMO', bolt.csvFormat('sfiii')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'))) + '"\n')),
             #Books
-            ('BOOK', bolt.csvFormat('sfii')+'\n',
+            ('BOOK', bolt.csvFormat('sfi')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('EPoints'))) + '"\n')),
-            #Clothing
-            ('CLOT', bolt.csvFormat('sfii')+'\n',
-                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('EPoints'))) + '"\n')),
+                _('Editor Id'),_('Weight'),_('Value'))) + '"\n')),
             #Ingredients
             ('INGR', bolt.csvFormat('sfi')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
@@ -13685,19 +13677,15 @@ class ItemStats:
             ('MISC', bolt.csvFormat('sfi')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'))) + '"\n')),
-            #Sigilstones
-            ('SGST', bolt.csvFormat('sfii')+'\n',
-                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('Uses'))) + '"\n')),
-            #Soulgems
-            ('SLGM', bolt.csvFormat('sfi')+'\n',
-                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'))) + '"\n')),
             #--Weapons
-            ('WEAP', bolt.csvFormat('sfiiiffi')+'\n',
+            ('WEAP', bolt.csvFormat('sfiiiififffiifffffffffffffffffif')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('Damage'),
-                _('Speed'),_('Reach'),_('EPoints'))) + '"\n')),
+                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('Damage'),_('Clip Size'),
+                _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
+                _('Min Range'), _('Max Range'), _('Fire Rate'), _('Override - Action Point'), _('Rumble - Left Motor Strength'),
+                _('rRmble - Right Motor Strength'), _('Rumble - Duration'), _('Override - Damage To Weapon Mult'), _('Attack Shots/Sec'),
+                _('Reload Time'), _('Jam Time'), _('Aim Arc'), _('Ramble - Wavelangth'), _('Limb Dmg Mult'), _('Sight Usage'),
+                _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'), _('Critical Damage'), _('Crit % Mult'))) + '"\n')),
             ):
             stats = self.type_stats[type]
             if not stats: continue
