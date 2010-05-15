@@ -2522,8 +2522,18 @@ class MreCrea(MreActor):
         (17,'noLeftArm'),
         (18,'noCombatInWater'),
         (19,'noShadow'),
-        (20,'noCorpseCheck'),
-        ))
+        (20,'noVATSMelee'),
+        (21,'allowPCDialogue'),
+        (22,'cantOpenDoors'),
+        (23,'immobile'),
+        (24,'tiltFrontBack'),
+        (25,'tiltLeftRight'),
+        (26,'noKnockDown'),
+        (27,'notPushable'),
+        (28,'allowPickpocket'),
+        (29,'isGhost'),
+        (30,'noRotatingHeadTrack'),
+        (31,'invulnerable'),))
     #--AI Service flags
     aiService = Flags(0L,Flags.getNames(
         (0,'weapons'),
@@ -3322,14 +3332,19 @@ class MreNpc(MreActor):
     _flags = Flags(0L,Flags.getNames(
         ( 0,'female'),
         ( 1,'essential'),
+        ( 2,'isChargenFacePreset'),
         ( 3,'respawn'),
         ( 4,'autoCalc'),
         ( 7,'pcLevelOffset'),
+        ( 8,'useTemplate'),
         ( 9,'noLowLevel'),
-        (13,'noRumors'),
-        (14,'summonable'),
-        (15,'noPersuasion'),
-        (20,'canCorpseCheck'),))
+        (11,'noBloodSpray'),
+        (12,'noBloodDecal'),
+        (20,'noVATSMelee'),
+        (22,'canBeAllRaces'),
+        (26,'noKnockDown'),
+        (27,'notPushable'),
+        (30,'noRotatingHeadTrack'),))
     #--AI Service flags
     aiService = Flags(0L,Flags.getNames(
         (0,'weapons'),
