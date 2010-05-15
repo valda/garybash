@@ -21038,20 +21038,20 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 if srcMod not in mod_npcsFixed: mod_npcsFixed[srcMod] = set()
                 mod_npcsFixed[srcMod].add(npc.fid)
                 keep(npc.fid)
-            raceHair = ((defaultMaleHair,defaultFemaleHair)[npc.flags.female]).get(npc.race)
-            if not npc.hair and raceHair:
-                npc.hair = random.choice(raceHair)
-                srcMod = npc.fid[0]
-                if srcMod not in mod_npcsFixed: mod_npcsFixed[srcMod] = set()
-                mod_npcsFixed[srcMod].add(npc.fid)
-                keep(npc.fid)
-            if not npc.hairLength or npc.hairLength == 0.0:
-                npc.hairLength = random.random()
-                srcMod = npc.fid[0]
-                if srcMod not in mod_npcsFixed: mod_npcsFixed[srcMod] = set()
-                keep(npc.fid)
-                if npc.fid in mod_npcsFixed[srcMod]: continue
-                mod_npcsFixed[srcMod].add(npc.fid)
+            # raceHair = ((defaultMaleHair,defaultFemaleHair)[npc.flags.female]).get(npc.race)
+            # if not npc.hair and raceHair:
+            #     npc.hair = random.choice(raceHair)
+            #     srcMod = npc.fid[0]
+            #     if srcMod not in mod_npcsFixed: mod_npcsFixed[srcMod] = set()
+            #     mod_npcsFixed[srcMod].add(npc.fid)
+            #     keep(npc.fid)
+            # if not npc.hairLength or npc.hairLength == 0.0:
+            #     npc.hairLength = random.random()
+            #     srcMod = npc.fid[0]
+            #     if srcMod not in mod_npcsFixed: mod_npcsFixed[srcMod] = set()
+            #     keep(npc.fid)
+            #     if npc.fid in mod_npcsFixed[srcMod]: continue
+            #     mod_npcsFixed[srcMod].add(npc.fid)
 
                 
         #--Done
