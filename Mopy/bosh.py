@@ -15064,7 +15064,7 @@ class UndeleteRefs:
             else:
                 if flags & 0x20 and type in ('ACHR','ACRE','REFR'):
                     flags = (flags & ~0x20) | 0x1000
-                    out.seek(-20,1)
+                    out.seek(-recHeaderSize,1)
                     out.write(struct.pack('=4s5I',type,size,flags,fid,uint2,uint3))
                     fixedRefs.add(fid)
                 copy(size)
