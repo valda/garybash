@@ -2255,12 +2255,12 @@ class MreArmo(MelRecord):
         MelStruct('BMDT','=2I',(_flags,'bipedFlags',0L),(_generalFlags,'generalFlags',0L)),
         MelModel('maleBody'),
         MelModel('maleWorld',2),
-        MelString('ICON','maleIconPath'),
-        MelString('MICO','maleIcon'),
+        MelString('ICON','maleLargeIconPath'),
+        MelString('MICO','maleSmallIconPath'),
         MelModel('femaleBody',3),
         MelModel('femaleWorld',4),
-        MelString('ICO2','femaleIconPath'),
-        MelString('MIC2','femaleIcon'),
+        MelString('ICO2','femaleLargeIconPath'),
+        MelString('MIC2','femaleSmallIconPath'),
         MelString('BMCT','ragdollConstraintTemplate'),
         MelFid('REPL','repairList'),
         MelFid('BIPL','bipedModelList'),
@@ -13630,7 +13630,7 @@ class ItemStats:
             elif type == 'LIGH':
                books[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value, duration)
-                    zip((sfloat,int,int,),fields[4:7]))
+                    zip((sfloat,int,int),fields[4:7]))
             elif type == 'MISC':
                 keys[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
@@ -13720,27 +13720,23 @@ class ItemPrices:
         #--AMMO: (eid, weight, value, damage, speed, epoints)
         #--ARMO: (eid, weight, value, health, strength)
         #--WEAP: (eid, weight, value, health, damage, speed, reach, epoints)
-        self.type_stats = {'ALCH':{},'AMMO':{},'APPA':{},'ARMO':{},'BOOK':{},'CLOT':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'SGST':{},'SLGM':{},'WEAP':{}}
+        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('value', 'eid', 'full'),
             'AMMO':('value', 'eid', 'full'),
-            'APPA':('value', 'eid', 'full'),
             'ARMO':('value', 'eid', 'full'),
             'BOOK':('value', 'eid', 'full'),
-            'CLOT':('value', 'eid', 'full'),
             'INGR':('value', 'eid', 'full'),
             'KEYM':('value', 'eid', 'full'),
             'LIGH':('value', 'eid', 'full'),
             'MISC':('value', 'eid', 'full'),
-            'SGST':('value', 'eid', 'full'),
-            'SLGM':('value', 'eid', 'full'),
             'WEAP':('value', 'eid', 'full'),
             }
         self.aliases = aliases or {} #--For aliasing mod names
 
     def readFromMod(self,modInfo):
         """Reads stats from specified mod."""
-        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreAppa,MreArmo,MreBook,MreClot,MreIngr,MreKeym,MreLigh,MreMisc,MreSgst,MreSlgm,MreWeap)
+        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -13753,7 +13749,7 @@ class ItemPrices:
 
     def writeToMod(self,modInfo):
         """Writes stats to specified mod."""
-        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreAppa,MreArmo,MreBook,MreClot,MreIngr,MreKeym,MreLigh,MreMisc,MreSgst,MreSlgm,MreWeap)
+        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -13788,20 +13784,12 @@ class ItemPrices:
             ('AMMO', bolt.csvFormat('iss')+'\n',
                 ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
                 _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
-            #--Apparatus
-            ('APPA', bolt.csvFormat('iss')+'\n',
-                ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
-                _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
             #--Armor
             ('ARMO', bolt.csvFormat('iss')+'\n',
                 ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
                 _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
             #Books
             ('BOOK', bolt.csvFormat('iss')+'\n',
-                ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
-                _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
-            #Clothing
-            ('CLOT', bolt.csvFormat('iss')+'\n',
                 ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
                 _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
             #Ingredients
@@ -13818,14 +13806,6 @@ class ItemPrices:
                 _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
             #--Misc
             ('MISC', bolt.csvFormat('iss')+'\n',
-                ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
-                _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
-            #Sigilstones
-            ('SGST', bolt.csvFormat('iss')+'\n',
-                ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
-                _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
-            #Soulgems
-            ('SLGM', bolt.csvFormat('iss')+'\n',
                 ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
                 _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
             #--Weapons
@@ -13847,21 +13827,23 @@ class CompleteItemData:
 
     def __init__(self,types=None,aliases=None):
         """Initialize."""
-        self.type_stats = {'ALCH':{},'AMMO':{},'APPA':{},'ARMO':{},'BOOK':{},'CLOT':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'SGST':{},'SLGM':{},'WEAP':{}}
+        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
-            'ALCH':('eid', 'full', 'weight', 'value', 'iconPath'),
-            'AMMO':('eid', 'full', 'weight', 'value', 'damage', 'speed', 'enchantPoints', 'iconPath'),
-            'APPA':('eid', 'full', 'weight', 'value', 'quality', 'iconPath'),
-            'ARMO':('eid', 'full', 'weight', 'value', 'health', 'strength', 'maleIconPath', 'femaleIconPath'),
-            'BOOK':('eid', 'full', 'weight', 'value', 'enchantPoints', 'iconPath'),
-            'CLOT':('eid', 'full', 'weight', 'value', 'enchantPoints', 'maleIconPath', 'femaleIconPath'),
+            'ALCH':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
+            'AMMO':('eid', 'full', 'speed',  'value', 'clipRounds', 'largeIconPath', 'smallIconPath'),
+            'ARMO':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
+            'BOOK':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
             'INGR':('eid', 'full', 'weight', 'value', 'iconPath'),
-            'KEYM':('eid', 'full', 'weight', 'value', 'iconPath'),
-            'LIGH':('eid', 'full', 'weight', 'value', 'duration', 'iconPath'),
-            'MISC':('eid', 'full', 'weight', 'value', 'iconPath'),
-            'SGST':('eid', 'full', 'weight', 'value', 'uses', 'iconPath'),
-            'SLGM':('eid', 'full', 'weight', 'value', 'iconPath'),
-            'WEAP':('eid', 'full', 'weight', 'value', 'health', 'damage', 'speed', 'reach', 'enchantPoints', 'iconPath'),
+            'KEYM':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
+            'LIGH':('eid', 'full', 'weight', 'value', 'duration','iconPath'),
+            'MISC':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
+            'WEAP':('eid', 'full', 'weight', 'value', 'health', 'damage','clipsize',
+                    'reach','ammoUse','minSpread','spread','sightFov','baseVatsToHitChance','projectileCount',
+                    'minRange','maxRange','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
+                    'rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult','attackShotsPerSec',
+                    'reloadTime','jamTime','aimArc','rambleWavelangth','limbDmgMult','sightUsage',
+                    'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax','criticalDamage','criticalMultiplier',
+                    'largeIconPath', 'smallIconPath'),
             }
         self.aliases = aliases or {} #--For aliasing mod fulls
         self.model = {}
@@ -13869,10 +13851,13 @@ class CompleteItemData:
         self.Fmodel = {}
         self.MGndmodel = {}
         self.FGndmodel = {}
+        self.ShellCasingmodel = {}
+        self.Scopemodel = {}
+        self.Gndmodel = {}
 
     def readFromMod(self,modInfo):
         """Reads stats from specified mod."""
-        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreAppa,MreArmo,MreBook,MreClot,MreIngr,MreKeym,MreLigh,MreMisc,MreSgst,MreSlgm,MreWeap)
+        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -13882,10 +13867,19 @@ class CompleteItemData:
                 longid = mapper(record.fid)
                 recordGetAttr = record.__getattribute__
                 stats[longid] = tuple(recordGetAttr(attr) for attr in attrs)
-                if type in ['ALCH','AMMO','APPA','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP']:
+                if type in ['ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC']:
                     if record.model:
                         self.model[longid] = record.model.modPath
-                elif type in ['CLOT','ARMO']:
+                elif type in ['WEAP',]:
+                    if record.model:
+                        self.model[longid] = record.model.modPath
+                    if record.shellCasingModel:
+                        self.ShellCasingmodel[longid] = record.shellCasingModel.modPath
+                    if record.scopeModel:
+                        self.Scopemodel[longid] = record.scopeModel.modPath
+                    if record.worldModel:
+                        self.Gndmodel[longid] = record.worldModel.modPath
+                elif type in ['ARMO',]:
                     if record.maleBody:
                         self.Mmodel[longid] = record.maleBody.modPath
                     if record.maleWorld:
@@ -13897,7 +13891,7 @@ class CompleteItemData:
 
     def writeToMod(self,modInfo):
         """Writes stats to specified mod."""
-        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreAppa,MreArmo,MreBook,MreClot,MreIngr,MreKeym,MreLigh,MreMisc,MreSgst,MreSlgm,MreWeap)
+        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -13916,7 +13910,7 @@ class CompleteItemData:
 
     def readFromText(self,textPath):
         """Reads stats from specified text file."""
-        alch, ammo, appa, armor, books, clothing, ingredients, keys, lights, misc, sigilstones, soulgems, weapons = [self.type_stats[type] for type in ('ALCH','AMMO','APPA','ARMO','BOOK','CLOT','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP')]
+        alch, ammo, armor, books, ingredients, keys, lights, misc, weapons = [self.type_stats[type] for type in ('ALCH','AMMO','ARMO','BOOK','INGR','KEYM','LIGH','MISC','WEAP')]
         aliases = self.aliases
         ins = bolt.CsvReader(textPath)
         pack,unpack = struct.pack,struct.unpack
@@ -13929,23 +13923,19 @@ class CompleteItemData:
             if type == 'ALCH':
                 alch[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
-                    zip((str,sfloat,int,str),fields[4:8]))
+                    zip((str,sfloat,int,str,str),fields[4:9]))
             elif type == 'AMMO':
                 ammo[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, damage, speed, enchantPoints)
-                    zip((str,sfloat,int,int,sfloat,int,str),fields[4:11]))
+                    #--(speed, value, clipRounds)
+                    zip((str,sfloat,int,int,str,str),fields[4:10]))
             elif type == 'ARMO':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, health, strength)
-                    zip((str,sfloat,int,int,int,str,str),fields[4:10]))
+                    #--(weight, value, health, ar)
+                    zip((str,sfloat,int,int,int,str,str,str,str),fields[4:13]))
             elif type == 'BOOK':
                books[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, echantPoints)
-                    zip((str,sfloat,int,int,str),fields[4:9]))
-            elif type == 'CLOT':
-                armor[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, echantPoints)
-                    zip((str,sfloat,int,int,str,str),fields[4:10]))
+                    #--(weight, value)
+                    zip((str,sfloat,int,str,str),fields[4:9]))
             elif type == 'INGR':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
@@ -13953,7 +13943,7 @@ class CompleteItemData:
             elif type == 'KEYM':
                 keys[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
-                    zip((str,sfloat,int,str),fields[4:8]))
+                    zip((str,sfloat,int,str,str),fields[4:9]))
             elif type == 'LIGH':
                books[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value, duration)
@@ -13961,19 +13951,21 @@ class CompleteItemData:
             elif type == 'MISC':
                 keys[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
-                    zip((str,sfloat,int,str),fields[4:8]))
-            elif type == 'SGST':
-               books[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, uses)
-                    zip((str,sfloat,int,int,str),fields[4:9]))
-            elif type == 'SLGM':
-                keys[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value)
-                    zip((str,sfloat,int),fields[4:8]))
+                    zip((str,sfloat,int,str,str),fields[4:9]))
             elif type == 'WEAP':
                 weapons[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, health, damage, speed, reach, epoints)
-                    zip((str,sfloat,int,int,int,sfloat,sfloat,int,str),fields[4:13]))
+                    #--(weight, value, health, damage, clipsize,
+                    #-- reach, ammoUse, minSpread, spread, sightFov, baseVatsToHitChance, projectileCount,
+                    #-- minRange, maxRange, fireRate, overrideActionPoint, rumbleLeftMotorStrength,
+                    #-- rumbleRightMotorStrength, rumbleDuration, overrideDamageToWeaponMult, attackShotsPerSec,
+                    #-- reloadTime, jamTime, aimArc, rambleWavelangth, limbDmgMult, sightUsage,
+                    #-- semiAutomaticFireDelayMin, semiAutomaticFireDelayMax, criticalDamage, criticalMultiplier)
+                    zip((str,sfloat,int,int,int,int,
+                         sfloat,int,sfloat,sfloat,sfloat,int,int,
+                         sfloat,sfloat,sfloat,sfloat,sfloat,
+                         sfloat,sfloat,sfloat,sfloat,
+                         sfloat,sfloat,sfloat,sfloat,sfloat,sfloat,
+                         sfloat,sfloat,int,sfloat,str,str),fields[4:38]))
         ins.close()
 
     def writeToText(self,textPath):
@@ -13986,58 +13978,49 @@ class CompleteItemData:
             return longids
         for type,format,header in (
             #--Alch
-            ('ALCH', bolt.csvFormat('ssfiss')+'\n',
+            ('ALCH', bolt.csvFormat('ssfisss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Icon Path'),_('Model'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #Ammo
-            ('AMMO', bolt.csvFormat('ssfiifiss')+'\n',
+            ('AMMO', bolt.csvFormat('ssfiisss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Damage'),_('Speed'),_('EPoints'),_('Icon Path'),_('Model'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Speed'),_('Value'),_('Clip Rounds'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #--Armor
-            ('ARMO', bolt.csvFormat('ssfiiissssss')+'\n',
+            ('ARMO', bolt.csvFormat('ssfiiissssssss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),
-                _('AR'),_('Male Icon Path'),_('Female Icon Path'),_('Male Model Path'),
-                _('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),
+                _('Male Large Icon Path'),_('Male Small Icon Path'),_('Female Large Icon Path'),_('Female Small Icon Path'),
+                _('Male Model Path'),_('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
             #Books
-            ('BOOK', bolt.csvFormat('ssfiiss')+'\n',
+            ('BOOK', bolt.csvFormat('ssfisss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('EPoints'),_('Icon Path'),_('Model'))) + '"\n')),
-            #Clothing
-            ('CLOT', bolt.csvFormat('ssfiissssss')+'\n',
-                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('EPoints'),
-                _('Male Icon Path'),_('Female Icon Path'),_('Male Model Path'),
-                _('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #Ingredients
             ('INGR', bolt.csvFormat('ssfiss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Icon Path'),_('Model'))) + '"\n')),
             #--Keys
-            ('KEYM', bolt.csvFormat('ssfiss')+'\n',
+            ('KEYM', bolt.csvFormat('ssfisss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Icon Path'),_('Model'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #Lights
             ('LIGH', bolt.csvFormat('ssfiiss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Duration'),_('Icon Path'),_('Model'))) + '"\n')),
             #--Misc
-            ('MISC', bolt.csvFormat('ssfiss')+'\n',
+            ('MISC', bolt.csvFormat('ssfisss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Icon Path'),_('Model'))) + '"\n')),
-            #Sigilstones
-            ('SGST', bolt.csvFormat('ssfiiss')+'\n',
-                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Uses'),_('Icon Path'),_('Model'))) + '"\n')),
-            #Soulgems
-            ('SLGM', bolt.csvFormat('ssfiss')+'\n',
-                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Icon Path'),_('Model'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #--Weapons
-            ('WEAP', bolt.csvFormat('ssfiiiffiss')+'\n',
+            ('WEAP', bolt.csvFormat('ssfiiiififffiifffffffffffffffffifssssss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('Damage'),
-                _('Speed'),_('Reach'),_('EPoints'),_('Icon Path'),_('Model'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('Damage'),_('Clip Size'),
+                _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
+                _('Min Range'), _('Max Range'), _('Fire Rate'), _('Override - Action Point'), _('Rumble - Left Motor Strength'),
+                _('rRmble - Right Motor Strength'), _('Rumble - Duration'), _('Override - Damage To Weapon Mult'), _('Attack Shots/Sec'),
+                _('Reload Time'), _('Jam Time'), _('Aim Arc'), _('Ramble - Wavelangth'), _('Limb Dmg Mult'), _('Sight Usage'),
+                _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'), _('Critical Damage'), _('Crit % Mult'),
+                _('Large Icon Path'),_('Small Icon Path'),_('Model'),_('Shell Casing Model'),_('Scope Model'),_('World Model'))) + '"\n')),
             ):
             stats = self.type_stats[type]
             if not stats: continue
@@ -14045,11 +14028,16 @@ class CompleteItemData:
             for longid in getSortedIds(stats):
                 out.write('"%s","%s","0x%06X",' % (type,longid[0].s,longid[1]))
                 tempstats = list(stats[longid])
-                if type == 'ARMO' or type == 'CLOT':
+                if type == 'ARMO':
                     tempstats.append(self.Mmodel.get(longid, 'NONE'))
                     tempstats.append(self.Fmodel.get(longid, 'NONE'))
                     tempstats.append(self.MGndmodel.get(longid, 'NONE'))
                     tempstats.append(self.FGndmodel.get(longid, 'NONE'))
+                elif type == 'WEAP':
+                    tempstats.append(self.model.get(longid, 'NONE'))
+                    tempstats.append(self.ShellCasingmodel.get(longid, 'NONE'))
+                    tempstats.append(self.Scopemodel.get(longid, 'NONE'))
+                    tempstats.append(self.Gndmodel.get(longid, 'NONE'))
                 else:
                     tempstats.append(self.model.get(longid, 'NONE'))
                 finalstats = tuple(tempstats)
@@ -16018,7 +16006,7 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreWeap,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel','animationType','gripAnimation','reloadAnimation')
         for recClass in (MreArmo, MreClot):
-            recAttrs_class[recClass] = ('maleBody','maleWorld','maleIconPath','maleIcon','femaleBody','femaleWorld','femaleIconPath','femaleIcon','flags')
+            recAttrs_class[recClass] = ('maleBody','maleWorld','maleLargeIconPath','maleSmallIconPath','femaleBody','femaleWorld','femaleLargeIconPath','femaleSmallIconPath','flags')
         for recClass in (MreCrea,):
             recAttrs_class[recClass] = ('model','bodyParts','nift_p','bodyPartData','impactDataset')
         for recClass in (MreMgef,):
