@@ -2,9 +2,9 @@
 == Credits and Contact ========================================================
 === Authors
 * **Original Code**
-  * Wrye Team: Gurus of Oblivion modding.
+  * Wrye Team: Gurus of the Oblivion modding.
 * **Porting**
-  * Valda: Hentai gentleman in wasteland.
+  * Valda: Hentai gentleman of wastes.
 
 === Contact
 * If you have a question/comment about Gary Bash, it's best to post it on the current RELZ topic on the Bethesda Game Studios (BGS) forums.
@@ -14,6 +14,27 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 15 [5/19/2010]
+* Add some GMST tweaks.
+  * Auto Aim Fix.
+  * Camera: Chase Distance.
+  * Camera: PC Death Time.
+  * Cell Respawn Time.
+  * Compass: POI Recognition.
+  * Cost Multiplier: Repair.
+  * Essential NPC Unconsciousness.
+  * Jump Higher.
+  * Player damage multiplier in VATS.
+* Fixed CSV Import/Export Stats and ItemData that threw an error (thanks Wonder Dog!).
+* Fixed "Undelete refs" again.
+* Fix a specification mismatch that assign a random hairstyle to bald NPC (thanks SpaceOden!).
+* Added TERM to the target records of Import/Export Script.
+* Added MreAvif (ActorValue Information) class.
+* Revise actor flags correctly.
+* Remove Reflst tag, it was fruitless.
+* Remove Oblivion specific files.
+* Update taglist.txt.
+
 === 14 [5/8/2010]
 * Bashed Patch:
   * Destructable tag did merge only Destructable subrecord.
