@@ -5318,7 +5318,7 @@ class MreAvif(MelRecord):
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FULL','full'),
-        MelString('DESC','descriptio'),
+        MelString('DESC','description'),
         MelString('ICON','largeIconPath'),
         MelString('MICO','smallIconPath'),
         MelString('ANAM','shortName'),
