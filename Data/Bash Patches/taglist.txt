@@ -1,4 +1,4 @@
-\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 915.
+\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 936.
 \ % A Bashed Patch suggestion for the mod above.
 
 Unofficial Fallout 3 Patch.esm
@@ -13,13 +13,17 @@ Destruction.esm
 % {{BASH:Destructable,Script}}
 xCALIBR.esm
 % {{BASH:Names,Graphics,Stats}}
+RoadWardens.esm
+% {{BASH:Actors.ACBS,Actors.AIData,Actors.AIPackages,Actors.CombatStyle,Actors.Stats,Factions,Invent,Scripts,ScriptContents}}
 FOOK2 - Main.esm
 % {{BASH:Hair,Invent,Stats,Relations}}
 FO3 Wanderers Edition - Main File.esm
-% {{BASH:Deflst,Delev,Invent,Relations,Relev,Stats}}
+% {{BASH:Actors.ACBS,Actors.Stats,Deflst,Delev,Invent,Relations,Relev,Stats}}
 Mart's Mutant Mod.esm
 % {{BASH:Invent,Relations,Delev}}
 Shojo Race.esm
+% {{BASH:Hair,Eyes}}
+XENH.esm
 % {{BASH:Hair,Eyes}}
 EnhancedChildren.esm
 % {{BASH:Hair,Eyes}}
@@ -33,6 +37,8 @@ Project Beauty- Broken Steel.esp
 Project Beauty- Point Lookout.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
 Raider preset beta.esp
+% {{BASH:NpcFaces,NoMerge}} and deactivate.
+Project Beauty HD version [Hair Fix].esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
 FaceMe.esp
 % {{BASH:NpcFaces,NoMerge}} and deactivate.
@@ -80,6 +86,7 @@ WeaponModKits - FWE Optional Worn Weapons.esp
 
 WMKAA12Shotgun.esp
 % {{BASH:Graphics}}
+
 BoS_DX.esp
 % {{BASH:Graphics}}
 WinterizedT51bDX.esp
@@ -90,12 +97,12 @@ Tribal_DX.esp
 % {{BASH:Deflst,Graphics}}
 BoS_FOOKedition_Armor.esp
 % {{BASH:Graphics}}
-Test-Weapon_additional armor.esp
-% {{BASH:Invent}}
 COL Enclave VER2.esp
 % {{BASH:Graphics}}
 COL Enclave Hell.esp
 % {{BASH:Graphics}}
+Test-Weapon_additional armor.esp
+% {{BASH:Invent}}
 
 EVE.esp
 % {{BASH:Graphics,Sound}}
@@ -110,6 +117,22 @@ EVE - FWE with WeaponModKits.esp
 EVE Anchorage - FWE DLC Anchorage.esp
 % {{BASH:Graphics,Sound}}
 
+UWWUT.esp
+% {{BASH:Graphics}}
+UWWUT - The Pitt Addon.esp
+% {{BASH:Graphics}}
+UWWUT - Broken Steel Addon.esp
+% {{BASH:Graphics}}
+UWWUT - WMK Addon.esp
+% {{BASH:Graphics}}
+UWWUT_WT.esp
+% {{BASH:Graphics,Stats}}
+UWWUT_WT - TP Addon.esp
+% {{BASH:Graphics,Stats}}
+UWWUT_WT - BS Addon.esp
+% {{BASH:Graphics,Stats}}
+UWWUT_WT - WMK Addon.esp
+% {{BASH:Graphics,Stats}}
 PlasmaWeaponsRedesignRebalance.esp
 % {{BASH:Graphics,Sound}}
 PlasmaRifleRedesign.esp
@@ -126,7 +149,7 @@ Mart's Mutant Mod.esp
 Mart's Mutant Mod - UF3P.esp
 % {{BASH:Invent}}
 Mart's Mutant Mod - Project Beauty.esp
-% {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth}}
+% {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth,NoMerge}}
 Mart's Mutant Mod - DLC The Pitt.esp
 % {{BASH:Delev}}
 Mart's Mutant Mod - DLC Broken Steel.esp
@@ -160,6 +183,9 @@ Mart's Mutant Mod - FOOK2 - DIK.esp
 Mart's Mutant Mod - FWE Master Release.esp
 % {{BASH:Invent,Relations}}
 
+MTC RealWildnessLife.esp
+% {{BASH:Relations}}
+
 FelloutWithLightingOverhual-1.0.esp
 % {{BASH:C.Light}}
 Realistic Interior Lighting.esp
@@ -176,6 +202,12 @@ Xepha's Dynamic Weather - Broken Steel.esp
 % {{BASH:C.Climate}}
 Xepha's Dynamic Weather - Point Lookout.esp
 % {{BASH:C.Climate}}
+DUIF3Extras.esp
+% {{BASH:Deflst,Delev}}
+Dog lover's mod NO ANCHORAGE.esp
+% {{BASH:Deflst,Delev}}
+MMM dog lover's mod.esp
+% {{BASH:Deflst,Delev}}
 
 HairPack_2chPlus.esp
 % {{BASH:Hair}}
@@ -185,6 +217,8 @@ HairPack_2chPlus+EYE.esp
 % {{BASH:Hair,eyes}}
 
 Shojo Race.esp
+% {{BASH:Hair,Eyes}}
+XENH.esp
 % {{BASH:Hair,Eyes}}
 [Nukomimi-San] Starter.esp
 % {{BASH:Hair,Eyes}}
