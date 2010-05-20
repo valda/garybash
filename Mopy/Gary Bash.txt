@@ -14,7 +14,7 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
-=== 15 [5/19/2010]
+=== 15 [5/20/2010]
 * Add some GMST tweaks.
   * Auto Aim Fix.
   * Camera: Chase Distance.
@@ -30,7 +30,7 @@ Gary Bash is released under Version 2 of the GNU General Public License. See enc
 * Fix a specification mismatch that assign a random hairstyle to bald NPC (thanks SpaceOden!).
 * Added TERM to the target records of Import/Export Script.
 * Added MreAvif (ActorValue Information) class.
-* Revise actor flags correctly.
+* Fixed actor flags correctly.
 * Remove Reflst tag, it was fruitless.
 * Remove Oblivion specific files.
 * Update taglist.txt.
