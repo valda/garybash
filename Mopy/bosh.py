@@ -19583,10 +19583,10 @@ class NamesTweak_Potions(MultiTweakItem):
         MultiTweakItem.__init__(self,_("Ingestibles"),
             _('Label ingestibles to sort by type. C: Chems, F: Food, S: Stimpack, A: Alcohol.'),
             'ALCH',
-            (_('F Radroach Meat'),  '%s '),
-            (_('F. Radroach Meat'), '%s. '),
-            (_('F - Radroach Meat'),'%s - '),
-            (_('(F) Radroach Meat'),'(%s) '),
+            (_('F Radroach Meat'),  '\x07\x07\x07\x07\x07%s '),
+            (_('F. Radroach Meat'), '\x07\x07\x07\x07\x07%s. '),
+            (_('F - Radroach Meat'),'\x07\x07\x07\x07\x07%s - '),
+            (_('(F) Radroach Meat'),'\x07\x07\x07\x07\x07(%s) '),
             )
 
     #--Config Phase -----------------------------------------------------------
@@ -19806,15 +19806,15 @@ class NamesTweak_Weapons(MultiTweakItem):
         MultiTweakItem.__init__(self,_("Weapons"),
             _('Label ammo and weapons to sort by type and damage.'),
             'WEAP',
-            (_('S BB Gun'),  '%s '),
-            (_('S. BB Gun'), '%s. '),
-            (_('S - BB Gun'),'%s - '),
-            (_('(S) BB Gun'),'(%s) '),
+            (_('S BB Gun'),  '\x07\x07%s '),
+            (_('S. BB Gun'), '\x07\x07%s. '),
+            (_('S - BB Gun'),'\x07\x07%s - '),
+            (_('(S) BB Gun'),'\x07\x07(%s) '),
             ('----','----'),
-            (_('S10 BB Gun'),  '%s%02d '),
-            (_('S10. BB Gun'), '%s%02d. '),
-            (_('S10 - BB Gun'),'%s%02d - '),
-            (_('(S10) BB Gun'),'(%s%02d) '),
+            (_('S10 BB Gun'),  '\x07\x07%s%02d '),
+            (_('S10. BB Gun'), '\x07\x07%s%02d. '),
+            (_('S10 - BB Gun'),'\x07\x07%s%02d - '),
+            (_('(S10) BB Gun'),'\x07\x07(%s%02d) '),
             )
 
     #--Config Phase -----------------------------------------------------------
@@ -19831,8 +19831,8 @@ class NamesTweak_Weapons(MultiTweakItem):
         """Scans specified mod file to extract info. May add record to patch mod,
         but won't alter it."""
         mapper = modFile.getLongMapper()
-        #for blockType in ('AMMO','WEAP'):
-        for blockType in ('WEAP',):
+        for blockType in ('AMMO','WEAP'):
+        #for blockType in ('WEAP',):
             modBlock = getattr(modFile,blockType)
             patchBlock = getattr(patchFile,blockType)
             id_records = patchBlock.id_records
@@ -19848,14 +19848,13 @@ class NamesTweak_Weapons(MultiTweakItem):
         showStat = '%02d' in format
         keep = patchFile.getKeeper()
         codes = getattr(patchFile,'weaponTags','BESMUTL')
-        #ammoFormat = format.replace('%02d','',1)
-        # for record in patchFile.AMMO.records:
-        #     if not record.full: continue
-        #     if record.full[0] in '+-=.()[]': continue
-        #     record.full = ammoFormat % 'A' + record.full
-        #     keep(record.fid)
-        #     srcMod = record.fid[0]
-        #     count[srcMod] = count.get(srcMod,0) + 1
+        ammoFormat = '\x07'
+        for record in patchFile.AMMO.records:
+            if not record.full: continue
+            record.full = ammoFormat + record.full
+            keep(record.fid)
+            srcMod = record.fid[0]
+            count[srcMod] = count.get(srcMod,0) + 1
         for record in patchFile.WEAP.records:
             if not record.full: continue
             if record.full[0] in '+-=.()[]': continue
@@ -19882,15 +19881,15 @@ class NamesTweaker(MultiTweaker):
     text = _("Tweak object names to show type and/or quality.")
     tweaks = sorted([
         NamesTweak_Body(_("Armor/Clothes"),_("Rename armor to sort by type."),'ARMO',
-            (_('A Naughty Nightwear'),  '%s '),
-            (_('A. Naughty Nightwear'), '%s. '),
-            (_('A - Naughty Nightwear'),'%s - '),
-            (_('(A) Naughty Nightwear'),'(%s) '),
+            (_('A Naughty Nightwear'),  '\x07\x07\x07%s '),
+            (_('A. Naughty Nightwear'), '\x07\x07\x07%s. '),
+            (_('A - Naughty Nightwear'),'\x07\x07\x07%s - '),
+            (_('(A) Naughty Nightwear'),'\x07\x07\x07(%s) '),
             ('----','----'),
-            (_('A01 Naughty Nightwear'),  '%s%02d '),
-            (_('A01. Naughty Nightwear'), '%s%02d. '),
-            (_('A01 - Naughty Nightwear'),'%s%02d - '),
-            (_('(A01) Naughty Nightwear'),'(%s%02d) '),
+            (_('A01 Naughty Nightwear'),  '\x07\x07\x07%s%02d '),
+            (_('A01. Naughty Nightwear'), '\x07\x07\x07%s%02d. '),
+            (_('A01 - Naughty Nightwear'),'\x07\x07\x07%s%02d - '),
+            (_('(A01) Naughty Nightwear'),'\x07\x07\x07(%s%02d) '),
             ),
         # NamesTweak_Body(_("Clothes"),_("Rename clothes to sort by type."),'CLOT',
         #     (_('P Grey Trowsers'),  '%s '),
