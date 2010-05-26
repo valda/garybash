@@ -1,4 +1,5 @@
 # GPL License and Copyright Notice ============================================
+# GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bolt.
 #
 #  Wrye Bolt is free software; you can redistribute it and/or
@@ -23,11 +24,12 @@
 #--Localization
 #..Handled by bolt, so import that.
 import bolt
+import bosh
 from bolt import _, GPath, deprint, delist
 from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError
 
 #--Python
-import cStringIO
+import cStringIO, cPickle
 import string
 import struct
 import sys
@@ -494,7 +496,22 @@ def showLog(parent,logText,title='',style=0,asDialog=True,fixedFont=False,icons=
 #------------------------------------------------------------------------------
 def showWryeLog(parent,logText,title='',style=0,asDialog=True,icons=None):
     """Convert logText from wtxt to html and display. Optionally, logText can be path to an html file."""
-    import wx.lib.iewin
+    try:
+        import wx.lib.iewin
+    except ImportError:
+        # Comtypes not available most likely! so do it this way:
+        import os
+        if not isinstance(logText,bolt.Path):
+            logPath = _settings.get('balt.WryeLog.temp', bolt.Path.getcwd().join('WryeLogTemp.html'))
+            cssDir = _settings.get('balt.WryeLog.cssDir', GPath(''))
+            ins = cStringIO.StringIO(logText+'\n{{CSS:wtxt_sand_small.css}}')
+            out = logPath.open('w')
+            bolt.WryeText.genHtml(ins,out,cssDir)
+            out.close()
+            logText = logPath
+        os.startfile(logText.s)
+        return
+        
     #--Sizing
     pos = _settings.get('balt.WryeLog.pos',defPos)
     size = _settings.get('balt.WryeLog.size',(400,400))
@@ -894,23 +911,156 @@ class Progress(bolt.Progress):
             self.dialog = None
 
 #------------------------------------------------------------------------------
+class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
+    """List control extended with the wxPython auto-width mixin class.
+    Also extended to support drag-and-drop.  To define custom drag-and-drop
+    functionality, you can provide callbacks for, or override the following functions:
+    OnDropFiles(self, x, y, filenames) - called when files are dropped in the list control
+    OnDropIndexes(self,indexes,newPos) - called to move the specified indexes to new starting position 'newPos'
+    dndAllow(self) - return true to allow dnd, false otherwise
+
+    OnDropFiles callback:   fnDropFiles
+    OnDropIndexes callback: fnDropIndexes
+    dndAllow callback:      fnDndAllow
+    """
+    class DropFileOrList(wx.PyDropTarget):
+        
+        def __init__(self, window, dndFiles, dndList):
+            wx.PyDropTarget.__init__(self)
+            self.window = window
+
+            self.data = wx.DataObjectComposite()
+            self.dataFile = wx.FileDataObject()                 # Accept files
+            self.dataList = wx.CustomDataObject('ListIndexes')  # Accept indexes from a list
+            if dndFiles: self.data.Add(self.dataFile)
+            if dndList : self.data.Add(self.dataList)
+            self.SetDataObject(self.data)
+
+        def OnData(self, x, y, data):
+            if self.GetData():
+                dtype = self.data.GetReceivedFormat().GetType()
+                if dtype == wx.DF_FILENAME:
+                    # File(s) were dropped
+                    self.window.OnDropFiles(x, y, self.dataFile.GetFilenames())
+                elif dtype == self.dataList.GetFormat().GetType():
+                    # ListCtrl indexes
+                    data = cPickle.loads(self.dataList.GetData())
+                    self.window._OnDropList(x, y, data)
+
+    def __init__(self, parent, id, pos=defPos, size=defSize, style=0,
+                 dndFiles=False, dndList=False, dndOnlyMoveContinuousGroup=True,
+                 fnDropFiles=None, fnDropIndexes=None, fnDndAllow=None):
+        wx.ListCtrl.__init__(self, parent, id, pos, size, style=style)
+        if dndFiles or dndList:
+            self.SetDropTarget(ListCtrl.DropFileOrList(self, dndFiles, dndList))
+            if dndList:
+                self.Bind(wx.EVT_LIST_BEGIN_DRAG, self.OnBeginDrag)
+        self.dndOnlyCont = dndOnlyMoveContinuousGroup
+        self.fnDropFiles = fnDropFiles
+        self.fnDropIndexes = fnDropIndexes
+        self.fnDndAllow = fnDndAllow
+        self.doDnD = True
+
+    def SetDnD(self, allow): self.doDnD = allow
+    
+    def OnBeginDrag(self, event):
+        if not self.dndAllow(): return
+        
+        indexes = []
+        start = stop = -1
+        for index in range(self.GetItemCount()):
+            if self.GetItemState(index, wx.LIST_STATE_SELECTED):
+                if stop >= 0 and self.dndOnlyCont:
+                    # Only allow moving selections if they are in a
+                    # continuous block...they aren't
+                    return
+                if start < 0:
+                    start = index
+                indexes.append(index)
+            else:
+                if start >=0 and stop < 0:
+                    stop = index - 1
+        if stop < 0: stop = self.GetItemCount()
+
+        selected = cPickle.dumps(indexes, 1)
+        ldata = wx.CustomDataObject('ListIndexes')
+        ldata.SetData(selected)
+
+        data = wx.DataObjectComposite()
+        data.Add(ldata)
+
+        source = wx.DropSource(self)
+        source.SetData(data)
+        source.DoDragDrop(flags=wx.Drag_DefaultMove)
+
+    def OnDropFiles(self, x, y, filenames):
+        if self.fnDropFiles:
+            self.fnDropFiles(x, y, filenames)
+            return
+        # To be implemented by sub-classes
+        raise AbstractError
+
+    def _OnDropList(self, x, y, indexes):
+        start = indexes[0]
+        stop = indexes[-1]
+
+        index, flags = self.HitTest((x, y))        
+        if index == wx.NOT_FOUND:   # Didn't drop it on an item
+            if self.GetItemCount() > 0:
+                if y <= self.GetItemRect(0).y:
+                    # Dropped it before the first item
+                    index = 0
+                elif y >= self.GetItemRect(self.GetItemCount() - 1).y:
+                    # Dropped it after the last item
+                    index = self.GetItemCount()
+                else:
+                    # Dropped it on the edge of the list, but not above or below
+                    return
+            else:
+                # Empty list
+                index = 0
+        else:
+            # Dropped on top of an item
+            target = index
+            if target >= start and target <= stop:
+                # Trying to drop it back on itself
+                return
+            elif target < start:
+                # Trying to drop it furthur up in the list
+                pass
+            elif target > stop:
+                # Trying to drop it further down the list
+                index -= 1 + (stop-start)
+
+            # If dropping on the top half of the item, insert above it,
+            # otherwise insert below it
+            rect = self.GetItemRect(target)
+            if y > rect.y + rect.height/2:
+                index += 1
+
+        # Do the moving
+        self.OnDropIndexes(indexes, index)
+
+    def OnDropIndexes(self, indexes, newPos):
+        if self.fnDropIndexes: self.fnDropIndexes(indexes, newPos)
+
+    def dndAllow(self):
+        if self.doDnD:
+            if self.fnDndAllow: return self.fnDndAllow()
+            return True
+        return False
+#------------------------------------------------------------------------------        
 class Tank(wx.Panel):
     """'Tank' format table. Takes the form of a wxListCtrl in Report mode, with
     multiple columns and (optionally) column an item menus."""
-
-    class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
-        """List control extended with the wxPython auto-width mixin class."""
-        def __init__(self, parent, id, pos=defPos, size=defSize, style=0):
-            wx.ListCtrl.__init__(self, parent, id, pos, size, style=style)
-            ListCtrlAutoWidthMixin.__init__(self)
-
     #--Class-------------------------------------------------------------------
     mainMenu = None
     itemMenu = None
 
     #--Instance ---------------------------------------------------------------
     def __init__(self,parent,data,icons=None,mainMenu=None,itemMenu=None,
-            details=None,id=-1,style=(wx.LC_REPORT | wx.LC_SINGLE_SEL)):
+            details=None,id=-1,style=(wx.LC_REPORT | wx.LC_SINGLE_SEL),
+            dndList=False,dndFiles=False,dndColumns=[]):
         wx.Panel.__init__(self,parent,id,style=wx.WANTS_CHARS)
         #--Data
         if icons == None: icons = {}
@@ -919,6 +1069,7 @@ class Tank(wx.Panel):
         self.mainMenu = mainMenu or self.__class__.mainMenu
         self.itemMenu = itemMenu or self.__class__.itemMenu
         self.details = details
+        self.dndColumns = dndColumns
         #--Item/Id mapping
         self.nextItemId = 1
         self.item_itemId = {}
@@ -928,7 +1079,9 @@ class Tank(wx.Panel):
         self.SetSizer(sizer)
         self.SetSizeHints(50,50)
         #--ListCtrl
-        self.gList = gList = Tank.ListCtrl(self, -1, style=style)
+        self.gList = gList = ListCtrl(self, -1, style=style,
+                                      dndFiles=dndFiles, dndList=dndList,
+                                      fnDndAllow=self.dndAllow, fnDropIndexes=self.OnDropIndexes)
         if self.icons:
             gList.SetImageList(icons.GetImageList(),wx.IMAGE_LIST_SMALL)
         #--State info
@@ -959,6 +1112,27 @@ class Tank(wx.Panel):
         data.setParam('vScrollPos', gList.GetScrollPos(wx.VERTICAL))
         #--Hack: Default text item background color
         self.defaultTextBackground = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW)
+
+    #--Drag and Drop-----------------------------------------------------------
+    def dndAllow(self):
+        # Only allow drag an drop when sorting by the columns specified in dndColumns
+        curColumn = self.data.defaultParam('colSort',self.data.tankColumns[0])
+        if curColumn not in self.dndColumns: return False
+        return True
+
+    def OnDropIndexes(self, indexes, newPos):
+        # See if the column is reverse sorted first
+        data = self.data
+        column = data.defaultParam('colSort',data.tankColumns[0])
+        reverse = data.defaultParam('colReverse',{}).get(column,False)
+        if reverse:
+            newPos = self.gList.GetItemCount() - newPos - 1 - (indexes[-1]-indexes[0])
+            if newPos < 0: newPos = 0
+        
+        # Move the given indexes to the new position
+        self.data.moveArchives(self.GetSelected(), newPos)
+        self.data.refresh(what='N')
+        self.RefreshUI()
 
     #--Item/Id/Index Translation ----------------------------------------------
     def GetItem(self,index):
@@ -1180,10 +1354,10 @@ class Tank(wx.Panel):
         columns = self.data.getParam('columns')
         self.SortItems(columns[event.GetColumn()],'INVERT')
 
-    def DoColumnMenu(self,event):
+    def DoColumnMenu(self,event,iColumn=None):
         """Show column menu."""
         if not self.mainMenu: return
-        iColumn = event.GetColumn()
+        if iColumn is None: iColumn = event.GetColumn()
         menu = wx.Menu()
         for item in self.mainMenu:
             item.AppendToMenu(menu,self,iColumn)
@@ -1192,9 +1366,11 @@ class Tank(wx.Panel):
 
     def DoItemMenu(self,event):
         """Show item menu."""
-        if not self.itemMenu: return
         selected = self.GetSelected()
-        if not selected: return
+        if not selected:
+            self.DoColumnMenu(event,0)
+            return
+        if not self.itemMenu: return
         menu = wx.Menu()
         for item in self.itemMenu:
             item.AppendToMenu(menu,self,selected)
@@ -1208,8 +1384,9 @@ class Tank(wx.Panel):
         if not items: return
         message = _(r'Delete these items? This operation cannot be undone.')
         message += '\n* ' + '\n* '.join([self.data.getName(x) for x in items])
-        if not askYes(self,message,_('Delete Items')): return
-        for item in items: del self.data[item]
+        if not askYes(self,message,_('Delete Items')): return False
+        for item in items:
+            del self.data[item]
         self.RefreshUI()
         self.data.setChanged()
 
@@ -1324,7 +1501,6 @@ class Tank_Delete(Link):
             self.gTank.DeleteSelected()
         finally:
             wx.EndBusyCursor()
-
 #------------------------------------------------------------------------------
 class Tank_Open(Link):
     """Open selected file(s)."""

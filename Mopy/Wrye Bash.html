@@ -27,7 +27,7 @@
 <h3><a name='QuickStart'>Quick Start</a></h3>
 <p class=list-1>&bull;&nbsp; <B><a href="#Installation">Installation</a></B>
 <p class=list-1>&bull;&nbsp; <a href="http://www.uesp.net/wiki/Tes4Mod:Wrye_Bash">How To's and FAQs</a>
-<p class=list-1>&bull;&nbsp; <a href="http://forums.bethsoft.com/index.php?/topic/1089021-relz-wrye-bash-thread-no-41/">RELZ Topic</a>
+<p class=list-1>&bull;&nbsp; <a href="http://forums.bethsoft.com/index.php?/topic/1092258-relz-wrye-bash-thread-no-42/">RELZ Topic</a>
 <p class=list-1>&bull;&nbsp; Download: 
   <p class=list-2>&bull;&nbsp; <a href="http://www.wryemusings.com/">Wrye Musings</a>
   <p class=list-2>&bull;&nbsp; <a href="http://tesnexus.com/downloads/file.php?id=22368">TesNexus</a> 
@@ -55,6 +55,7 @@
 <p class=list-2>&bull;&nbsp; <a href="#Ordering">Ordering</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#OmodConversionData">Omod Conversion Data</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#BainConversionFiles">Bain Conversion Files</a></p>
+<p class=list-2>&bull;&nbsp; <a href="#BainWizards">Bain Wizards</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#PackageCommands">Package Commands</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#PackageHeaderCommands">Package Header Commands</a></p>
 <p class=list-1>&bull;&nbsp; <a href="#ReplacersTab">Replacers Tab</a></p>
@@ -66,8 +67,6 @@
 <p class=list-1>&bull;&nbsp; <a href="#ModsTabCommands">Mods Tab Commands</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#AutoGhost">Auto-Ghost</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#LoadLists">Load Lists</a></p>
-<p class=list-2>&bull;&nbsp; <a href="#Oblivionini">Oblivion.ini</a></p>
-<p class=list-2>&bull;&nbsp; <a href="#INITweaks">INI Tweaks</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#ListMods">List Mods</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#DebugMode">Debug Mode</a></p>
 <p class=list-1>&bull;&nbsp; <a href="#ModFileCommands">Mod File Commands</a></p>
@@ -127,8 +126,9 @@
 <p class=list-2>&bull;&nbsp; <a href="#ImportSound">Import Sound</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#ImportStats">Import Stats</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#ImportSpellStats">Import Spell Stats</a></p>
+<p class=list-2>&bull;&nbsp; <a href="#ImportSpells">Import Spells</a></p>
 <p class=list-1>&bull;&nbsp; <a href="#Globals">Globals</a></p>
-<p class=list-2>&bull;&nbsp; <a href="#NPCTweaker">NPC Tweaker</a></p>
+<p class=list-2>&bull;&nbsp; <a href="#TweakActors">Tweak Actors</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#TweakAssorted">Tweak Assorted</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#TweakClothes">Tweak Clothes</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#TweakNames">Tweak Names</a></p>
@@ -152,7 +152,9 @@
 <p class=list-2>&bull;&nbsp; <a href="#OnlyOneWarnings">Only One Warnings</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#ModGroupInfo">Mod Group Info</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#ModCheckerOptions">Mod Checker Options</a></p>
-<p class=list-1>&bull;&nbsp; <a href="#INITweaksTab">INI Tweaks Tab</a></p>
+<p class=list-1>&bull;&nbsp; <a href="#INIEditsTab">INI Edits Tab</a></p>
+<p class=list-2>&bull;&nbsp; <a href="#INITweaksOptions">INI Tweaks Options</a></p>
+<p class=list-2>&bull;&nbsp; <a href="#TweakFileCommands">Tweak File Commands</a></p>
 <p class=list-1>&bull;&nbsp; <a href="#SavesTab">Saves Tab</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#SavesList">Saves List</a></p>
 <p class=list-2>&bull;&nbsp; <a href="#BackupFiles">Backup Files</a></p>
@@ -214,7 +216,7 @@
 <h2><a name='QuickTour'>Quick Tour</a></h2>
 <img src="images/WryeBash_04.png" width="686" height="527" border="0" alt="Saves Tab">
 <p class=empty>&nbsp;</p>
-<p class=list-1>&bull;&nbsp; At the top are the main tabs: <a href="#InstallersTab">Installers</a>, <a href="#ReplacersTab">Replacers</a> (if enabled but superseded by Installers Tab), <a href="#ModsTab">Mods</a>, <a href="#INITweaksTab">INI Tweaks</a> <a href="#SavesTab">Saves</a> and <a href="#ScreenshotsTab">Screenshots</a>.
+<p class=list-1>&bull;&nbsp; At the top are the main tabs: <a href="#InstallersTab">Installers</a>, <a href="#ReplacersTab">Replacers</a> (if enabled but superseded by Installers Tab), <a href="#ModsTab">Mods</a>, <a href="#INIEditsTab">INI Edits</a> <a href="#SavesTab">Saves</a> and <a href="#ScreenshotsTab">Screenshots</a>.
 <p class=list-1>&bull;&nbsp; The <B>savegame list</B> is the main feature of this Saves Tab. For each file, details are shown and general "health" of the savegame is indicated by the color of the savegame's checkbox. Purple is best &#150; totally safe to play. Red is worst &#150; meaning that one of the master mods files is missing.
 <p class=list-1>&bull;&nbsp; The file details for the currently selected savegame are shown to the right. File name, stats and savegame preview image are all shown. 
 <p class=list-1>&bull;&nbsp; The <B>masters list</B> for the savegame is shown at the bottom of the details. The masters for the savegame are just the mods (esps and esms) that the savegame depends on. 
@@ -301,7 +303,7 @@
 <p class=empty>&nbsp;</p>
 <h2><a name='Installation'>Installation</a></h2>
 <h3><a name='GetandInstall'>Get and Install</a></h3>
-<p class=list-1>&bull;&nbsp; <B>Download and run <a href="http://planetelderscrolls.gamespy.com/View.php?view=OblivionUtilities.Detail&id=44">Wrye Python</a></B>
+<p class=list-1>&bull;&nbsp; <B>Download and run Wrye Python [ <a href="http://planetelderscrolls.gamespy.com/View.php?view=OblivionUtilities.Detail&id=44">PlanetElderScrolls</a> | <a href="http://tesnexus.com/downloads/file.php?id=22368">TESNexus</a> ]</B>
   <p class=list-2>&bull;&nbsp; Select all components, then select the temporary install directory and click "Install". Upon doing so, installers for selected components will be unzipped and run in sequence. It's best to accept the default settings for each installer. 
   <p class=list-2>&bull;&nbsp; <B>Note:</B> This is not part of Wrye Bash itself &#150; rather it is a bundled installation of python and related libraries that Wrye Bash is built on top of. You should only need to install this once. For more infos, se <a href="#PythonComponents">Python Components</a>.
 <p class=list-1>&bull;&nbsp; <B>Download and Unzip <a href="http://tesnexus.com/downloads/file.php?id=22368">Wrye Bash XXX.zip</a></B> 
@@ -364,6 +366,9 @@
   <p class=list-2>&bull;&nbsp; If, when installing wxPython, you did not see the usual installation wizard dialog, then you almost certainly downloaded a corrupted version of wxPython. Re-download it. Make sure that the downloaded file is larger than a few kB (actually, it should be about 8 Mb).
 <p class=list-1>&bull;&nbsp; <B>The NTVDM CPU has encountered an illegal instruction.</B>
   <p class=list-2>&bull;&nbsp; If an error message like this pops up (very rare) the problem is with your OS installation. For some reason the Microsoft utility that handles the installation of installer files is messed up. As far as I know, the only solution is to fix (maybe reinstall) your OS (the utility is part of the Windows OS).
+<p class=list-1>&bull;&nbsp; <B>Generating comtypes</B>
+  <p class=list-2>&bull;&nbsp; The very first time you run Bash after installing ComTypes, you may get a popup with six lines similar to: <code># Generating comtypes.gen.stdole</code>
+  <p class=list-2>&bull;&nbsp; Close the popup and ignore it. It shouldn't appear again unless you reinstall ComTypes.
 <p class=list-1>&bull;&nbsp; <B>UNCommon Problems</B>
   <p class=list-2>&bull;&nbsp; If the problem is not listed above and thinking about it doesn't help, then go to the forums and post the whole bugdump. Preferably, you should post the dump in the <B><I>Relz/Help</I></B> topic (see <a href="#WryeBash">Discussion</a> link at top of page) or you can start a new topic. Be sure to mention "Wrye Bash" in the text of the post.
   <p class=list-2>&bull;&nbsp; <B><I>Hint:</I></B> Control-C does not work in the command line window, but you can still copy text from it by:
@@ -372,28 +377,44 @@
     <p class=empty>&nbsp;</p>
 <h3><a name='PythonComponents'>Python Components</a></h3>
 <p class=list-1>&bull;&nbsp; If you're having difficulty getting or installing Wrye Python or if you prefer to do things by hand, then here's some additional info on the python components it installs.
+<p class=list-1>&bull;&nbsp; There are two currently supported Python installations that you may choose between: an older "official" setup, and a newer alternative setup.
 <p class=list-1>&bull;&nbsp; <B>Components:</B>
-  <p class=list-2>&bull;&nbsp; <B>Python 2.5</B> 
-    <p class=list-3>&bull;&nbsp; This is the main install for python. It provides the base interpreter/compiler and the basic libraries. Python 2.5 is the preferred version for Wrye Bash.
-    <p class=list-3>&bull;&nbsp; Download link: <a href="http://python.org/ftp/python/2.5.2/python-2.5.2.msi">Python 2.5.2</a>
-  <p class=list-2>&bull;&nbsp; <B>wxPython 2.8.7.1 ANSI</B>  
-    <p class=list-3>&bull;&nbsp; Python supports several different GUI libraries. Wrye Bash uses wxPython. Note that it's important to get version 2.8.7.1 &#150; later versions of wxPython 2.8 are not compatible with Psyco.
-    <p class=list-3>&bull;&nbsp; Download link: <a href="http://downloads.sourceforge.net/wxpython/wxPython2.8-win32-ansi-2.8.7.1-py25.exe">wxPython 2.8.7.1 ANSI for python 2.5</a>. 
-  <p class=list-2>&bull;&nbsp; <B>pyWin32</B>
-    <p class=list-3>&bull;&nbsp; PyWin32 provices access to windows registry info on user folders, etc. Wrye Bash uses this info to locate user specific info (active plugins and save games folder).
-    <p class=list-3>&bull;&nbsp; Download link: <a href="http://sourceforge.net/projects/pywin32/files/latest">SourceForge pywin32</a>. <B>Be sure to install the version that matches the version of python you installed!</B> E.g. if you installed python 2.5, then download/install pywinXXX-py2.5.exe. 
-  <p class=list-2>&bull;&nbsp; <B>ComTypes 0.5.2</B> 
-    <p class=list-3>&bull;&nbsp; ComTypes is not strictly required, but may be used by later versions of Wrye Bash. (It's useful for copying screenshots to the desktop, etc.)
-  <p class=list-2>&bull;&nbsp; <B>PIL 1.1.6</B>
-    <p class=list-3>&bull;&nbsp; PIL (Python Imaging Library) is currently required, but may be used by later versions of Wrye Bash. (It's useful for manipulating screenshots, etc.)
-  <p class=list-2>&bull;&nbsp; <B>Psyco 1.6</B> 
-    <p class=list-3>&bull;&nbsp; <B><a href="http://psyco.sourceforge.net/">Psyco</a></B> provides a peformance boost for python programs (at the cost of using more memory). Psyco is not required by Wrye Bash, but will be used if it is present. The performance boost can be useful if you frequently rebuild the Bashed Patch.
-    <p class=list-3>&bull;&nbsp; Download link: <a href="http://downloads.sourceforge.net/psyco/psyco-1.6.win32-py25.exe?modtime=1199710841&big_mirror=0">Psyco 1.6-py25.exe</a>.
+  <p class=list-2>&bull;&nbsp; The old "official" setup:
+    <p class=list-3>&bull;&nbsp; <B>Python 2.5</B> 
+      <p class=list-4>&bull;&nbsp; This is the main install for python. It provides the base interpreter/compiler and the basic libraries. Python 2.5 is the preferred version for Wrye Bash.
+      <p class=list-4>&bull;&nbsp; Download link: <a href="http://python.org/ftp/python/2.5.2/python-2.5.2.msi">Python 2.5.2</a>
+    <p class=list-3>&bull;&nbsp; <B>wxPython 2.8.7.1 ANSI</B>  
+      <p class=list-4>&bull;&nbsp; Python supports several different GUI libraries. Wrye Bash uses wxPython. Note that it's important to get version 2.8.7.1 &#150; later versions of wxPython 2.8 are not compatible with Psyco.
+      <p class=list-4>&bull;&nbsp; Download link: <a href="http://downloads.sourceforge.net/wxpython/wxPython2.8-win32-ansi-2.8.7.1-py25.exe">wxPython 2.8.7.1 ANSI for python 2.5</a>. 
+    <p class=list-3>&bull;&nbsp; <B>pyWin32</B>
+      <p class=list-4>&bull;&nbsp; PyWin32 provices access to windows registry info on user folders, etc. Wrye Bash uses this info to locate user specific info (active plugins and save games folder).
+      <p class=list-4>&bull;&nbsp; Download link: <a href="http://sourceforge.net/projects/pywin32/files/latest">SourceForge pywin32</a>. <B>Be sure to install the version that matches the version of python you installed!</B> E.g. if you installed python 2.5, then download/install pywinXXX-py2.5.exe. 
+    <p class=list-3>&bull;&nbsp; <B>ComTypes 0.5.2</B> 
+      <p class=list-4>&bull;&nbsp; ComTypes is not strictly required, but may be used by later versions of Wrye Bash. (It's useful for copying screenshots to the desktop, etc.)
+    <p class=list-3>&bull;&nbsp; <B>PIL 1.1.6</B>
+      <p class=list-4>&bull;&nbsp; PIL (Python Imaging Library) is not currently required, but may be used by later versions of Wrye Bash. (It's useful for manipulating screenshots, etc.)
+      <p class=empty>&nbsp;</p>
+  <p class=list-2>&bull;&nbsp; The newer alternative setup:
+    <p class=list-3>&bull;&nbsp; <B>Python 2.6</B> 
+      <p class=list-4>&bull;&nbsp; This is the main install for python. It provides the base interpreter/compiler and the basic libraries. Python 2.6 is the preferred version for Wrye Bash.
+      <p class=list-4>&bull;&nbsp; Download link: <a href="http://www.python.org/ftp/python/2.6.5/python-2.6.5.msi">Python 2.6.5</a>
+    <p class=list-3>&bull;&nbsp; <B>wxPython 2.8.10.1 ANSI</B>  
+      <p class=list-4>&bull;&nbsp; Python supports several different GUI libraries. Wrye Bash uses wxPython.
+      <p class=list-4>&bull;&nbsp; Download link: <a href="http://downloads.sourceforge.net/wxpython/wxPython2.8-win32-ansi-2.8.10.1-py26.exe">wxPython 2.8.10.1 ANSI for Python 2.6</a>. 
+    <p class=list-3>&bull;&nbsp; <B>PyWin32</B>
+      <p class=list-4>&bull;&nbsp; Optional component.  PyWin32 provices access to windows registry info on user folders, etc. Wrye Bash uses this to retreive version info for BAIN Wizards.
+      <p class=list-4>&bull;&nbsp; Download link: <a href="http://sourceforge.net/project/platformdownload.php?group_id=78018">PyWin32</a>.
+    <p class=list-3>&bull;&nbsp; <B>ComTypes 0.6.2</B> 
+      <p class=list-4>&bull;&nbsp; Optional component (for the PM Archives Tab).  If not installed, the PM Archives tab will not be visible.
+      <p class=list-4>&bull;&nbsp; Download link:  <a href="http://pypi.python.org/pypi/comtypes/0.6.2">ComTypes</a>
+    <p class=list-3>&bull;&nbsp; <B>Psyco 1.6</B> 
+      <p class=list-4>&bull;&nbsp; <B><a href="http://psyco.sourceforge.net/">Psyco</a></B> provides a peformance boost for python programs (at the cost of using more memory). Psyco is not required by Wrye Bash, but will be used if it is present. The performance boost can be useful if you frequently rebuild the Bashed Patch.
+      <p class=list-4>&bull;&nbsp; Download link: <a href="http://downloads.sourceforge.net/psyco/psyco-1.6.win32-py25.exe?modtime=1199710841&big_mirror=0">Psyco 1.6-py25.exe</a>.
 <p class=list-1>&bull;&nbsp; Wrye Python Debris
   <p class=list-2>&bull;&nbsp; Wrye Python does <B><I>not</I></B> have an uninstall feature. Instead, run install for separate components. If you're uninstalling everything, then uninstall python <I>last</I>.
   <p class=list-2>&bull;&nbsp; After running Wrye Python, you'll be left with separate installer files for each of the components. You can discard or keep these as you prefer.
 <p class=list-1>&bull;&nbsp; Alternate Python Installations
-  <p class=list-2>&bull;&nbsp; Alternate python installations <I>might</I> work, however no guarantee is made. Currently (and for foreseeable future), python 2.5, wxPython 2.8.7.1, etc. are the preferred versions.
+  <p class=list-2>&bull;&nbsp; Alternate python installations <I>might</I> work, however no guarantee is made. Currently (and for the foreseeable future), python 2.5, wxPython 2.8.7.1, etc. are the preferred versions.
   <p class=empty>&nbsp;</p>
 <h2><a name='Help'>Help!</a></h2>
 <p class=list-1>&bull;&nbsp; <B>Startup Problems:</B> See <a href="#IfBashWontStart">If Bash Won't Start</a>.
@@ -465,6 +486,9 @@
   <p class=list-2>&bull;&nbsp; <a href="http://www.mediamonkey.com/">Media Monkey</a>
   <p class=list-2>&bull;&nbsp; <a href="http://notepad-plus.sourceforge.net/">Notepad++</a>
   <p class=list-2>&bull;&nbsp; <a href="http://winmerge.org/">WinMerge</a>
+  <p class=list-2>&bull;&nbsp; <a href="http://www.radgametools.com/bnkdown.htm">RAD Video Tools</a>
+  <p class=list-2>&bull;&nbsp; <a href="http://filezilla-project.org/">Filezilla</a>
+  <p class=list-2>&bull;&nbsp; <a href="http://www.egg-of-time.us/portal/index.php?option=com_content&view=article&id=1825">Egg Translator</a>
   <p class=list-2>&bull;&nbsp; <a href="http://www.logitech.com/index.cfm/434/285&cl=za">Logitech G11 Keyboard Profiler</a>
   <p class=list-2>&bull;&nbsp; 18 Custom buttons
     <p class=list-3>&bull;&nbsp; These buttons can be set to any executable (.exe), Java (.jar), or double-clickable file (as in Explorer).
@@ -535,6 +559,8 @@
   <p class=list-2>&bull;&nbsp; Orange: Indicates that the install is dirty. This will occur for packages for which the configuration has been altered (either by altering active sub-packages and esmps, or by altering the package itself). This can be repaired by running Anneal or Anneal All.
   <p class=list-2>&bull;&nbsp; Yellow: Indicates that the package has "underrides" i.e. some of its installed files <I>should</I> be overridden by higher order packages. This may happen after reordering mods that have already been installed. It can be repaired by running Anneal or Anneal All.
   <p class=list-2>&bull;&nbsp; Grey: Indicates that some files present in the package will <B><I>not</I></B> be installed. This is usually due to a complex structure that is only partially handled by Bain, but can also be due to having files that Bain refuses to install (exe's, dlls, sub-archives, etc.)
+<p class=list-1>&bull;&nbsp; <B>Markers</B>
+  <p class=list-2>&bull;&nbsp; "Dummy" packages that begin and end with "==".  These are usefull for organizing packages into groups.  ==Last== is an example of these.
   <p class=empty>&nbsp;</p>
 <h3><a name='PackageDetails'>Package Details</a></h3>
 <p>Details for the currently selected package will be show on the right. There are (currently) three fields here:
@@ -588,6 +614,7 @@
   <p class=list-2>&bull;&nbsp; All packages are moved to just before the ==Last== marker when Bain first encounteres them.
   <p class=list-2>&bull;&nbsp; Order can be changed by right clicking on a package (or group of selected packages) and selecting "Move To". Just enter the position to which the packages should be moved. If you're moving many packages at once, they'll keep their relative order, with the "oldest" moving to the specified position, and the others following after it.
   <p class=list-2>&bull;&nbsp; You can also use Ctrl-Up and Ctrl-Down to change the order of packages.  This preserves their relative load order without moving them as a block.
+  <p class=list-2>&bull;&nbsp; You can also re-order packages by dragging and dropping the package where you want in the load order.  This will only work if the list is sorted by 'Order'
 <p class=list-1>&bull;&nbsp; <B>Last</B>
   <p class=list-2>&bull;&nbsp; Last is a special marker entry that Bain automatically adds to the archive list. It corresponds to the position at which any newly encountered packages are inserted. if you want specific packages (e.g. your personal projects) to always have high order, then move them to <I>after</I> the ==Last== marker.
 <p class=list-1>&bull;&nbsp; <B>Install Order</B>
@@ -638,6 +665,18 @@
   <p class=list-2>&bull;&nbsp; Wait while Bash unpacks the source archive, rearranges the files, and packs the converted archive.
   <p class=list-2>&bull;&nbsp; Once finished, you are free to delete the original archives if you so desire.
   <p class=empty>&nbsp;</p>
+<h3><a name='BainWizards'>Bain Wizards</a></h3>
+<p>Bain Wizards allow modders to include a simple configuration script with their packages.  Wizards run on a simple scripting language similar to OBMM script, contained in a <B>wizard.txt</B> file in the package.  For more information on the wizard format, see WizardDocs.txt.  When run, the wizard will run through a series of windows to allow you to select option, then show a summary page at the end telling you which sub-packages and esps/esms will be selected.
+<p class=list-1>&bull;&nbsp; <B>Wizard Pages</B>
+  <p class=list-2>&bull;&nbsp; <B><a href="images/Versions.jpg">Version Warning Page</a>:</B> Shown when you system doesn't meet the requirements for Oblivion, OBSE, or OBGE for a package.
+  <p class=list-2>&bull;&nbsp; <B><a href="images/SelectOne.jpg">Single Selection Page</a> | <a href="images/SelectMany.jpg">Multi Selection Page</a>:</B> Allows you to select a single or many options given a prompt.  Images and detailed descriptions can be included for each option.
+  <p class=list-2>&bull;&nbsp; <B><a href="images/Cancel.jpg">Cancel Page</a>:</B> Shown if the wizard canceled installation.
+  <p class=list-2>&bull;&nbsp; <B><a href="images/Finish.jpg">Finish Page</a>:</B> Shown at the end of the wizard.  This will give a list of the sub-packages and esps/esms that will be selected once the wizard is completed.
+<p class=list-1>&bull;&nbsp; <B>Wizard Options</B>
+  <p class=list-2>&bull;&nbsp; <B>Auto-Anneal/Install:</B> If this is selected, then after a wizard is completed, the package will also be installed/annealed as appropriate.
+  <p class=list-2>&bull;&nbsp; <B>Auto Wizard:</B> When this is selected, any dialogs that are provided with default answers will automatically use these.
+<p class=list-1>&bull;&nbsp; For more information on BAIN Wizards, see the wizards <a href="wizards.html">documentation</a>.
+<p class=empty>&nbsp;</p>
 <h3><a name='PackageCommands'>Package Commands</a></h3>
 <p>The following commands are available from context menu of packages.
 <p class=list-1>&bull;&nbsp; <B>File</B>
@@ -687,7 +726,7 @@
   <p class=list-2>&bull;&nbsp; <B>Open:</B> Opens the Installers directory in Windows Explorer. 
   <p class=list-2>&bull;&nbsp; <B>Refresh Data:</B> Rescans the Data directory and all project directories. Since this operation takes a little while, this scan is ordinarily done only once per Bash session. So, if you have manually edited the directories after that one-time scan, you should run this command to update Bain to the changes.
   <p class=list-2>&bull;&nbsp; <B>Full Refresh:</B> This does a full refresh of all data files. Notably this will recalculate CRCs for all files (ordinarily CRCs are only calculated for files that seem to have changed). Running this command will likely take 5-15 minutes.
-  <p class=list-2>&bull;&nbsp; <B>INI Tweaks:</B> This brings up a list of INI tweaks that can be applied. For use after installing/uninstalling a mod that needs to tweak INI settings.
+  <p class=list-2>&bull;&nbsp; <B>Add Marker:</B> Creates a marker for organizing your packages.  The "==" will be added for you.
   <p class=list-2>&bull;&nbsp; <B>List Packages:</B> Displays list of projects and archives and copies that same list to the clipboard. Useful for posting your package order to forums for install debugging help. 
   <p class=list-2>&bull;&nbsp; <B>Anneal All:</B> This will install any missing files (for active installers) and correct all install order and reconfiguration errors.
   <p class=list-2>&bull;&nbsp; <B>Unhide:</B> Unhides hidden packages.
@@ -696,7 +735,7 @@
   <p class=list-2>&bull;&nbsp; <B>Enabled:</B> This enables/disables Bain itself. Preferred setting: Enabled (checked).
   <p class=list-2>&bull;&nbsp; <B>Show Replacers Tab:</B> If checked, will cause the Replacers tab to appear.
   <p class=list-2>&bull;&nbsp; <B>Auto-Anneal:</B> Toggles the auto-anneal process on/off. Preferred setting: enabled.
-  <p class=list-2>&bull;&nbsp; <B>Auto-Wizard:</B> Toggles whether or not to auto-install/anneal when finished with a wizard. (Available only if Wizard Instally system is active)
+  <p class=list-2>&bull;&nbsp; <B>Auto-Anneal/Install Wizard:</B> Toggles whether or not to automatically install/anneal a package when finished with its wizard. (Available only if Wizard Instally system is active)
   <p class=list-2>&bull;&nbsp; <B>Enable Wizard Install:</B> Toggles whether the Wizard Install system is active; requires PyWin so if you don't have that and try to activate this Bash will crash. (Also settable in the bash.ini)
   <p class=list-2>&bull;&nbsp; <B>Auto-Refresh Projects:</B> Toggles the auto-refreshing of projects on/off. Preferred setting: enabled.
 <p class=list-1>&bull;&nbsp; <B>Behavior</B>
@@ -705,6 +744,8 @@
   <p class=list-2>&bull;&nbsp; <B>Show Inactive Conflicts:</B> If checked, then the conflicts report will show conflicts with inactive as well as active mods. Usually only active conflicts are of interest, however sometimes its useful to review all conflicting packages.
   <p class=list-2>&bull;&nbsp; <B>Show Lower Conflicts:</B> If checked, then the conflicts report with show conflicts with lower order packages. If you're only interested in higher order conflicts, the uncheck this to remove some clutter from the report.
   <p class=list-2>&bull;&nbsp; <B>Skip Screenshots:</B> If checked, then files from a Data\Screenshots directory will be skipped.
+  <p class=list-2>&bull;&nbsp; <B>Skip Images:</B> If checked, image files will be skipped.
+  <p class=list-2>&bull;&nbsp; <B>Skip Docs:</B> If checked, document files will be skipped vice being swept to the Docs\ directory.
   <p class=list-2>&bull;&nbsp; <B>Skip DistantLOD:</B> If checked, then DistantLOD files in packages will be ignored. Useful if you're using Tes4LodGen to generate DistantLOD files.
   <p class=empty>&nbsp;</p>
 <h2><a name='ReplacersTab'>Replacers Tab</a></h2>
@@ -747,11 +788,12 @@
   <p class=list-2>&bull;&nbsp; <B><I>Pink:</I></B> A file that shares a modification date/time with another file.
     Not a problem unless they're both activated, in which case, the lines turn...
   <p class=list-2>&bull;&nbsp; <B><I>Orange:</I></B> Exclusion group violation. See <a href="#ExclusionGroups">Exclusion Groups</a> below. 
-  <p class=list-2>&bull;&nbsp; <B><I>Red:</I></B> A file that shares a modification date/time with another file &#150; with 
-    both files being activated. This should definitely be corrected! Use details view to change the modification date of one of the files by a second or more.
+  <p class=list-2>&bull;&nbsp; <B><I>Red:</I></B>
+    <p class=list-3>&bull;&nbsp; A file that shares a modification date/time with another file &#150; with both files being activated. This should definitely be corrected! Use details view to change the modification date of one of the files by a second or more.
+    <p class=list-3>&bull;&nbsp; An active file that has the 'Deactivate' tag.  The file should be deactivated to function properly.
 <p class=list-1>&bull;&nbsp; <B>Text Styles</B>
     <p class=list-3>&bull;&nbsp; <B><I><B>Slant</B>:</I></B> A file that is reccommended to be imported and deactivated (ie. has the 'Deactivate' tag).
-    <p class=list-3>&bull;&nbsp; <B><I>Normal:</I></B> Any other file.
+    <p class=list-3>&bull;&nbsp; <B>Normal:</B> Any other file.
 <p class=list-1>&bull;&nbsp; <B>Checkbox Types</B>
   <p class=list-2>&bull;&nbsp; Regular checkmark: mod is active.
   <p class=list-2>&bull;&nbsp; Plus sign (+) checkmark: mod is merged into an active <a href="#BashedPatches">Bashed Patch</a> mod.
@@ -804,6 +846,7 @@
   <p class=list-2>&bull;&nbsp; You can alphabetically sort several mods at once by selecting them and then selecting "File: Sort" from the context menu.
   <p class=list-2>&bull;&nbsp; You can move files up and down the load order with Ctrl-Up and Ctrl-Down, respectively. This also works when multiple files are selected, and preserves their relative load order.
   <p class=list-2>&bull;&nbsp; You can select multiple files and use the "Redate" command. The first mod will be moved to the specified date/time, with other mods following at one minute intervals.
+  <p class=list-2>&bull;&nbsp; You can move one or more files in a group (if sorted by 'Load Order'), and drag and drop them to rearrange the load order.
 <p class=list-1>&bull;&nbsp; <B>Maintaining Load Order</B>
   <p class=list-2>&bull;&nbsp; First, make sure that the "Lock Times" option is selected on the column header context menu.
   <p class=list-2>&bull;&nbsp; Then, after making any changes to mod files, bring the main Bash window to the foreground, and Bash will reset times as needed.
@@ -831,12 +874,6 @@
 <p class=list-1>&bull;&nbsp; <B>Save List...</B> Saves your currently activated mods to a new load list.
 <p class=list-1>&bull;&nbsp; <B>Edit Lists...</B> Allows you to delete and rename previously defined load lists.
 <p class=list-1>&bull;&nbsp; <B>[Load List]</B> Synchronizes activated mods to load list.
-<p class=empty>&nbsp;</p>
-<h3><a name='Oblivionini'>Oblivion.ini</a></h3>
-<p class=list-1>&bull;&nbsp; This opens the Oblivion.ini file in your preferred editor.
-<p class=empty>&nbsp;</p>
-<h3><a name='INITweaks'>INI Tweaks</a></h3>
-<p class=list-1>&bull;&nbsp; This feature has been deprecated and instead has a tab all to itself. (see [[#|INI Tweaks Tab]
 <p class=empty>&nbsp;</p>
 <h3><a name='ListMods'>List Mods</a></h3>
 <p class=list-1>&bull;&nbsp; Displays list of currently active mods and copies that same list to the clipboard. Useful for posting your list of mods to forums for load debugging help.
@@ -1199,8 +1236,9 @@
     <p class=list-3>&bull;&nbsp; Most components will try to automatically configure themselves, but you may still need to tweak their settings.
     <p class=list-3>&bull;&nbsp; Some components do not need to be configured (e.g., <a href="#AlchemicalCatalogs">Alchemical Catalogs</a>). 
     <p class=list-3>&bull;&nbsp; Configuration of specific components is covered below.
+    <p class=list-3>&bull;&nbsp; the Select All button (where available) will select all items and if the item has a choice (ie in Tweak Settings) will select the first one in the list. 
 <p class=list-1>&bull;&nbsp; <B>Build the Patch</B>
-  <p class=list-2>&bull;&nbsp; Once you have at least one component selected, the OK button will become enabled. Click on it to update the patch, or click Cancel quit without updating the patch mod.
+  <p class=list-2>&bull;&nbsp; Once you have at least one component selected, the OK button will become enabled. Click on it to update the patch, or click Cancel to quit without updating the patch mod.
   <p class=empty>&nbsp;</p>
 <h3><a name='PatchNotes'>Patch Notes</a></h3>
 <p class=list-1>&bull;&nbsp; <B>Load Order</B>
@@ -1228,7 +1266,7 @@
   <p class=list-2>&bull;&nbsp; Actors.AIPackages: Mod modifies Creature or NPC AI Packages list (<a href="#ImportActors">Import Actors</a>).
   <p class=list-2>&bull;&nbsp; Actors.Animations: Mod modifies Creature or NPC special Animations list (<a href="#ImportActors">Import Actors</a>).
   <p class=list-2>&bull;&nbsp; Actors.CombatStyle: Mod modifies the Creature/NPC assigned combat styles (<a href="#ImportActors">Import Actors</a>). 
-  <p class=list-2>&bull;&nbsp; Actors.DeathItems: Mod modifies Creature or NPC Death Item (<a href="#ImportActors">Import Actors</a>).
+  <p class=list-2>&bull;&nbsp; Actors.DeathItem: Mod modifies Creature or NPC Death Item (<a href="#ImportActors">Import Actors</a>).
   <p class=list-2>&bull;&nbsp; Actors.Stats: Mod modifies Creature or NPC stats (<a href="#ImportActors">Import Actors</a>).
   <p class=list-2>&bull;&nbsp; Body-F: Mod modifies female body definition (<a href="#RaceRecords">Race Records</a>).
   <p class=list-2>&bull;&nbsp; Body-M: Mod modifies male body definition (<a href="#RaceRecords">Race Records</a>).
@@ -1256,8 +1294,14 @@
   <p class=list-2>&bull;&nbsp; NoMerge: Mod should not be merged even though they're technically mergeable.
   <p class=list-2>&bull;&nbsp; NPC.Class: Mod changes the designated Classes of NPCs (<a href="#ImportActors">ImportActors</a>).
   <p class=list-2>&bull;&nbsp; NpcFaces: Mod modifies faces (<a href="#ImportNPCFaces">Import NPC Faces</a>).
+  <p class=list-2>&bull;&nbsp; R.AddSpells: mod adds racial spells. (<a href="#RaceRecords">Race Records</a>).
+  <p class=list-2>&bull;&nbsp; R.Attributes-F mod changesrace attributes for females (<a href="#RaceRecords">Race Records</a>).
+  <p class=list-2>&bull;&nbsp; R.Attributes-M: mod changes race attributes for males (<a href="#RaceRecords">Race Records</a>).
+  <p class=list-2>&bull;&nbsp; R.Description: mod changes race description(s) (<a href="#RaceRecords">Race Records</a>).
+  <p class=list-2>&bull;&nbsp; R.ChangeSpells: Mod overwrites race spells list(s) (<a href="#RaceRecords">Race Records</a>).
   <p class=list-2>&bull;&nbsp; R.Mouth: Mod changes mouth/tongue (<a href="#RaceRecords">Race Records</a>).
   <p class=list-2>&bull;&nbsp; R.Relations: Mod changes race relationships (<a href="#RaceRecords">Race Records</a>).
+  <p class=list-2>&bull;&nbsp; R.Skills: mdo changes race skill bonuses (<a href="#RaceRecords">Race Records</a>).
   <p class=list-2>&bull;&nbsp; R.Teeth: Mod changes upper/lower teeth (<a href="#RaceRecords">Race Records</a>).
   <p class=list-2>&bull;&nbsp; Relev: Mod relevels items in (<a href="#LeveledLists">Leveled Lists</a>).
   <p class=list-2>&bull;&nbsp; Scripts: Mod modifies item, npc or object scripts (<a href="#ImportScripts">Import Scripts</a>).
@@ -1327,21 +1371,21 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
 <p class=list-1>&bull;&nbsp; Allows Certain changes to actors (creatures and NPCs) to be imported from source mods. One main patcher and a couple secondary patchers.
 <p class=list-1>&bull;&nbsp; <B>Configuration</B>
   <p class=list-2>&bull;&nbsp; Source mods for the main patcher <I>must</I> contain one (or more) of the following tags:
-    <p class=list-3>&bull;&nbsp; Actors.ACBS: Mod Modifies the Creature or NPC ACBS configuration (such as fatigue, etc.).
+    <p class=list-3>&bull;&nbsp; Actors.ACBS: Mod codifies the Creature or NPC ACBS configuration (such as fatigue, etc.).
     <p class=list-3>&bull;&nbsp; Actors.AIData: Mod modifies Creature or NPC AI Data.
     <p class=list-3>&bull;&nbsp; Actors.CombatStyle: Mod modifies the Creature/NPC assigned combat styles. 
-    <p class=list-3>&bull;&nbsp; Actors.DeathItems: Mod modifies Creature or NPC Death Item.
     <p class=list-3>&bull;&nbsp; Actors.Stats: Mod modifies Creature or NPC stats.
-    <p class=list-3>&bull;&nbsp; Creatures.Blood: Mod changes the creature blood subrecords.
-    <p class=list-3>&bull;&nbsp; NPC.Class: Mod changes the designated classes of NPCs.
-  <p class=list-2>&bull;&nbsp; There are also two secondary patchers:
-    <p class=list-3>&bull;&nbsp; Actors.Animations: Mod changes the KFFZ subrecord of NPCs or Creatures.
-      <p class=list-4>&bull;&nbsp; (note: direct import rather than merge - this will hopefully be fixed next version (279))
-    <p class=list-3>&bull;&nbsp; Actors.AIPackages 
-      *(merges change likes Import Inventory) (note: some instances in which it does not import for an unknown reason - works 90% or more of the time but sometimes will skip records - hopefully will be fixed in version 280)
+    <p class=list-3>&bull;&nbsp; Creatures.Blood: Mod modifies the creature blood subrecords.
+    <p class=list-3>&bull;&nbsp; NPC.Class: Mod modifies the designated classes of NPCs.
+  <p class=list-2>&bull;&nbsp; There are also three secondary patchers:
+    <p class=list-3>&bull;&nbsp; Actors.Animations: Mod modifies the KFFZ subrecord of NPCs or Creatures.
+      <p class=list-4>&bull;&nbsp; (note: direct import rather than merge - this will hopefully be fixed next version (285))
+    <p class=list-3>&bull;&nbsp; Actors.AIPackages: Mod modifies the AIPackages lists of NPCs or creatures. 
+      *(merges change likes Import Inventory) (note: some instances in which it does not import for an unknown reason - works 90% or more of the time but sometimes will skip records - hopefully will be fixed in version 285)
+    <p class=list-3>&bull;&nbsp; Actors.DeathItems: Mod modifies Creature or NPC Death Item.
 <p class=list-1>&bull;&nbsp; <B>Usage</B>
-  <p class=list-2>&bull;&nbsp; For selected mods, each of that tags will import the related information into the Bashed Patch if necessary. 
-  <p class=list-2>&bull;&nbsp; In case two source mods modify the same Actor in the same way, then the later loading source mod will win. If they modify the same actor in different ways (e.g. one changes AIData, the other changes DeathItem), then both changes will be included in the patch. 
+  <p class=list-2>&bull;&nbsp; For selected mods, each of the tags will import the related information into the Bashed Patch if necessary. 
+  <p class=list-2>&bull;&nbsp; In cases where two source mods modify the same Actor in the same way, then the later loading source mod will win. If they modify the same actor in different ways (e.g. one changes AIData, the other changes DeathItem), then both changes will be included in the patch if properly tagged and selected. 
   <p class=empty>&nbsp;</p>
 <h3><a name='ImportCells'>Import Cells</a></h3>
 <p class=list-1>&bull;&nbsp; Allows certain changes to cell to be imported from source mods.
@@ -1395,7 +1439,7 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
   <p class=list-2>&bull;&nbsp; Handles most named objects types (except lights). Does <B><I>not</I></B> handle GMSTs, cells, landmarks or dialogs. If source mods is fully covered (no GMSTs, cells, etc.) then it does not need to be loaded after merging.
 <p class=list-1>&bull;&nbsp; <B>Guard Names</B>
   <p class=list-2>&bull;&nbsp; A names patcher file that covers guards, legion soldiers, couriers, and a few other generically named characters and creatures from both Oblivion and Oscuro's Oblivion Overhaul. 
-  <p class=list-2>&bull;&nbsp; This is based on <a href="http://planetelderscrolls.gamespy.com/View.php?view=OblivionMods.Detail&id=123">Flak's Complete Names Project</a>. However, ranks have been strongly tweaked from Flak's version and OOO names have been added.
+;  * This is based on <a href="http://planetelderscrolls.gamespy.com/View.php?view=OblivionMods.Detail&id=123">Flak's Complete Names Project</a>. However, ranks have been strongly tweaked from Flak's version and OOO names have been added.
 <p class=list-1>&bull;&nbsp; <B>Rational Names</B>
   <p class=list-2>&bull;&nbsp; A names patcher file for Rational Names is included. This includes all of the name changes of the Rational Names 2 mod (but not the GMST settings for soul gem strings). It also includes additional name changes to cover Shivering Isles, Oscuro's Oblivion Overhaul and a few more mods.
   <p class=list-2>&bull;&nbsp; Note that it is best not to edit this file directly since it is included in the Bash distribution. Instead, duplicate and edit as desired.
@@ -1490,19 +1534,34 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
   <p class=list-2>&bull;&nbsp; Source mods are automatically recognized if they have a <code>SpellStats</code> <a href="#BashTags">tag</a> in the mod description. 
   <p class=list-2>&bull;&nbsp; Source text files are automatically recognized if they are in the <code>Oblivion\Data\Bash Patches</code> directory and end with <code>Spells.csv</code>. Note that the <a href="#ExportImportSpellStats">Export/Import Spell Stats</a> command will export files in this format.
   <p class=empty>&nbsp;</p>
+<h3><a name='ImportSpells'>Import Spells</a></h3>
+<p class=list-1>&bull;&nbsp; This option will merge changes to npc, and creature spells lists from the selected mods. Only mods marked with the <code>Actors.Spells</code> or <code>spellsOnly</code> <a href="#BashTags">tag</a> will appear in the list.
+  <p class=list-2>&bull;&nbsp; Sometimes it's desirable to change only the spells of an actor. This is desirable when modifying the inventory of creatures that have been changed by overhauls &#150; especially when you can't rely on the overhauls being present. 
+  <p class=list-2>&bull;&nbsp; For a mod to override only the spells, the mod must be tagged with <code>spellsOnly</code> and must be merged into the patch (i.e. the mod must <I>not</I> be active when the patch is being built.) 
+<p class=list-1>&bull;&nbsp; <B>Notes</B>
+  <p class=list-2>&bull;&nbsp; Generally later loading source mods will dominate.
+    <p class=list-3>&bull;&nbsp; If an early source replaces a resistance with a weakness, but a later source replaces the resistance with an nurfed resistance; then the patch will have the nurfed resistance but <I>not</I> the weakness.
+    <p class=list-3>&bull;&nbsp; If a source tries to remove anything, but fails because that spell is already present or a later mod has already removed it, then none of the changes from the source will be applied.
+    <p class=empty>&nbsp;</p>
 <hr>
 <p><B>Tweakers</B> tweak records in the currently active set of mods in specified ways. All tweakers have several specific features which can be individually turned off. Features whose name ends with bracketed text (e.g., "Max Potion Weight [0.1]) can be configured by right clicking on the feature and selecting an option from the pop up menu.
-  <p class=empty>&nbsp;</p>
+    <p class=empty>&nbsp;</p>
 <h2><a name='Globals'>Globals</a></h2>
 <p class=list-1>&bull;&nbsp; Tweaks the values of globals to whatever is selected. Item ending with a "[xxx]" will allow you to choose a different value. Right click on the item and choose the preferred value from the list. Note: Any globals will only be added to the patch if there is an active mod file (including oblivion.esm) that includes one named the same (although case insensitive).
 <p class=list-1>&bull;&nbsp; <B>Crime: Force Jail:</B> The bounty value you must have to have a jail term be non-optional (ie can't pay the fine).
 <p class=list-1>&bull;&nbsp; <B>Thieves Guild: Quest Misdemeanor Penalty:</B> Sets the cost if you commit the specified misdemeanor while completing a Thieves Guild Quest
 <p class=list-1>&bull;&nbsp; <B>Timescale:</B> Oblivion's timescale.
 <p class=empty>&nbsp;</p>
-<h3><a name='NPCTweaker'>NPC Tweaker</a></h3>
-<p class=list-1>&bull;&nbsp; Changes to NPC record subrecords; such as skeleton.
+<h3><a name='TweakActors'>Tweak Actors</a></h3>
+<p class=list-1>&bull;&nbsp; Changes to NPC or Creature record subrecords; such as skeleton.
+<p class=list-1>&bull;&nbsp; <B>As Intended: Boars</B>
+  <p class=list-2>&bull;&nbsp; Adds the Bethesda Boar Resistances spells to all boars (found by the UOP team, mod this is based off of made by Tejon).
+<p class=list-1>&bull;&nbsp; <B>As Intended: Imps</B>
+  <p class=list-2>&bull;&nbsp; Adds the Bethesda Imp Resistances spells to all imps (found by the UOP team, mod this is based off of made by Tejon).
 <p class=list-1>&bull;&nbsp; <B>Mayu's Animation Overhaul Skeleton Tweaker</B>
   <p class=list-2>&bull;&nbsp; Sets NPC skeletons paths to match that required for MAO to work.
+<p class=list-1>&bull;&nbsp; <B>No Bloody Creatures</B>
+  <p class=list-2>&bull;&nbsp; Nulls the blood records of all creatures; acts like 'Mart's Monster Mod - No Blood.esp' except universal.
 <p class=list-1>&bull;&nbsp; <B>Redguard FGTS Nuller</B>
   <p class=list-2>&bull;&nbsp; Sets Redguard NPC FGTS subrecords to null; for use with Better Redguards.
 <p class=list-1>&bull;&nbsp; <B>Vanilla Beast Skelton Tweaker</B>
@@ -1568,6 +1627,7 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
 <h3><a name='TweakSettings'>Tweak Settings</a></h3>
 <p class=list-1>&bull;&nbsp; <B>Overview</B>
 <p class=list-1>&nbsp;&nbsp; Allows you to tweak game behavior in miscellaneous ways. Item ending with a "[xxx]" will allow you to choose a different value. Right click on the item and choose the preferred value from the list.
+<p class=list-1>&bull;&nbsp; <B>AI: Max Active Actors:</B> The maximum number of actors for AI to be processing at once - must be higher than <B>Combat: Max Actors:</B>.
 <p class=list-1>&bull;&nbsp; <B>Arrow: Litter Count/Time:</B> Shot arrows will be automatically removed from the world after a certain period (Arrow Litter Time) or if their number exceeds the Arrow Litter Count.
 <p class=list-1>&bull;&nbsp; <B>Arrow: Recovery from Actor:</B> Your chance of recovering an arrow shot into an actor (including arrows shot into player). 
 <p class=list-1>&bull;&nbsp; <B>Arrow Speed:</B> Speed at which a full power arrow travels.
@@ -1597,6 +1657,7 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
 <p class=list-1>&bull;&nbsp; <B>Magic: Chameleon Refraction:</B> Turns off the refraction effect for chameleon, but leaves the incremental transparency effect on. (Transparency won't be very obvious until PC/NPC is at higher levels of Chameleon.)
 <p class=list-1>&bull;&nbsp; <B>Master of Mercantile Extra Gold Amount:</B> The extra barter gold all vendor's have for a master of mercantile.
 <p class=list-1>&bull;&nbsp; <B>Msg: Equip Misc. Item:</B> sets the message on equiping a misc item to blank or either "." or "Hmm..."
+<p class=list-1>&bull;&nbsp; <B>UOP Vampire Aging and Face Fix.esp:</B> Duplicate of UOP component that disables vampire aging (fixes a bug). Use instead of 'UOP Vampire Aging & Face Fix.esp' to save an esp slot.
 <p class=empty>&nbsp;</p>
 <hr>
 <p><B>Special</B> patch components don't fit into the categories above. Two of them (<a href="#AlchemicalCatalogs">Alchemical Catalogs</a> and <a href="#PowerExhaustion">Power Exhaustion</a>) are for use with specific mods. The remaining component, <a href="#LeveledLists">Leveled Lists</a>, is for general use.
@@ -1659,12 +1720,18 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
     <p class=list-3>&bull;&nbsp; Body-F: If specifying female body textures, height, or weight.
     <p class=list-3>&bull;&nbsp; Eyes: If mod contributes eyes.
     <p class=list-3>&bull;&nbsp; Hair: If contributing hair.
+    <p class=list-3>&bull;&nbsp; R.AddSpells: if adding racial spells.
+    <p class=list-3>&bull;&nbsp; R.Attributes-F if specifying race attributes for females.
+    <p class=list-3>&bull;&nbsp; R.Attributes-M: if specifying race attributes for males.
+    <p class=list-3>&bull;&nbsp; R.Description: if specifying race description(s).
+    <p class=list-3>&bull;&nbsp; R.ChangeSpells: if totally overwriting race spells list(s).
     <p class=list-3>&bull;&nbsp; R.Mouth: If specifying/changing mouth/tongue. (See <a href="http://www.tesnexus.com/downloads/file.php?id=10674">Merged Mouth</a>.)
     <p class=list-3>&bull;&nbsp; R.Relations: If specifying race relations.
+    <p class=list-3>&bull;&nbsp; R.Skills: if specifying race skill bonuses (<a href="#RaceRecords">Race Records</a>).
     <p class=list-3>&bull;&nbsp; R.Teeth: If specifying/changing upper/lower teeth. (See <a href="http://www.tesnexus.com/downloads/file.php?id=10674">Merged Teeth</a>.)
     <p class=list-3>&bull;&nbsp; Voice-M: If specifying male voice.
     <p class=list-3>&bull;&nbsp; Voice-F: If specifying female voice.
-  <p class=list-2>&nbsp;&nbsp; E.g., for Beautiful People, the tag should be {{BASH:Hair,Eyes}}.
+    <p class=list-3>&nbsp;&nbsp; E.g., for Beautiful People, the tag should be {{BASH:Hair,Eyes}}.
 <p class=list-1>&bull;&nbsp; Merge Procedure
   <p class=list-2>&bull;&nbsp; Body: The last mod tagged with Body-M (Body-F) will win for males (females). Note that "body" includes: body texture, height and weight &#150; i.e. the winning mod (for a given gender) will determine all of these factors (for that gender).
   <p class=list-2>&bull;&nbsp; Hair: All hairs will be merged into final record.
@@ -1764,21 +1831,41 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
 <p class=list-1>&bull;&nbsp; <B>Copy Text:</B> Copies text of report to clipboard. (Useful for forum postings.)
 <p class=list-1>&bull;&nbsp; <B>Update:</B> The report will usually auto-regenerate (if necessary) when you raise the Mod Checker window. But if it doesn't you can force it to regenerate with this button.
 <p class=empty>&nbsp;</p>
-<h2><a name='INITweaksTab'>INI Tweaks Tab</a></h2>
-<p class=list-1>&bull;&nbsp; This feature allows you to quickly modify Oblivion.ini by copying settings from an Ini Tweak file. Ini tweak files are just like Oblivion.ini, except they contain <I>only</I> the section/key settings that are to be changed.
+<h2><a name='INIEditsTab'>INI Edits Tab</a></h2>
+<img src="images/ini-oblivion.png" border="1" alt="INI Edits Tab">
+<img src="images/ini-all natural.png" border="1" alt="INI Edits Tab">
+<p class=list-1>&bull;&nbsp; This feature allows you to quickly modify an Ini file (such as Oblivion.ini) by copying settings from an Ini Tweak file. Ini tweak files are just like Oblivion.ini, except they contain <I>only</I> the section/key settings that are to be changed.
+<p class=list-1>&bull;&nbsp; Tweaks can also be applied to Ini files that contain scripts to configure mods.  These Ini tweak files are just like the script you're trying to tweak, except the contain <I>only</I> the settings that are to be changed.  Wrye Bash can modify any <B>set</B> or <B>setGS</B> commands in these script files.
 <p class=list-1>&bull;&nbsp; <B><I>Warning:</I></B> Incorrect Oblivion.ini settings can cause general weirdness, CTDs or even damage to your computer! (Or so I've heard.) Advanced graphics settings in particular tend to be card/computer specific and should not be casually copied from one computer to another. 
 <p class=list-1>&bull;&nbsp; <B><I>Note:</I></B> The background load section of the ini file changed with the introduction of Patch 1.2. It would probably be a bad thing to apply pre 1.2 background settings to a 1.2 configuration and vice versa.
 <p class=list-1>&bull;&nbsp; <B>Checkbox Colors</B> 
-  <img src="images/checkbox_green_on.png" width="16" height="16" border="0" alt="Green">
-  <img src="images/checkbox_orange_on.png" width="16" height="16" border="0" alt="Orange">
-    <p class=list-3>&bull;&nbsp; Checkbox colors indicate the status of the ini tweak
-  <p class=list-2>&bull;&nbsp; Orange: Invalid; some or all variables set in the INI do not exist in Oblivion.ini
-  <p class=list-2>&bull;&nbsp; Green: Valid; all values exist in the oblivion.ini. But not 'Active' - as in not all changes in the tweak are applied.
-  <p class=list-2>&bull;&nbsp; Green with Check: Valid and Active.
-  <p class=empty>&nbsp;</p>
+  <img src="images/checkbox_green_on.png" width="16" height="16" border="0" alt="Green with Check">
+  <img src="images/checkbox_green_imp.png" width="16" height="16" border="0" alt="Green with Dot">
+  <img src="images/checkbox_yellow_imp.png" width="16" height="16" border="0" alt="Yellow with Dot">
+  <img src="images/checkbox_green_off.png" width="16" height="16" border="0" alt="Green">
+  <img src="images/checkbox_orange_off.png" width="16" height="16" border="0" alt="Orange">
+  <p class=list-2>&bull;&nbsp; Checkbox colors indicate the status of the ini tweak
+    <p class=list-3>&bull;&nbsp; Orange: Invalid; some or all variables set in the INI do not exist in the selected Ini file.
+    <p class=list-3>&bull;&nbsp; Green: Valid; all values exist in the target Ini, but none of the settings are the same as in the tweak file
+    <p class=list-3>&bull;&nbsp; Yellow with Dot: Valid, some of the settings in target Ini are the same, but some are not.
+    <p class=list-3>&bull;&nbsp; Green with Dot: Valid, some of the settings in target Ini are the same, but some are not.  The ones that are not, ARE the same as another tweak file from the same installer.
+    <p class=list-3>&bull;&nbsp; Green with Check: Valid and Active.
+    <p class=empty>&nbsp;</p>
+<h3><a name='INITweaksOptions'>INI Tweaks Options</a></h3>
+<p class=list-1>&bull;&nbsp; The drop down selection box chooses your target Ini file for applying the tweaks to.
+<p class=list-1>&bull;&nbsp; <B>Remove</B>: Removes the target Ini from the drop down selection box.
+<p class=list-1>&bull;&nbsp; <B>Edit</B>: Opens the target Ini file for editing. 
+<p class=list-1>&bull;&nbsp; <B>Valid Tweaks First:</B> If checked, invalid tweaks will be sorted to the bottom.
+<p class=empty>&nbsp;</p>
+<h3><a name='TweakFileCommands'>Tweak File Commands</a></h3>
+<p class=list-1>&bull;&nbsp; <B>Apply:</B> Applies the INI Tweak to Ovlivion.ini
+<p class=list-1>&bull;&nbsp; <B>List Errors:</B> If the tweak is invalid, this will show you which entries in the tweak don't exist in Oblivion.ini
+<p class=list-1>&bull;&nbsp; <B>Open:</B> Open the tweak file for editing.
+<p class=list-1>&bull;&nbsp; <B>Delete:</B> Delete the tweak file.
+<p class=empty>&nbsp;</p>
 <h2><a name='SavesTab'>Saves Tab</a></h2>
 <img src="images/WryeBash_04.png" width="686" height="527" border="0" alt="Saves Tab">
-  <p class=empty>&nbsp;</p>
+<p class=empty>&nbsp;</p>
 <h3><a name='SavesList'>Saves List</a></h3>
 <p class=list-1>&bull;&nbsp; <B>Checkbox Colors</B> 
   <img src="images/checkbox_purple_on.png" width="16" height="16" border="0" alt="Purple">
@@ -2009,7 +2096,7 @@ Bob's Mod with a very, very long name.esp >> Bob's Mod.esp</pre>
 <h3><a name='ScreenshotCommands'>Screenshot Commands</a></h3>
 <p>Right click on a screenshot to see these:
 <p class=list-1>&bull;&nbsp; <B>Delete:</B> Deletes selected files.
-<p class=list-1>&bull;&nbsp; <B>Convert to jpg:</B> Converts selected files to jpg format.
+<p class=list-1>&bull;&nbsp; <B>Convert:</B> Converts selected files to one of the following formats: JPG, PNG, BMP, TIF
   <p class=list-2>&bull;&nbsp; If file by name new name already exists, then conversion will be skipped (for that file).
 <p class=list-1>&bull;&nbsp; <B>Rename:</B> Renames selected files according to format. 
   <p class=list-2>&bull;&nbsp; If multiple files are selected, they'll be numbered sequentially after the first.
@@ -2149,6 +2236,63 @@ DELETE PROFILE %s AND THE %d SAVE FILES IT CONTAINS?
 <h2><a name='Versions'>Versions</a></h2>
 <p><B><I>All versions by Wrye unless otherwise noted.</I></B>
   <p class=empty>&nbsp;</p>
+<h3><a name='28424052010LojackMetallicowPacificMorrowindThreeDValda68kWaruddar'>284 [24/05/2010] [Lojack,Metallicow,PacificMorrowind,ThreeD,Valda68k,Waruddar]</a></h3>
+<p class=list-1>&bull;&nbsp; Incorrect italicization fixed.
+<p class=list-1>&bull;&nbsp; BashIni changes:
+  <p class=list-2>&bull;&nbsp; text colours for mergeable/'No-Merge' tagged/non-mergeable/esm mods settable.
+<p class=list-1>&bull;&nbsp; Active mods with the 'Deactivate' tag will be highlighted in red.
+<p class=list-1>&bull;&nbsp; Bashed Patch changes:
+  <p class=list-2>&bull;&nbsp; Actors.DeathItems moved (back) to seperate patcher for better Warcry & FCOM ease of use (and similar issues). (with fixes in the full release - reported by baphometal)
+  <p class=list-2>&bull;&nbsp; New Patcher: Import Spells - Actors.Spells and spellsOnly tags added for it, basically invent for spells.
+  <p class=list-2>&bull;&nbsp; RacePatcher changes:
+    <p class=list-3>&bull;&nbsp; Left eye import fix (contributed by Valda68k)
+    <p class=list-3>&bull;&nbsp; R.Ears tag added; imports ears
+    <p class=list-3>&bull;&nbsp; R.Attributes-F tag added; imports race attributes for females
+    <p class=list-3>&bull;&nbsp; R.Attributes-M tag added; imports race attributes for males
+    <p class=list-3>&bull;&nbsp; R.Skills tag added; imports race skill bonuses
+    <p class=list-3>&bull;&nbsp; R.Description tag added; imports race description
+    <p class=list-3>&bull;&nbsp; R.AddSpells tag added; imports race spells additions.
+    <p class=list-3>&bull;&nbsp; R.ChangeSpells tag added; imports race spell as totally new list.
+    <p class=list-3>&bull;&nbsp; R.Head added; imports race head record.
+    <p class=list-3>&bull;&nbsp; NPC Hairlength will also be randomized when random hair/eyes are assigned (and even if both of those are pre-set) <B>if</B> hair length is 0.0 or None.
+    <p class=list-3>&bull;&nbsp; another not insignificant optimization.
+  <p class=list-2>&bull;&nbsp; Merge dialogue no longer shows mergeable mods that load after the patch (those are not and have never been merged anyways)
+  <p class=list-2>&bull;&nbsp; Warning about delinquent/missing masters on rebuild doesn't warn for such errors for the patch itself (since presumably you are rebuilding the patch since you've changed your LO intentionally)
+  <p class=list-2>&bull;&nbsp; New warnings about NoMerge/Deactivate tagged mods being active at rebuild time (they shouldn't be).
+  <p class=list-2>&bull;&nbsp; No warning about NoMerge tagged mods that are non-mergeable anyways.
+  <p class=list-2>&bull;&nbsp; 4 new GMST changers added to tweak settings
+  <p class=list-2>&bull;&nbsp; New Names tweaker added: 'Lore Friendly Names: Dwarven -> Dwemer' added.
+  <p class=list-2>&bull;&nbsp; NPC Tweaker changes:
+    <p class=list-3>&bull;&nbsp; Renamed to Tweak Actors.
+    <p class=list-3>&bull;&nbsp; 'No Bloody Creatures' tweak added.
+    <p class=list-3>&bull;&nbsp; 'As Intended: Boars' tweak added.
+    <p class=list-3>&bull;&nbsp; 'As Intended: Imps' tweak added.
+    <p class=list-3>&bull;&nbsp; Redguard FGTS Nuller now correctly handles npcs with no race assigned (very odd!) (reported by blake7791, specifically found in Skin Toned Mannequins) - just skips such NPCs instead of raising a fatal error in patch build.
+  <p class=list-2>&bull;&nbsp; Select/Deselect All buttons on list/tweak patchers (ie everything except for a few special patcher such as SEWorld Tests etc.) added.
+  <p class=list-2>&bull;&nbsp; All patchers no longer display mods that are loading after the patch (since they were not included in build anyways (even selected) this makes it much simpler and less confusing).
+<p class=list-1>&bull;&nbsp; Mod Checker now alerts you if you have NoMerge or Deactivate tagged mods active instead of imported & deactivated.
+<p class=list-1>&bull;&nbsp; BAIN:
+  <p class=list-2>&bull;&nbsp; Renaming now updates the 'Mods' and 'INI Edits' tabs
+  <p class=list-2>&bull;&nbsp; 2 bugfixes dealing with filtering (reported by Vindicator)
+  <p class=list-2>&bull;&nbsp; Double or middle clicking on an image in a BAIN Wizard will open the full image.
+  <p class=list-2>&bull;&nbsp; You can now create your own 'Markers'.  Right click->Add Marker..., then type the name.  the '==' will be added before and after for you.
+  <p class=list-2>&bull;&nbsp; List Packages now has option to only export active packages 
+  <p class=list-2>&bull;&nbsp; List Packages shows whether package is active or not. 
+<p class=list-1>&bull;&nbsp; INI Edits:
+  <p class=list-2>&bull;&nbsp; Now supports applying tweaks to any Ini
+  <p class=list-2>&bull;&nbsp; Supports script type Ini files.  Can modify any <B>set</B> or <B>setGS</B> command.
+  <p class=list-2>&bull;&nbsp; Files ending in '.ace','.tgz','.tar','.tar.gz','.omod' will no longer be installed by BAIN. (requested by myk002)
+<p class=list-1>&bull;&nbsp; comtypes is optional now.  It is required for a couple function but most have work arounds enabled (ie Bashe Patch log loads in default internet browser) and Wrye Bash will work without it (features currently without workarounds are: the PM Archive panel, Doc Browser).
+<p class=list-1>&bull;&nbsp; You can delete Installers and INI Edits with the Delete key now.
+<p class=list-1>&bull;&nbsp; You can rearrange Load Order/Install Order on the Mods Tab and Installers Tab by dragging and dropping.
+<p class=list-1>&bull;&nbsp; German translation updated to Wrye Bash 284RC1 (contributed by ThreeD).
+<p class=list-1>&bull;&nbsp; 3 new tool launchers added (contributed by Metallicow).
+<p class=list-1>&bull;&nbsp; Save/ESP Details window shows current order as well as saved order of esp/ms. (so you can see what the difference is much easier when (for example) updating a save game.
+<p class=list-1>&bull;&nbsp; Some image files renamed to be correct case for case sensitive OSes (patch from Frodo_TheDarkLord)
+<p class=list-1>&bull;&nbsp; Fix so that it is impossible to open multiple copies of Wrye Bash at the same.
+<p class=list-1>&bull;&nbsp; Added option in Patch dialogue to save configuration (ie then you can click cancel without loosing the configuration changes you've done).
+<p class=list-1>&bull;&nbsp; Taglist updated to BOSS masterlist revision 943.
+<p class=empty>&nbsp;</p>
 <h3><a name='28318042010LojackPacificMorrowindWarrudar'>283 [18/04/2010] [Lojack,PacificMorrowind,Warrudar]</a></h3>
 <p class=list-1>&bull;&nbsp; Taglist: updated to masterlist version 824 and a bunch of cruft removed.
 <p class=list-1>&bull;&nbsp; Fixes:

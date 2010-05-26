@@ -71,14 +71,14 @@ from balt import leftSash, topSash
 from balt import spacer, hSizer, vSizer, hsbSizer, vsbSizer
 from balt import colors, images, Image
 from balt import Links, Link, SeparatorLink, MenuLink
+from balt import ListCtrl
 
+# BAIN wizard support, requires PyWin32, so import will fail if it's not installed
 try:
-    if bosh.inisettings['enablewizard']:
-        import belt     #BAIN scripting
-except KeyError:
-    bosh.initDirs()
-    if bosh.inisettings['enablewizard']:
-        import belt     #BAIN scripting
+    import belt
+    bEnableWizard = True
+except:
+    bEnableWizard = False
 
 #  - Make sure that python root directory is in PATH, so can access dll's.
 if sys.prefix not in set(os.environ['PATH'].split(';')):
@@ -148,6 +148,7 @@ settingDefaults = {
         'Group': _('Group'),
         'Installer':_('Installer'),
         'Load Order': _('Load Order'),
+        'Current Order': _('Current LO'),
         'Modified': _('Modified'),
         'Num': _('MI'),
         'PlayTime':_('Play Time'),
@@ -160,17 +161,18 @@ settingDefaults = {
         'Subject': _('Subject'),
         },
     #--Wrye Bash: Masters
-    'bash.masters.cols': ['File','Num'],
+    'bash.masters.cols': ['File','Num', 'Current Order'],
     'bash.masters.esmsFirst': 1,
     'bash.masters.selectedFirst': 0,
     'bash.masters.sort': 'Save Order',
     'bash.masters.colReverse': {},
     'bash.masters.colWidths': {
         'File':80,
-        'Num':20,
+        'Num':30,
+        'Current Order':60,
         },
     'bash.masters.colAligns': {
-        'Num':1,
+        'Save Order':1,
         },
     #--Wrye Bash: Mod Docs
     'bash.modDocs.show': False,
@@ -204,6 +206,8 @@ settingDefaults = {
         'Installer':100,
         },
     'bash.ini.colAligns': {},
+    'bash.ini.choices': {},
+    'bash.ini.choice': 0,
     #--Wrye Bash: Mods
     'bash.mods.cols': ['File','Load Order','Rating','Group','Installer','Modified','Size','Author'],
     'bash.mods.esmsFirst': 1,
@@ -488,22 +492,19 @@ class SashTankPanel(NotebookPanel):
         return self.detailsItem
 
 #------------------------------------------------------------------------------
-class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
-    def __init__(self, parent, ID, pos=wx.DefaultPosition,
-                 size=wx.DefaultSize, style=0):
-        wx.ListCtrl.__init__(self, parent, ID, pos, size, style=style)
-        ListCtrlAutoWidthMixin.__init__(self)
-
-#------------------------------------------------------------------------------
 class List(wx.Panel):
-    def __init__(self,parent,id=-1,ctrlStyle=(wx.LC_REPORT | wx.LC_SINGLE_SEL)):
+    def __init__(self,parent,id=-1,ctrlStyle=(wx.LC_REPORT | wx.LC_SINGLE_SEL),
+                 dndFiles=False, dndList=False, dndColumns=[]):
         wx.Panel.__init__(self,parent,id, style=wx.WANTS_CHARS)
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(sizer)
         self.SetSizeHints(-1,50)
+        self.dndColumns = dndColumns
         #--ListCtrl
         listId = self.listId = wx.NewId()
-        self.list = ListCtrl(self, listId, style=ctrlStyle)
+        self.list = ListCtrl(self, listId, style=ctrlStyle,
+                             dndFiles=dndFiles, dndList=dndList,
+                             fnDndAllow=self.dndAllow, fnDropFiles=self.OnDropFiles, fnDropIndexes=self.OnDropIndexes)
         self.checkboxes = colorChecks
         self.mouseItem = None
         self.mouseTexts = {}
@@ -528,6 +529,14 @@ class List(wx.Panel):
         self.list.Bind(wx.EVT_MOTION,self.OnMouse)
         self.list.Bind(wx.EVT_LEAVE_WINDOW,self.OnMouse)
         self.list.Bind(wx.EVT_SCROLLWIN,self.OnScroll)
+
+    #--Drag and Drop---------------------------------------
+    def dndAllow(self):
+        col = self.sort
+        if col not in self.dndColumns: return False
+        return True
+    def OnDropFiles(self, x, y, filenames): raise AbstractError
+    def OnDropIndexes(self, indexes, newPos): raise AbstractError
 
     #--Items ----------------------------------------------
     #--Populate Columns
@@ -684,13 +693,16 @@ class List(wx.Panel):
 
     def MouseEnteredItem(self,item):
         """Handle mouse entered item by showing tip or similar."""
-        pass
+        text = self.mouseTexts.get(item) or ''
+        if text != self.mouseTextPrev:
+            statusBar.SetStatusText(text,1)
+            self.mouseTextPrev = text                
 
     #--Column Menu
-    def DoColumnMenu(self,event):
+    def DoColumnMenu(self,event,column = None):
         if not self.mainMenu: return
         #--Build Menu
-        column = event.GetColumn()
+        if column is None: column = event.GetColumn()
         menu = wx.Menu()
         for link in self.mainMenu:
             link.AppendToMenu(menu,self,column)
@@ -709,7 +721,9 @@ class List(wx.Panel):
     #--Item Menu
     def DoItemMenu(self,event):
         selected = self.GetSelected()
-        if not selected: return
+        if not selected:
+            self.DoColumnMenu(event,0)
+            return
         #--Build Menu
         menu = wx.Menu()
         for link in self.itemMenu:
@@ -838,6 +852,9 @@ class MasterList(List):
                     if voCurrent: value += ' ['+voCurrent+']'
             elif col == 'Num':
                 value = '%02X' % (self.fileOrderItems.index(itemId),)
+            elif col == 'Current Order':
+                #print itemId
+                value = '%02X' % (self.loadOrderNames.index(masterName),)
             #--Insert/Set Value
             if mode and (colDex == 0):
                 self.list.InsertStringItem(itemDex, value)
@@ -889,9 +906,9 @@ class MasterList(List):
              self.items.sort(key=lambda a: bosh.modInfos.table.getItem(a,'installer',''))
         elif col == 'Modified':
             self.items.sort(key=lambda a: data[a].mtime)
-        elif col == 'Save Order':
+        elif col in ['Save Order','Num']:
             self.items.sort()
-        elif col == 'Load Order':
+        elif col in ['Load Order','Current Order']:
             loadOrderNames = self.loadOrderNames
             data = self.data
             self.items.sort(key=lambda a: loadOrderNames.index(data[a].name))
@@ -1018,6 +1035,22 @@ class INIList(List):
         #--Events
         #--ScrollPos
 
+    def CountTweakStatus(self):
+        """Returns number of each type of tweak, in the
+        following format:
+        (applied,mismatched,not_applied,invalid)"""
+        applied = 0
+        mismatch = 0
+        not_applied = 0
+        invalid = 0
+        for tweak in self.data.keys():
+            status = self.data[tweak].status
+            if status == -10: invalid += 1
+            elif status == 0: not_applied += 1
+            elif status == 10: mismatch += 1
+            elif status == 20: applied += 1
+        return (applied,mismatch,not_applied,invalid)
+
     def RefreshUI(self,files='ALL',detail='SAME'):
         """Refreshes UI for specified files."""
         #--Details
@@ -1026,6 +1059,8 @@ class INIList(List):
         else:
             selected = set([detail])
         #--Populate
+        if files == 'VALID':
+            files = [GPath(self.items[x]) for x in range(len(self.items)) if self.data[GPath(self.items[x])].status >= 0]
         if files == 'ALL':
             self.PopulateItems(selected=selected)
         elif isinstance(files,bolt.Path):
@@ -1042,32 +1077,48 @@ class INIList(List):
         fileName = GPath(self.items[itemDex])
         fileInfo = self.data[fileName]
         cols = self.cols
-        settings = bosh.falloutIni.getSettings()
         for colDex in range(self.numCols):
             col = cols[colDex]
             if col == 'File':
                 value = fileName.s
             elif col == 'Installer':
-                value = self.data.table.getItem(fileName.s, 'installer', '')
+                value = self.data.table.getItem(fileName, 'installer', '')
             if mode and colDex == 0:
                 self.list.InsertStringItem(itemDex, value)
             else:
                 self.list.SetStringItem(itemDex, colDex, value)
         status = fileInfo.getStatus()
         #--Image
-        checkMark = status > 0
-        icon = 0
-        if status == 10:
+        checkMark = 0
+        icon = 0    # Ok tweak, not applied
+        mousetext = ''
+        if status == 20:
+            # Valid tweak, applied
+            checkMark = 1
+            mousetext = _('Tweak is currently applied.')
+        elif status == 15:
+            # Valid tweak, some settings applied, others are
+            # overwritten by values in another tweak from same installer
+            checkMark = 3
+            mousetext = _('Some settings are applied.  Some are overwritten by another tweak from the same installer.')
+        elif status == 10:
+            # Ok tweak, some parts are applied, others not
             icon = 10
+            checkMark = 3
+            mousetext = _('Some settings are changed.')
         elif status == -10:
+            # Bad tweak
             icon = 20
+            mousetext = _('Tweak is invalid')
+        self.mouseTexts[itemDex] = mousetext
         self.list.SetItemImage(itemDex,self.checkboxes.Get(icon,checkMark))
         #--Font/BG Color
         item = self.list.GetItem(itemDex)
         item.SetTextColour(wx.BLACK)
-        item.SetBackgroundColour(wx.WHITE)
         if status < 0:
             item.SetBackgroundColour(colors['bash.installers.outOfOrder'])
+        else:
+            item.SetBackgroundColour(wx.WHITE)
         self.list.SetItem(item)
         if fileName in selected:
             self.list.SetItemState(itemDex,wx.LIST_STATE_SELECTED,wx.LIST_STATE_SELECTED)
@@ -1092,7 +1143,7 @@ class INIList(List):
         #--Valid Tweaks first?
         self.sortValid = settings['bash.ini.sortValid']
         if self.sortValid:
-            self.items.sort(key=lambda a: self.data[a].getStatus() < 0)
+            self.items.sort(key=lambda a: self.data[a].status < 0)
         
 
     def OnKeyUp(self,event):
@@ -1100,6 +1151,12 @@ class INIList(List):
         ##Ctrl+A
         if event.ControlDown() and event.GetKeyCode() in (65,97):
             self.SelectAll()
+        elif event.GetKeyCode() == wx.WXK_DELETE:
+            try:
+                wx.BeginBusyCursor()
+                self.DeleteSelected()
+            finally:
+                wx.EndBusyCursor()           
         event.Skip()
 #------------------------------------------------------------------------------
 class ModList(List):
@@ -1124,7 +1181,7 @@ class ModList(List):
         self.mainMenu = ModList.mainMenu
         self.itemMenu = ModList.itemMenu
         #--Parent init
-        List.__init__(self,parent,-1,ctrlStyle=(wx.LC_REPORT))#|wx.SUNKEN_BORDER))
+        List.__init__(self,parent,-1,ctrlStyle=(wx.LC_REPORT), dndList=True, dndColumns=['Load Order'])#|wx.SUNKEN_BORDER))
         #--Image List
         checkboxesIL = colorChecks.GetImageList()
         self.list.SetImageList(checkboxesIL,wx.IMAGE_LIST_SMALL)
@@ -1136,6 +1193,57 @@ class ModList(List):
         #--ScrollPos
         self.list.ScrollLines(settings.get('bash.mods.scrollPos',0))
         self.vScrollPos = self.list.GetScrollPos(wx.VERTICAL)
+
+    #-- Drag and Drop-----------------------------------------------------
+    def OnDropIndexes(self, indexes, newPos):
+        # Make sure we're not auto-sorting
+        for thisFile in self.GetSelected():
+            if GPath(thisFile) in bosh.modInfos.autoSorted:
+                balt.showError(self,_("Auto-ordered files cannot be manually moved."))
+                return
+        # Watch out for errors in range
+        if newPos > indexes[0]:   inc = 1
+        elif newPos < indexes[0]: inc = -1
+        else: return
+        howMany = indexes[-1]-indexes[0]
+        # Make sure we don't go out of bounds
+        target = indexes[0]
+        thisFile = self.items[target]
+        while True:
+            if target < 0: break
+            if target + howMany >= len(self.items) - inc: break
+            if target == newPos: break
+            swapFile = self.items[target]
+            if thisFile.cext != swapFile.cext: break
+            target += inc
+        if inc == 1 and target + howMany <= indexes[-1]: return
+        if inc == -1 and target >= indexes[0]: return
+        # Adjust for going up/down
+        if inc > 0:
+            target += howMany
+        else:
+            indexes.reverse()
+        # Gather time codes
+        i = indexes[0]
+        times = []
+        while i != target + inc:
+            info = bosh.modInfos[self.items[i]]
+            times.append(info.mtime)
+            i += inc
+        # Rearrange them for the new load order            
+        times.reverse()
+        newThisTimes = times[:howMany+1]
+        newSwapTimes = times[howMany+1:]
+        times = newSwapTimes + newThisTimes
+        # Apply new times
+        i = indexes[0]
+        while i != target + inc:
+            info = bosh.modInfos[self.items[i]]
+            info.setmtime(times.pop())
+            i += inc
+        # Refresh
+        bosh.modInfos.refreshInfoLists()
+        self.RefreshUI()
 
     def RefreshUI(self,files='ALL',detail='SAME',refreshSaves=True):
         """Refreshes UI for specified file. Also calls saveList.RefreshUI()!"""
@@ -1231,14 +1339,15 @@ class ModList(List):
         #should mod be deactivated
         if 'Deactivate' in bosh.modInfos[fileName].getBashTags():
             item.SetFont(wx.Font(8, wx.NORMAL, wx.SLANT, wx.NORMAL))
-            if checkMark == 1:
-                mouseText = _("Mod should be imported  and deactivated")
         else:
             item.SetFont(wx.Font(8, wx.NORMAL, wx.NORMAL, wx.NORMAL))
         #--Text BG
         if fileInfo.hasActiveTimeConflict():
             item.SetBackgroundColour(colors['bash.doubleTime.load'])
             mouseText = _("WARNING: Has same load order as another mod.")
+        elif 'Deactivate' in bosh.modInfos[fileName].getBashTags() and checkMark == 1:
+            item.SetBackgroundColour(colors['bash.doubleTime.load'])
+            mouseText = _("Mod should be imported and deactivated")
         elif fileInfo.isExOverLoaded():
             item.SetBackgroundColour(colors['bash.exOverLoaded'])
             mouseText = _("WARNING: Exclusion group is overloaded.")
@@ -1304,13 +1413,6 @@ class ModList(List):
             self.items.sort(key=lambda x: x not in active)
 
     #--Events ---------------------------------------------
-    def MouseEnteredItem(self,item):
-        """Handle mouse entered item by showing tip or similar."""
-        text = self.mouseTexts.get(item) or ''
-        if text != self.mouseTextPrev:
-            statusBar.SetStatusText(text,1)
-            self.mouseTextPrev = text
-
     def OnDoubleClick(self,event):
         """Handle doubclick event."""
         (hitItem,hitFlag) = self.list.HitTest(event.GetPosition())
@@ -1350,7 +1452,8 @@ class ModList(List):
                         thisInfo.setmtime(swapTime)
                         swapInfo.setmtime(thisTime)
                         bosh.modInfos.refreshInfoLists()
-                        self.RefreshUI()
+                        self.RefreshUI(refreshSaves=False)
+                    self.RefreshUI([],refreshSaves=True)
         event.Skip()
         
     def OnKeyUp(self,event):
@@ -1381,7 +1484,10 @@ class ModList(List):
         """Left Down: Check/uncheck mods."""
         (hitItem,hitFlag) = self.list.HitTest((event.GetX(),event.GetY()))
         if hitFlag == 32:
+            self.list.SetDnD(False)
             self.checkUncheckMod(self.items[hitItem])
+        else:
+            self.list.SetDnD(True)
         #--Pass Event onward
         event.Skip()
 
@@ -1440,7 +1546,8 @@ class ModDetails(wx.Window):
         self.save.Disable()
         self.cancel.Disable()
         #--Bash tags
-        self.allTags = sorted(('Body-F', 'Body-M', 'C.Climate', 'C.Light', 'C.Music', 'C.Name', 'C.RecordFlags', 'C.Owner', 'C.Water', 'Deactivate', 'Deflst', 'Delev', 'Destructable', 'Eyes', 'Factions', 'Relations', 'Filter', 'Graphics', 'Hair', 'IIM', 'Invent', 'Names', 'NoMerge', 'NpcFaces', 'Relev', 'Scripts', 'ScriptContents', 'Sound', 'Stats', 'Voice-F', 'Voice-M', 'R.Teeth', 'R.Mouth', 'Roads', 'Actors.Anims', 'Actors.AIData', 'Actors.DeathItem', 'Actors.AIPackages', 'Actors.Stats', 'Actors.ACBS', 'NPC.Class', 'Actors.CombatStyle', 'Creatures.Blood'))
+        self.allTags = sorted(('Body-F', 'Body-M', 'C.Climate', 'C.Light', 'C.Music', 'C.Name', 'C.RecordFlags', 'C.Owner', 'C.Water', 'Deactivate', 'Deflst', 'Delev', 'Destructable', 'Eyes', 'Factions', 'Relations', 'Filter', 'Graphics', 'Hair', 'IIM', 'Invent', 'Names', 'NoMerge', 'NpcFaces', 'Relev', 'Scripts', 'ScriptContents', 'Sound', 'Stats', 'Voice-F', 'Voice-M', 'R.Teeth', 'R.Mouth', 'R.Ears', 'R.Head', 'R.Attributes-F', 'R.Attributes-M', 'R.Skills', 'R.Description', 'Roads', 'Actors.Anims', 'Actors.AIData', 'Actors.DeathItem', 'Actors.AIPackages', 'Actors.Stats', 'Actors.ACBS', 'NPC.Class', 'Actors.CombatStyle', 'Creatures.Blood'))
+
         id = self.tagsId = wx.NewId()
         self.gTags = (
             wx.TextCtrl(self,id,"",size=(textWidth,100),style=wx.TE_MULTILINE|wx.TE_READONLY))
@@ -1709,20 +1816,171 @@ class INIPanel(NotebookPanel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent,-1)
         global iniList
+        #--Remove from list button
+        self.button = button(self,_('Remove'),onClick=self.OnRemove)
+        #--Edit button
+        self.edit = button(self,_('Edit...'),onClick=self.OnEdit)
+        #--Choices
+        self.choices = settings['bash.ini.choices']
+        self.choice = settings['bash.ini.choice']
+        self.CheckTargets()
+        self.lastDir = bosh.dirs['mods'].s
+        self.SortChoices()
+        self.SetBaseIni(self.GetChoice())
         iniList = INIList(self)
+        self.comboBox = wx.ComboBox(self,-1,value=self.GetChoiceString(),choices=self.sortKeys,style=wx.CB_READONLY)
         #--Events
         wx.EVT_SIZE(self,self.OnSize)
+        self.comboBox.Bind(wx.EVT_COMBOBOX,self.OnSelectDropDown)
         #--Layout
-        sizer = hSizer(
-            (iniList,1,wx.GROW))
+        sizer = vSizer(
+            (hSizer(
+                (self.comboBox,1,wx.ALIGN_CENTER|wx.EXPAND|wx.TOP,1),
+                ((4,0),0),
+                (self.button,0,wx.ALIGN_TOP,0),
+                (self.edit,0,wx.ALIGN_TOP,0),
+             ),0,wx.TOP|wx.LEFT|wx.BOTTOM|wx.RIGHT|wx.GROW,4),
+            (hSizer(
+                (iniList,1,wx.GROW)
+                ),1,wx.GROW)
+            )
         self.SetSizer(sizer)
 
+    def GetChoice(self,index=None):
+        """ Return path for a given choice, or the
+        currently selected choice if index is None."""
+        if index is None:
+            return self.choices[self.sortKeys[self.choice]]
+        else:
+            return self.choices[self.sortKeys[index]]
+
+    def GetChoiceString(self,index=None):
+        """Return text for a given choice, or the
+        currently selected choice if index is None."""
+        if index is None:
+            return self.sortKeys[self.choice]
+        else:
+            return self.sortKeys[index]
+
+    def RefreshUI(self,what='ALL'):
+        if what == 'ALL' or what == 'TARGETS':
+            # Refresh the drop down list
+            path = self.GetChoice()
+            if path is None:
+                self.choice -= 1
+            elif not path.isfile():
+                del self.choices[self.GetChoiceString()]
+                self.choice -= 1
+                what = 'ALL'
+            self.SetBaseIni(self.GetChoice())
+            self.comboBox.SetItems(self.SortChoices())
+            self.comboBox.SetSelection(self.choice)
+        if what == 'ALL' or what == 'TWEAKS':
+            iniList.RefreshUI()
+
+    def SetBaseIni(self,path=None):
+        """Sets the target INI file."""
+        if self.choice == 0:
+            bosh.iniInfos.setBaseIni(bosh.falloutIni)
+            self.button.Enable(False)
+        else:
+            if not path:
+                path = self.GetChoice()
+            bosh.iniInfos.setBaseIni(bosh.BestIniFile(path))
+            self.button.Enable(True)
+        if iniList is not None: iniList.RefreshUI()
+
+    def OnRemove(self,event):
+        """Called when the 'Remove' button is pressed."""
+        selection = self.comboBox.GetValue()
+        self.choice -= 1
+        del self.choices[selection]
+        self.comboBox.SetItems(self.SortChoices())
+        self.comboBox.SetSelection(self.choice)
+        self.SetBaseIni()
+        iniList.RefreshUI()
+
+    def OnEdit(self,event):
+        """Called when the 'Edit' button is pressed."""
+        selection = self.comboBox.GetValue()
+        self.choices[selection].start()
+
+    def CheckTargets(self):
+        """Check the list of target INIs, remove any that don't exist"""
+        changed = False
+        for i in self.choices.keys():
+            if i == 'Browse...': continue
+            path = self.choices[i]
+            if not path.isfile():
+                del self.choices[i]
+                changed = True
+        if 'FALLOUT.INI' not in self.choices:
+            self.choices['FALLOUT.INI'] = bosh.falloutIni.path
+            changed = True
+        if 'Browse...' not in self.choices:
+            self.choices['Browse...'] = None
+            changed = True
+        if changed: self.SortChoices()
+        if len(self.choices.keys()) <= self.choice + 1:
+            self.choice = 0
+
+    def SortChoices(self):
+        """Sorts the list of target INIs alphabetically, but with
+        FALLOUT.INI at the top and 'Browse...' at the bottom"""
+        keys = self.choices.keys()
+        # Sort alphabetically
+        keys.sort()
+        # Sort FALLOUT.INI to the top, and 'Browse...' to the bottom
+        keys.sort(key=lambda a: (a != 'FALLOUT.INI') + (a == 'Browse...'))
+        self.sortKeys = keys
+        return keys
+
+    def SetStatusCount(self):
+        """Sets mod count in last field."""
+        stati = iniList.CountTweakStatus()
+        text = _("Tweaks: %d/%d") % (stati[0],sum(stati[:-1]))
+        statusBar.SetStatusText(text,2)
+
+    def OnSelectDropDown(self,event):
+        """Called when the user selects a new target INI from the drop down."""
+        selection = event.GetString()
+        path = self.choices[selection]
+        if not path:
+            # 'Browse...'
+            path = balt.askOpen(self,defaultDir=self.lastDir,wildcard='INI files (*.ini)|*.ini')
+            if not path:
+                self.comboBox.SetSelection(self.choice)
+                return
+            # Make sure the 'new' file isn't already in the list
+            if path.stail in self.choices:
+                new_choice = self.sortKeys.index(path.stail)
+                refresh = new_choice != self.choice
+                self.choice = new_choice
+                self.comboBox.SetSelection(self.choice)
+                if refresh:
+                    self.SetBaseIni(path)
+                    iniList.RefreshUI()
+                return
+            self.lastDir = path.shead
+            self.choices[path.stail] = path
+            self.SortChoices()
+            self.choice = self.sortKeys.index(path.stail)
+            self.comboBox.SetItems(self.sortKeys)
+            self.comboBox.SetSelection(self.choice)
+        else:
+            if self.choice == event.GetInt(): return
+            self.choice = event.GetInt()
+        self.SetBaseIni(path)
+        iniList.RefreshUI()
+        
     def OnSize(self,event):
         wx.Window.Layout(self)
         iniList.Layout()
 
     def OnCloseWindow(self):
         """To be called when containing frame is closing.  Use for saving data, scrollpos, etc."""
+        settings['bash.ini.choices'] = self.choices
+        settings['bash.ini.choice'] = self.choice
         bosh.iniInfos.table.save()
 
 #------------------------------------------------------------------------------
@@ -2133,12 +2391,14 @@ class InstallersList(balt.Tank):
     def __init__(self,parent,data,icons=None,mainMenu=None,itemMenu=None,
             details=None,id=-1,style=(wx.LC_REPORT | wx.LC_SINGLE_SEL)):
         balt.Tank.__init__(self,parent,data,icons,mainMenu,itemMenu,
-            details,id,style)
+            details,id,style,dndList=True,dndFiles=True,dndColumns=[_('Order')])
         self.gList.Bind(wx.EVT_CHAR, self.OnChar)
         self.gList.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+
     def SelectAll(self):
         for itemDex in range(self.gList.GetItemCount()):
             self.gList.SetItemState(itemDex,wx.LIST_STATE_SELECTED,wx.LIST_STATE_SELECTED)
+            
     def OnChar(self,event):
         """Char event: Reorder."""
         if ((event.ControlDown() and event.GetKeyCode() in (wx.WXK_UP,wx.WXK_DOWN))):
@@ -2165,9 +2425,16 @@ class InstallersList(balt.Tank):
 
     def OnKeyUp(self,event):
         """Char event: select all items"""
-        ##Ctrl+A
+        ##Ctrl+A - select all
         if event.ControlDown() and event.GetKeyCode() in (65,97):
             self.SelectAll()
+        ##Delete - delete
+        if event.GetKeyCode() == wx.WXK_DELETE:
+            try:
+                wx.BeginBusyCursor()
+                self.DeleteSelected()
+            finally:
+                wx.EndBusyCursor()
         event.Skip()
 #------------------------------------------------------------------------------
 class InstallersPanel(SashTankPanel):
@@ -2317,7 +2584,9 @@ class InstallersPanel(SashTankPanel):
             bosh.modInfos.autoGrouped.clear()
             modList.RefreshUI('ALL')
         if bosh.iniInfos.refresh():
-            iniList.RefreshUI('ALL')
+            iniList.GetParent().RefreshUI('ALL')
+        else:
+            iniList.GetParent().RefreshUI('TARGETS')
 
     def RefreshDetails(self,item=None):
         """Refreshes detail view associated with data from item."""
@@ -3558,7 +3827,11 @@ class BashNotebook(wx.Notebook):
         self.AddPage(INIPanel(self),_("INI Edits"))
         self.AddPage(ScreensPanel(self),_("Screenshots"))
         if re.match('win',sys.platform):
-            self.AddPage(MessagePanel(self),_("PM Archive"))
+            try:
+                self.AddPage(MessagePanel(self),_("PM Archive"))
+            except ImportError:
+                if bolt.deprintOn:
+                    print _("PM Archive panel disabled due to Import Error (most likely comtypes)")
         self.AddPage(PeoplePanel(self),_("People"))
         #self.AddPage(ModBasePanel(self),_("ModBase"))
         self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED,self.OnShowPage)
@@ -3645,7 +3918,6 @@ class BashFrame(wx.Frame):
         self.inRefreshData = False #--Prevent recursion while refreshing.
         self.knownCorrupted = set()
         self.falloutIniCorrupted = False
-        self.falloutPrefsIniCorrupted = False
         self.incompleteInstallError = False
         #--Layout
         sizer = vSizer((notebook,1,wx.GROW))
@@ -3754,12 +4026,6 @@ class BashFrame(wx.Frame):
             self.falloutIniCorrupted = bosh.falloutIni.isCorrupted
             if self.falloutIniCorrupted:
                 message = _('Your FALLOUT.INI should begin with a section header (e.g. "[General]"), but does not. You should edit the file to correct this.')
-                balt.showWarning(self,fill(message))
-        #--Corrupt FalloutPrefs.ini
-        if self.falloutPrefsIniCorrupted != bosh.falloutPrefsIni.isCorrupted:
-            self.falloutPrefsIniCorrupted = bosh.falloutPrefsIni.isCorrupted
-            if self.falloutPrefsIniCorrupted:
-                message = _('Your FalloutPrefs.ini should begin with a section header (e.g. "[General]"), but does not. You should edit the file to correct this.')
                 balt.showWarning(self,fill(message))
         #--Any Y2038 Resets?
         if bolt.Path.mtimeResets:
@@ -4190,7 +4456,7 @@ class ModChecker(wx.Frame):
 
     def OnCopyText(self,event=None):
         """Copies text of report to clipboard."""
-        text = '[codebox]'+self.text+'[/codebox]'
+        text = '[spoiler][code]'+self.text+'[/code][/spoiler]'
         text = re.sub(r'\[\[.+?\|\s*(.+?)\]\]',r'\1',text)
         text = re.sub('(__|\*\*|~~)','',text)
         text = re.sub('&bull; &bull;','**',text)
@@ -4260,12 +4526,12 @@ class BashApp(wx.App):
         self.InitData(progress)
         progress.Update(70,_("Initializing Version"))
         self.InitVersion()
-        progress.Destroy()
         #--MWFrame
         progress.Update(80,_("Initializing Windows"))
         frame = BashFrame(
              pos=settings['bash.framePos'],
              size=settings['bash.frameSize'])
+        progress.Destroy()
         self.SetTopWindow(frame)
         frame.Show()
         balt.ensureDisplayed(frame)
@@ -4289,7 +4555,6 @@ class BashApp(wx.App):
         bosh.configHelpers = bosh.ConfigHelpers()
         bosh.configHelpers.refresh()
         bosh.falloutIni = bosh.FalloutIni()
-        bosh.falloutPrefsIni = bosh.FalloutPrefsIni()
         bosh.modInfos = bosh.ModInfos()
         bosh.modInfos.refresh(doAutoGroup=True)
         progress.Update(30,_("Initializing SaveInfos"))
@@ -4499,6 +4764,7 @@ class PatchDialog(wx.Dialog):
         patcherNames = [patcher.getName() for patcher in self.patchers]
         #--GUI elements
         self.gExecute = button(self,id=wx.ID_OK,onClick=self.Execute)
+        self.gSaveConfig = button(self,id=wx.ID_SAVE,onClick=self.SaveConfig)
         self.gPatchers = wx.CheckListBox(self,-1,choices=patcherNames,style=wx.LB_SINGLE)
         for index,patcher in enumerate(self.patchers):
             self.gPatchers.Check(index,patcher.isEnabled)
@@ -4521,7 +4787,7 @@ class PatchDialog(wx.Dialog):
             (wx.StaticLine(self),0,wx.EXPAND|wx.BOTTOM,4),
             (hSizer(
                 spacer,
-                self.gExecute,
+                self.gExecute,(self.gSaveConfig,0,wx.LEFT,4),
                 (button(self,id=wx.ID_CANCEL),0,wx.LEFT,4),
                 ),0,wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM,4)
             )
@@ -4569,10 +4835,10 @@ class PatchDialog(wx.Dialog):
             nullProgress = bolt.Progress()
             patchers = [patcher for patcher in self.patchers if patcher.isEnabled]
             patchFile = bosh.PatchFile(self.patchInfo,patchers)
-            patchFile.initData(SubProgress(progress,0,0.1))
-            patchFile.initFactories(SubProgress(progress,0.1,0.2))
-            patchFile.scanLoadMods(SubProgress(progress,0.2,0.8))
-            patchFile.buildPatch(log,SubProgress(progress,0.8,0.9))
+            patchFile.initData(SubProgress(progress,0,0.1)) #try to speed this up!
+            patchFile.initFactories(SubProgress(progress,0.1,0.2)) #no speeding needed/really possible (less than 1/4 second even with large LO)
+            patchFile.scanLoadMods(SubProgress(progress,0.2,0.8)) #try to speed this up!
+            patchFile.buildPatch(log,SubProgress(progress,0.8,0.9))#no speeding needed/really possible (less than 1/4 second even with large LO)
             #--Save
             progress(0.9,patchName.s+_('\nSaving...'))
             patchFile.safeSave()
@@ -4612,6 +4878,14 @@ class PatchDialog(wx.Dialog):
             progress.Destroy()
             raise
 
+    def SaveConfig(self,event=None):
+        """Save the configuration"""
+        patchName = self.patchInfo.name
+        patchConfigs = {'ImportedMods':set()}
+        for patcher in self.patchers:
+            patcher.saveConfig(patchConfigs)
+        bosh.modInfos.table.setItem(patchName,'bash.patch.configs',patchConfigs)
+            
     #--GUI --------------------------------
     def OnSize(self,event):
         balt.sizes[self.__class__.__name__] = self.GetSizeTuple()
@@ -4675,6 +4949,20 @@ class Patcher:
         if self.gConfigPanel:
             self.gConfigPanel.Layout()
 
+    def SelectAll(self,event=None):
+        """'Select All' Button was pressed, update all configChecks states."""
+        tocheck = []
+        try: items = self.items
+        except AttributeError: items = self.tweaks
+        for index, item in enumerate(items):
+            self.gList.Check(index,True)
+        self.OnListCheck()
+
+    def DeselectAll(self,event=None):
+        """'Deselect All' Button was pressed, update all configChecks states."""
+        self.gList.SetChecked([])
+        self.OnListCheck()
+
 #------------------------------------------------------------------------------
 class AliasesPatcher(Patcher,bosh.AliasesPatcher):
     """Basic patcher panel with no options."""
@@ -4726,12 +5014,13 @@ class ListPatcher(Patcher):
         if self.gConfigPanel: return self.gConfigPanel
         #--Else...
         self.forceItemCheck = self.__class__.forceItemCheck
+        self.selectCommands = self.__class__.selectCommands
         self.gTipText = gTipText
         gConfigPanel = self.gConfigPanel = wx.Window(parent,-1)
         text = fill(self.__class__.text,70)
         gText = staticText(self.gConfigPanel,text)
         if self.forceItemCheck:
-            self.gList =wx.ListBox(gConfigPanel,-1)
+            self.gList = wx.ListBox(gConfigPanel,-1)
         else:
             self.gList =wx.CheckListBox(gConfigPanel,-1)
             self.gList.Bind(wx.EVT_CHECKLISTBOX,self.OnListCheck)
@@ -4756,6 +5045,14 @@ class ListPatcher(Patcher):
                 (self.gAdd,0,wx.TOP,12),
                 (self.gRemove,0,wx.TOP,4),
                 ),0,wx.EXPAND|wx.LEFT,4)
+        if self.selectCommands:
+            self.gSelectAll= button(gConfigPanel,_("Select All"),onClick=self.SelectAll)
+            self.gDeselectAll = button(gConfigPanel,_("Deselect All"),onClick=self.DeselectAll)
+            gSelectSizer = (vSizer(
+                (self.gSelectAll,0,wx.TOP,12),
+                (self.gDeselectAll,0,wx.TOP,4),
+                ),0,wx.EXPAND|wx.LEFT,4)
+        else: gSelectSizer = None 
         #--Init GUI
         self.SetItems(self.configItems)
         #--Layout
@@ -4764,7 +5061,7 @@ class ListPatcher(Patcher):
             (hsbSizer((gConfigPanel,-1,self.__class__.listLabel),
                 ((4,0),0,wx.EXPAND),
                 (self.gList,1,wx.EXPAND|wx.TOP,2),
-                gManualSizer,
+                gManualSizer,gSelectSizer,
                 ),1,wx.EXPAND|wx.TOP,4),
             )
         gConfigPanel.SetSizer(gSizer)
@@ -4898,11 +5195,19 @@ class TweakPatcher(Patcher):
         self.gList.Bind(wx.EVT_RIGHT_UP,self.OnMouse)
         self.mouseItem = -1
         self.mouseState = None
+        if self.selectCommands:
+            self.gSelectAll= button(gConfigPanel,_("Select All"),onClick=self.SelectAll)
+            self.gDeselectAll = button(gConfigPanel,_("Deselect All"),onClick=self.DeselectAll)
+            gSelectSizer = (vSizer(
+                (self.gSelectAll,0,wx.TOP,12),
+                (self.gDeselectAll,0,wx.TOP,4),
+                ),0,wx.EXPAND|wx.LEFT,4)
+        else: gSelectSizer = None
         #--Init GUI
         self.SetItems()
         #--Layout
         gSizer = vSizer(
-            (gText,),
+            (gText,), gSelectSizer,
             #(hsbSizer((gConfigPanel,-1,self.__class__.listLabel),
                 #((4,0),0,wx.EXPAND),
                 (self.gList,1,wx.EXPAND|wx.TOP,2),
@@ -4921,7 +5226,7 @@ class TweakPatcher(Patcher):
 
     def OnListCheck(self,event=None):
         """One of list items was checked. Update all check states."""
-        for index,tweak in enumerate(self.tweaks):
+        for index, tweak in enumerate(self.tweaks):
             tweak.isEnabled = self.gList.IsChecked(index)
 
     def OnMouse(self,event):
@@ -5004,6 +5309,8 @@ class NPCAIPackagePatcher(bosh.NPCAIPackagePatcher,ListPatcher): pass
 
 class ActorImporter(bosh.ActorImporter,ListPatcher): pass
 
+class DeathItemPatcher(bosh.DeathItemPatcher,ListPatcher): pass
+
 class CellImporter(bosh.CellImporter,ListPatcher): pass
 
 class ImportFactions(bosh.ImportFactions,ListPatcher): pass
@@ -5012,7 +5319,7 @@ class ImportRelations(bosh.ImportRelations,ListPatcher): pass
 
 class ImportInventory(bosh.ImportInventory,ListPatcher): pass
 
-#class NPCChanger(bosh.NPCChangeImporter,ListPatcher): pass
+#class ImportActorSpells(bosh.ImportSpells,ListPatcher): pass
 
 class NamesPatcher(bosh.NamesPatcher,ListPatcher): pass
 
@@ -5031,7 +5338,7 @@ class ImportScripts(bosh.ImportScripts,ListPatcher):pass
 
 class ImportScriptContents(bosh.ImportScriptContents,ListPatcher):pass
 
-class ImportSpells(bosh.SpellsPatcher,ListPatcher):pass
+#class ImportSpells(bosh.SpellsPatcher,ListPatcher):pass
 
 class DestructablePatcher(bosh.DestructablePatcher,ListPatcher): pass
 
@@ -5046,7 +5353,7 @@ class GmstTweaker(bosh.GmstTweaker,TweakPatcher): pass
 
 class NamesTweaker(bosh.NamesTweaker,TweakPatcher): pass
 
-class SkelTweaker(bosh.SkelTweaker,TweakPatcher): pass
+class TweakActors(bosh.TweakActors,TweakPatcher): pass
 
 # Patchers 40 ------------------------------------------------------------------
 class AlchemicalCatalogs(bosh.AlchemicalCatalogs,Patcher): pass
@@ -5077,6 +5384,7 @@ PatchDialog.patchers.extend((
     #AlchemicalCatalogs(),
     ActorAnimPatcher(),
     ActorImporter(),
+    DeathItemPatcher(),
     NPCAIPackagePatcher(),
     #CoblExhaustion(),
     CellImporter(),
@@ -5086,7 +5394,8 @@ PatchDialog.patchers.extend((
     GraphicsPatcher(),
     ImportFactions(),
     ImportInventory(),
-    #SkelTweaker(),
+    #ImportActorSpells(),
+    TweakActors(),
     ImportRelations(),
     ImportScripts(),
     ImportScriptContents(),
@@ -5539,8 +5848,23 @@ class File_Open(Link):
         dir = self.window.data.dir
         for file in self.data:
             dir.join(file).start()
+#------------------------------------------------------------------------------
+class Installers_AddMarker(Link):
+    """Add an installer marker."""
+    def AppendToMenu(self,menu,window,data):
+        Link.AppendToMenu(self,menu,window,data)
+        menuItem = wx.MenuItem(menu,self.id,_('Add Marker...'))
+        menu.AppendItem(menuItem)
 
-# Installers Links -----------------------------------------------------------------
+    def Execute(self,event):
+        """Handle selection."""
+        name = balt.askText(self.gTank,_('Enter a title:'),_('Add Marker'))
+        if not name: return
+        name = '=='+name+'=='
+        self.data.addMarker(name)
+        self.data.refresh(what='OS')
+        gInstallers.RefreshUIMods()
+# Installers Links ------------------------------------------------------------
 #------------------------------------------------------------------------------
 class Installers_AnnealAll(Link):
     """Anneal all packages."""
@@ -5621,81 +5945,6 @@ class Installers_Enabled(Link):
         else:
             gInstallers.gList.gList.DeleteAllItems()
             gInstallers.RefreshDetails(None)
-#------------------------------------------------------------------------------
-class Installers_EnableWizard(Link):
-    """Flips wizard enabled status."""
-    def AppendToMenu(self,menu,window,data):
-        Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Enable Wizard Install'),kind=wx.ITEM_CHECK)
-        menu.AppendItem(menuItem)
-        menuItem.Check(bosh.inisettings['enablewizard'])
-
-    def Execute(self,event):
-        """Handle selection."""
-        path = bosh.dirs['mopy'].join('Wrye Bash Launcher.pyw')
-        path = path.s
-        path = path.replace('\\',os.sep)
-        if bosh.inisettings['enablewizard']:
-            message = (_("Disable wizard install system?\nThis will close and reopen Wrye Bash. Do you want to continue?"))
-            if not balt.askContinue(self.gTank,message,'bash.disablewiz.continue',
-                _('Disable Wizard Install System?')):
-                return
-            if not GPath('bash.ini').exists(): #Not possible >= v280, but older versions modified bosh.py to enable the wizard
-                shutil.copyfile( 'bash_default.ini', 'bash.ini')
-                file = bosh.dirs['mopy'].join(r'bosh.py').open("r")
-                lines = file.readlines()
-                file.close
-                if "    inisettings['enablewizard'] = 1\n" in lines:
-                    pos = lines.index("    inisettings['enablewizard'] = 1\n")
-                    lines[pos] = "    inisettings['enablewizard'] = False\n"
-                file = bosh.dirs['mopy'].join(r'bosh.py').open("w")
-                file.writelines(lines)
-                file.close
-            file = bosh.dirs['mopy'].join(r'bash.ini').open("r")
-            lines = file.readlines()
-            file.close    
-            for i, line in enumerate(lines):
-                if line.lstrip().startswith('bEnableWizard='):
-                    lines[i] = "bEnableWizard=False\n"
-                    file = bosh.dirs['mopy'].join(r'bash.ini').open("w")
-                    file.writelines(lines)
-                    file.close
-                    break
-            else:
-                for i, line in enumerate(lines):
-                    if line.lstrip().startswith('[Settings]'):
-                        lines.insert(i+1, "bEnableWizard=False\n")
-                        file = bosh.dirs['mopy'].join(r'bash.ini').open("w")
-                        file.writelines(lines)
-                        file.close
-                        break
-        else:
-            message = (_("Enable wizard install system?\nThis will close and reopen Wrye Bash and will require the Python win32api to be installed or Bash will not start!\nYou can reset it by changing the line in the Bash ini as per the readme. Do you want to continue?"))
-            if not balt.askContinue(self.gTank,message,'bash.enablewiz.continue',
-                _('Enable Wizard Install System?')):
-                return
-            if not GPath('bash.ini').exists(): shutil.copyfile('bash_default.ini', 'bash.ini')
-            file = bosh.dirs['mopy'].join(r'bash.ini').open("r")
-            lines = file.readlines()
-            file.close    
-            for i, line in enumerate(lines):
-                if line.lstrip().startswith('bEnableWizard='):
-                    lines[i] = "bEnableWizard=True\n"
-                    file = bosh.dirs['mopy'].join(r'bash.ini').open("w")
-                    file.writelines(lines)
-                    file.close
-                    break
-            else:
-                for i, line in enumerate(lines):
-                    if line.lstrip().startswith('[Settings]'):
-                        lines.insert(i+1, "bEnableWizard=True\n")
-                        file = bosh.dirs['mopy'].join(r'bash.ini').open("w")
-                        file.writelines(lines)
-                        file.close
-                        break
-        os.startfile(path)
-        bashFrame.Close()
- 
 #------------------------------------------------------------------------------
 class Installers_BsaRedirection(Link):
     """Toggle BSA Redirection."""
@@ -5921,9 +6170,21 @@ class Installers_SortStructure(Link):
 class InstallerLink(Link):
     """Common functions for installer links..."""
 
+    def hasMarker(self):
+        if len(self.selected) > 0:
+            for i in self.selected:
+                if isinstance(self.data[i],bosh.InstallerMarker):
+                    return True
+        return False
+
     def isSingle(self):
         """Indicates whether or not is single installer."""
         return len(self.selected) == 1
+
+    def isSingleMarker(self):
+        """Indicates wheter or not is single installer marker."""
+        if len(self.selected) != 1: return False
+        else: return isinstance(self.data[self.selected[0]],bosh.InstallerMarker)
 
     def isSingleProject(self):
         """Indicates whether or not is single project."""
@@ -6051,15 +6312,6 @@ class Installer_Anneal(InstallerLink):
             bashFrame.RefreshData()
 
 #------------------------------------------------------------------------------
-class Installer_Delete(balt.Tank_Delete):
-    """Deletes selected file from tank."""
-    def Execute(self,event):
-        balt.Tank_Delete.Execute(self,event)
-        self.data.refreshOrder()
-        self.data.refresh(what='ION')
-        self.gTank.RefreshUI()
-
-#------------------------------------------------------------------------------
 class Installer_Duplicate(InstallerLink):
     """Duplicate selected Installers."""
     def AppendToMenu(self,menu,window,data):
@@ -6067,7 +6319,7 @@ class Installer_Duplicate(InstallerLink):
         self.title = _('Duplicate...')
         menuItem = wx.MenuItem(menu,self.id,self.title)
         menu.AppendItem(menuItem)
-        menuItem.Enable(self.isSingle())
+        menuItem.Enable(self.isSingle() and not self.isSingleMarker())
 
     def Execute(self,event):
         """Handle selection."""
@@ -6113,7 +6365,7 @@ class Installer_Hide(InstallerLink):
         self.title = _('Hide...')
         menuItem = wx.MenuItem(menu,self.id,self.title)
         menu.AppendItem(menuItem)
-        menuItem.Enable(self.isSingle())
+        menuItem.Enable(self.isSingle() and not self.isSingleMarker())
 
     def Execute(self,event):
         """Handle selection."""
@@ -6205,12 +6457,22 @@ class Installer_Rename(InstallerLink):
                     installer.archive = newName.s
                     #--Add the new archive to Bash
                     self.data[newName] = installer
+                    #--Update the iniInfos & modInfos for 'installer'
+                    mfiles = [x for x in bosh.modInfos.table.getColumn('installer') if bosh.modInfos.table[x]['installer'] == oldPath.stail]
+                    ifiles = [x for x in bosh.iniInfos.table.getColumn('installer') if bosh.iniInfos.table[x]['installer'] == oldPath.stail]
+                    for i in mfiles:
+                        bosh.modInfos.table[i]['installer'] = newPath.stail
+                    for i in ifiles:
+                        bosh.iniInfos.table[i]['installer'] = newPath.stail
+                        
             num += 1
             numStr = `num`
             numStr = '0'*(numLen-len(numStr))+numStr
 
         #--Refresh UI
         self.data.refresh(what='I')
+        modList.RefreshUI()
+        iniList.RefreshUI()
         self.gTank.RefreshUI()
 #------------------------------------------------------------------------------
 class Installer_HasExtraData(InstallerLink):
@@ -6273,7 +6535,10 @@ class Installer_ListPackages(InstallerLink):
 
     def Execute(self,event):
         #--Get masters list
-        text = self.data.getPackageList()
+        message = _('Only show Installed Packages?\n(Else shows all packages)')
+        if balt.askYes(self.gTank,message,_('Only Show Installed?')):
+            text = self.data.getPackageList(False)
+        else: text = self.data.getPackageList() 
         if (wx.TheClipboard.Open()):
             wx.TheClipboard.SetData(wx.TextDataObject(text))
             wx.TheClipboard.Close()
@@ -6334,7 +6599,7 @@ class Installer_Open(balt.Tank_Open):
         Link.AppendToMenu(self,menu,window,data)
         menuItem = wx.MenuItem(menu,self.id,_('Open...'))
         menu.AppendItem(menuItem)
-        self.selected = [x for x in self.selected if x != self.data.lastKey]
+        self.selected = [x for x in self.selected if not isinstance(self.data.data[x],bosh.InstallerMarker)]
         menuItem.Enable(bool(self.selected))
 
 #------------------------------------------------------------------------------
@@ -7104,26 +7369,30 @@ class INI_Apply(Link):
 
         bEnable = True
         for i in data:
-            fileInfo = bosh.iniInfos[i]
-            if fileInfo.getStatus() < 0:
+            iniInfo = bosh.iniInfos[i]
+            if iniInfo.status < 0:
                 bEnable = False
                 break
         menuItem.Enable(bEnable)
 
     def Execute(self,event):
         """Handle applying INI Tweaks."""
-        window = getattr(self,'gTank',None) or self.window
-        message = _("Apply an ini tweak to Fallout.ini/FalloutPrefs.ini?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
-        if not balt.askContinue(window,message,'bash.iniTweaks.continue',_("INI Tweaks")):
-            return
+        #-- If we're applying to FALLOUT.INI, show the warning
+        if self.window.GetParent().comboBox.GetSelection() == 0:
+            message = _("Apply an ini tweak to FALLOUT.INI?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
+            if not balt.askContinue(self.window,message,'bash.iniTweaks.continue',_("INI Tweaks")):
+                return
         dir = self.window.data.dir
+        needsRefresh = False
         for item in self.data:
+            #--No point applying a tweak that's already applied
+            if bosh.iniInfos[item].status == 20: continue
+            needsRefresh = True
             file = dir.join(item)
-            if bosh.iniInfos[item].isPrefsIni:
-                bosh.falloutPrefsIni.applyTweakFile(file)
-            else:
-                bosh.falloutIni.applyTweakFile(file)
-            iniList.RefreshUI()
+            iniList.data.ini.applyTweakFile(file)
+        if needsRefresh:
+            #--Refresh status of all the tweaks valid for this ini
+            iniList.RefreshUI('VALID')
 #------------------------------------------------------------------------------
 class Mods_EsmsFirst(Link):
     """Sort esms to the top."""
@@ -7169,8 +7438,8 @@ class Mods_AutoGhost(Link):
 
     def Execute(self,event):
         settings['bash.mods.autoGhost'] ^= True
-        bosh.modInfos.autoGhost(True)
-        self.window.RefreshUI()
+        files = bosh.modInfos.autoGhost(True)
+        self.window.RefreshUI(files)
 
 #------------------------------------------------------------------------------
 class Mods_AutoGroup(Link):
@@ -7296,34 +7565,6 @@ class Mods_LockTimes(Link):
         modList.RefreshUI()
 
 #------------------------------------------------------------------------------
-class Mods_FalloutIni(Link):
-    """Open FALLOUT.INI."""
-    def AppendToMenu(self,menu,window,data):
-        Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('FALLOUT.INI...'))
-        menu.AppendItem(menuItem)
-        self.path = bosh.dirs['saveBase'].join('FALLOUT.INI')
-        menuItem.Enable(self.path.exists())
-
-    def Execute(self,event):
-        """Handle selection."""
-        self.path.start()
-
-#------------------------------------------------------------------------------
-class Mods_FalloutPrefsIni(Link):
-    """Open FalloutPrefs.ini."""
-    def AppendToMenu(self,menu,window,data):
-        Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('FalloutPrefs.ini...'))
-        menu.AppendItem(menuItem)
-        self.path = bosh.dirs['saveBase'].join('FalloutPrefs.ini')
-        menuItem.Enable(self.path.exists())
-
-    def Execute(self,event):
-        """Handle selection."""
-        self.path.start()
-
-#------------------------------------------------------------------------------
 class Mods_BossMasterList(Link):
     """Open Data/masterlist.txt."""
     def AppendToMenu(self,menu,window,data):
@@ -7354,6 +7595,7 @@ class Mods_Fallout3Version(Link):
 
     def Execute(self,event):
         """Handle selection."""
+        if bosh.modInfos.voCurrent == self.key: return
         bosh.modInfos.setFallout3Version(self.key)
         bosh.modInfos.refresh()
         modList.RefreshUI()
@@ -7755,6 +7997,7 @@ class Mod_AllowAllGhosting(Link):
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
+        files = []
         for fileName in self.data:
             fileInfo = bosh.modInfos[fileName]
             allowGhosting = True
@@ -7762,7 +8005,8 @@ class Mod_AllowAllGhosting(Link):
             toGhost = fileName not in bosh.modInfos.ordered
             oldGhost = fileInfo.isGhost
             if fileInfo.setGhost(toGhost) != oldGhost:
-                self.window.RefreshUI(fileName)
+                files.append(fileName)
+        self.window.RefreshUI(files)
 
 #------------------------------------------------------------------------------
 class Mod_AllowNoGhosting(Link):
@@ -7772,6 +8016,7 @@ class Mod_AllowNoGhosting(Link):
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
+        files = []
         for fileName in self.data:
             fileInfo = bosh.modInfos[fileName]
             allowGhosting = False
@@ -7779,7 +8024,8 @@ class Mod_AllowNoGhosting(Link):
             toGhost = False
             oldGhost = fileInfo.isGhost
             if fileInfo.setGhost(toGhost) != oldGhost:
-                self.window.RefreshUI(fileName)
+                files.append(fileName)
+        self.window.RefreshUI(files)
      
 #------------------------------------------------------------------------------
 class Mod_AllowInvertGhosting(Link):
@@ -7789,6 +8035,7 @@ class Mod_AllowInvertGhosting(Link):
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
+        files = []
         for fileName in self.data:
             fileInfo = bosh.modInfos[fileName]
             allowGhosting = bosh.modInfos.table.getItem(fileName,'allowGhosting',True) ^ True
@@ -7796,7 +8043,8 @@ class Mod_AllowInvertGhosting(Link):
             toGhost = allowGhosting and fileName not in bosh.modInfos.ordered
             oldGhost = fileInfo.isGhost
             if fileInfo.setGhost(toGhost) != oldGhost:
-                self.window.RefreshUI(fileName)
+                files.append(fileName)
+        self.window.RefreshUI(files)
      
 #------------------------------------------------------------------------------
 class Mod_AllowGhosting(Link):
@@ -8662,16 +8910,33 @@ class Mod_Patch_Update(Link):
 
     def Execute(self,event):
         """Handle activation event."""
+        fileName = GPath(self.data[0])
+        fileInfo = bosh.modInfos[fileName]
         unfiltered = [x for x in bosh.modInfos.ordered if 'Filter' in bosh.modInfos[x].getBashTags()]
+        noMerge = [x for x in bosh.modInfos.ordered if 'NoMerge' in bosh.modInfos[x].getBashTags() and x in bosh.modInfos.mergeable]
+        deactivate = [x for x in bosh.modInfos.ordered if 'Deactivate' in bosh.modInfos[x].getBashTags()]
         message = balt.fill(_("The following mods are tagged 'Filter'. These should be deactivated before building the patch, and then merged into the patch during build.\n*%s\n\nDeactivate the mods now?") % ('\n* '.join(x.s for x in unfiltered),),80)
         if unfiltered and balt.askYes(self.window,message,_("Deactivate Filter Mods")):
             for mod in unfiltered:
                 bosh.modInfos.unselect(mod,False)
             bosh.modInfos.refreshInfoLists()
             bosh.modInfos.plugins.save()
+        message = balt.fill(_("The following mods are tagged 'Deactivate'. These should be deactivated before building the patch, and then imported into the patch during build.\n*%s\n\nDeactivate the mods now?") % ('\n* '.join(x.s for x in deactivate),),80)
+        if deactivate and balt.askYes(self.window,message,_("Deactivate 'Deactivate' tagged Mods")):
+            for mod in deactivate:
+                bosh.modInfos.unselect(mod,False)
+            bosh.modInfos.refreshInfoLists()
+            bosh.modInfos.plugins.save()
+        message = balt.fill(_("The following mods are tagged 'NoMerge'. These should be deactivated before building the patch, and then imported into the patch during build.\n*%s\n\nDeactivate the mods now?") % ('\n* '.join(x.s for x in noMerge),),80)
+        if noMerge and balt.askYes(self.window,message,_("Deactivate 'NoMerge' tagged Mods")):
+            for mod in noMerge:
+                bosh.modInfos.unselect(mod,False)
+            bosh.modInfos.refreshInfoLists()
+            bosh.modInfos.plugins.save()
         previousMods = set()
         text = ''
         for mod in bosh.modInfos.ordered:
+            if mod == fileInfo: continue
             for master in bosh.modInfos[mod].header.masters:
                 if master not in bosh.modInfos.ordered:
                     label = _('MISSING MASTER')
@@ -8687,11 +8952,10 @@ class Mod_Patch_Update(Link):
             warning = balt.askYes(self.window,(_('WARNING!\nThe following mod(s) have master file error(s):\n%sPlease adjust your load order to rectify those probem(s) before continuing. However you can still proceed if you want to. Proceed?') % (text)),_("Missing or Delinquent Master Errors"))
             if not warning:
                 return
-        fileName = GPath(self.data[0])
-        fileInfo = bosh.modInfos[fileName]
         if not bosh.modInfos.ordered:
             balt.showWarning(self.window,_("That which does not exist cannot be patched.\nLoad some mods and try again."),_("Existential Error"))
             return
+        bosh.PatchFile.patchTime = fileInfo.mtime
         patchDialog = PatchDialog(self.window,fileInfo)
         patchDialog.ShowModal()
         self.window.RefreshUI(detail=fileName)
@@ -10155,36 +10419,38 @@ class Screens_NextScreenShot(Link):
         self.window.RefreshUI()
 
 #------------------------------------------------------------------------------
-class Screen_ConvertToJpg(Link):
-    """Converts selected images to jpg files."""
+class Screen_ConvertTo(Link):
+    """Converts seleected images to another type."""
+    def __init__(self,ext,imageType,*args,**kwdargs):
+        Link.__init__(self,*args,**kwdargs)
+        self.ext = ext.lower()
+        self.imageType = imageType
+
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Convert to jpg'))
+        menuItem = wx.MenuItem(menu,self.id,_('Convert to %s') % self.ext)
         menu.AppendItem(menuItem)
-        convertable = [name for name in self.data if GPath(name).cext != '.jpg']
+        convertable = [name for name in self.data if GPath(name).cext != '.'+self.ext]
         menuItem.Enable(len(convertable) > 0)
 
     def Execute(self,event):
-        #--File Info
-        srcDir = self.window.data.dir
-        progress = balt.Progress(_("Converting to Jpg"))
+        srcDir = bosh.screensData.dir
+        progress = balt.Progress(_("Converting to %s") % self.ext)
         try:
             progress.setFull(len(self.data))
-            srcDir = bosh.screensData.dir
             for index,fileName in enumerate(self.data):
                 progress(index,fileName.s)
                 srcPath = srcDir.join(fileName)
-                destPath = srcPath.root+'.jpg'
+                destPath = srcPath.root+'.'+self.ext
                 if srcPath == destPath or destPath.exists(): continue
                 bitmap = wx.Bitmap(srcPath.s)
-                result = bitmap.SaveFile(destPath.s,wx.BITMAP_TYPE_JPEG)
+                result = bitmap.SaveFile(destPath.s,self.imageType)
                 if not result: continue
                 srcPath.remove()
         finally:
             if progress: progress.Destroy()
-            bosh.screensData.refresh()
+            self.window.data.refresh()
             self.window.RefreshUI()
-
 #------------------------------------------------------------------------------
 class Screen_Rename(Link):
     """Renames files by pattern."""
@@ -10196,7 +10462,7 @@ class Screen_Rename(Link):
 
     def Execute(self,event):
         #--File Info
-        rePattern = re.compile(r'^([^\\/]+?)(\d*)(\.(jpg|bmp))$',re.I)
+        rePattern = re.compile(r'^([^\\/]+?)(\d*)(\.(jpg|jpeg|png|tif|bmp))$',re.I)
         fileName0 = self.data[0]
         pattern = balt.askText(self.window,_("Enter new name. E.g. Screenshot 123.bmp"),
             _("Rename Files"),fileName0.s)
@@ -11027,6 +11293,21 @@ def InitStatusBar():
             bosh.tooldirs['WinMerge'],
             Image(r'images/WinMerge'+bosh.inisettings['iconSize']+'.png'),
             _("Launch WinMerge")))
+    BashStatusBar.buttons.append( #FileZilla
+        App_Button(
+            bosh.tooldirs['FileZilla'],
+            Image(r'images/FileZilla'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch FileZilla")))
+    BashStatusBar.buttons.append( #EggTranslator
+        App_Button(
+            bosh.tooldirs['EggTranslator'],
+            Image(r'images/EggTranslator'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch Egg Translator")))
+    BashStatusBar.buttons.append( #RADVideoTools
+        App_Button(
+            bosh.tooldirs['RADVideo'],
+            Image(r'images/RADVideoTools'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch RAD Video Tools")))
     if bosh.inisettings['custom1opt']:
         BashStatusBar.buttons.append(
             App_Button(
@@ -11281,6 +11562,7 @@ def InitInstallerLinks():
     InstallersPanel.mainMenu.append(balt.Tanks_Open())
     InstallersPanel.mainMenu.append(Installers_Refresh(fullRefresh=False))
     InstallersPanel.mainMenu.append(Installers_Refresh(fullRefresh=True))
+    InstallersPanel.mainMenu.append(Installers_AddMarker())    
     InstallersPanel.mainMenu.append(SeparatorLink())
     InstallersPanel.mainMenu.append(Installer_ListPackages())
     InstallersPanel.mainMenu.append(SeparatorLink())
@@ -11293,9 +11575,8 @@ def InitInstallerLinks():
     InstallersPanel.mainMenu.append(Installers_ShowReplacers())
     InstallersPanel.mainMenu.append(SeparatorLink())
     InstallersPanel.mainMenu.append(Installers_AutoAnneal())
-    if bosh.inisettings['enablewizard']:
+    if bEnableWizard:
         InstallersPanel.mainMenu.append(Installers_AutoWizard())
-    InstallersPanel.mainMenu.append(Installers_EnableWizard())
     InstallersPanel.mainMenu.append(Installers_AutoRefreshProjects())
     InstallersPanel.mainMenu.append(Installers_BsaRedirection())
     InstallersPanel.mainMenu.append(Installers_RemoveEmptyDirs())
@@ -11310,7 +11591,7 @@ def InitInstallerLinks():
     #--File
     InstallersPanel.itemMenu.append(Installer_Open())
     InstallersPanel.itemMenu.append(Installer_Duplicate())
-    InstallersPanel.itemMenu.append(Installer_Delete())
+    InstallersPanel.itemMenu.append(balt.Tank_Delete())
     InstallersPanel.itemMenu.append(Installer_OpenFallout3Nexus())
     #InstallersPanel.itemMenu.append(Installer_OpenSearch())
     #InstallersPanel.itemMenu.append(Installer_OpenTESA())
@@ -11324,7 +11605,7 @@ def InitInstallerLinks():
     InstallersPanel.itemMenu.append(Installer_HasExtraData())
     InstallersPanel.itemMenu.append(Installer_SkipVoices())
     InstallersPanel.itemMenu.append(SeparatorLink())
-    if bosh.inisettings['enablewizard']:
+    if bEnableWizard:
         InstallersPanel.itemMenu.append(Installer_Wizard(False))
         InstallersPanel.itemMenu.append(Installer_Wizard(True))
         InstallersPanel.itemMenu.append(Installer_EditWizard())
@@ -11358,8 +11639,6 @@ def InitReplacerLinks():
 def InitINILinks():
     """Initialize INI Edits tab menus."""
     #--Column Links
-    INIList.mainMenu.append(Mods_FalloutIni())
-    INIList.mainMenu.append(Mods_FalloutPrefsIni())
     INIList.mainMenu.append(INI_SortValid())
 
     #--Item menu
@@ -11622,7 +11901,13 @@ def InitScreenLinks():
     ScreensList.itemMenu.append(Screen_Rename())
     ScreensList.itemMenu.append(File_Delete())
     ScreensList.itemMenu.append(SeparatorLink())
-    ScreensList.itemMenu.append(Screen_ConvertToJpg())
+    if True: #--Convert
+        convertMenu = MenuLink(_('Convert'))
+        convertMenu.links.append(Screen_ConvertTo('jpg',wx.BITMAP_TYPE_JPEG))
+        convertMenu.links.append(Screen_ConvertTo('png',wx.BITMAP_TYPE_PNG))
+        convertMenu.links.append(Screen_ConvertTo('bmp',wx.BITMAP_TYPE_BMP))
+        convertMenu.links.append(Screen_ConvertTo('tif',wx.BITMAP_TYPE_TIF))
+        ScreensList.itemMenu.append(convertMenu)
 
 def InitMessageLinks():
     """Initialize messages tab menus."""

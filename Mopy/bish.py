@@ -663,86 +663,11 @@ def gmstIds(fileName=None):
     print 'maxId',hex(maxId)
     #--Eid list? - if the GMST has a 00000000 eid when looking at it in the cs with nothing 
 	# but oblivion.esm loaded you need to add the gmst to this list, rebuild the pickle and overwrite the old one.
-    for eid in ['fPlayerDeathReloadTime']:
+    for eid in ['fPlayerDeathReloadTime','iMapMarkerVisibleDistance','fVanityModeWheelMax','fChase3rdPersonZUnitsPerSecond','fAutoAimMaxDegreesMiss','iHoursToRespawnCell','fEssentialDeathTime','fJumpHeightMin']:
         if eid not in fids:
             maxId += 1
             fids[eid] = maxId
             print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['iMapMarkerVisibleDistance']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['fVanityModeWheelMax']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['fChase3rdPersonZUnitsPerSecond']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['fAutoAimMaxDegreesMiss']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['iHoursToRespawnCell']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['fEssentialDeathTime']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    for eid in ['fJumpHeightMin']:
-        if eid not in fids:
-            maxId += 1
-            fids[eid] = maxId
-            print '%08X  %08X %s' % (0,maxId,eid)
-    # for eid in ['iTrainingSkills']:
-    #     if eid not in fids:
-    #         maxId += 1
-    #         fids[eid] = maxId
-    #         print '%08X  %08X %s' % (0,maxId,eid)
-    # for eid in ['fRepairCostMult']:
-    #     if eid not in fids:
-    #         maxId += 1 
-    #         fids[eid] = maxId
-    #         print '%08X  %08X %s' % (0,maxId,eid)
-    # for eid in ['fCrimeGoldSteal']:
-    #     if eid not in fids:
-    #         maxId += 1
-    #         fids[eid] = maxId
-    #         print '%08X  %08X %s' % (0,maxId,eid)
-    # for eid in ['iAllowAlchemyDuringCombat']:
-    #     if eid not in fids:
-    #         maxId += 1
-    #         fids[eid] = maxId
-    #         print '%08X  %08X %s' % (0,maxId,eid)
-    # for eid in ['iNumberActorsAllowedToFollowPlayer']:
-    #     if eid not in fids:
-    #         maxId += 1
-    #         fids[eid] = maxId
-    #         print '%08X  %08X %s' % (0,maxId,eid)
-    # for eid in ['iAllowRepairDuringCombat']:
-    #     if eid not in fids:
-    #         maxId += 1
-    #         fids[eid] = maxId
-    #         print '%08X  %08X %s' % (0,maxId,eid)
-    # for eid in ['iMaxPlayerSummonedCreatures']:
-    #     if eid not in fids:
-    #         maxId += 1
-    #         fids[eid] = maxId
-    #         print '%08X  %08X %s' % (0,maxId,eid)
-    # for eid in ['iAICombatMaxAllySummonCount']:
-    #     if eid not in fids:
-    #         maxId += 1
-    #         fids[eid] = maxId
-    #         print '%08X  %08X %s' % (0,maxId,eid)
 			#--Source file
     if fileName:
         init(3)
