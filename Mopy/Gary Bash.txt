@@ -14,6 +14,10 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 16 [5/27/2010]
+* Rebase to latest Wrye Bash 284.
+* Insert BEL cord in the head of names to fix sort order (contributed by televator).
+
 === 15 [5/20/2010]
 * Add some GMST tweaks.
   * Auto Aim Fix.
@@ -50,7 +54,7 @@ Gary Bash is released under Version 2 of the GNU General Public License. See enc
 * Fixed a bug that fails to swaps Fallout3.esm to specified version (thanks Sativarg!).
 
 === 13 [4/25/2010]
-* Rebase to latest Wrye Bash 283
+* Rebase to latest Wrye Bash 283.
   * Many new great features were taken in. but adjusting for wasteland may be insufficient...
 * Change to green icons (thanks Sativarg!).
 * LVLG subrecord in leveled lists came to be merged.
