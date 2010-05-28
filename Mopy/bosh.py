@@ -17787,10 +17787,12 @@ class SoundPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreMgef,):
             recAttrs_class[recClass] = ('castingSound','boltSound','hitSound','areaSound')
-        for recClass in (MreActi,MreLigh):
+        for recClass in (MreActi,):
             recAttrs_class[recClass] = ('soundLooping','soundActivation')
+        for recClass in (MreLigh,):
+            recAttrs_class[recClass] = ('sound',)
         for recClass in (MreWthr,):
-            recAttrs_class[recClass] = ('sound','sounds')
+            recAttrs_class[recClass] = ('sounds',)
         for recClass in (MreCont,):
             recAttrs_class[recClass] = ('soundOpen','soundClose')
         for recClass in (MreDoor,):
@@ -19860,10 +19862,30 @@ class GmstTweaker(MultiTweaker):
             ('5000',5000),
             ('6000',6000),
             ),
-        GmstTweak(_('UOP Vampire Aging and Face Fix.esp'),
-            _("Duplicate of UOP component that disables vampire aging (fixes a bug). Use instead of 'UOP Vampire Aging & Face Fix.esp' to save an esp slot."),
-            'iVampirismAgeOffset',
-            ('Fix it!',0),
+        #GmstTweak(_('UOP Vampire Aging and Face Fix.esp'),
+        #    _("Duplicate of UOP component that disables vampire aging (fixes a bug). Use instead of 'UOP Vampire Aging & Face Fix.esp' to save an esp slot."),
+        #    'iVampirismAgeOffset',
+        #    ('Fix it!',0),
+        #    ),
+        GmstTweak(_('PipBoy Light Keypress-Delay'),
+            _("Seconds of delay until the PipBoy Light switches on."),
+            ('fPlayerPipBoyLightTimer'),
+            (_('0.3'),0.3),
+            (_('0.4'),0.4),
+            (_('0.5'),0.5),
+            (_('0.6'),0.6),
+            (_('0.7'),0.7),
+            (_('[0.8]'),0.8),
+            (_('1.0'),1.0),
+            ),
+		GmstTweak(_('VATS Playback Delay'),
+            _("Seconds of delay after the VATS Camera finished playback."),
+            ('fVATSPlaybackDelay'),
+            (_('0.01'),0.01),
+            (_('0.05'),0.05),
+            (_('0.10'),0.1),
+            (_('[0.17]'),0.17),
+            (_('0.25'),0.25),
             ),
         ],key=lambda a: a.label.lower())
     #--Patch Phase ------------------------------------------------------------
@@ -20353,7 +20375,7 @@ class NamesTweaker(MultiTweaker):
         # NamesTweak_Scrolls(),
         # NamesTweak_Spells(),
         NamesTweak_Weapons(),
-        NamesTweak_Dwarven(),
+        #NamesTweak_Dwarven(),
         ],key=lambda a: a.label.lower())
     tweaks.insert(0,NamesTweak_BodyTags())
 
@@ -21876,10 +21898,10 @@ class TweakActors(MultiTweaker):
     tweaks = sorted([
         MAONPCSkeletonPatcher(),
         VanillaNPCSkeletonPatcher(),
-        RedguardNPCPatcher(),
+        #RedguardNPCPatcher(),
         NoBloodCreaturesPatcher(),
-        AsIntendedImpsPatcher(),
-        AsIntendedBoarsPatcher(),
+        #AsIntendedImpsPatcher(),
+        #AsIntendedBoarsPatcher(),
         #RWALKNPCAnimationPatcher(),
         #SWALKNPCAnimationPatcher(),
         ],key=lambda a: a.label.lower())

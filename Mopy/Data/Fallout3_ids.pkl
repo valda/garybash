@@ -1613,4 +1613,7 @@ I84881
 sS'fVanityModeWheelMin'
 p540
 I119804
+sS'fPlayerPipBoyLightTimer'
+p541
+I15803213
 ss.
