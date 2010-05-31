@@ -6092,9 +6092,9 @@ class MobICells(MobCells):
             elif recType == 'GRUP':
                 size,groupFid,groupType = header[1:4]
                 if groupType == 2: # Block number
-                    endBlockPos = insTell()+size+24
+                    endBlockPos = insTell()+size-24
                 elif groupType == 3: # Sub-block number
-                    endSubblockPos = insTell()+size+24
+                    endSubblockPos = insTell()+size-24
                 elif groupType == 6: # Cell Children
                     if cell:
                         if groupFid != cell.fid:
@@ -6180,11 +6180,11 @@ class MobWorld(MobCells):
                 if groupType == 4: # Exterior Cell Block
                     block = structUnpack('2h',structPack('I',groupFid))
                     block = (block[1],block[0])
-                    endBlockPos = insTell() + size + 24
+                    endBlockPos = insTell() + size - 24
                 elif groupType == 5: # Exterior Cell Sub-Block
                     subblock = structUnpack('2h',structPack('I',groupFid))
                     subblock = (subblock[1],subblock[0])
-                    endSubblockPos = insTell() + size + 24
+                    endSubblockPos = insTell() + size - 24
                 elif groupType == 6: # Cell Children
                     if cell:
                         if groupFid != cell.fid:
@@ -6208,6 +6208,10 @@ class MobWorld(MobCells):
                     raise ModError(self.inName,'Unexpected subgroup %d in world children group.' % groupType)
             else:
                 raise ModError(self.inName,'Unexpected %s record in world children group.' % recType)
+            if block and insTell() == endBlockPos:
+                cell = subblock = block = None
+            elif subblock and insTell() == endSubblockPos:
+                cell = subblock = None
         self.setChanged()
 
     def getNumRecords(self,includeGroups=True):
