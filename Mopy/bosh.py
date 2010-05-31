@@ -6140,6 +6140,7 @@ class MobWorld(MobCells):
         recCellClass = self.loadFactory.getRecClass('CELL')
         errLabel = 'World Block'
         cell = None
+        cells = {}
         block = None
         subblock = None
         cellBlocks = self.cellBlocks
@@ -6171,6 +6172,7 @@ class MobWorld(MobCells):
                             raise ModError(self.inName,'Extra exterior cell <%s> %s before block group.' % (hex(cell.fid), cell.eid))
                         self.worldCellBlock = cellBlock
                 cell = recClass(header,ins,True)
+                cells[cell.fid] = cell
                 if block:
                     if insTell() > endBlockPos or insTell() > endSubblockPos:
                         raise ModError(self.inName,'Exterior cell <%s> %s after block or'
@@ -6186,10 +6188,11 @@ class MobWorld(MobCells):
                     subblock = (subblock[1],subblock[0])
                     endSubblockPos = insTell() + size - 24
                 elif groupType == 6: # Cell Children
+                    cell = cells.get(groupFid,None)
                     if cell:
-                        if groupFid != cell.fid:
-                            raise ModError(self.inName,'Cell subgroup (%s) does not match CELL <%s> %s.' %
-                                (hex(groupFid), hex(cell.fid), cell.eid))
+                        #if groupFid != cell.fid:
+                        #    raise ModError(self.inName,'Cell subgroup (%s) does not match CELL <%s> %s.' %
+                        #        (hex(groupFid), hex(cell.fid), cell.eid))
                         if unpackCellBlocks:
                             cellBlock = MobCell(header,selfLoadFactory,cell,ins,True)
                         else:
