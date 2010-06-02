@@ -14,9 +14,14 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
-=== 16 [5/27/2010]
-* Rebase to latest Wrye Bash 284.
-* Insert BEL cord in the head of names to fix sort order (contributed by televator).
+=== 16 [6/2/2010] [Valda,Televator]
+* Rebase to Wrye Bash 284.
+* Bashed Patch:
+  * Tweak Names: Insert BEL cord in the head of names to fix sort order (contributed by televator).
+  * Added some Game Setting Tweaks: PipBoy Light Delay, VATS Camera Delay (contributed by televator).
+  * Fixed a loading of hierarchical structure of the CELL records (for FWE MR5.03, Destruction V6-1) (thanks Psymon, Katnap).
+  * Added 'GetIsUsedItemEquipType' to conditionFunctionData (thanks poopoopapa!).
+* Save tab: Removed context menu item which doesn't work. (thanks MadCat221, SkullKnight)
 
 === 15 [5/20/2010]
 * Add some GMST tweaks.
