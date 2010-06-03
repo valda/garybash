@@ -1189,7 +1189,7 @@ __Importers__ are components that import specific information from selected mods
     * Actors.Animations: Mod modifies the KFFZ subrecord of NPCs or Creatures.
       * (note: direct import rather than merge - this will hopefully be fixed next version (285))
     * Actors.AIPackages: Mod modifies the AIPackages lists of NPCs or creatures. 
-      *(merges change likes Import Inventory) (note: some instances in which it does not import for an unknown reason - works 90% or more of the time but sometimes will skip records - hopefully will be fixed in version 285)
+      * Merges change likes Import Inventory but for the AIPackage list.
     * Actors.DeathItems: Mod modifies Creature or NPC Death Item.
 * __Usage__
   * For selected mods, each of the tags will import the related information into the Bashed Patch if necessary. 
@@ -1786,6 +1786,9 @@ These are the commands found on context menu for saves...
 === Import NPC Levels
 * **Deprecated.** Use [[#|Update NPC Levels]] instead. 
 
+=== Set Number of Uses for Weapon Enchantments
+* This allows you to set the number of uses for any cast when used enchantments you have created in-game.
+
 === Rename Enchanted
 * This allows you to rename any enchanted items that you have created in-game.
 
@@ -2044,6 +2047,36 @@ DELETE PROFILE %s AND THE %d SAVE FILES IT CONTAINS?
 == Versions ===================================================================
 {{CONTENTS=0}}
 **All versions by Wrye unless otherwise noted.**
+
+=== 285 [12/12/2010] [Lojack,Metallicow,PacificMorrowind,Waruddar]
+* Bashed Patch Changes:
+  * Master 'Select All' and 'Deselect All' patchers and items in list/tweak patchers buttons added.
+  * Export/Import Config buttons added.
+  * Save config button removed (due to bug it caused - use Export/Import instead).
+  * Actors.AIPackages totally refactored (as in it works properly now).
+    * Also removes the OOO duplicate version of UOP AI Package fixes if you are using both of them (except for one on HaulsHisRopes but that shouldn't cause any problems).
+  * R.Ears fixed.
+  * Misc Tweaks:
+    * fix (reported by Blade of Mercy) and improvements to All Clothes playable tweak.
+  * Rebuilding doesn't complain about missing masters for the bash patch now (truly!).
+  * NoMerge tag warning text updated to be clearer (contributed by Sartivarg).
+  * suggestion to deactivate and merge mergeable mods added to rebuild patch checks.
+  * NoMerge/Mergeable/Deactivate/Filter warnings/questions merged into one scrollable and much more legible text warning/question window.
+  * Patch Dialogue now has an icon assigned (the Wrye Monkey Icon).
+  * For tweaks with options that take numbers as value (ie tweak settings) new 'Custom' entry option; select custom and enter your own number in the prompt following any directions there.
+* New Save Game Tweaker: Set Number of Uses for Weapon Enchantments.
+* BAIN Changes:
+  * fix so that when you check/uncheck an esp in the esp/m list the view maintains its scroll position.
+  * above fix also applied to subpackages list.
+  * Wizards changes:
+    * DataFileExists properly documents
+    * newline error fixed in textboxes
+* Magic Effect school for Spells/enchantments with more than one effect based on highest cost not first effect (so inline with in game values).
+* Bash.ini typos fixed, prettied and sorted a bit better (contributed by Metallicow)
+* Start of the CBash implementation into Wrye Bash:
+  * CBash.dll included as Rename_CBash.dll; it will only be used if renamed to just 'CBash.dll'
+  * Bunch of Import/Export functions modifed to use that if available: EditorID, Names, Npclevels, Scripts (though leaves a whole lot of backup files on import).
+
 
 === 284 [24/05/2010] [Lojack,Metallicow,PacificMorrowind,ThreeD,Valda68k,Waruddar]
 * Incorrect italicization fixed.

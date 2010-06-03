@@ -14,8 +14,8 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
-=== 16 [6/2/2010] [Valda,Televator]
-* Rebase to Wrye Bash 284.
+=== 16 [6/3/2010] [Valda,Televator]
+* Rebase to Wrye Bash 285.
 * Bashed Patch:
   * Tweak Names: Insert BEL cord in the head of names to fix sort order (contributed by televator).
   * Added some Game Setting Tweaks: PipBoy Light Delay, VATS Camera Delay (contributed by televator).

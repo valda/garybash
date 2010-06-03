@@ -43,6 +43,7 @@ import bolt
 from bosh import formatInteger,formatDate
 from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError
 from bolt import _, LString,GPath, SubProgress, deprint, delist
+from cint import *
 
 #--Python
 import ConfigParser
@@ -953,9 +954,9 @@ class MasterList(List):
         pass #--Don't do column head sort.
 
     #--Column Menu
-    def DoColumnMenu(self,event):
+    def DoColumnMenu(self,event,column=None):
         if not self.fileInfo: return
-        List.DoColumnMenu(self,event)
+        List.DoColumnMenu(self,event,column)
 
     #--Item Menu
     def DoItemMenu(self,event):
@@ -1546,7 +1547,7 @@ class ModDetails(wx.Window):
         self.save.Disable()
         self.cancel.Disable()
         #--Bash tags
-        self.allTags = sorted(('Body-F', 'Body-M', 'C.Climate', 'C.Light', 'C.Music', 'C.Name', 'C.RecordFlags', 'C.Owner', 'C.Water', 'Deactivate', 'Deflst', 'Delev', 'Destructable', 'Eyes', 'Factions', 'Relations', 'Filter', 'Graphics', 'Hair', 'IIM', 'Invent', 'Names', 'NoMerge', 'NpcFaces', 'Relev', 'Scripts', 'ScriptContents', 'Sound', 'Stats', 'Voice-F', 'Voice-M', 'R.Teeth', 'R.Mouth', 'R.Ears', 'R.Head', 'R.Attributes-F', 'R.Attributes-M', 'R.Skills', 'R.Description', 'Roads', 'Actors.Anims', 'Actors.AIData', 'Actors.DeathItem', 'Actors.AIPackages', 'Actors.Stats', 'Actors.ACBS', 'NPC.Class', 'Actors.CombatStyle', 'Creatures.Blood'))
+        self.allTags = sorted(('Body-F', 'Body-M', 'C.Climate', 'C.Light', 'C.Music', 'C.Name', 'C.RecordFlags', 'C.Owner', 'C.Water', 'Deactivate', 'Deflst', 'Delev', 'Destructable', 'Eyes', 'Factions', 'Relations', 'Filter', 'Graphics', 'Hair', 'IIM', 'Invent', 'Names', 'NoMerge', 'NpcFaces', 'Relev', 'Scripts', 'ScriptContents', 'Sound', 'Stats', 'Voice-F', 'Voice-M', 'R.Teeth', 'R.Mouth', 'R.Ears', 'R.Head', 'R.Attributes-F', 'R.Attributes-M', 'R.Skills', 'R.Description', 'Roads', 'Actors.Anims', 'Actors.AIData', 'Actors.DeathItem', 'Actors.AIPackages', 'Actors.AIPackagesForceAdd', 'Actors.Stats', 'Actors.ACBS', 'NPC.Class', 'Actors.CombatStyle', 'Creatures.Blood'))
 
         id = self.tagsId = wx.NewId()
         self.gTags = (
@@ -1916,6 +1917,9 @@ class INIPanel(NotebookPanel):
                 changed = True
         if 'FALLOUT.INI' not in self.choices:
             self.choices['FALLOUT.INI'] = bosh.falloutIni.path
+            changed = True
+        if 'FalloutPrefs.ini' not in self.choices:
+            self.choices['FalloutPrefs.ini'] = bosh.falloutPrefsIni.path
             changed = True
         if 'Browse...' not in self.choices:
             self.choices['Browse...'] = None
@@ -2488,6 +2492,7 @@ class InstallersPanel(SashTankPanel):
         self.espms = []
         self.gEspmList = wx.CheckListBox(right,-1)
         self.gEspmList.Bind(wx.EVT_CHECKLISTBOX,self.OnCheckEspmItem)
+       ## self.gEspmList.Bind(wx.EVT_RIGHT_UP,self.SelectionMenu) #since can't get this to work, commenting it out for now.
         #--Comments
         self.gComments = wx.TextCtrl(right,-1,style=wx.TE_MULTILINE)
         #--Events
@@ -2739,25 +2744,46 @@ class InstallersPanel(SashTankPanel):
         subScrollPos  = self.gSubList.GetScrollPos(wx.VERTICAL)
         espmScrollPos = self.gEspmList.GetScrollPos(wx.VERTICAL)
         self.gList.RefreshUI(self.detailsItem)
-        self.gSubList.ScrollLines(subScrollPos)
-        self.gEspmList.ScrollLines(espmScrollPos)
+    #    self.gEspmList.ScrollLines(-len(self.espms))
+    #    self.gSubList.ScrollLines(-self.gSubList.GetCount())
+    #    self.gEspmList.ScrollLines(espmScrollPos)
+    #    self.gSubList.ScrollLines(subScrollPos)
+        self.gSubList.SetScrollPos(wx.VERTICAL,subScrollPos)
+        self.gEspmList.SetScrollPos(wx.VERTICAL,espmScrollPos)
 
     def OnCheckSubItem(self,event):
         """Handle check/uncheck of item."""
         installer = self.data[self.detailsItem]
         for index in range(self.gSubList.GetCount()):
             installer.subActives[index+1] = self.gSubList.IsChecked(index)
+        index = event.GetSelection()
+        self.gSubList.SetSelection(index) 
         self.refreshCurrent(installer)
+        
+    def SelectionMenu(self,event):
+        """Handle right click in espm list."""
+        #--Build Menu
+        self.espmlinks = Links()
+        self.espmlinks.append(Installer_Espm_DeselectAll())
+        self.espmlinks.append(Installer_Espm_SelectAll())
+        menu = wx.Menu()
+        for link in self.espmlinks:
+            link.AppendToMenu(menu,self,self)
+        #--Show/Destroy Menu
+        self.gEspmList.PopupMenu(menu)
+        menu.Destroy()
 
     def OnCheckEspmItem(self,event):
         """Handle check/uncheck of item."""
         installer = self.data[self.detailsItem]
         espmNots = installer.espmNots
-        for index,espm in enumerate(self.espms):
-            if self.gEspmList.IsChecked(index):
-                espmNots.discard(espm)
-            else:
-                espmNots.add(espm)
+        index = event.GetSelection()
+        espm = GPath(self.gEspmList.GetString(index))
+        if self.gEspmList.IsChecked(index):
+            espmNots.discard(espm)
+        else:
+            espmNots.add(espm)
+        self.gEspmList.SetSelection(index)    # so that (un)checking also selects (moves the highlight)
         self.refreshCurrent(installer)
 
 #------------------------------------------------------------------------------
@@ -3926,7 +3952,12 @@ class BashFrame(wx.Frame):
     def SetTitle(self,title=None):
         """Set title. Set to default if no title supplied."""
         if not title:
-            title = "Wrye Bash for Fallout3 %s: " % (settings['bash.readme'][1],)
+            ###Remove from Bash after CBash integrated
+            if(CBash == None):
+                title = "Wrye Bash for Fallout3 %s: " % (settings['bash.readme'][1],)
+            else:
+                title = "Wrye Bash for Fallout3 %s, CBash v%u.%u.%u: " % (settings['bash.readme'][1], CBash.GetMajor(), CBash.GetMinor(), CBash.GetRevision())
+
             maProfile = re.match(r'Saves\\(.+)\\$',bosh.saveInfos.localSave)
             if maProfile:
                 title += maProfile.group(1)
@@ -4545,8 +4576,8 @@ class BashApp(wx.App):
     def InitResources(self):
         """Init application resources."""
         global bashBlue, bashRed, bashDocBrowser
-        bashRed = bashRed.GetIconBundle()
         bashBlue = bashBlue.GetIconBundle()
+        bashRed = bashRed.GetIconBundle()
         bashDocBrowser = bashDocBrowser.GetIconBundle()
 
     def InitData(self,progress):
@@ -4555,6 +4586,7 @@ class BashApp(wx.App):
         bosh.configHelpers = bosh.ConfigHelpers()
         bosh.configHelpers.refresh()
         bosh.falloutIni = bosh.FalloutIni()
+        bosh.falloutPrefsIni = bosh.FalloutPrefsIni()
         bosh.modInfos = bosh.ModInfos()
         bosh.modInfos.refresh(doAutoGroup=True)
         progress.Update(30,_("Initializing SaveInfos"))
@@ -4763,8 +4795,12 @@ class PatchDialog(wx.Dialog):
         self.currentPatcher = None
         patcherNames = [patcher.getName() for patcher in self.patchers]
         #--GUI elements
-        self.gExecute = button(self,id=wx.ID_OK,onClick=self.Execute)
-        self.gSaveConfig = button(self,id=wx.ID_SAVE,onClick=self.SaveConfig)
+        self.gExecute = button(self,id=wx.ID_OK,label=_('Build Patch'),onClick=self.Execute)
+        self.gRevertConfig = button(self,id=wx.ID_REVERT_TO_SAVED,onClick=self.RevertConfig)
+        self.gSelectAll = button(self,id=wx.wx.ID_SELECTALL,onClick=self.SelectAll)
+        self.gDeselectAll = button(self,id=wx.wx.ID_SELECTALL,label=_('Deselect All'),onClick=self.DeselectAll)
+        self.gExportConfig = button(self,id=wx.ID_SAVEAS,label=_('Export Patch Configuration'),onClick=self.ExportConfig)
+        self.gImportConfig = button(self,id=wx.ID_OPEN,label=_('Import Patch Configuration'),onClick=self.ImportConfig)
         self.gPatchers = wx.CheckListBox(self,-1,choices=patcherNames,style=wx.LB_SINGLE)
         for index,patcher in enumerate(self.patchers):
             self.gPatchers.Check(index,patcher.isEnabled)
@@ -4787,11 +4823,20 @@ class PatchDialog(wx.Dialog):
             (wx.StaticLine(self),0,wx.EXPAND|wx.BOTTOM,4),
             (hSizer(
                 spacer,
-                self.gExecute,(self.gSaveConfig,0,wx.LEFT,4),
+                (self.gRevertConfig,0,wx.LEFT,4),
+                (self.gExportConfig,0,wx.LEFT,4),
+                (self.gImportConfig,0,wx.LEFT,4),
+                ),0,wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM,4),
+            (hSizer(
+                spacer,
+                self.gExecute,
+                (self.gSelectAll,0,wx.LEFT,4),
+                (self.gDeselectAll,0,wx.LEFT,4),
                 (button(self,id=wx.ID_CANCEL),0,wx.LEFT,4),
                 ),0,wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM,4)
             )
         self.SetSizer(sizer)
+        self.SetIcon(Image(r'images/wryemonkey16.jpg',wx.BITMAP_TYPE_JPEG).GetIcon())
         #--Patcher panels
         for patcher in self.patchers:
             gConfigPanel = patcher.GetConfigPanel(self,gConfigSizer,self.gTipText)
@@ -4803,7 +4848,7 @@ class PatchDialog(wx.Dialog):
     def SetOkEnable(self):
         """Sets enable state for Ok button."""
         for patcher in self.patchers:
-            if patcher.isEnabled:
+            if patcher.isEnabled:                
                 return self.gExecute.Enable(True)
         self.gExecute.Enable(False)
 
@@ -4885,7 +4930,98 @@ class PatchDialog(wx.Dialog):
         for patcher in self.patchers:
             patcher.saveConfig(patchConfigs)
         bosh.modInfos.table.setItem(patchName,'bash.patch.configs',patchConfigs)
+        
+    def ExportConfig(self,event=None):
+        """Export the configuration to a user selected dat file."""
+        patchName = self.patchInfo.name + _('_Configuration.dat')
+        textDir = bosh.dirs['patches']
+        textDir.makedirs()
+        #--File dialog
+        textPath = balt.askSave(self.parent,_('Export Bashed Patch configuration to:'),textDir,patchName, '*Configuration.dat')
+        if not textPath: return
+        pklPath = textPath+'.pkl'
+        table = bolt.Table(bosh.PickleDict(textPath, pklPath))
+        patchConfigs = {'ImportedMods':set()}
+        for patcher in self.patchers:
+            patcher.saveConfig(patchConfigs)
+        table.setItem(bolt.Path('Saved Bashed Patch Configuration'),'bash.patch.configs',patchConfigs)
+        table.save()
+        
+    def ImportConfig(self,event=None):
+        """Import the configuration to a user selected dat file."""
+        patchName = self.patchInfo.name + _('_Configuration.dat')
+        textDir = bosh.dirs['patches']
+        textDir.makedirs()
+        #--File dialog
+        textPath = balt.askOpen(self.parent,_('Import Bashed Patch configuration from:'),textDir,patchName, '*.dat')
+        if not textPath: return
+        pklPath = textPath+'.pkl'
+        table = bolt.Table(bosh.PickleDict(
+            textPath, pklPath))
+        patchConfigs = table.getItem(bolt.Path('Saved Bashed Patch Configuration'),'bash.patch.configs',{})
+        for index,patcher in enumerate(self.patchers):
+            patcher.getConfig(patchConfigs)
+            self.gPatchers.Check(index,patcher.isEnabled)
+            if isinstance(patcher, ListPatcher):
+                if patcher.getName() == 'Leveled Lists': continue #not handled yet!
+                for index, item in enumerate(patcher.items):
+                    try:
+                        patcher.gList.Check(index,patcher.configChecks[item])
+                    except KeyError: deprint(_('item %s not in saved configs') % (item))
+            elif isinstance(patcher, TweakPatcher):
+                for index, item in enumerate(patcher.tweaks):
+                    try:
+                        patcher.gList.Check(index,item.isEnabled) 
+                    except: deprint(_('item %s not in saved configs') % (item))
+        self.SetOkEnable()
+    
+    def RevertConfig(self,event=None):
+        """Revert configuration back to saved"""
+        patchConfigs = bosh.modInfos.table.getItem(self.patchInfo.name,'bash.patch.configs',{})
+        for index,patcher in enumerate(self.patchers):
+            patcher.getConfig(patchConfigs)
+            self.gPatchers.Check(index,patcher.isEnabled)
+            if isinstance(patcher, ListPatcher):
+                if patcher.getName() == 'Leveled Lists': continue #not handled yet!
+                for index, item in enumerate(patcher.items):
+                    patcher.gList.Check(index,patcher.configChecks[item])
+            elif isinstance(patcher, TweakPatcher):
+                for index, item in enumerate(patcher.tweaks):
+                    patcher.gList.Check(index,item.isEnabled)
+        self.SetOkEnable()
             
+    def SelectAll(self,event=None):
+        """Select all patchers and entries in patchers with child entries."""
+        for index,patcher in enumerate(self.patchers):
+            self.gPatchers.Check(index,True)
+            patcher.isEnabled = True
+            if isinstance(patcher, ListPatcher):
+                if patcher.getName() == 'Leveled Lists': continue
+                for index, item in enumerate(patcher.items):
+                    patcher.gList.Check(index,True)
+                    patcher.configChecks[item] = True
+            elif isinstance(patcher, TweakPatcher):
+                for index, item in enumerate(patcher.tweaks):
+                    patcher.gList.Check(index,True)
+                    item.isEnabled = True
+            self.gExecute.Enable(True)
+                
+    def DeselectAll(self,event=None):
+        """Deselect all patchers and entries in patchers with child entries."""
+        for index,patcher in enumerate(self.patchers):
+            self.gPatchers.Check(index,False)
+            patcher.isEnabled = False
+            if isinstance(patcher, ListPatcher):
+                if patcher.getName() == 'Leveled Lists': continue
+                for index, item in enumerate(patcher.items):
+                    patcher.gList.Check(index,False)
+                    patcher.configChecks[item] = False
+            elif isinstance(patcher, TweakPatcher):
+                for index, item in enumerate(patcher.tweaks):
+                    patcher.gList.Check(index,False)
+                    item.isEnabled = False
+        self.gExecute.Enable(False)
+        
     #--GUI --------------------------------
     def OnSize(self,event):
         balt.sizes[self.__class__.__name__] = self.GetSizeTuple()
@@ -5221,7 +5357,10 @@ class TweakPatcher(Patcher):
         """Set item to specified set of items."""
         self.gList.Clear()
         for index,tweak in enumerate(self.tweaks):
-            self.gList.Insert(tweak.getListLabel(),index)
+            label = tweak.getListLabel()
+            if tweak.choiceLabels and tweak.choiceLabels[tweak.chosen].startswith('Custom'):
+                label += ' %4.2f ' % tweak.choiceValues[tweak.chosen][0]
+            self.gList.Insert(label,index)
             self.gList.Check(index,tweak.isEnabled)
 
     def OnListCheck(self,event=None):
@@ -5281,6 +5420,12 @@ class TweakPatcher(Patcher):
         for index,label in enumerate(choiceLabels):
             if label == '----':
                 menu.AppendSeparator()
+            elif label.startswith('Custom'):
+                menulabel = label + ' %4.2f ' % tweaks[tweakIndex].choiceValues[index][0]
+                menuItem = wx.MenuItem(menu,index,menulabel,kind=wx.ITEM_CHECK)
+                menu.AppendItem(menuItem)
+                if index == chosen: menuItem.Check()
+                wx.EVT_MENU(self.gList,index,self.OnTweakCustomChoice)
             else:
                 menuItem = wx.MenuItem(menu,index,label,kind=wx.ITEM_CHECK)
                 menu.AppendItem(menuItem)
@@ -5295,6 +5440,20 @@ class TweakPatcher(Patcher):
         tweakIndex = self.rightClickTweakIndex
         self.tweaks[tweakIndex].chosen = event.GetId()
         self.gList.SetString(tweakIndex,self.tweaks[tweakIndex].getListLabel())
+        
+    def OnTweakCustomChoice(self,event):
+        """Handle choice menu selection."""
+        tweakIndex = self.rightClickTweakIndex
+        index = event.GetId()
+        tweak = self.tweaks[tweakIndex]
+        tweak.chosen = index
+        if tweak.float: label = _('Enter the desired custom tweak value.\nDue to an inability to get decimal numbers from the wxPython prompt please enter an extra zero after your choice if it is not meant to be a decimal.\nIf you are trying to enter a decimal multiply it by 10, for example for 0.3 enter 3 instead.')
+        else: label = _('Enter the desired custom tweak value.')
+        value = balt.askNumber(self.gConfigPanel,label,prompt=_('Value'),title=_('Custom Tweak Value'),value=self.tweaks[tweakIndex].choiceValues[index][0],min=-10000,max=10000)
+        if not value: value = self.tweaks[tweakIndex].choiceValues[index][0]
+        if tweak.float: value = float(value) / 10
+        self.tweaks[tweakIndex].choiceValues[index] = (value,)
+        self.gList.SetString(tweakIndex,(self.tweaks[tweakIndex].getListLabel()+' %4.2f ' % (value)))
 
 # Patchers 10 ------------------------------------------------------------------
 class PatchMerger(bosh.PatchMerger,ListPatcher):
@@ -6213,14 +6372,14 @@ class Installer_EditWizard(InstallerLink):
         menuItem = wx.MenuItem(menu, self.id, _('Edit Wizard...'))
         menu.AppendItem(menuItem)
         if self.isSingleProject():
-            menuItem.Enable(self.data[self.selected[0]].hasWizard)
+            menuItem.Enable(self.data[self.selected[0]].hasWizard != False)
         else:
             menuItem.Enable(False)
 
     def Execute(self, event):
         path = self.selected[0]
         dir = self.data.dir
-        dir.join(path.s, 'wizard.txt').start()
+        dir.join(path.s, self.data[path].hasWizard).start()
 
      
 class Installer_Wizard(InstallerLink):
@@ -6241,7 +6400,7 @@ class Installer_Wizard(InstallerLink):
         menu.AppendItem(menuItem)
         if self.isSingle():
             installer = self.data[self.selected[0]]
-            menuItem.Enable(installer.hasWizard)
+            menuItem.Enable(installer.hasWizard != False)
         else:
             menuItem.Enable(False)
 
@@ -6630,11 +6789,12 @@ class Installer_OpenSearch(InstallerLink):
     def Execute(self,event):
         """Handle selection."""
         message = _("Open a search for this on Google?")
-        if balt.askContinue(self.gTank,message,'bash.installers.opensearch',_('Open at search')):
-            #fileName = bosh.reBaseName(self.selected[0].s).group(1)
+        if balt.askContinue(self.gTank,message,'bash.installers.opensearch',_('Open a search')):
+            fileName = self.selected[0].s
+            print fileName
             #filename = 'Wrye Bash'
-            filename = bosh.reSplitOnNonAlphaNumeric.split(self.selected[0].s)
-            print filename+len(filename)
+            filename = filename.strip('0123456789')
+            print filename+str(len(filename))
             os.startfile('http://www.google.com/search?hl=en&q='+filename+'aq=f&oq=&aqi=')
 
 class Installer_OpenTESA(InstallerLink):
@@ -6716,6 +6876,45 @@ class Installer_Uninstall(InstallerLink):
             self.data.refresh(what='NS')
             gInstallers.RefreshUIMods()
             bashFrame.RefreshData()
+
+# InstallerDetails Links ------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+class Installer_Espm_SelectAll(InstallerLink):
+    """Select All Esp/ms in installer for installation."""
+    def AppendToMenu(self,menu,window,data):
+        Link.AppendToMenu(self,menu,window,data)
+        menuItem = wx.MenuItem(menu,self.id,_('Select All'))
+        menu.AppendItem(menuItem)
+
+    def Execute(self,event):
+        """Handle selection."""
+        espmNots = self.data.data[self.data.detailsItem].espmNots
+        espmNots = set()
+        newchecked = []
+        for i in range(len(self.data.espms)):
+            newchecked.append(i)
+        print newchecked
+        self.data.gEspmList.SetChecked(newchecked)
+        print str(self.data.gEspmList.IsChecked(0))+'6856'
+        #self.data.refreshCurrent(self.data.data[self.data.detailsItem])
+        print str(self.data.gEspmList.IsChecked(0))+'6859'
+
+class Installer_Espm_DeselectAll(InstallerLink):
+    """Select All Esp/ms in instalelr for installation."""
+    def AppendToMenu(self,menu,window,data):
+        Link.AppendToMenu(self,menu,window,data)
+        menuItem = wx.MenuItem(menu,self.id,_('Deselect All'))
+        menu.AppendItem(menuItem)
+
+    def Execute(self,event):
+        """Handle selection."""
+        self.data.data[self.data.detailsItem].espmNots
+        espmNots = set(self.data.espms)
+        print self.data.gEspmList.IsChecked(0)
+        self.data.gEspmList.SetChecked([])
+        #self.data.refreshCurrent(self.data.data[self.data.detailsItem])    
+        print self.data.gEspmList.IsChecked(0)        
 
 # InstallerArchive Links ------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -7637,7 +7836,7 @@ class Mod_ActorLevels_Export(Link):
     """Export actor levels from mod to text file."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('NPC Levels'))
+        menuItem = wx.MenuItem(menu,self.id,_('NPC Levels...'))
         menu.AppendItem(menuItem)
         menuItem.Enable(len(self.data)==1)
 
@@ -8141,7 +8340,7 @@ class Mod_CreateBlank(Link):
 
 #------------------------------------------------------------------------------
 class Mod_FactionRelations_Export(Link):
-    """Export faction relationss from mod to text file."""
+    """Export faction relations from mod to text file."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
         menuItem = wx.MenuItem(menu,self.id,_('Relations...'))
@@ -8912,31 +9111,44 @@ class Mod_Patch_Update(Link):
         """Handle activation event."""
         fileName = GPath(self.data[0])
         fileInfo = bosh.modInfos[fileName]
-        unfiltered = [x for x in bosh.modInfos.ordered if 'Filter' in bosh.modInfos[x].getBashTags()]
-        noMerge = [x for x in bosh.modInfos.ordered if 'NoMerge' in bosh.modInfos[x].getBashTags() and x in bosh.modInfos.mergeable]
-        deactivate = [x for x in bosh.modInfos.ordered if 'Deactivate' in bosh.modInfos[x].getBashTags()]
-        message = balt.fill(_("The following mods are tagged 'Filter'. These should be deactivated before building the patch, and then merged into the patch during build.\n*%s\n\nDeactivate the mods now?") % ('\n* '.join(x.s for x in unfiltered),),80)
-        if unfiltered and balt.askYes(self.window,message,_("Deactivate Filter Mods")):
-            for mod in unfiltered:
-                bosh.modInfos.unselect(mod,False)
-            bosh.modInfos.refreshInfoLists()
-            bosh.modInfos.plugins.save()
-        message = balt.fill(_("The following mods are tagged 'Deactivate'. These should be deactivated before building the patch, and then imported into the patch during build.\n*%s\n\nDeactivate the mods now?") % ('\n* '.join(x.s for x in deactivate),),80)
-        if deactivate and balt.askYes(self.window,message,_("Deactivate 'Deactivate' tagged Mods")):
-            for mod in deactivate:
-                bosh.modInfos.unselect(mod,False)
-            bosh.modInfos.refreshInfoLists()
-            bosh.modInfos.plugins.save()
-        message = balt.fill(_("The following mods are tagged 'NoMerge'. These should be deactivated before building the patch, and then imported into the patch during build.\n*%s\n\nDeactivate the mods now?") % ('\n* '.join(x.s for x in noMerge),),80)
-        if noMerge and balt.askYes(self.window,message,_("Deactivate 'NoMerge' tagged Mods")):
-            for mod in noMerge:
-                bosh.modInfos.unselect(mod,False)
-            bosh.modInfos.refreshInfoLists()
-            bosh.modInfos.plugins.save()
+        if not bosh.modInfos.ordered:
+            balt.showWarning(self.window,_("That which does not exist cannot be patched.\nLoad some mods and try again."),_("Existential Error"))
+            return
+        bosh.PatchFile.patchTime = fileInfo.mtime
+        message = ""
+        ActivePriortoPatch = [x for x in bosh.modInfos.ordered if bosh.modInfos[x].mtime < fileInfo.mtime]
+        unfiltered = [x for x in ActivePriortoPatch if 'Filter' in bosh.modInfos[x].getBashTags()]
+        merge = [x for x in ActivePriortoPatch if 'NoMerge' not in bosh.modInfos[x].getBashTags() and x in bosh.modInfos.mergeable]
+        noMerge = [x for x in ActivePriortoPatch if 'NoMerge' in bosh.modInfos[x].getBashTags() and x in bosh.modInfos.mergeable]
+        deactivate = [x for x in ActivePriortoPatch if 'Deactivate' in bosh.modInfos[x].getBashTags() and not 'Filter' in bosh.modInfos[x].getBashTags()]
+        if deactivate: message += _("The following mods are tagged 'Deactivate'. These should be deactivated before building the patch, and then imported into the patch during build.\n*%s") % ('\n* '.join(x.s for x in deactivate)) + '\n\n'
+        if unfiltered: message += _("The following mods are tagged 'Filter'. These should be deactivated before building the patch, and then merged into the patch during build.\n*%s") % ('\n* '.join(x.s for x in unfiltered)) + '\n\n'
+        if merge: message += _("The following mods are mergeable. While it is not important to Wrye Bash functionality or the end contents of the bashed patch, it is suggest that they be deactivated and merged into the patch; this (helps) avoid the  Oblivion maximum esp/m limit.\n*%s") % ('\n* '.join(x.s for x in merge)) + '\n\n'
+        if noMerge: message += _("The following mods are tagged 'NoMerge'. These should be deactivated before building the patch and imported according to tag(s), and preferences.\n*%s") % ('\n* '.join(x.s for x in noMerge)) + '\n\n'
+        if message:
+            message += 'Automatically deactivate those mods now?'
+            if balt.showLog(self.window,message,_('Deactivate Suggested Mods?'),icons=bashBlue,question=True):
+                wx.BeginBusyCursor()              
+                if deactivate:
+                    for mod in deactivate:
+                        bosh.modInfos.unselect(mod,False)
+                if unfiltered:
+                    for mod in unfiltered:
+                        bosh.modInfos.unselect(mod,False)
+                if merge:
+                    for mod in merge:
+                        bosh.modInfos.unselect(mod,False)
+                if noMerge:
+                    for mod in noMerge:
+                        bosh.modInfos.unselect(mod,False)
+                bosh.modInfos.refreshInfoLists()
+                bosh.modInfos.plugins.save()
+                self.window.RefreshUI(detail=fileName)
+                wx.EndBusyCursor() 
         previousMods = set()
         text = ''
         for mod in bosh.modInfos.ordered:
-            if mod == fileInfo: continue
+            if mod == fileName: break
             for master in bosh.modInfos[mod].header.masters:
                 if master not in bosh.modInfos.ordered:
                     label = _('MISSING MASTER')
@@ -8952,10 +9164,6 @@ class Mod_Patch_Update(Link):
             warning = balt.askYes(self.window,(_('WARNING!\nThe following mod(s) have master file error(s):\n%sPlease adjust your load order to rectify those probem(s) before continuing. However you can still proceed if you want to. Proceed?') % (text)),_("Missing or Delinquent Master Errors"))
             if not warning:
                 return
-        if not bosh.modInfos.ordered:
-            balt.showWarning(self.window,_("That which does not exist cannot be patched.\nLoad some mods and try again."),_("Existential Error"))
-            return
-        bosh.PatchFile.patchTime = fileInfo.mtime
         patchDialog = PatchDialog(self.window,fileInfo)
         patchDialog.ShowModal()
         self.window.RefreshUI(detail=fileName)
@@ -9091,42 +9299,6 @@ class Mod_ShowReadme(Link):
         docBrowser.Raise()
 
 #------------------------------------------------------------------------------
-class Mod_Stats_Export(Link):
-    """Export armor and weapon stats from mod to text file."""
-    def AppendToMenu(self,menu,window,data):
-        Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Stats...'))
-        menu.AppendItem(menuItem)
-        menuItem.Enable(bool(self.data))
-
-    def Execute(self,event):
-        fileName = GPath(self.data[0])
-        fileInfo = bosh.modInfos[fileName]
-        textName = fileName.root+_('_Stats.csv')
-        textDir = bosh.dirs['patches']
-        textDir.makedirs()
-        #--File dialog
-        textPath = balt.askSave(self.window,_('Export stats to:'),
-            textDir, textName, '*Stats.csv')
-        if not textPath: return
-        (textDir,textName) = textPath.headTail
-        #--Export
-        progress = balt.Progress(_("Export Stats"))
-        try:
-            itemStats = bosh.ItemStats()
-            readProgress = SubProgress(progress,0.1,0.8)
-            readProgress.setFull(len(self.data))
-            for index,fileName in enumerate(map(GPath,self.data)):
-                fileInfo = bosh.modInfos[fileName]
-                readProgress(index,_("Reading %s.") % (fileName.s,))
-                itemStats.readFromMod(fileInfo)
-            progress(0.8,_("Exporting to %s.") % (textName.s,))
-            itemStats.writeToText(textPath)
-            progress(1.0,_("Done."))
-        finally:
-            progress = progress.Destroy()
-
-#------------------------------------------------------------------------------
 class Mod_Scripts_Export(Link):
     """Export scripts from mod to text file."""
     def AppendToMenu(self,menu,window,data):
@@ -9194,6 +9366,42 @@ class Mod_Scripts_Import(Link):
             balt.showOk(self.window,_("No changed scripts to import."),_("Import Scripts"))
         else:
             balt.showLog(self.window,importedScripts,_('Import Scripts'),icons=bashBlue)
+
+#------------------------------------------------------------------------------
+class Mod_Stats_Export(Link):
+    """Export armor and weapon stats from mod to text file."""
+    def AppendToMenu(self,menu,window,data):
+        Link.AppendToMenu(self,menu,window,data)
+        menuItem = wx.MenuItem(menu,self.id,_('Stats...'))
+        menu.AppendItem(menuItem)
+        menuItem.Enable(bool(self.data))
+
+    def Execute(self,event):
+        fileName = GPath(self.data[0])
+        fileInfo = bosh.modInfos[fileName]
+        textName = fileName.root+_('_Stats.csv')
+        textDir = bosh.dirs['patches']
+        textDir.makedirs()
+        #--File dialog
+        textPath = balt.askSave(self.window,_('Export stats to:'),
+            textDir, textName, '*Stats.csv')
+        if not textPath: return
+        (textDir,textName) = textPath.headTail
+        #--Export
+        progress = balt.Progress(_("Export Stats"))
+        try:
+            itemStats = bosh.ItemStats()
+            readProgress = SubProgress(progress,0.1,0.8)
+            readProgress.setFull(len(self.data))
+            for index,fileName in enumerate(map(GPath,self.data)):
+                fileInfo = bosh.modInfos[fileName]
+                readProgress(index,_("Reading %s.") % (fileName.s,))
+                itemStats.readFromMod(fileInfo)
+            progress(0.8,_("Exporting to %s.") % (textName.s,))
+            itemStats.writeToText(textPath)
+            progress(1.0,_("Done."))
+        finally:
+            progress = progress.Destroy()
 
 #------------------------------------------------------------------------------
 class Mod_Stats_Import(Link):
@@ -9895,7 +10103,26 @@ class Save_EditPCSpells(Link):
         dialog = balt.ListEditor(self.window,-1,_('Player Spells'),data)
         dialog.ShowModal()
         dialog.Destroy()
+        
+#------------------------------------------------------------------------------
+class Save_EditCreatedEnchantmentCosts(Link):
+    """Dialogue and Menu for setting number of uses for Cast When Used Enchantments."""
+    def AppendToMenu(self,menu,window,data):
+        """Append to menu."""
+        Link.AppendToMenu(self,menu,window,data)
+        menuItem = wx.MenuItem(menu,self.id,_('Set Number of Uses for Weapon Enchantments...'))
+        menu.AppendItem(menuItem)
+        menuItem.Enable(len(data) == 1)
 
+    def Execute(self,event):
+        fileName = GPath(self.data[0])
+        fileInfo = self.window.data[fileName]
+        dialog = balt.askNumber(self.window,_('Enter the number of uses you desire per recharge for all custom made enchantements.\n(Enter 0 for unlimited uses)'),prompt='Uses',title='Number of Uses',value=50,min=0,max=10000)
+        if not dialog: return
+        self.Enchantments = bosh.SaveEnchantments(fileInfo)
+        self.Enchantments.load()
+        self.Enchantments.setCastWhenUsedEnchantmentNumberOfUses(dialog)
+        
 #------------------------------------------------------------------------------
 class Save_Move:
     """Moves or copies selected files to alternate profile."""
@@ -11009,6 +11236,9 @@ def InitImages():
     images['bash.32'] = Image(r'images/bash_32.png',wx.BITMAP_TYPE_PNG)
     images['bash.16.blue'] = Image(r'images/bash_16_blue.png',wx.BITMAP_TYPE_PNG)
     images['bash.32.blue'] = Image(r'images/bash_32_blue.png',wx.BITMAP_TYPE_PNG)
+    #--Bash Patch Dialogue
+   # images['monkey.16'] = Image(r'images/wryemonkey16.jpg',wx.BITMAP_TYPE_JPEG)
+  #  images['monkey.32'] = Image(r'images/wryemonkey32.jpg',wx.BITMAP_TYPE_JPEG)
     #--DocBrowser
     images['doc.16'] = Image(r'images/DocBrowser16.png',wx.BITMAP_TYPE_PNG)
     images['doc.32'] = Image(r'images/DocBrowser32.png',wx.BITMAP_TYPE_PNG)
@@ -11735,27 +11965,29 @@ def InitModLinks():
     if True: #--Export
         exportMenu = MenuLink(_("Export"))
         exportMenu.links.append(Mod_EditorIds_Export())
-        exportMenu.links.append(Mod_Factions_Export())
-        exportMenu.links.append(Mod_FullNames_Export())
         exportMenu.links.append(Mod_Groups_Export())
-        exportMenu.links.append(Mod_ActorLevels_Export())
-        exportMenu.links.append(Mod_FactionRelations_Export())
-        exportMenu.links.append(Mod_Stats_Export())
         exportMenu.links.append(Mod_ItemData_Export())
+        exportMenu.links.append(Mod_FullNames_Export())
+        exportMenu.links.append(Mod_ActorLevels_Export())
         exportMenu.links.append(Mod_Scripts_Export())
+        exportMenu.links.append(Mod_Stats_Export())
+        exportMenu.links.append(SeparatorLink())
+        exportMenu.links.append(Mod_Factions_Export())
         exportMenu.links.append(Mod_Prices_Export())
+        exportMenu.links.append(Mod_FactionRelations_Export())
         ModList.itemMenu.append(exportMenu)
     if True: #--Import
         importMenu = MenuLink(_("Import"))
-        importMenu.links.append(Mod_Face_Import())
         importMenu.links.append(Mod_EditorIds_Import())
-        importMenu.links.append(Mod_Fids_Replace())
-        importMenu.links.append(Mod_FullNames_Import())
         importMenu.links.append(Mod_Groups_Import())
-        importMenu.links.append(Mod_ActorLevels_Import())
-        importMenu.links.append(Mod_Stats_Import())
         importMenu.links.append(Mod_ItemData_Import())
+        importMenu.links.append(Mod_FullNames_Import())
+        importMenu.links.append(Mod_ActorLevels_Import())
         importMenu.links.append(Mod_Scripts_Import())
+        importMenu.links.append(Mod_Stats_Import())
+        importMenu.links.append(SeparatorLink())
+        importMenu.links.append(Mod_Face_Import())
+        importMenu.links.append(Mod_Fids_Replace())
         ModList.itemMenu.append(importMenu)
     ModList.itemMenu.append(Mod_AddMaster())
     ModList.itemMenu.append(Mod_CopyToEsmp())
@@ -11828,6 +12060,7 @@ def InitSaveLinks():
     #--------------------------------------------
     #SaveList.itemMenu.append(SeparatorLink())
     #SaveList.itemMenu.append(Save_EditPCSpells())
+    #SaveList.itemMenu.append(Save_EditCreatedEnchantmentCosts())
     #SaveList.itemMenu.append(Save_ImportFace())
     #SaveList.itemMenu.append(Save_EditCreated('ENCH'))
     #SaveList.itemMenu.append(Save_EditCreated('ALCH'))
