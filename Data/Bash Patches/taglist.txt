@@ -1,8 +1,10 @@
-\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 936.
+\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 973.
 \ % A Bashed Patch suggestion for the mod above.
 
+BrokenSteel.esm
+% {{BASH:Actors.AIPackages}}
 Unofficial Fallout 3 Patch.esm
-% {{BASH:Delev,Relev}}
+% {{BASH:Delev,Relev,Names}}
 HairPack.esm
 % {{BASH:Hair,Eyes}}
 Project Beauty.esm
@@ -13,10 +15,12 @@ Destruction.esm
 % {{BASH:Destructable,Script}}
 xCALIBR.esm
 % {{BASH:Names,Graphics,Stats}}
+CFWRv4.esm
+% {{BASH:Deflst,Delev,Invent,Names,Graphics,Scripts,Stats}}
 RoadWardens.esm
 % {{BASH:Actors.ACBS,Actors.AIData,Actors.AIPackages,Actors.CombatStyle,Actors.Stats,Factions,Invent,Scripts,ScriptContents}}
 FOOK2 - Main.esm
-% {{BASH:Hair,Invent,Stats,Relations}}
+% {{BASH:Invent,Stats,Relations,Factions}}
 FO3 Wanderers Edition - Main File.esm
 % {{BASH:Actors.ACBS,Actors.Stats,Deflst,Delev,Invent,Relations,Relev,Stats}}
 Mart's Mutant Mod.esm
@@ -30,6 +34,17 @@ EnhancedChildren.esm
 AliciasCuteShop.esm
 % {{BASH:Stats}}
 Abbreviated Effects.esm
+% {{BASH:Names}}
+
+Unofficial Fallout 3 Patch - Operation Anchorage.esp
+% {{BASH:Names}}
+Unofficial Fallout 3 Patch - The Pitt.esp
+% {{BASH:Names}}
+Unofficial Fallout 3 Patch - Broken Steel.esp
+% {{BASH:Names}}
+Unofficial Fallout 3 Patch - Point Lookout.esp
+% {{BASH:Names}}
+Unofficial Fallout 3 Patch - Mothership Zeta.esp
 % {{BASH:Names}}
 
 Project Beauty- Broken Steel.esp
@@ -56,9 +71,9 @@ Realistic icons.esp
 FF_DestructibleRadios.esp
 % {{BASH:Destructable}}
 Destruction - Main.esp
-% {{BASH:Destructable,Script,Graphics}}
+% {{BASH:Destructable,Scripts,Graphics}}
 Destruction - DLC.esp
-% {{BASH:Destructable,Script}}
+% {{BASH:Destructable,Scripts}}
 
 FOOK2 - Main.esp
 % {{BASH:Delev,Relev}}
@@ -80,7 +95,7 @@ FO3 Wanderers Edition - Optional Worn Weapons.esp
 % {{BASH:Delev,Relev}}
 
 WeaponModKits - FWE Master Release.esp
-% {{BASH:Deflst}}
+% {{BASH:Deflst,Relev}}
 WeaponModKits - FWE Optional Worn Weapons.esp
 % {{BASH:Delev}}
 
@@ -173,9 +188,11 @@ Mart's Mutant Mod - Increased Increased Spawns.esp
 Mart's Mutant Mod - Increased Spawns.esp
 % {{BASH:Relev}}
 Mart's Mutant Mod - Natural Selection.esp
-% {{BASH:Relations,NoMerge}} and deactivate.
+% {{BASH:Relations}}
 Mart's Mutant Mod - Reduced Wasteland Spawns.esp
 % {{BASH:Delev,Relev}}
+Mart's Mutant Mod - Tougher Traders.esp
+% {{BASH:Actors.Stats}}
 Mart's Mutant Mod - FOOK2.esp
 % {{BASH:Relations}}
 Mart's Mutant Mod - FOOK2 - DIK.esp
