@@ -20095,7 +20095,7 @@ class GmstTweaker(MultiTweaker):
             (_('1.0'),1.0),
             (_('Custom'),0),
             ),
-        GmstTweak(_('VATS Playback Delay'),
+        GmstTweak(False,_('VATS Playback Delay'),
             _("Seconds of delay after the VATS Camera finished playback."),
             ('fVATSPlaybackDelay'),
             (_('0.01'),0.01),
