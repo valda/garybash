@@ -20105,6 +20105,16 @@ class GmstTweaker(MultiTweaker):
             (_('0.25'),0.25),
             (_('Custom'),0),
             ),
+        GmstTweak(False,_('NPC-Death XP Threshold (Followers)'),
+            _("Percentage of total damage you have to inflict in order to get XP"),
+            ('iXPDeathRewardHealthThreshold'),
+            (_('0%'),0),
+            (_('25%'),25),
+            (_('[40%]'),40),
+            (_('50%'),50),
+            (_('75%'),75),
+            (_('Custom'),0),
+            ),
         ],key=lambda a: a.label.lower())
     #--Patch Phase ------------------------------------------------------------
     def getWriteClasses(self):
