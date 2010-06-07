@@ -20115,6 +20115,17 @@ class GmstTweaker(MultiTweaker):
             (_('75%'),75),
             (_('Custom'),0),
             ),
+        GmstTweak(False,_('Hacking: Maximum Number of words'),
+            _("The maximum number of words appearing in the terminal hacking mini-game."),
+            ('iHackingMaxWords'),
+            (_('1'),1),
+            (_('4'),4),
+            (_('8'),8),
+            (_('12'),12),
+            (_('16'),16),
+            (_('[20]'),20),
+            (_('Custom'),0),
+            ),
         ],key=lambda a: a.label.lower())
     #--Patch Phase ------------------------------------------------------------
     def getWriteClasses(self):
