@@ -11132,8 +11132,13 @@ class Installer(object):
     def sortFiles(files):
         """Utility function. Sorts files by directory, then file name."""
         def sortKey(file):
-            dirFile = file.lower().rsplit('\\',1)
-            if len(dirFile) == 1: dirFile.insert(0,'')
+            #dirFile = file.lower().rsplit('\\',1)
+            #if len(dirFile) == 1: dirFile.insert(0,'')
+            pathParts = bolt.Path.mbSplit(file)
+            if len(pathParts) == 1:
+                dirFile = ['', pathParts[0]]
+            else:
+                dirFile = ['\\'.join(pathParts[0:-1]), pathParts[-1]]
             return dirFile
         sortKeys = dict((x,sortKey(x)) for x in files)
         return sorted(files,key=lambda x: sortKeys[x])
@@ -11367,9 +11372,13 @@ class Installer(object):
             sub = ''
             bSkip = False
             if type == 2: #--Complex archive
-                subFile = full.split('\\',1)
-                if len(subFile) == 2:
-                    sub,file = subFile
+                #subFile = full.split('\\',1)
+                #if len(subFile) == 2:
+                #    sub,file = subFile
+                pathParts = bolt.Path.mbSplit(full)
+                if len(pathParts) > 1:
+                    sub = pathParts[0]
+                    file = '\\'.join(pathParts[1:])
                     if sub not in activeSubs:
                         if sub not in allSubs:
                             skipDirFiles.add(file)
@@ -11377,7 +11386,9 @@ class Installer(object):
                     fileLower = file.lower()
             if sub not in self.espmMap:
                 self.espmMap[sub] = []
-            rootPos = file.find('\\')
+            #rootPos = file.find('\\')
+            pathParts = bolt.Path.mbSplit(file)
+            rootPos = len(pathParts[0]) if len(pathParts) > 1 else -1
             extPos = file.rfind('.')
             fileLower = file.lower()
             rootLower = (rootPos > 0 and fileLower[:rootPos]) or ''
@@ -11423,7 +11434,9 @@ class Installer(object):
                 if pFile in espmNots: continue
             elif bSkip: continue
             if skipEspmVoices and fileLower[:12] == 'sound\\voice\\':
-                farPos = file.find('\\',12)
+                #farPos = file.find('\\',12)
+                pathParts = bolt.Path.mbSplit(file[12:])
+                farPos = len(pathParts[0])+12 if len(pathParts) > 1 else -1
                 if farPos > 12 and fileLower[12:farPos] in skipEspmVoices:
                     continue
             #--Remap docs
@@ -11474,8 +11487,13 @@ class Installer(object):
         """Extract file/size/crc info from archive."""
         self.refreshSource(archive,progress,fullRefresh)
         def fscSortKey(fsc):
-            dirFile = fsc[0].lower().rsplit('\\',1)
-            if len(dirFile) == 1: dirFile.insert(0,'')
+            #dirFile = fsc[0].lower().rsplit('\\',1)
+            #if len(dirFile) == 1: dirFile.insert(0,'')
+            pathParts = bolt.Path.mbSplit(fsc[0])
+            if len(pathParts) == 1:
+                dirFile = ['', pathParts[0]]
+            else:
+                dirFile = ['\\'.join(pathParts[0:-1]), pathParts[-1]]
             return dirFile
         fileSizeCrcs = self.fileSizeCrcs
         sortKeys = dict((x,fscSortKey(x)) for x in fileSizeCrcs)
@@ -11489,7 +11507,8 @@ class Installer(object):
         for file,size,crc in fileSizeCrcs:
             fileLower = file.lower()
             if type != 1:
-                frags = file.split('\\')
+                #frags = file.split('\\')
+                frags = bolt.Path.mbSplit(file)
                 nfrags = len(frags)
                 #--Type 1?
                 if (nfrags == 1 and reDataFile.search(frags[0]) or
