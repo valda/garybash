@@ -6342,6 +6342,7 @@ class MobWorlds(MobBase):
         errLabel = expType + ' Top Block'
         worldBlocks = self.worldBlocks
         world = None
+        worlds = {}
         insAtEnd = ins.atEnd
         insRecHeader = ins.unpackRecHeader
         insSeek = ins.seek
@@ -6353,19 +6354,21 @@ class MobWorlds(MobBase):
             recType = header[0]
             if recType == expType:
                 world = recWrldClass(header,ins,True)
+                worlds[world.fid] = world
             elif recType == 'GRUP':
                 groupFid,groupType = header[2:4]
                 if groupType != 1:
                     raise ModError(ins.inName,'Unexpected subgroup %d in CELL group.' % groupType)
+                world = worlds.get(groupFid,None)
                 if not world:
                     #raise ModError(ins.inName,'Extra subgroup %d in WRLD group.' % groupType)
                     #--Orphaned world records. Skip over.
                     insSeek(header[1]-24,1)
                     self.orphansSkipped += 1
                     continue
-                if groupFid != world.fid:
-                    raise ModError(ins.inName,'WRLD subgroup (%s) does not match WRLD <%s> %s.' %
-                        (hex(groupFid), hex(world.fid), world.eid))
+                #if groupFid != world.fid:
+                #    raise ModError(ins.inName,'WRLD subgroup (%s) does not match WRLD <%s> %s.' %
+                #        (hex(groupFid), hex(world.fid), world.eid))
                 worldBlock = MobWorld(header,selfLoadFactory,world,ins,True)
                 worldBlocksAppend(worldBlock)
                 world = None
