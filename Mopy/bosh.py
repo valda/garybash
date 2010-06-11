@@ -16393,7 +16393,7 @@ class CellImporter(ImportPatcher):
         cellData = self.cellData
        # cellData['Maps'] = {}
         loadFactory = LoadFactory(False,MreCell,MreWrld)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for srcMod in self.sourceMods:
             if srcMod not in modInfos: continue
@@ -16577,7 +16577,7 @@ class GraphicsPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
             temp_id_data = {}
@@ -16727,7 +16727,7 @@ class ActorImporter(ImportPatcher):
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,MreNpc,MreCrea)
         longTypes = self.longTypes & set(x.classType for x in self.actorClasses)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
             temp_id_data = {}
@@ -16860,7 +16860,7 @@ class KFFZPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
             temp_id_data = {}
@@ -16985,7 +16985,7 @@ class NPCAIPackagePatcher(ImportPatcher):
                 OOOandUOP = True
         longTypes = self.longTypes
         loadFactory = LoadFactory(False,MreCrea,MreNpc)
-        progress.setFull(len(self.srcMods))
+        progress.setFull(1+len(self.srcMods))
         cachedMasters = {}
         data = self.data
         for index,srcMod in enumerate(self.srcMods):
@@ -17178,7 +17178,7 @@ class DeathItemPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
             temp_id_data = {}
@@ -17300,7 +17300,7 @@ class ImportFactions(ImportPatcher):
         """Get names from source files."""
         if not self.isActive: return
         actorFactions = ActorFactions(aliases=self.patchFile.aliases)
-        progress.setFull(len(self.srcFiles))
+        progress.setFull(1+len(self.srcFiles))
         for srcFile in self.srcFiles:
             srcPath = GPath(srcFile)
             patchesDir = dirs['patches'].list()
@@ -17413,7 +17413,7 @@ class ImportRelations(ImportPatcher):
         """Get names from source files."""
         if not self.isActive: return
         factionRelations = FactionRelations(aliases=self.patchFile.aliases)
-        progress.setFull(len(self.srcFiles))
+        progress.setFull(1+len(self.srcFiles))
         for srcFile in self.srcFiles:
             srcPath = GPath(srcFile)
             patchesDir = dirs['patches'].list()
@@ -17528,7 +17528,7 @@ class ImportScripts(ImportPatcher):
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
             temp_id_data = {}
@@ -17677,7 +17677,7 @@ class ImportScriptContents(ImportPatcher):
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
             temp_id_data = {}
@@ -17808,7 +17808,7 @@ class ImportInventory(ImportPatcher):
         """Get data from source files."""
         if not self.isActive or not self.srcMods: return
         loadFactory = LoadFactory(False,'CREA','NPC_','CONT')
-        progress.setFull(len(self.srcMods))
+        progress.setFull(1+len(self.srcMods))
         for index,srcMod in enumerate(self.srcMods):
             srcInfo = modInfos[srcMod]
             srcFile = ModFile(srcInfo,loadFactory)
@@ -17930,7 +17930,7 @@ class NamesPatcher(ImportPatcher):
         """Get names from source files."""
         if not self.isActive: return
         fullNames = FullNames(aliases=self.patchFile.aliases)
-        progress.setFull(len(self.srcFiles))
+        progress.setFull(1+len(self.srcFiles))
         for srcFile in self.srcFiles:
             srcPath = GPath(srcFile)
             patchesDir = dirs['patches'].list()
@@ -18028,7 +18028,7 @@ class NpcFacePatcher(ImportPatcher):
         if not self.isActive: return
         faceData = self.faceData
         loadFactory = LoadFactory(False,MreNpc)
-        progress.setFull(len(self.faceMods))
+        progress.setFull(1+len(self.faceMods))
         cachedMasters = {}
         for index,faceMod in enumerate(self.faceMods):
             if faceMod not in modInfos: continue
@@ -18130,7 +18130,7 @@ class RoadImporter(ImportPatcher):
         """Get cells from source files."""
         if not self.isActive: return
         loadFactory = LoadFactory(False,MreCell,MreWrld,MreRoad)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         for srcMod in self.sourceMods:
             if srcMod not in modInfos: continue
             srcInfo = modInfos[srcMod]
@@ -18235,7 +18235,7 @@ class SoundPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
             temp_id_data = {}
@@ -18374,7 +18374,7 @@ class StatsPatcher(ImportPatcher):
         """Get stats from source files."""
         if not self.isActive: return
         itemStats = ItemStats(aliases=self.patchFile.aliases)
-        progress.setFull(len(self.srcFiles))
+        progress.setFull(1+len(self.srcFiles))
         for srcFile in self.srcFiles:
             srcPath = GPath(srcFile)
             patchesDir = dirs['patches'].list()
@@ -18486,7 +18486,7 @@ class SpellsPatcher(ImportPatcher):
         """Get stats from source files."""
         if not self.isActive: return
         itemStats = SpellRecords(aliases=self.patchFile.aliases)
-        progress.setFull(len(self.srcFiles))
+        progress.setFull(1+len(self.srcFiles))
         for srcFile in self.srcFiles:
             srcPath = GPath(srcFile)
             patchesDir = dirs['patches'].list()
@@ -18604,7 +18604,7 @@ class DestructablePatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
-        progress.setFull(len(self.sourceMods))
+        progress.setFull(1+len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
             temp_id_data = {}
@@ -20815,7 +20815,7 @@ class CoblExhaustion(SpecialPatcher,ListPatcher):
     def initData(self,progress):
         """Get names from source files."""
         if not self.isActive: return
-        progress.setFull(len(self.srcFiles))
+        progress.setFull(1+len(self.srcFiles))
         for srcFile in self.srcFiles:
             srcPath = GPath(srcFile)
             patchesDir = dirs['patches'].list()
@@ -21493,7 +21493,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
         """Get data from source files."""
         if not self.isActive or not self.srcMods: return
         loadFactory = LoadFactory(False,MreRace)
-        progress.setFull(len(self.srcMods))
+        progress.setFull(1+len(self.srcMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.srcMods):
             if srcMod not in modInfos: continue
