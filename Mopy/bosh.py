@@ -16977,11 +16977,13 @@ class NPCAIPackagePatcher(ImportPatcher):
         """Prepare to handle specified patch mod. All functions are called after this."""
         Patcher.initPatchFile(self,patchFile,loadMods)
         self.srcMods = self.getConfigChecked()
+        self.isActive = len(self.srcMods) != 0
         self.data = {}
         self.longTypes = set(('CREA','NPC_'))
 
     def initData(self,progress):
         """Get data from source files."""
+        if not self.isActive: return
         OOOandUOP = False
         if GPath("Oscuro's_Oblivion_Overhaul.esm") in self.srcMods or GPath("Oscuro's_Oblivion_Overhaul.esp") in self.srcMods:
             if GPath("Unofficial Oblivion Patch.esp") in self.srcMods:
