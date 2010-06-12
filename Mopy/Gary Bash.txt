@@ -14,6 +14,15 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 17 [6/13/2010] [Valda,Televator]
+* Bashed Patch:
+  * Added GMSTweak to change the maximum number of words appearing in the terminal hacking mini-game (contributed by televator).
+  * GMSTweak to change follower related health damage threshold in order to gain XP from killing a NPC (contributed by televator).
+  * Fixed 'VATS Playback Delay' GMST tweak.
+  * Fixed a bug that threw error when NPCAIPackagePatcher source mods are unchecked all (thanks Postcrackshot91).
+  * Fixed a loading worldspaces for Unofficial Fallout 3 Patch - Broken Steel.esp (thanks Fcara1).
+* BAIN: Correctly handle a path including the multibyte-char by which the 2nd byte is '0x5c' (aka Japanese DAMEMOJI).
+
 === 16 [6/3/2010] [Valda,Televator]
 * Rebase to Wrye Bash 285.
 * Bashed Patch:

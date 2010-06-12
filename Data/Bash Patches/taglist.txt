@@ -1,4 +1,4 @@
-\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 973.
+\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 1033.
 \ % A Bashed Patch suggestion for the mod above.
 
 BrokenSteel.esm
@@ -7,14 +7,14 @@ Unofficial Fallout 3 Patch.esm
 % {{BASH:Delev,Relev,Names}}
 HairPack.esm
 % {{BASH:Hair,Eyes}}
-Project Beauty.esm
-% {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth}}
 FaceMe.esm
 % {{BASH:NpcFaces,Hair,Eyes}}
 Destruction.esm
 % {{BASH:Destructable,Script}}
 xCALIBR.esm
 % {{BASH:Names,Graphics,Stats}}
+Project Beauty.esm
+% {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth}}
 CFWRv4.esm
 % {{BASH:Deflst,Delev,Invent,Names,Graphics,Scripts,Stats}}
 RoadWardens.esm
@@ -121,15 +121,15 @@ Test-Weapon_additional armor.esp
 
 EVE.esp
 % {{BASH:Graphics,Sound}}
+EVE Operation Anchorage.esp
+% {{BASH:Graphics,Sound}}
 EVE - FWE Master Release.esp
 % {{BASH:Graphics,Sound}}
 EVE - FWE Master Release (Follower Enhanced).esp
 % {{BASH:Graphics,Sound}}
-EVE Operation Anchorage.esp
+EVE Anchorage - FWE DLC Anchorage.esp
 % {{BASH:Graphics,Sound}}
 EVE - FWE with WeaponModKits.esp
-% {{BASH:Graphics,Sound}}
-EVE Anchorage - FWE DLC Anchorage.esp
 % {{BASH:Graphics,Sound}}
 
 UWWUT.esp
@@ -163,8 +163,6 @@ Mart's Mutant Mod.esp
 % {{BASH:Delev}}
 Mart's Mutant Mod - UF3P.esp
 % {{BASH:Invent}}
-Mart's Mutant Mod - Project Beauty.esp
-% {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth,NoMerge}}
 Mart's Mutant Mod - DLC The Pitt.esp
 % {{BASH:Delev}}
 Mart's Mutant Mod - DLC Broken Steel.esp
@@ -197,6 +195,8 @@ Mart's Mutant Mod - FOOK2.esp
 % {{BASH:Relations}}
 Mart's Mutant Mod - FOOK2 - DIK.esp
 % {{BASH:Relations}}
+Mart's Mutant Mod - Project Beauty.esp
+% {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth,NoMerge}}
 Mart's Mutant Mod - FWE Master Release.esp
 % {{BASH:Invent,Relations}}
 
@@ -219,6 +219,7 @@ Xepha's Dynamic Weather - Broken Steel.esp
 % {{BASH:C.Climate}}
 Xepha's Dynamic Weather - Point Lookout.esp
 % {{BASH:C.Climate}}
+
 DUIF3Extras.esp
 % {{BASH:Deflst,Delev}}
 Dog lover's mod NO ANCHORAGE.esp
@@ -244,7 +245,17 @@ EZCompanion_Type-N.esp
 
 xCALIBR_override.esp
 % {{BASH:Names,Graphics,Stats}}
+xCALIBR_override_unsorted.esp
+% {{BASH:Names,Graphics,Stats}}
+xCALIBR_override_FWE5.esp
+% {{BASH:Names,Graphics,Stats}}
 xCALIBR_FWE5_Override.esp
+% {{BASH:Names,Graphics,Stats}}
+xCALIBR_2CW_CP.esp
+% {{BASH:Names,Graphics,Stats}}
+xCALIBR_2CW_CP_Sorted.esp
+% {{BASH:Names,Graphics,Stats}}
+FWE+WMK_weapons_xCALIBRified.esp
 % {{BASH:Names,Graphics,Stats}}
 Choose your own hairstyle (load this last on FOMM).esp
 % {{BASH:NpcFaces,Hair,Eyes}}
