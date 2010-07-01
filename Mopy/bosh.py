@@ -20256,7 +20256,7 @@ class NamesTweak_Body(MultiTweakItem):
             x for x in codes]
         for record in getattr(patchFile,self.key).records:
             if not record.full: continue
-            if record.full[0] in '+-=.()[]': continue
+            if record.full[0] in '+-=()[]<>': continue
             flags = record.bipedFlags
             if flags.head or flags.hair or flags.headband or flags.hat: type = head
             elif flags.upperBody: type = body
@@ -20322,10 +20322,15 @@ class NamesTweak_Potions(MultiTweakItem):
         keep = patchFile.getKeeper()
         for record in patchFile.ALCH.records:
             if not record.full: continue
-            if record.full[0] in '+-=.()[]': continue
+            if record.full[0] in '+-=()[]<>': continue
             if not record.etype in range(10,14): continue
             label = 'CSFA'[record.etype-10]
-            record.full = format % label + record.full
+            prefix = ''
+            if label == 'S':
+                prefix = '\x07\x07'
+            elif label == 'C':
+                prefix = '\x07'
+            record.full = prefix + format % label + record.full
             keep(record.fid)
             srcMod = record.fid[0]
             count[srcMod] = count.get(srcMod,0) + 1
@@ -20562,7 +20567,7 @@ class NamesTweak_Weapons(MultiTweakItem):
             count[srcMod] = count.get(srcMod,0) + 1
         for record in patchFile.WEAP.records:
             if not record.full: continue
-            if record.full[0] in '+-=.()[]': continue
+            if record.full[0] in '+-=()[]<>': continue
             if not record.etype in range(0,7): continue
             type = codes[record.etype]
             if showStat:
