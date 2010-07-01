@@ -14,6 +14,10 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 18 [7/1/2010]
+* Added support 'IsLimbGone' condition function. (thanks DoomFruit!).
+* Update taglist.txt.
+
 === 17 [6/13/2010] [Valda,Televator]
 * Bashed Patch:
   * Added GMSTweak to change the maximum number of words appearing in the terminal hacking mini-game (contributed by televator).
