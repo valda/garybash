@@ -1,10 +1,10 @@
-\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 1033.
+\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 1100.
 \ % A Bashed Patch suggestion for the mod above.
 
 BrokenSteel.esm
 % {{BASH:Actors.AIPackages}}
 Unofficial Fallout 3 Patch.esm
-% {{BASH:Delev,Relev,Names}}
+% {{BASH:Deflst,Delev,Relev,Factions,Invent,Names,Relations,Stats}}
 HairPack.esm
 % {{BASH:Hair,Eyes}}
 FaceMe.esm
@@ -25,6 +25,8 @@ FO3 Wanderers Edition - Main File.esm
 % {{BASH:Actors.ACBS,Actors.Stats,Deflst,Delev,Invent,Relations,Relev,Stats}}
 Mart's Mutant Mod.esm
 % {{BASH:Invent,Relations,Delev}}
+Xepha's Dynamic Weather.esm
+% {{BASH:C.Climate,Sound}}
 Shojo Race.esm
 % {{BASH:Hair,Eyes}}
 XENH.esm
@@ -37,39 +39,60 @@ Abbreviated Effects.esm
 % {{BASH:Names}}
 
 Unofficial Fallout 3 Patch - Operation Anchorage.esp
-% {{BASH:Names}}
+% {{BASH:Deflst,Names}}
 Unofficial Fallout 3 Patch - The Pitt.esp
-% {{BASH:Names}}
+% {{BASH:Deflst,Names}}
 Unofficial Fallout 3 Patch - Broken Steel.esp
-% {{BASH:Names}}
+% {{BASH:Deflst,Names}}
 Unofficial Fallout 3 Patch - Point Lookout.esp
-% {{BASH:Names}}
+% {{BASH:Deflst,Names,Invent,Stats}}
 Unofficial Fallout 3 Patch - Mothership Zeta.esp
-% {{BASH:Names}}
+% {{BASH:Deflst,Names}}
+Error Correction.esp
+% {{BASH:Scripts}}
+FireLightFix.esp
+% {{BASH:C.Light}}
 
 Project Beauty- Broken Steel.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+% {{BASH:NpcFaces,NoMerge,Deactivate}}
 Project Beauty- Point Lookout.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+% {{BASH:NpcFaces,NoMerge,Deactivate}}
 Raider preset beta.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+% {{BASH:NpcFaces,NoMerge,Deactivate}}
 Project Beauty HD version [Hair Fix].esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+% {{BASH:NpcFaces,NoMerge,Deactivate}}
 FaceMe.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+% {{BASH:NpcFaces,NoMerge,Deactivate}}
 FaceMe-Broken Steel.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+% {{BASH:NpcFaces,NoMerge,Deactivate}}
 Shojo NPC.esp
 % {{BASH:Invent,NpcFaces}}
 Moira-EXSP.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+% {{BASH:NpcFaces,NoMerge,Deactivate}}
 BatteriesPlusV1_2.esp
 % {{BASH:Graphics}}
 Realistic icons.esp
 % {{BASH:Graphics}}
 
+NotSoFast.esp
+% {{BASH:Scripts}}
+HeirApparent.esp
+% {{BASH:Scripts}}
+IntoTheDeepWoods.esp
+% {{BASH:Scripts}}
+PLweightadjust.esp
+% {{BASH:Scripts,Stats}}
+The Mantis Imperative - Mantis.esp
+% {{BASH:Relev}}
+
 FF_DestructibleRadios.esp
 % {{BASH:Destructable}}
+Angry Scientists.esp
+% {{BASH:Invent}}
+MrLabTechnician.esp
+% {{BASH:Relev}}
+MrLabTechnician - FWE.esp
+% {{BASH:Deflst,Delev}}
 Destruction - Main.esp
 % {{BASH:Destructable,Scripts,Graphics}}
 Destruction - DLC.esp
@@ -104,6 +127,8 @@ WMKAA12Shotgun.esp
 
 BoS_DX.esp
 % {{BASH:Graphics}}
+BoSDX.esp
+% {{BASH:Graphics}}
 WinterizedT51bDX.esp
 % {{BASH:Graphics}}
 Outcast DX.esp
@@ -120,7 +145,7 @@ Test-Weapon_additional armor.esp
 % {{BASH:Invent}}
 
 EVE.esp
-% {{BASH:Graphics,Sound}}
+% {{BASH:Graphics,Sound,Scripts}}
 EVE Operation Anchorage.esp
 % {{BASH:Graphics,Sound}}
 EVE - FWE Master Release.esp
@@ -148,6 +173,10 @@ UWWUT_WT - BS Addon.esp
 % {{BASH:Graphics,Stats}}
 UWWUT_WT - WMK Addon.esp
 % {{BASH:Graphics,Stats}}
+Less Useless Karma Gifts.esp
+% {{BASH:Relev,Delev}}
+Less Useless Karma Gifts 2.0.esp
+% {{BASH:Relev,Delev}}
 PlasmaWeaponsRedesignRebalance.esp
 % {{BASH:Graphics,Sound}}
 PlasmaRifleRedesign.esp
@@ -158,6 +187,22 @@ PlasmaRifleRedesign_standardonly.esp
 % {{BASH:Graphics,Sound}}
 PlasmaPistolRedesign.esp
 % {{BASH:Graphics,Sound}}
+Water Bottles 3000.esp
+% {{BASH:Graphics,NoMerge,Deactivate}}
+schematics2.esp
+% {{BASH:Graphics,NoMerge}}
+Weld - Badge.esp
+% {{BASH:Graphics,Actors.Anims,Invent}}
+Weld - Badge and Hat.esp
+% {{BASH:Graphics,Actors.Anims,Invent}}
+Weld and Steel - Badges.esp
+% {{BASH:Graphics,Actors.Anims,Invent}}
+Weld and Steel - Badges, only Weld hat.esp
+% {{BASH:Graphics,Actors.Anims,Invent}}
+Deputy Weld and Steel - Badges and Hats.esp
+% {{BASH:Graphics,Actors.Anims,Invent}}
+Deputy Weld and Steel - Badges Steel Hat.esp
+% {{BASH:Graphics,Actors.Anims,Invent}}
 
 Mart's Mutant Mod.esp
 % {{BASH:Delev}}
@@ -170,7 +215,7 @@ Mart's Mutant Mod - DLC Broken Steel.esp
 Mart's Mutant Mod - DLC Point Lookout.esp
 % {{BASH:Delev,Relev}}
 Project Beauty- Point Lookout MMM.esp
-% {{BASH:NpcFaces,NoMerge}} and deactivate.
+% {{BASH:NpcFaces,NoMerge,Deactivate}}
 Mart's Mutant Mod - No Corpse Flies.esp
 % {{BASH:Relev}}
 Mart's Mutant Mod - No Floaters.esp
@@ -199,9 +244,16 @@ Mart's Mutant Mod - Project Beauty.esp
 % {{BASH:NpcFaces,Hair,Eyes,Voice-M,Voice-F,Body-M,Body-F,R.Teeth,R.Mouth,NoMerge}}
 Mart's Mutant Mod - FWE Master Release.esp
 % {{BASH:Invent,Relations}}
+Mart's Mutant Mod - FWE with EVE.esp
+% {{BASH:Invent,Relations}}
 
 MTC RealWildnessLife.esp
 % {{BASH:Relations}}
+
+Owned!.esp
+% {{BASH:Factions}}
+AMPUTATE!.esp
+% {{BASH:Scripts}}
 
 FelloutWithLightingOverhual-1.0.esp
 % {{BASH:C.Light}}
@@ -211,6 +263,20 @@ Realistic Interior Lighting - BS.esp
 % {{BASH:C.Light}}
 Realistic Interior Lighting - OA.esp
 % {{BASH:C.Light}}
+DarkerInteriorsFallOut3.esp
+% {{BASH:C.Light}}
+DarkerInteriorsAnchorage.esp
+% {{BASH:C.Light}}
+DarkerInteriorsThePitt.esp
+% {{BASH:C.Light}}
+DarkerInteriorsBrokenSteel.esp
+% {{BASH:C.Light}}
+DarkerInteriorsPointLookout.esp
+% {{BASH:C.Light}}
+DarkerInteriorsZeta.esp
+% {{BASH:C.Light}}
+Xepha's Dynamic Weather - Main.esp
+% {{BASH:C.Climate}}
 Xepha's Dynamic Weather - Anchorage.esp
 % {{BASH:C.Climate}}
 Xepha's Dynamic Weather - The Pitt.esp
@@ -243,6 +309,8 @@ XENH.esp
 EZCompanion_Type-N.esp
 % {{BASH:Hair,Eyes}}
 
+Mez's Merged Patch 5-0 - DLC-FWE-WMK-MMM.esp
+% {{BASH:Deflst,Delev,Factions,Invent,Relations,Relev,Scripts}}
 xCALIBR_override.esp
 % {{BASH:Names,Graphics,Stats}}
 xCALIBR_override_unsorted.esp
@@ -256,6 +324,16 @@ xCALIBR_2CW_CP.esp
 xCALIBR_2CW_CP_Sorted.esp
 % {{BASH:Names,Graphics,Stats}}
 FWE+WMK_weapons_xCALIBRified.esp
+% {{BASH:Names,Graphics,Stats}}
+FWE(v.5.04)+WMK_weapons_xCALIBRified.esp
+% {{BASH:Names,Graphics,Stats}}
+FWE+WMKexcalibrified(Anch).esp
+% {{BASH:Names,Graphics,Stats}}
+FWE+WMKexcalibrified(Pitt).esp
+% {{BASH:Names,Graphics,Stats}}
+FWE+WMKexcalibrified(Lkout).esp
+% {{BASH:Names,Graphics,Stats}}
+frederyck+FWE+xCALIBR.esp
 % {{BASH:Names,Graphics,Stats}}
 Choose your own hairstyle (load this last on FOMM).esp
 % {{BASH:NpcFaces,Hair,Eyes}}
