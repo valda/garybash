@@ -426,6 +426,7 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (430, 'IsActorTalkingThroughActivator', 0, 0, 0, 0),
     (1165, 'GetWeaponHasScope', 0, 0, 0, 0),
     (480, 'GetIsUsedItemEquipType', 1, 0, 0, 0),
+    (398, 'IsLimbGone', 1, 0, 0, 0),
     )
 allConditions = set(entry[0] for entry in conditionFunctionData)
 fid1Conditions = set(entry[0] for entry in conditionFunctionData if entry[2] == 2)
