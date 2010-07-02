@@ -14,8 +14,13 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
-=== 18 [7/1/2010]
-* Added support 'IsLimbGone' condition function. (thanks DoomFruit!).
+=== 18 [7/2/2010] [Valda,Televator]
+* Bashed Patch:
+  * Added support 'IsLimbGone' condition function. (thanks DoomFruit!).
+  * Added tweak that litters shell case (inspired from Shells Rain).
+  * Added < and > to the list of character exceptions for the Name Patcher (FWE's Control Panel is named like that: < FWE Control Panel >)
+  * Removed . from the list of exceptions, due to vanilla game items beginning with dot. (for example: .32 Pistol)
+  * Inventory sorter tweak was changed to the independent option.
 * Update taglist.txt.
 
 === 17 [6/13/2010] [Valda,Televator]
