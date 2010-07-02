@@ -20288,10 +20288,10 @@ class NamesTweak_Potions(MultiTweakItem):
         MultiTweakItem.__init__(self,False,_("Ingestibles"),
             _('Label ingestibles to sort by type. C: Chems, F: Food, S: Stimpack, A: Alcohol.'),
             'ALCH',
-            (_('F Radroach Meat'),  '\x07\x07\x07\x07\x07%s '),
-            (_('F. Radroach Meat'), '\x07\x07\x07\x07\x07%s. '),
-            (_('F - Radroach Meat'),'\x07\x07\x07\x07\x07%s - '),
-            (_('(F) Radroach Meat'),'\x07\x07\x07\x07\x07(%s) '),
+            (_('F Radroach Meat'),  '%s '),
+            (_('F. Radroach Meat'), '%s. '),
+            (_('F - Radroach Meat'),'%s - '),
+            (_('(F) Radroach Meat'),'(%s) '),
             )
 
     #--Config Phase -----------------------------------------------------------
@@ -20325,12 +20325,7 @@ class NamesTweak_Potions(MultiTweakItem):
             if record.full[0] in '+-=()[]<>': continue
             if not record.etype in range(10,14): continue
             label = 'CSFA'[record.etype-10]
-            prefix = ''
-            if label == 'S':
-                prefix = '\x07\x07'
-            elif label == 'C':
-                prefix = '\x07'
-            record.full = prefix + format % label + record.full
+            record.full = format % label + record.full
             keep(record.fid)
             srcMod = record.fid[0]
             count[srcMod] = count.get(srcMod,0) + 1
@@ -20516,33 +20511,32 @@ class NamesTweak_Weapons(MultiTweakItem):
         MultiTweakItem.__init__(self,False,_("Weapons"),
             _('Label ammo and weapons to sort by type and damage.'),
             'WEAP',
-            (_('S BB Gun'),  '\x07\x07%s '),
-            (_('S. BB Gun'), '\x07\x07%s. '),
-            (_('S - BB Gun'),'\x07\x07%s - '),
-            (_('(S) BB Gun'),'\x07\x07(%s) '),
+            (_('S BB Gun'),  '%s '),
+            (_('S. BB Gun'), '%s. '),
+            (_('S - BB Gun'),'%s - '),
+            (_('(S) BB Gun'),'(%s) '),
             ('----','----'),
-            (_('S10 BB Gun'),  '\x07\x07%s%02d '),
-            (_('S10. BB Gun'), '\x07\x07%s%02d. '),
-            (_('S10 - BB Gun'),'\x07\x07%s%02d - '),
-            (_('(S10) BB Gun'),'\x07\x07(%s%02d) '),
+            (_('S10 BB Gun'),  '%s%02d '),
+            (_('S10. BB Gun'), '%s%02d. '),
+            (_('S10 - BB Gun'),'%s%02d - '),
+            (_('(S10) BB Gun'),'(%s%02d) '),
             )
 
     #--Config Phase -----------------------------------------------------------
     #--Patch Phase ------------------------------------------------------------
     def getReadClasses(self):
         """Returns load factory classes needed for reading."""
-        return (MreAmmo,MreWeap)
+        return (MreWeap,)
 
     def getWriteClasses(self):
         """Returns load factory classes needed for writing."""
-        return (MreAmmo,MreWeap)
+        return (MreWeap,)
 
     def scanModFile(self,modFile,progress,patchFile):
         """Scans specified mod file to extract info. May add record to patch mod,
         but won't alter it."""
         mapper = modFile.getLongMapper()
-        for blockType in ('AMMO','WEAP'):
-        #for blockType in ('WEAP',):
+        for blockType in ('WEAP',):
             modBlock = getattr(modFile,blockType)
             patchBlock = getattr(patchFile,blockType)
             id_records = patchBlock.id_records
@@ -20558,13 +20552,6 @@ class NamesTweak_Weapons(MultiTweakItem):
         showStat = '%02d' in format
         keep = patchFile.getKeeper()
         codes = getattr(patchFile,'weaponTags','BESMUTL')
-        ammoFormat = '\x07'
-        for record in patchFile.AMMO.records:
-            if not record.full: continue
-            record.full = ammoFormat + record.full
-            keep(record.fid)
-            srcMod = record.fid[0]
-            count[srcMod] = count.get(srcMod,0) + 1
         for record in patchFile.WEAP.records:
             if not record.full: continue
             if record.full[0] in '+-=()[]<>': continue
@@ -20644,6 +20631,72 @@ class NamesTweak_Dwarven(MultiTweakItem):
             log('  * %s: %d' % (srcMod.s,count[srcMod]))
 
 #------------------------------------------------------------------------------
+class NamesTweak_SortInventory(MultiTweakItem):
+    #--Config Phase -----------------------------------------------------------
+    def __init__(self):
+        MultiTweakItem.__init__(self,False,_("Sort Inventory"),
+            _('Sort item by category in barter and container screens.'),
+            'sortInventory',
+            # weapon,armor,stimpak,chem,food/drink,ammo
+            (_('Chem>Ammo>Weapon>Armor>Food>Misc'),3,2,6,5,1,4),
+            (_('Ammo>Chem>Weapon>Armor>Food>Misc'),3,2,5,4,1,6),
+            )
+
+    #--Config Phase -----------------------------------------------------------
+    #--Patch Phase ------------------------------------------------------------
+    def getReadClasses(self):
+        """Returns load factory classes needed for reading."""
+        return (MreAmmo,MreWeap,MreArmo,MreAlch)
+
+    def getWriteClasses(self):
+        """Returns load factory classes needed for writing."""
+        return (MreAmmo,MreWeap,MreArmo,MreAlch)
+
+    def scanModFile(self,modFile,progress,patchFile):
+        """Scans specified mod file to extract info. May add record to patch mod,
+        but won't alter it."""
+        mapper = modFile.getLongMapper()
+        for blockType in ('AMMO','WEAP','ARMO','ALCH'):
+            modBlock = getattr(modFile,blockType)
+            patchBlock = getattr(patchFile,blockType)
+            id_records = patchBlock.id_records
+            for record in modBlock.getActiveRecords():
+                if mapper(record.fid) not in id_records:
+                    record = record.getTypeCopy(mapper)
+                    patchBlock.setRecord(record)
+
+    def buildPatch(self,log,progress,patchFile):
+        """Edits patch file as desired. Will write to log."""
+        count = {}
+        cntWeap,cntArmo,cntStim,cntChem,cntFood,cntAmmo = self.choiceValues[self.chosen]
+        keep = patchFile.getKeeper()
+        for cnt,type in ((cntWeap,'WEAP'),(cntArmo,'ARMO'),(cntAmmo,'AMMO')):
+            for record in getattr(patchFile,type).records:
+                if not record.full: continue
+                if record.full[0] in '+-=[]<>\x07': continue
+                record.full = '\x07' * cnt + record.full
+                keep(record.fid)
+                srcMod = record.fid[0]
+                count[srcMod] = count.get(srcMod,0) + 1
+        for record in patchFile.ALCH.records:
+            if not record.full: continue
+            if record.full[0] in '+-=[]<>\x07': continue
+            if not record.etype in range(10,14): continue
+            if record.etype == 10:   # chems
+                record.full = '\x07' * cntChem + record.full
+            elif record.etype == 11: # stimpak
+                record.full = '\x07' * cntStim + record.full
+            else:                    # food/alcohol
+                record.full = '\x07' * cntFood + record.full
+            keep(record.fid)
+            srcMod = record.fid[0]
+            count[srcMod] = count.get(srcMod,0) + 1
+        #--Log
+        log(_('* %s: %d') % (self.label,sum(count.values())))
+        for srcMod in modInfos.getOrdered(count.keys()):
+            log('  * %s: %d' % (srcMod.s,count[srcMod]))
+
+#------------------------------------------------------------------------------
 class NamesTweaker(MultiTweaker):
     """Tweaks record full names in various ways."""
     scanOrder = 32
@@ -20652,15 +20705,15 @@ class NamesTweaker(MultiTweaker):
     text = _("Tweak object names in various ways such as lore friendlyness or show type/quality.")
     tweaks = sorted([
         NamesTweak_Body(False,_("Armor/Clothes"),_("Rename armor to sort by type."),'ARMO',
-            (_('A Naughty Nightwear'),  '\x07\x07\x07%s '),
-            (_('A. Naughty Nightwear'), '\x07\x07\x07%s. '),
-            (_('A - Naughty Nightwear'),'\x07\x07\x07%s - '),
-            (_('(A) Naughty Nightwear'),'\x07\x07\x07(%s) '),
+            (_('A Naughty Nightwear'),  '%s '),
+            (_('A. Naughty Nightwear'), '%s. '),
+            (_('A - Naughty Nightwear'),'%s - '),
+            (_('(A) Naughty Nightwear'),'(%s) '),
             ('----','----'),
-            (_('A01 Naughty Nightwear'),  '\x07\x07\x07%s%02d '),
-            (_('A01. Naughty Nightwear'), '\x07\x07\x07%s%02d. '),
-            (_('A01 - Naughty Nightwear'),'\x07\x07\x07%s%02d - '),
-            (_('(A01) Naughty Nightwear'),'\x07\x07\x07(%s%02d) '),
+            (_('A01 Naughty Nightwear'),  '%s%02d '),
+            (_('A01. Naughty Nightwear'), '%s%02d. '),
+            (_('A01 - Naughty Nightwear'),'%s%02d - '),
+            (_('(A01) Naughty Nightwear'),'(%s%02d) '),
             ),
         # NamesTweak_Body(False,_("Clothes"),_("Rename clothes to sort by type."),'CLOT',
         #     (_('P Grey Trowsers'),  '%s '),
@@ -20673,6 +20726,7 @@ class NamesTweaker(MultiTweaker):
         # NamesTweak_Spells(),
         NamesTweak_Weapons(),
         #NamesTweak_Dwarven(),
+        NamesTweak_SortInventory(),
         ],key=lambda a: a.label.lower())
     tweaks.insert(0,NamesTweak_BodyTags())
 
