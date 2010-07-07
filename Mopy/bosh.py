@@ -20726,9 +20726,9 @@ class NamesTweaker(MultiTweaker):
         # NamesTweak_Spells(),
         NamesTweak_Weapons(),
         #NamesTweak_Dwarven(),
-        NamesTweak_SortInventory(),
         ],key=lambda a: a.label.lower())
     tweaks.insert(0,NamesTweak_BodyTags())
+    tweaks.append(NamesTweak_SortInventory())
 
     #--Patch Phase ------------------------------------------------------------
     def getReadClasses(self):
