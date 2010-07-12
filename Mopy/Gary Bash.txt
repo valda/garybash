@@ -14,6 +14,11 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 20 [7/12/2010]
+* Bashed Patch:
+  * Tweak Names: Fixed a bug that inventory sorter cannot be worked together with weapon names tweaker.
+  * Fixed that the retry dialog is displayed when failing in the write of bashed patch.
+
 === 18 [7/2/2010] [Valda,Televator]
 * Bashed Patch:
   * Added support 'IsLimbGone' condition function. (thanks DoomFruit!).
