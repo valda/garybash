@@ -4886,7 +4886,14 @@ class PatchDialog(wx.Dialog):
             patchFile.buildPatch(log,SubProgress(progress,0.8,0.9))#no speeding needed/really possible (less than 1/4 second even with large LO)
             #--Save
             progress(0.9,patchName.s+_('\nSaving...'))
-            patchFile.safeSave()
+            while True:
+                try:
+                    patchFile.safeSave()
+                except WindowsError:
+                    message = _("The patch cannot be written to (Data\\%s).\nIt might be locking by other processes.\nDo you want to retry or cancel?") % (patchName.s,)
+                    if balt.askWarning(self,fill(message,80),_("Couldn't write ")+patchName.s): continue
+                    raise
+                break
             #--Cleanup
             self.patchInfo.refresh()
             modList.RefreshUI(patchName)
