@@ -3067,7 +3067,7 @@ class MreInfo(MelRecord):
     """Info (dialog entry) record."""
     classType = 'INFO'
     _flags = Flags(0,Flags.getNames(
-        'goodbye','random','sayOnce',None,'infoRefusal','randomEnd','runForRumors'))
+        'goodbye','random','sayOnce','runImmediately','infoRefusal','randomEnd','runForRumors','sayOnceADay','alwaysDarken'))
     class MelInfoData(MelStruct):
         """Support older 2 byte version."""
         def loadData(self,record,ins,type,size,readId):
@@ -3080,7 +3080,7 @@ class MreInfo(MelRecord):
             for attr,value,action in zip(self.attrs,unpacked,self.actions):
                 if callable(action): value = action(value)
                 setter(attr,value)
-            if self._debug: print (record.dialType,record.flags.getTrueAttrs(),record.unused1)
+            if self._debug: print (record.dialType,record.flags.getTrueAttrs())
 
     class MelInfoSchr(MelStruct):
         """Print only if schd record is null."""
@@ -3089,7 +3089,7 @@ class MreInfo(MelRecord):
                 MelStruct.dumpData(self,record,out)
     #--MelSet
     melSet = MelSet(
-        MelInfoData('DATA','2Bs','dialType',(_flags,'flags'),('unused1','\x02')),
+        MelInfoData('DATA','HH','dialType',(_flags,'flags')),
         MelFid('QSTI','quests'),
         MelFid('TPIC','topic'),
         MelFid('PNAM','prevInfo'),
