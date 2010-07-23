@@ -2101,6 +2101,7 @@ Female World Model Path
 === bosh.py, 14058
 Export Scripts
 >>>>
+スクリプトのエキスポート
 
 === bosh.py, 14065
 reading scripts in %s
@@ -2634,6 +2635,7 @@ Books will be reformatted for DarN UI
 === bosh.py, 18423
 Nvidia Fog Fix
 >>>>
+Nvidia Fog 修正
 
 === bosh.py, 18424
 Fix fog related Nvidia black screen problems.)
@@ -3897,6 +3899,7 @@ Incomplete Installation
 === basher.py, 3793
 Mark Mergeable
 >>>>
+マージ可能とする
 
 === basher.py, 3859
 Doc Browser
@@ -4021,6 +4024,7 @@ Class
 === basher.py, 4392
 Import
 >>>>
+インポート
 
 === basher.py, 4463
 Face imported
@@ -4117,6 +4121,7 @@ A file named %s already exists in the hidden files directory. Overwrite it?
 === basher.py, 5306
 List Masters
 >>>>
+マスター一覧
 
 === basher.py, 5324
 Redate
@@ -4810,6 +4815,7 @@ This command will export the level info for NPCs whose level is offset with resp
 === basher.py, 7404
 Export NPC Levels
 >>>>
+NPCレベルのエキスポート
 
 === basher.py, 7408
 _NPC_Levels.csv
@@ -4830,6 +4836,7 @@ Import NPC Levels
 === basher.py, 7458
 Add Master
 >>>>
+マスターを追加
 
 === basher.py, 7463
 WARNING! For advanced modders only! Adds specified master to list of masters, thus ceding ownership of new content of this mod to the new master. Useful for splitting mods into esm/esp pairs
@@ -4906,6 +4913,7 @@ Invert Ghosting
 === basher.py, 7808
 Don't Ghost
 >>>>
+ゴースト化しない
 
 === basher.py, 7839
 Apply Nvidia fog fix. This modify fog values in interior cells to avoid the Nvidia black screen bug
@@ -4942,6 +4950,7 @@ Export faction relations to
 === basher.py, 7914
 Export Relations
 >>>>
+リレーションのエキスポート
 
 === basher.py, 7921
 Reading %s
@@ -4966,6 +4975,7 @@ Export factions to
 === basher.py, 7949
 Export Factions
 >>>>
+ファクションのエクスポート
 
 === basher.py, 7969
 Mark Levelers
@@ -4986,10 +4996,12 @@ Not Mergeable\n*
 === basher.py, 8021
 Copy to Esm
 >>>>
+Esmにコピー
 
 === basher.py, 8021
 Copy to Esp
 >>>>
+Espにコピー
 
 === basher.py, 8039
 Replace existing %s?
@@ -5010,12 +5022,12 @@ Imported face to: %s
 === basher.py, 8096
 Esmify Masters
 >>>>
-マスターをESM化
+マスターをEsm化
 
 === basher.py, 8108
 Espify Masters
 >>>>
-マスターをESP化
+マスターをEsp化
 
 === basher.py, 8116
 WARNING! For advanced modders only! Flips esp/esm bit of esp masters to convert them to/from esm state. Useful for building/analyzing esp mastered mods
@@ -5024,12 +5036,12 @@ WARNING! For advanced modders only! Flips esp/esm bit of esp masters to convert 
 === basher.py, 8139
 Esmify Self
 >>>>
-自身をESM化
+自身をEsm化
 
 === basher.py, 8139
 Espify Self
 >>>>
-自身をESP化
+自身をEsp化
 
 === basher.py, 8149
 WARNING! For advanced modders only!\n\nThis command flips an internal bit in the mod, converting an esp to an esm and vice versa. Note that it is this bit and NOT the file extension that determines the esp/esm state of the mod
@@ -5118,6 +5130,7 @@ Objects Changed
 === basher.py, 8463
 Decompile All
 >>>>
+すべてデコンパイル
 
 === basher.py, 8469
 This command will remove the effects of a 'compile all' by removing all scripts whose texts appear to be identical to the version that they override
@@ -5166,6 +5179,7 @@ Export names to
 === basher.py, 8580
 Export Names
 >>>>
+名前のエキスポート
 
 === basher.py, 8605
 Import record names from a text file. This will replace existing names and is not reversible!
@@ -5182,6 +5196,7 @@ Objects Renamed
 === basher.py, 8657
 Rebuild Patch
 >>>>
+パッチの再構築
 
 === basher.py, 8666
 The following mods are tagged 'Filter'. These should be deactivated before building the patch, and then merged into the patch during build.\n*%s\n\nDeactivate the mods now?
@@ -5242,6 +5257,7 @@ Set File Version
 === basher.py, 8739
 Details
 >>>>
+概要
 
 === basher.py, 8751
 Sorting records
@@ -5254,6 +5270,7 @@ Sorting records
 === basher.py, 8775
 Remove World Orphans
 >>>>
+はぐれWorld情報を削除
 
 === basher.py, 8780
 In some circumstances, editing a mod will leave orphaned cell records in the world group. This command will remove such orphans
@@ -5270,6 +5287,7 @@ Orphan cell blocks removed: %d
 === basher.py, 8815
 Readme
 >>>>
+れどめ
 
 === basher.py, 8841
 _Stats.csv
@@ -5282,6 +5300,7 @@ Export stats to
 === basher.py, 8850
 Export Stats
 >>>>
+アイテム性能のエキスポート
 
 === basher.py, 8870
 Scripts
@@ -5390,10 +5409,12 @@ Export prices to
 === basher.py, 9097
 Export Prices
 >>>>
+値段のエキスポート
 
 === basher.py, 9117
 Undelete Refs
 >>>>
+削除レコードの復旧
 
 === basher.py, 9122
 Changes deleted refs to ignored. This is a very advanced feature and should only be used by modders who know exactly what they're doing
@@ -5718,6 +5739,7 @@ already exists
 === basher.py, 10286
 Export
 >>>>
+エキスポート
 
 === basher.py, 10288
 Export People
