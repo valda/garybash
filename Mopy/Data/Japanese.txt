@@ -4955,23 +4955,23 @@ Enter a title
 === basher.py, 6039
 Anneal All
 >>>>
-
+すべて反映
 === basher.py, 6044
 Annealing
 >>>>
-
+反映中
 === basher.py, 6058
 Auto-Anneal
 >>>>
-
+自動で反映
 === basher.py, 6071
 Auto-Anneal/Install Wizards
 >>>>
-
+自動反映/インストールウィザード
 === basher.py, 6084
 Auto-Refresh Projects
 >>>>
-
+プロジェクトの自動再読込
 === basher.py, 6096
 Enabled
 >>>>
@@ -5067,7 +5067,7 @@ Installing
 === basher.py, 6466
 Anneal
 >>>>
-
+反映する
 === basher.py, 6499
 Copy (%d)
 >>>>
@@ -5183,15 +5183,15 @@ Attempt to open this as a mod at TesAlliance? This assumes that the trailing dig
 === basher.py, 6826
 Refresh
 >>>>
-
+再読込
 === basher.py, 6832
 Refreshing Packages
 >>>>
-
+パッケージの再読込中
 === basher.py, 6836
 Refreshing Packages...\n
 >>>>
-
+パッケージの再読込中...\n
 === basher.py, 6852
 Skip Voices
 >>>>
@@ -5211,19 +5211,19 @@ Unpack to Project
 === basher.py, 6942
 Unpack %s to Project
 >>>>
-%s をプロジェクトに展開する
+%s をプロジェクトに展開
 === basher.py, 6949
 %s is not a valid project name
 >>>>
-
+%s は正しいプロジェクトではありません
 === basher.py, 6952
 %s is a file
 >>>>
-
+%s はファイルです
 === basher.py, 6955
 %s already exists. Overwrite it?
 >>>>
-
+%s に上書きしてもいいですか?
 === basher.py, 6958
 Unpacking to Project
 >>>>
@@ -5247,7 +5247,7 @@ Fomod情報
 === basher.py, 7069
 Sync from Data
 >>>>
-Dataに同期
+Dataから同期
 === basher.py, 7084
 Update %s according to data directory?\nFiles to delete: %d\nFiles to update: %d
 >>>>
@@ -5255,7 +5255,7 @@ Update %s according to data directory?\nFiles to delete: %d\nFiles to update: %d
 === basher.py, 7090
 Updating files
 >>>>
-
+ファイルを更新
 === basher.py, 7105
 Sync and Pack
 >>>>
@@ -5263,11 +5263,11 @@ Sync and Pack
 === basher.py, 7119
 Pack to Archive
 >>>>
-アーカイブにする
+アーカイブに圧縮
 === basher.py, 7129
 Pack %s to Archive
 >>>>
-%s をアーカイブにする
+%s をアーカイブに圧縮
 === basher.py, 7136
 %s is not a valid archive name
 >>>>
@@ -5275,7 +5275,7 @@ Pack %s to Archive
 === basher.py, 7139
 %s is a directory
 >>>>
-
+%s はディレクトリです
 === basher.py, 7142
 The %s extension is unsupported. Using %s instead
 >>>>
@@ -5283,7 +5283,7 @@ The %s extension is unsupported. Using %s instead
 === basher.py, 7150
 Use solid compression for %s?
 >>>>
-
+%s をソリッド書庫にしますか?
 === basher.py, 7151
 Packing to Archive
 >>>>
