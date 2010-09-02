@@ -5344,6 +5344,17 @@ class MreAvif(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreEczn(MelRecord):
+    """Encounter Zone record."""
+    classType = 'ECZN'
+    _flags = Flags(0L,Flags.getNames('neverResets','matchPCBelowMinimumLevel'))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('DATA','=I2b2B',(FID,'owner',None),'rank','minimumLevel',(_flags,'flags',0L),('unused1',null1)),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5353,7 +5364,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif))
+    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
@@ -15746,7 +15757,7 @@ class PatchFile(ModFile):
         MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr,
         MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp, MreSkil,
         MreTxst, MreMicn, MreFlst, MreLvln, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-        MreDebr, MreImad, MreMstt, MreNote, MreTerm)
+        MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn)
 
     @staticmethod
     def modIsMergeable(modInfo,progress=None):
