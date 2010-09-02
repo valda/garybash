@@ -7,11 +7,11 @@
   * Valda: Hentai gentleman of wastes.
 
 === Contact
-* If you have a question/comment about Gary Bash, it's best to post it on the current RELZ topic on the Bethesda Game Studios (BGS) forums.
-* Please **NEVER** post a question about Gary Bash in the topic of original Wrye Bash.
+* If you have a question/comment about Wrye Flash, it's best to post it on the current RELZ topic on the Bethesda Game Studios (BGS) forums.
+* Please **NEVER** post a question about Wrye Flash in the topic of original Wrye Bash.
 
 == License ===================================================================
-Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
+Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
 === 20 [9/02/2010] [Valda,Sativarg]

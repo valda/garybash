@@ -4637,7 +4637,7 @@ class BashApp(wx.App):
         #--Current Version
         settings['bash.version'] = 43
         #--Version from readme
-        readme = bosh.dirs['mopy'].join('Gary Bash.txt')
+        readme = bosh.dirs['mopy'].join('Wrye Flash.txt')
         if readme.exists() and readme.mtime != settings['bash.readme'][0]:
             reVersion = re.compile("^=== ([\.\d]+) \[")
             for line in readme.open():
