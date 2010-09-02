@@ -3954,9 +3954,9 @@ class BashFrame(wx.Frame):
         if not title:
             ###Remove from Bash after CBash integrated
             if(CBash == None):
-                title = "Wrye Bash for Fallout3 %s: " % (settings['bash.readme'][1],)
+                title = "Wrye Flash %s: " % (settings['bash.readme'][1],)
             else:
-                title = "Wrye Bash for Fallout3 %s, CBash v%u.%u.%u: " % (settings['bash.readme'][1], CBash.GetMajor(), CBash.GetMinor(), CBash.GetRevision())
+                title = "Wrye Flash %s, CBash v%u.%u.%u: " % (settings['bash.readme'][1], CBash.GetMajor(), CBash.GetMinor(), CBash.GetRevision())
 
             maProfile = re.match(r'Saves\\(.+)\\$',bosh.saveInfos.localSave)
             if maProfile:

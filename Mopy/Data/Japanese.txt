@@ -1053,7 +1053,7 @@ Potion
 === bush.py, 793
 Cell
 >>>>
-セル
+場所
 === bush.py, 794
 Object Ref
 >>>>
@@ -1833,7 +1833,7 @@ Package
 === bosh.py, 12399
 Order
 >>>>
-オーダー
+順序
 === bosh.py, 12399
 Modified
 >>>>
@@ -4037,7 +4037,7 @@ Installer
 === basher.py, 151
 Load Order
 >>>>
-ロードオーダー
+ロード順
 === basher.py, 152
 Current LO
 >>>>
@@ -4955,19 +4955,19 @@ Enter a title
 === basher.py, 6039
 Anneal All
 >>>>
-すべて反映
+全てアニール処理
 === basher.py, 6044
 Annealing
 >>>>
-反映中
+アニール処理中
 === basher.py, 6058
 Auto-Anneal
 >>>>
-自動で反映
+自動アニール
 === basher.py, 6071
 Auto-Anneal/Install Wizards
 >>>>
-自動反映/インストールウィザード
+自動アニール/インストールウィザード
 === basher.py, 6084
 Auto-Refresh Projects
 >>>>
@@ -5067,7 +5067,7 @@ Installing
 === basher.py, 6466
 Anneal
 >>>>
-反映する
+アニール処理
 === basher.py, 6499
 Copy (%d)
 >>>>
@@ -5143,7 +5143,7 @@ List Structure
 === basher.py, 6740
 Move To
 >>>>
-移動する
+順序を移動
 === basher.py, 6746
 Move selected archives to what position?\nEnter position number.\nLast: -1; First of Last: -2; Semi-Last: -3
 >>>>

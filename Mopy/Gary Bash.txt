@@ -1,4 +1,4 @@
-= Gary Bash (Wrye Bash for Fallout 3) =========================================
+= Wrye Flash (Wrye Bash for Fallout 3) ========================================
 == Credits and Contact ========================================================
 === Authors
 * **Original Code**
@@ -14,6 +14,9 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 20 [9/02/2010]
+* Added Japanese language catalog.
+
 === 19 [7/16/2010]
 * Bashed Patch:
   * Fixed a bug that inventory sorter cannot be worked together with weapon names tweaker (thanks televator).
