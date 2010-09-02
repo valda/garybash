@@ -11336,21 +11336,21 @@ def InitStatusBar():
 #        App_Tes4Gecko(None,
 #            Image(r'images/TES4Gecko'+bosh.inisettings['iconSize']+'.png'),
 #            _("Launch Tes4Gecko")))
-#    BashStatusBar.buttons.append( #Tes4View
-#        App_Tes4View(
-#            bosh.tooldirs['Tes4ViewPath'],
-#            Image(r'images/tes4view'+bosh.inisettings['iconSize']+'.png'),
-#            _("Launch TES4View")))
+    BashStatusBar.buttons.append( #FO3MasterRestore
+        App_FO3Edit(
+            bosh.tooldirs['FO3MasterRestorePath'],
+            Image(r'images/FO3MasterRestore'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch FO3MasterRestore")))
     BashStatusBar.buttons.append( #FO3Edit
         App_FO3Edit(
             bosh.tooldirs['FO3EditPath'],
             Image(r'images/FO3Edit'+bosh.inisettings['iconSize']+'.png'),
             _("Launch FO3Edit")))
-#    BashStatusBar.buttons.append( #Tes4Trans
-#        App_Tes4View(
-#            bosh.tooldirs['Tes4TransPath'],
-#            Image(r'images/TES4Trans'+bosh.inisettings['iconSize']+'.png'),
-#            _("Launch TES4Trans")))
+    BashStatusBar.buttons.append( #FO3MasterUpdate
+        App_FO3Edit(
+            bosh.tooldirs['FO3MasterUpdatePath'],
+            Image(r'images/FO3MasterUpdate'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch FO3MasterUpdate")))
 #    BashStatusBar.buttons.append( #Tes4LODGen
 #        App_Button(
 #            bosh.tooldirs['Tes4LodGenPath'],

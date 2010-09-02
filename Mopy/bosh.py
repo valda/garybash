@@ -22651,8 +22651,8 @@ def initDirs(personal='',localAppData='',fallout3Path=''):
                 if not tooldirs[dir].isabs():
                     tooldirs[dir] = dirs['app'].join(tooldirs[dir])
     
-    #tooldirs['Tes4ViewPath'] = tooldirs['Tes4EditPath'].head.join('TES4View.exe')
-    #tooldirs['Tes4TransPath'] = tooldirs['Tes4EditPath'].head.join('TES4Trans.exe')
+    tooldirs['FO3MasterUpdatePath'] = tooldirs['FO3EditPath'].head.join('FO3MasterUpdate.exe')
+    tooldirs['FO3MasterRestorePath'] = tooldirs['FO3EditPath'].head.join('FO3MasterRestore.exe')
     
     #--Mod Data, Installers
     if bashIni and bashIni.has_option('General','sFallout3Mods'):

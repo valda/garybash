@@ -14,8 +14,10 @@
 Gary Bash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
-=== 20 [9/02/2010]
+=== 20 [9/02/2010] [Valda,Sativarg]
 * Added Japanese language catalog.
+* Added 'ECZN' (Encounter Zone) record support.
+* Added FO3MasterUpdate and FO3MasterRestore launchers (contributed by Sativarg).
 
 === 19 [7/16/2010]
 * Bashed Patch:
