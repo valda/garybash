@@ -419,6 +419,7 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (500, 'GetWeaponHealthPerc', 0, 0, 0, 0),
     (368, 'IsPlayerActionActive', 1, 0, 0, 0),
     (416, 'GetGroupMemberCount', 0, 0, 0, 0),
+    (417, 'GetGroupTargetCount', 0, 0, 0, 0),
     (510, 'GetLastHitCritical', 0, 0, 0, 0),
     (450, 'GetFactionRelation', 1, 0, 0, 0),
     (455, 'GetPlayerTeammateCount', 0, 0, 0, 0),
