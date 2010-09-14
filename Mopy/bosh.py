@@ -14056,7 +14056,7 @@ class ItemStats:
             modName = GPath(modName)
             longid = (GPath(aliases.get(modName,modName)),int(objectStr[2:],16))
             if type == 'ALCH':
-                potions[longid] = (eid,) + tuple(func(field) for func,field in
+                alch[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
                     zip((sfloat,int),fields[4:6]))
             elif type == 'AMMO':
