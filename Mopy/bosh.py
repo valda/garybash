@@ -2280,6 +2280,7 @@ class MreArmo(MelRecord):
         MelString('ICO2','femaleLargeIconPath'),
         MelString('MIC2','femaleSmallIconPath'),
         MelString('BMCT','ragdollConstraintTemplate'),
+        MelDestructable(),
         MelFid('REPL','repairList'),
         MelFid('BIPL','bipedModelList'),
         MelStruct('ETYP','I',(_etype,'etype',0L)),

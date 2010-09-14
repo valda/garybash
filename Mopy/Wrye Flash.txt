@@ -14,10 +14,14 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
-=== 20 [9/02/2010] [Valda,Sativarg]
+=== 20 [9/15/2010] [Valda,Sativarg]
+* Change AppName.
 * Added Japanese language catalog.
 * Added 'ECZN' (Encounter Zone) record support.
 * Added FO3MasterUpdate and FO3MasterRestore launchers (contributed by Sativarg).
+* Added 'GetGroupTargetCount' definition to conditionFunctionData (support for Fallout3Tactics.esm).
+* Added 'IsTurning' definition to conditionFunctionData (support for Asuka-tan Mod).
+* Added 'DEST' (Destructable) subrecord handler to 'ARMO' (Armor) record structure (support for Asuka-tan Mod).
 
 === 19 [7/16/2010]
 * Bashed Patch:

@@ -395,6 +395,7 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (492, 'GetMapMakerVisible', 1, 1, 1, 2),
     (446, 'GetInZone', 2, 1, 1, 2),
     ( 25, 'IsMoving', 0, 0, 0, 0),
+    ( 26, 'IsTurning', 0, 0, 0, 0),
     (451, 'IsLastIdlePlayed', 2, 0, 0, 0),
     (399, 'IsWeaponInList', 2, 0, 0, 0),
     (408, 'GetVATSValue', 1, 2, 0, 0),
