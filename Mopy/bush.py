@@ -426,9 +426,16 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (455, 'GetPlayerTeammateCount', 0, 0, 0, 0),
     (219, 'GetAnimAction', 0, 0, 0, 0),
     (430, 'IsActorTalkingThroughActivator', 0, 0, 0, 0),
-    (1165, 'GetWeaponHasScope', 0, 0, 0, 0),
     (480, 'GetIsUsedItemEquipType', 1, 0, 0, 0),
     (398, 'IsLimbGone', 1, 0, 0, 0),
+    # extended by FOSE
+    (1024, 'GetFOSEVersion', 0, 0, 0, 0),
+    (1025, 'GetFOSERevision', 0, 0, 0, 0),
+    (1213, 'GetFOSEBeta', 0, 0, 0, 0),
+    (1082, 'IsKeyPressed', 1, 0, 0, 0),
+    (1166, 'IsControlPressed', 1, 0, 0, 0),
+    (1028, 'GetWeight', 2, 0, 0, 0),
+    (1165, 'GetWeaponHasScope', 0, 0, 0, 0),
     )
 allConditions = set(entry[0] for entry in conditionFunctionData)
 fid1Conditions = set(entry[0] for entry in conditionFunctionData if entry[2] == 2)
