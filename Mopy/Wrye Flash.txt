@@ -22,6 +22,7 @@ Wrye Flash is released under Version 2 of the GNU General Public License. See en
 * Added 'GetGroupTargetCount' definition to conditionFunctionData (support for Fallout3Tactics.esm).
 * Added 'IsTurning' definition to conditionFunctionData (support for Asuka-tan Mod).
 * Added 'DEST' (Destructable) subrecord handler to 'ARMO' (Armor) record structure (support for Asuka-tan Mod).
+* Added some FOSE condition functions ('GetFOSEVersion', 'GetFOSERevision', etc) to conditionFunctionData (thanks Meridian).
 
 === 19 [7/16/2010]
 * Bashed Patch:
