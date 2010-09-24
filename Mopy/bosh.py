@@ -4580,13 +4580,13 @@ class MreWeap(MelRecord):
         MelWeapDnam('DNAM','Iff4B5fI4BffII11fIIffIfff',
                     'animationType','animationMultiplier','reach',(_dflags1,'dnamFlags1',0L),
                     'gripAnimation','ammoUse','reloadAnimation','minSpread','spread',
-                    'unknown','sightFov','unknown2',(FID,'projectile',None),
+                    'unknown','sightFov','unknown2',(FID,'projectile',0L),
                     'baseVatsToHitChance','attackAnimation','projectileCount','embeddedWeaponActorValue','minRange','maxRange',
                     'onHit',(_dflags2,'dnamFlags2',0L),'animationAttackMultiplier','fireRate','overrideActionPoint',
                     'rumbleLeftMotorStrength','rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult',
                     'attackShotsPerSec','reloadTime','jamTime','aimArc','skill','rumblePattern','rambleWavelangth','limbDmgMult',
                     'resistType','sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax'),
-        MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',None)),
+        MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',0L)),
         MelBase('VNAM','_vnam','sountLevel'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
