@@ -5143,7 +5143,7 @@ List Structure
 === basher.py, 6740
 Move To
 >>>>
-‡˜‚ðˆÚ“®
+ˆÚ“®
 === basher.py, 6746
 Move selected archives to what position?\nEnter position number.\nLast: -1; First of Last: -2; Semi-Last: -3
 >>>>
