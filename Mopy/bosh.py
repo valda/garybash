@@ -20708,6 +20708,68 @@ class NamesTweak_SortInventory(MultiTweakItem):
         for srcMod in modInfos.getOrdered(count.keys()):
             log('  * %s: %d' % (srcMod.s,count[srcMod]))
 
+class NamesTweak_AmmoWeight(MultiTweakItem):
+    #--Config Phase -----------------------------------------------------------
+    def __init__(self):
+        MultiTweakItem.__init__(self,False,_("Append Ammo Weight"),
+            _('Append weight to the tail of ammo names.'),
+            'AmmoWeight',
+            (_('Append Ammo Weight: BB -> BB (WG 0.01)'),'AmmoWeight'),
+            )
+
+    #--Config Phase -----------------------------------------------------------
+    #--Patch Phase ------------------------------------------------------------
+    def getReadClasses(self):
+        """Returns load factory classes needed for reading."""
+        return (MreAmmo,MreFlst)
+
+    def getWriteClasses(self):
+        """Returns load factory classes needed for writing."""
+        return (MreAmmo,MreFlst)
+
+    def scanModFile(self,modFile,progress,patchFile):
+        """Scans specified mod file to extract info. May add record to patch mod,
+        but won't alter it."""
+        mapper = modFile.getLongMapper()
+        for blockType in ('AMMO','FLST'):
+            modBlock = getattr(modFile,blockType)
+            patchBlock = getattr(patchFile,blockType)
+            id_records = patchBlock.id_records
+            for record in modBlock.getActiveRecords():
+                if mapper(record.fid) not in id_records:
+                    record = record.getTypeCopy(mapper)
+                    patchBlock.setRecord(record)
+
+    def buildPatch(self,log,progress,patchFile):
+        """Edits patch file as desired. Will write to log."""
+        count = {}
+        keep = patchFile.getKeeper()
+        weights = {}
+        weightRe = re.compile(r"^(.*)( \(WG \d+\.\d+\))$")
+        listEidRe = re.compile(r"^AmmoWeight(\d)(\d{2})List$")
+        for record in patchFile.FLST.records:
+            m = listEidRe.match(record.eid)
+            if m:
+                weight = " (WG %s.%s)" % (m.group(1), m.group(2))
+                for fid in record.fids:
+                    weights[fid] = weight
+        for record in patchFile.AMMO.records:
+            if not record.full: continue
+            weight = weights.get(record.fid)
+            if weight:
+                m = weightRe.match(record.full)
+                if m:
+                    record.full = m.group(1) + weight
+                else:
+                    record.full = record.full + weight
+                keep(record.fid)
+                srcMod = record.fid[0]
+                count[srcMod] = count.get(srcMod,0) + 1
+        #--Log
+        log(_('* %s: %d') % (self.label,sum(count.values())))
+        for srcMod in modInfos.getOrdered(count.keys()):
+            log('  * %s: %d' % (srcMod.s,count[srcMod]))
+
 #------------------------------------------------------------------------------
 class NamesTweaker(MultiTweaker):
     """Tweaks record full names in various ways."""
@@ -20738,6 +20800,7 @@ class NamesTweaker(MultiTweaker):
         # NamesTweak_Spells(),
         NamesTweak_Weapons(),
         #NamesTweak_Dwarven(),
+        NamesTweak_AmmoWeight(),
         ],key=lambda a: a.label.lower())
     tweaks.insert(0,NamesTweak_BodyTags())
     tweaks.append(NamesTweak_SortInventory())
