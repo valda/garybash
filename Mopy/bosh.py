@@ -20089,7 +20089,7 @@ class GmstTweaker(MultiTweaker):
             (_('Custom'),0),
             ),
         GmstTweak(False,_('Combat: Auto Aim Fix'),
-            _("Removes unpleasant auto aim."),
+            _("Increase Auto Aim settings to a level at which Snipers can benefit from them."),
             ('fAutoAimMaxDistance', 'fAutoAimScreenPercentage', 'fAutoAimMaxDegrees', 'fAutoAimMissRatioLow', 'fAutoAimMissRatioHigh', 'fAutoAimMaxDegreesMiss'),
             (_('Harder'),50000.00, -180.00, 1.10, 1.00, 1.30, 3.00),
             ),
