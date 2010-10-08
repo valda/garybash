@@ -300,6 +300,9 @@ settingDefaults = {
     'bash.messages.colAligns': {},
     #--FO3Edit
     'fo3Edit.iKnowWhatImDoing':False,
+    #--BOSS:
+    'BOSS.ClearLockTimes':False,
+    'BOSS.AlwaysUpdate':False,
     }
 
 # Exceptions ------------------------------------------------------------------
@@ -7822,6 +7825,30 @@ class Mods_FO3EditExpert(Link):
         settings['fo3Edit.iKnowWhatImDoing'] ^= True
 
 #------------------------------------------------------------------------------
+class Mods_BOSSDisableLockTimes(Link):
+    """Toggle Lock Times disabling when launching BOSS through Bash."""
+    def AppendToMenu(self,menu,window,data):
+        Link.AppendToMenu(self,menu,window,data)
+        menuItem = wx.MenuItem(menu,self.id,_('BOSS Disable Lock Times'),help="If selected will temporarilly disable Bash's Lock Times when running BOSS through Bash.",kind=wx.ITEM_CHECK)
+        menu.AppendItem(menuItem)
+        menuItem.Check(settings['BOSS.ClearLockTimes'])
+
+    def Execute(self,event):
+        settings['BOSS.ClearLockTimes'] ^= True
+
+#------------------------------------------------------------------------------
+class Mods_BOSSShowUpdate(Link):
+    """Toggle Lock Times disabling when launching BOSS through Bash."""
+    def AppendToMenu(self,menu,window,data):
+        Link.AppendToMenu(self,menu,window,data)
+        menuItem = wx.MenuItem(menu,self.id,_('Always Update BOSS Masterlist prior to running BOSS.'),help="If selected will update tell BOSS to update the masterlist before sorting the mods.",kind=wx.ITEM_CHECK)
+        menu.AppendItem(menuItem)
+        menuItem.Check(settings['BOSS.AlwaysUpdate'])
+
+    def Execute(self,event):
+        settings['BOSS.AlwaysUpdate'] ^= True
+
+#------------------------------------------------------------------------------
 class Mods_UpdateInvalidator(Link):
     """Mod Replacers dialog."""
     def AppendToMenu(self,menu,window,data):
@@ -11022,35 +11049,62 @@ class App_BOSS(App_Button):
     """loads BOSS"""
 
     def Execute(self,event,extraArgs=None):
-        exeFose = bosh.dirs['app'].join('fose_loader.exe')
-        exeArgs = self.exeArgs
-        if self.foseArg != None and settings.get('bash.fose.on',False) and exeFose.exists():
-            exePath = exeFose
-            if self.foseArg != '': exeArgs += (self.foseArg,)
+        if self.IsPresent():
+            exeFose = bosh.dirs['app'].join('fose_loader.exe')
+            exeArgs = self.exeArgs
+            if self.foseArg != None and settings.get('bash.fose.on',False) and exeFose.exists():
+                exePath = exeFose
+                if self.foseArg != '': exeArgs += (self.foseArg,)
+            else:
+                exePath = self.exePath
+            exeArgs = (exePath.stail,)+exeArgs
+            if extraArgs: exeArgs += extraArgs
+            statusBar.SetStatusText(' '.join(exeArgs),1)
+            cwd = bolt.Path.getcwd()
+            exePath.head.setcwd()
+            progress = balt.Progress(_("Executing BOSS"))
+            if settings.get('bash.mods.autoGhost') and not bosh.configHelpers.bossVersion:
+                progress(0.05,_("Processing... deghosting mods"))
+                ghosted = []
+                for root, dirs, files in os.walk(bosh.dirs['mods'].s):
+                    for name in files:
+                        fileLower = name.lower()
+                        if fileLower[-10:] == '.esp.ghost' or fileLower[-10:] == '.esm.ghost':
+                            if not name[:-6] in files:
+                                file = bosh.dirs['mods'].join(name)
+                                ghosted.append(fileLower)
+                                newName = bosh.dirs['mods'].join(name[:-6])
+                                file.moveTo(newName)
+            lockTimesActive = False
+            if settings['BOSS.ClearLockTimes']:
+                if settings['bosh.modInfos.resetMTimes']:
+                    bosh.modInfos.mtimes.clear()
+                    settings['bosh.modInfos.resetMTimes'] = bosh.modInfos.lockTimes = lockTimesActive
+                    lockTimesActive = True
+            if settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85):
+                exeArgs += ('-u',)
+            if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
+                exeArgs += ('-r 2',)   
+            elif wx.GetKeyState(82):
+                exeArgs += ('-r 1',)
+            if wx.GetKeyState(86):
+                exeArgs += ('-V-',)
+            progress(0.05,_("Processing... launching BOSS."))
+            try:
+                os.spawnv(os.P_WAIT,exePath.s,exeArgs)
+            except Exception, error:
+                print str(error)
+                print _("Used Path: %s") % exePath.s
+                print _("Used Arguments: "), exeArgs
+                print
+                raise
+            finally:
+                if progress: progress.Destroy()
+                if lockTimesActive: 
+                    settings['bosh.modInfos.resetMTimes'] = bosh.modInfos.lockTimes = lockTimesActive
+                cwd.setcwd()
         else:
-            exePath = self.exePath
-        exeArgs = (exePath.stail,)+exeArgs
-        if extraArgs: exeArgs += extraArgs
-        statusBar.SetStatusText(' '.join(exeArgs),1)
-        cwd = bolt.Path.getcwd()
-        exePath.head.setcwd()
-        progress = balt.Progress(_("Executing BOSS"))
-        if settings.get('bash.mods.autoGhost'):
-            progress(0.05,_("Processing... deghosting mods"))
-            ghosted = []
-            for root, dirs, files in os.walk(bosh.dirs['mods'].s):
-                for name in files:
-                    fileLower = name.lower()
-                    if fileLower[-10:] == '.esp.ghost' or fileLower[-10:] == '.esm.ghost':
-                        if not name[:-6] in files:
-                            file = bosh.dirs['mods'].join(name)
-                            ghosted.append(fileLower)
-                            newName = bosh.dirs['mods'].join(name[:-6])
-                            file.moveTo(newName)
-        progress(0.55,_("Processing... launching BOSS."))
-        os.spawnv(os.P_WAIT,exePath.s,exeArgs)
-        if progress: progress.Destroy()
-        cwd.setcwd()
+            raise StateError('Application missing: %s' % self.exePath.s)
 
 #------------------------------------------------------------------------------
 class Fallout3_Button(App_Button):
@@ -11356,9 +11410,11 @@ def InitStatusBar():
 #            bosh.tooldirs['Tes4LodGenPath'],
 #            Image(r'images/Tes4LODGen'+bosh.inisettings['iconSize']+'.png'),
 #            _("Launch Tes4LODGen")))
-    BashStatusBar.buttons.append( #BOSS
+    configHelpers = bosh.ConfigHelpers()
+    configHelpers.refresh()
+    BashStatusBar.buttons.append( #BOSS -- will u
         App_BOSS(
-            bosh.dirs['app'].join('Data\\BOSS-F.bat'),
+            (bosh.dirs['app'].join('Data\\BOSS-F.bat'),bosh.dirs['app'].join('Data\\BOSS.exe'))[configHelpers.bossVersion],
             Image(r'images/Boss'+bosh.inisettings['iconSize']+'.png'),
             _("Launch BOSS")))
     if bosh.inisettings['showmodelingtoollaunchers']:
@@ -11929,6 +11985,8 @@ def InitModLinks():
     ModList.mainMenu.append(Mods_Deprint())
     ModList.mainMenu.append(Mods_DumpTranslator())
     ModList.mainMenu.append(Mods_FO3EditExpert())
+    ModList.mainMenu.append(Mods_BOSSDisableLockTimes())
+    ModList.mainMenu.append(Mods_BOSSShowUpdate())
 
     #--ModList: Item Links
     if True: #--File
