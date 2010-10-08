@@ -20713,7 +20713,7 @@ class NamesTweak_AmmoWeight(MultiTweakItem):
     #--Config Phase -----------------------------------------------------------
     def __init__(self):
         MultiTweakItem.__init__(self,False,_("Append Ammo Weight"),
-            _("Append FWE's ammo weight to tail of the ammo names."),
+            _("Append ammo weight of FWE to tail of the ammo name."),
             'AmmoWeight',
             (_('BB (WG 0.01)'), ' (WG %s.%s)'),
             (_('BB (0.01)'), ' (%s.%s)'),
