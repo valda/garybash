@@ -20682,24 +20682,25 @@ class NamesTweak_SortInventory(MultiTweakItem):
         count = {}
         cntWeap,cntArmo,cntStim,cntChem,cntFood,cntAmmo = self.choiceValues[self.chosen]
         keep = patchFile.getKeeper()
+        reHead = re.compile(r"^\x07*")
         for cnt,type in ((cntWeap,'WEAP'),(cntArmo,'ARMO'),(cntAmmo,'AMMO')):
             for record in getattr(patchFile,type).records:
                 if not record.full: continue
-                if record.full[0] in '+-=[]<>\x07': continue
-                record.full = '\x07' * cnt + record.full
+                if record.full[0] in '+-=[]<>': continue
+                record.full = reHead.sub('\x07' * cnt, record.full)
                 keep(record.fid)
                 srcMod = record.fid[0]
                 count[srcMod] = count.get(srcMod,0) + 1
         for record in patchFile.ALCH.records:
             if not record.full: continue
-            if record.full[0] in '+-=[]<>\x07': continue
+            if record.full[0] in '+-=[]<>': continue
             if not record.etype in range(10,14): continue
             if record.etype == 10:   # chems
-                record.full = '\x07' * cntChem + record.full
+                record.full = reHead.sub('\x07' * cntChem, record.full)
             elif record.etype == 11: # stimpak
-                record.full = '\x07' * cntStim + record.full
+                record.full = reHead.sub('\x07' * cntStim, record.full)
             else:                    # food/alcohol
-                record.full = '\x07' * cntFood + record.full
+                record.full = reHead.sub('\x07' * cntFood, record.full)
             keep(record.fid)
             srcMod = record.fid[0]
             count[srcMod] = count.get(srcMod,0) + 1
@@ -20712,9 +20713,10 @@ class NamesTweak_AmmoWeight(MultiTweakItem):
     #--Config Phase -----------------------------------------------------------
     def __init__(self):
         MultiTweakItem.__init__(self,False,_("Append Ammo Weight"),
-            _('Append weight to the tail of ammo names.'),
+            _("Append FWE's ammo weight to tail of the ammo names."),
             'AmmoWeight',
-            (_('Append Ammo Weight: BB -> BB (WG 0.01)'),'AmmoWeight'),
+            (_('BB (WG 0.01)'), ' (WG %s.%s)'),
+            (_('BB (0.01)'), ' (%s.%s)'),
             )
 
     #--Config Phase -----------------------------------------------------------
@@ -20743,6 +20745,7 @@ class NamesTweak_AmmoWeight(MultiTweakItem):
     def buildPatch(self,log,progress,patchFile):
         """Edits patch file as desired. Will write to log."""
         count = {}
+        format = self.choiceValues[self.chosen][0]
         keep = patchFile.getKeeper()
         weights = {}
         weightRe = re.compile(r"^(.*)( \(WG \d+\.\d+\))$")
@@ -20750,7 +20753,7 @@ class NamesTweak_AmmoWeight(MultiTweakItem):
         for record in patchFile.FLST.records:
             m = listEidRe.match(record.eid)
             if m:
-                weight = " (WG %s.%s)" % (m.group(1), m.group(2))
+                weight = format % (m.group(1), m.group(2))
                 for fid in record.fids:
                     weights[fid] = weight
         for record in patchFile.AMMO.records:

@@ -3927,7 +3927,7 @@ class BashFrame(wx.Frame):
         global bashFrame
         bashFrame = self
         #--Window
-        wx.Frame.__init__(self, parent, -1, 'Wrye Bash', pos, size,style)
+        wx.Frame.__init__(self, parent, -1, 'Wrye Flash', pos, size,style)
         minSize = settings['bash.frameSize.min']
         self.SetSizeHints(minSize[0],minSize[1])
         self.SetTitle()
@@ -4552,7 +4552,7 @@ class BashApp(wx.App):
         #--Constants
         self.InitResources()
         #--Init Data
-        progress = wx.ProgressDialog("Wrye Bash",_("Initializing Data")+' '*10,
+        progress = wx.ProgressDialog("Wrye Flash",_("Initializing Data")+' '*10,
             style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | (sys.version[:3] != '2.4' and wx.PD_SMOOTH))
         self.InitData(progress)
         progress.Update(70,_("Initializing Version"))
@@ -7514,7 +7514,7 @@ class Mods_LoadList:
             balt.showError(self,_('All load list slots are full. Please delete an existing load list before adding another.'))
             return
         #--Dialog
-        newItem = (balt.askText(self.window,_('Save current load list as:'),'Wrye Bash') or '').strip()
+        newItem = (balt.askText(self.window,_('Save current load list as:'),'Wrye Flash') or '').strip()
         if not newItem: return
         if len(newItem) > 64:
             message = _('Load list name must be between 1 and 64 characters long.')
