@@ -13800,6 +13800,7 @@ class FullNames:
     def __init__(self,types=None,aliases=None):
         """Initialize."""
         self.type_id_name = {} #--(eid,name) = type_id_name[type][longid]
+        self.type_id_sname = {} #--(eid,sname) = type_id_sname[type][longid]
         self.types = types or FullNames.defaultTypes
         self.aliases = aliases or {}
 
@@ -13825,6 +13826,7 @@ class FullNames:
                         id_name[longid] = (record.eid,full)
         else:
             type_id_name = self.type_id_name
+            type_id_sname = self.type_id_sname
             Current = Collection(ModsPath=dirs['mods'].s)
             modFile = Current.addMod(modInfo.name.s)
             Current.minimalLoad(LoadMasters=False)
@@ -13832,7 +13834,9 @@ class FullNames:
             mapper = modFile.MakeLongFid
             for type,block in modFile.aggregates.iteritems():
                 if type not in type_id_name: type_id_name[type] = {}
+                if type not in type_id_sname: type_id_sname[type] = {}
                 id_name = type_id_name[type]
+                id_sname = type_id_sname[type]
                 for record in block:
                     longid = record.longFid
                     if(hasattr(record, 'full')):
@@ -13840,6 +13844,11 @@ class FullNames:
                         eid = record.eid
                         if eid and full:
                             id_name[longid] = (eid,full)
+                    if(hasattr(record, 'shortName')):
+                        sname = record.shortName
+                        eid = record.eid
+                        if eid and sname:
+                            id_sname[longid] = (eid,sname)
 
 
     def writeToMod(self,modInfo):
@@ -13892,17 +13901,23 @@ class FullNames:
         """Imports type_id_name from specified text file."""
         textPath = GPath(textPath)
         type_id_name = self.type_id_name
+        type_id_sname = self.type_id_sname
         aliases = self.aliases
         ins = bolt.CsvReader(textPath)
         for fields in ins:
             if len(fields) < 5 or fields[2][:2] != '0x': continue
             type,mod,objectIndex,eid,full = fields[:5]
+            sname = fields[5] if len(fields) > 5 else None
             mod = GPath(mod)
             longid = (aliases.get(mod,mod),int(objectIndex[2:],16))
             if type in type_id_name:
                 type_id_name[type][longid] = (eid,full)
             else:
                 type_id_name[type] = {longid:(eid,full)}
+            if type in type_id_sname:
+                type_id_sname[type][longid] = (eid,sname)
+            else:
+                type_id_sname[type] = {longid:(eid,sname)}
         ins.close()
 
     def writeToText(self,textPath):
@@ -17964,6 +17979,7 @@ class NamesPatcher(ImportPatcher):
         """Prepare to handle specified patch mod. All functions are called after this."""
         Patcher.initPatchFile(self,patchFile,loadMods)
         self.id_full = {} #--Names keyed by long fid.
+        self.id_sname = {} #--Short names keyed by long fid.
         self.activeTypes = [] #--Types ('ALCH', etc.) of data actually provided by src mods/files.
         self.skipTypes = [] #--Unknown types that were skipped.
         self.srcFiles = self.getConfigChecked()
@@ -17987,6 +18003,7 @@ class NamesPatcher(ImportPatcher):
             progress.plus()
         #--Finish
         id_full = self.id_full
+        id_sname = self.id_sname
         knownTypes = set(MreRecord.type_class.keys())
         for type,id_name in fullNames.type_id_name.iteritems():
             if type not in knownTypes:
@@ -18012,6 +18029,7 @@ class NamesPatcher(ImportPatcher):
         """Scan modFile."""
         if not self.isActive: return
         id_full = self.id_full
+        id_sname = self.id_sname
         modName = modFile.fileInfo.name
         mapper = modFile.getLongMapper()
         for type in self.activeTypes:
@@ -18023,7 +18041,7 @@ class NamesPatcher(ImportPatcher):
                 if not record.longFids: fid = mapper(fid)
                 if fid in id_records: continue
                 if fid not in id_full: continue
-                if record.full != id_full[fid]:
+                if record.full != id_full[fid] or (hasattr(record, 'shortName') and record.shortName != id_sname.get(fid, None)):
                     patchBlock.setRecord(record.getTypeCopy(mapper))
 
     def buildPatch(self,log,progress):
@@ -18032,14 +18050,21 @@ class NamesPatcher(ImportPatcher):
         modFile = self.patchFile
         keep = self.patchFile.getKeeper()
         id_full = self.id_full
+        id_sname = self.id_sname
         type_count = {}
         for type in self.activeTypes:
             if type not in modFile.tops: continue
             type_count[type] = 0
             for record in modFile.tops[type].records:
                 fid = record.fid
+                changed = False
                 if fid in id_full and record.full != id_full[fid]:
                     record.full = id_full[fid]
+                    changed = True
+                if fid in id_sname and record.shortName != id_sname[fid]:
+                    record.shortName = id_sname[fid]
+                    changed = True
+                if changed:
                     keep(fid)
                     type_count[type] += 1
         log.setHeader('= '+self.__class__.name)
