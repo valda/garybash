@@ -2398,7 +2398,7 @@ class InstallersList(balt.Tank):
     def __init__(self,parent,data,icons=None,mainMenu=None,itemMenu=None,
             details=None,id=-1,style=(wx.LC_REPORT | wx.LC_SINGLE_SEL)):
         balt.Tank.__init__(self,parent,data,icons,mainMenu,itemMenu,
-            details,id,style,dndList=True,dndFiles=True,dndColumns=[_('Order')])
+            details,id,style,dndList=True,dndFiles=True,dndColumns=['Order'])
         self.gList.Bind(wx.EVT_CHAR, self.OnChar)
         self.gList.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
 
@@ -2422,7 +2422,7 @@ class InstallersList(balt.Tank):
                 newPos = self.data.data[thisFile].order + moveMod
                 if newPos < 0 or maxPos < newPos: break
                 self.data.moveArchives([thisFile],newPos)
-            self.data.refresh(what='N')
+            self.data.refresh(what='I')
             self.RefreshUI()
             if visibleIndex > maxPos: visibleIndex = maxPos
             elif visibleIndex < 0: visibleIndex = 0
@@ -2430,13 +2430,20 @@ class InstallersList(balt.Tank):
         else:
             event.Skip()
 
+    def OnDClick(self,event):
+        """Double click, open the installer."""
+        (hitItem,hitFlag) = self.gList.HitTest(event.GetPosition())
+        if hitItem < 0: return
+        path = self.data.dir.join(self.GetItem(hitItem))
+        if path.exists(): path.start()
+
     def OnKeyUp(self,event):
         """Char event: select all items"""
         ##Ctrl+A - select all
         if event.ControlDown() and event.GetKeyCode() in (65,97):
             self.SelectAll()
         ##Delete - delete
-        if event.GetKeyCode() == wx.WXK_DELETE:
+        elif event.GetKeyCode() == wx.WXK_DELETE:
             try:
                 wx.BeginBusyCursor()
                 self.DeleteSelected()
@@ -2650,7 +2657,7 @@ class InstallersPanel(SashTankPanel):
             return dirFile
         def dumpFiles(files,default='',header='',isPath=False):
             if files:
-                buff = cStringIO.StringIO()
+                buff = StringIO.StringIO()
                 if isPath: files = [x.s for x in files]
                 else: files = list(files)
                 sortKeys = dict((x,sortKey(x)) for x in files)
@@ -2744,23 +2751,27 @@ class InstallersPanel(SashTankPanel):
         """Refreshes current item while retaining scroll positions."""
         installer.refreshDataSizeCrc()
         installer.refreshStatus(self.data)
+
         subScrollPos  = self.gSubList.GetScrollPos(wx.VERTICAL)
-        espmScrollPos = self.gEspmList.GetScrollPos(wx.VERTICAL)
+        subIndex = self.gSubList.GetSelection()
+        
+##        espmScrollPos = self.gEspmList.GetScrollPos(wx.VERTICAL)
+##        espmIndex = self.gEspmList.GetSelection()
+        
         self.gList.RefreshUI(self.detailsItem)
-    #    self.gEspmList.ScrollLines(-len(self.espms))
-    #    self.gSubList.ScrollLines(-self.gSubList.GetCount())
-    #    self.gEspmList.ScrollLines(espmScrollPos)
-    #    self.gSubList.ScrollLines(subScrollPos)
-        self.gSubList.SetScrollPos(wx.VERTICAL,subScrollPos)
-        self.gEspmList.SetScrollPos(wx.VERTICAL,espmScrollPos)
+        self.gSubList.ScrollLines(subScrollPos)
+        self.gSubList.SetSelection(subIndex)
+##        if espmIndex != -1:
+##            self.gEspmList.ScrollLines(espmScrollPos)
+##            self.gEspmList.SetSelection(espmIndex)
 
     def OnCheckSubItem(self,event):
         """Handle check/uncheck of item."""
         installer = self.data[self.detailsItem]
+        index = event.GetSelection()
+        self.gSubList.SetSelection(index)
         for index in range(self.gSubList.GetCount()):
             installer.subActives[index+1] = self.gSubList.IsChecked(index)
-        index = event.GetSelection()
-        self.gSubList.SetSelection(index) 
         self.refreshCurrent(installer)
         
     def SelectionMenu(self,event):

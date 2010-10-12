@@ -1,5 +1,4 @@
 # GPL License and Copyright Notice ============================================
-# GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bolt.
 #
 #  Wrye Bolt is free software; you can redistribute it and/or
@@ -1000,6 +999,7 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
                  dndFiles=False, dndList=False, dndOnlyMoveContinuousGroup=True,
                  fnDropFiles=None, fnDropIndexes=None, fnDndAllow=None):
         wx.ListCtrl.__init__(self, parent, id, pos, size, style=style)
+        ListCtrlAutoWidthMixin.__init__(self)
         if dndFiles or dndList:
             self.SetDropTarget(ListCtrl.DropFileOrList(self, dndFiles, dndList))
             if dndList:
@@ -1148,6 +1148,7 @@ class Tank(wx.Panel):
         gList.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         gList.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.DoItemMenu)
         gList.Bind(wx.EVT_LIST_ITEM_SELECTED,self.OnItemSelected)
+        gList.Bind(wx.EVT_LEFT_DCLICK, self.OnDClick)
         #--Events: Columns
         gList.Bind(wx.EVT_LIST_COL_CLICK, self.OnColumnClick)
         gList.Bind(wx.EVT_LIST_COL_RIGHT_CLICK, self.DoColumnMenu)
@@ -1396,6 +1397,10 @@ class Tank(wx.Panel):
     def OnLeftDown(self,event):
         """Left mouse button was pressed."""
         #self.hitTest = self.gList.HitTest((event.GetX(),event.GetY()))
+        event.Skip()
+
+    def OnDClick(self,event):
+        """Left mouse double click."""
         event.Skip()
 
     def OnColumnClick(self, event):
