@@ -13865,6 +13865,7 @@ class FullNames:
         ###Remove from Bash after CBash integrated
         if(CBash == None):
             type_id_name,types = self.type_id_name,self.types
+            type_id_sname = self.type_id_sname
             classes = [MreRecord.type_class[x] for x in self.types]
             loadFactory= LoadFactory(True,*classes)
             modFile = ModFile(modInfo,loadFactory)
@@ -13873,20 +13874,29 @@ class FullNames:
             changed = {}
             for type in types:
                 id_name = type_id_name.get(type,None)
+                id_sname = type_id_sname.get(type,None)
                 typeBlock = modFile.tops.get(type,None)
                 if not id_name or not typeBlock: continue
                 for record in typeBlock.records:
                     longid = mapper(record.fid)
                     full = record.full
+                    sname = record.shortName if (hasattr(record, 'shortName')) else None
                     eid,newFull = id_name.get(longid,(0,0))
+                    eid2,newSname = id_sname.get(longid,(0,0))
                     if newFull and newFull not in (full,'NO NAME'):
                         record.full = newFull
                         record.setChanged()
                         changed[eid] = (full,newFull)
+                    if newSname and newSname not in (sname,'NO NAME'):
+                        record.shortName = newSname
+                        record.setChanged()
+                        if not changed.has_key(eid):
+                            changed[eid] = (sname,newSname)
             if changed: modFile.safeSave()
             return changed
         else:
             type_id_name = self.type_id_name
+            type_id_sname = self.type_id_sname
             Current = Collection(ModsPath=dirs['mods'].s)
             modFile = Current.addMod(modInfo.name.s)
             Current.fullLoad(LoadMasters=False)
@@ -13894,14 +13904,21 @@ class FullNames:
             changed = {}
             for type,block in modFile.aggregates.iteritems():
                 id_name = type_id_name.get(type,None)
+                id_sname = type_id_sname.get(type,None)
                 if not id_name: continue
                 for record in block:
                     longid = record.longFid
                     full = record.full
+                    sname = record.shortName if (hasattr(record, 'shortName')) else None
                     eid,newFull = id_name.get(longid,(0,0))
+                    eid2,newSname = id_sname.get(longid,(0,0))
                     if newFull and newFull not in (full,'NO NAME'):
                         record.full = newFull
                         changed[eid] = (full,newFull)
+                    if newSname and newSname not in (sname,'NO NAME'):
+                        record.shortName = newSname
+                        if not changed.has_key(eid):
+                            changed[eid] = (sname,newSname)
             if changed: modFile.safeCloseSave()
             return changed
 
@@ -13915,7 +13932,7 @@ class FullNames:
         for fields in ins:
             if len(fields) < 5 or fields[2][:2] != '0x': continue
             type,mod,objectIndex,eid,full = fields[:5]
-            sname = fields[5] if len(fields) > 5 else None
+            sname = fields[5] if type in self.hasShortNameTypes else None
             mod = GPath(mod)
             longid = (aliases.get(mod,mod),int(objectIndex[2:],16))
             if type in type_id_name:
