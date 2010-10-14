@@ -13969,9 +13969,9 @@ class FullNames:
                 eid,name = id_name[longid]
                 if type in self.hasShortNameTypes:
                     eid2,sname = id_sname.get(longid,(eid,''))
-                    out.write(rowFormat % (type,longid[0].s,longid[1],eid,name,sname))
+                    out.write(rowFormat % (type,longid[0].s,longid[1],eid,name.replace('"', '""'),sname.replace('"', '""')))
                 else:
-                    out.write(rowFormat % (type,longid[0].s,longid[1],eid,name))
+                    out.write(rowFormat % (type,longid[0].s,longid[1],eid,name.replace('"', '""')))
         out.close()
 #------------------------------------------------------------------------------
 class SigilStoneDetails:
