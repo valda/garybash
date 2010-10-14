@@ -48,6 +48,7 @@ from cint import *
 #--Python
 import ConfigParser
 import cStringIO
+import StringIO
 import copy
 import os
 import re
