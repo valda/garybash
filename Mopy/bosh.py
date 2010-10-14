@@ -13794,9 +13794,11 @@ class FidReplacer:
 class FullNames:
     """Names for records, with functions for importing/exporting from/to mod/text file."""
     defaultTypes = set((
-        'ALCH', 'AMMO', 'APPA', 'ARMO', 'BOOK', 'BSGN', 'CLAS', 'CLOT', 'CONT', 'CREA', 'DOOR',
-        'EYES', 'FACT', 'FLOR', 'HAIR','INGR', 'KEYM', 'LIGH', 'MISC', 'NPC_', 'RACE', 'SGST',
-        'SLGM', 'SPEL','WEAP',))
+        'ALCH', 'AMMO', 'APPA', 'ARMO', 'BOOK', 'CLAS', 'CLOT', 'CONT', 'CREA', 'DOOR',
+        'EYES', 'FACT', 'FLOR', 'HAIR', 'INGR', 'KEYM', 'LIGH', 'MISC', 'NOTE', 'NPC_',
+        'RACE', 'SPEL', 'TERM', 'WEAP',))
+    hasShortNameTypes = set((
+        'AMMO', 'AVIF', ))
 
     def __init__(self,types=None,aliases=None):
         """Initialize."""
@@ -13810,6 +13812,7 @@ class FullNames:
         ###Remove from Bash after CBash integrated
         if(CBash == None):
             type_id_name,types = self.type_id_name, self.types
+            type_id_sname = self.type_id_sname
             classes = [MreRecord.type_class[x] for x in self.types]
             loadFactory= LoadFactory(False,*classes)
             modFile = ModFile(modInfo,loadFactory)
@@ -13819,19 +13822,24 @@ class FullNames:
                 typeBlock = modFile.tops.get(type,None)
                 if not typeBlock: continue
                 if type not in type_id_name: type_id_name[type] = {}
+                if type not in type_id_sname: type_id_sname[type] = {}
                 id_name = type_id_name[type]
+                id_sname = type_id_sname[type]
                 for record in typeBlock.getActiveRecords():
                     longid = mapper(record.fid)
                     full = record.full or (type != 'LIGH' and 'NO NAME')
                     if record.eid and full:
                         id_name[longid] = (record.eid,full)
+                    if(hasattr(record, 'shortName')):
+                        sname = record.shortName
+                        if record.eid and sname:
+                            id_sname[longid] = (record.eid,sname)
         else:
             type_id_name = self.type_id_name
             type_id_sname = self.type_id_sname
             Current = Collection(ModsPath=dirs['mods'].s)
             modFile = Current.addMod(modInfo.name.s)
             Current.minimalLoad(LoadMasters=False)
-            
             mapper = modFile.MakeLongFid
             for type,block in modFile.aggregates.iteritems():
                 if type not in type_id_name: type_id_name[type] = {}
@@ -13882,7 +13890,6 @@ class FullNames:
             Current = Collection(ModsPath=dirs['mods'].s)
             modFile = Current.addMod(modInfo.name.s)
             Current.fullLoad(LoadMasters=False)
-            
             mapper = modFile.MakeLongFid
             changed = {}
             for type,block in modFile.aggregates.iteritems():
@@ -13925,18 +13932,29 @@ class FullNames:
         """Exports type_id_name to specified text file."""
         textPath = GPath(textPath)
         type_id_name = self.type_id_name
-        headFormat = '"%s","%s","%s","%s","%s"\n'
-        rowFormat = '"%s","%s","0x%06X","%s","%s"\n'
+        type_id_sname = self.type_id_sname
         out = textPath.open('w')
-        out.write(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name')))
         for type in sorted(type_id_name):
+            if type in self.hasShortNameTypes:
+                headFormat = '"%s","%s","%s","%s","%s","%s"\n'
+                rowFormat = '"%s","%s","0x%06X","%s","%s","%s"\n'
+                out.write(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name'),_('Short Name')))
+            else:
+                headFormat = '"%s","%s","%s","%s","%s"\n'
+                rowFormat = '"%s","%s","0x%06X","%s","%s"\n'
+                out.write(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name')))
             id_name = type_id_name[type]
+            id_sname = type_id_sname.get(type, {})
             longids = id_name.keys()
             longids.sort(key=lambda a: id_name[a][0])
             longids.sort(key=itemgetter(0))
             for longid in longids:
                 eid,name = id_name[longid]
-                out.write(rowFormat % (type,longid[0].s,longid[1],eid,name))
+                if type in self.hasShortNameTypes:
+                    eid2,sname = id_sname.get(longid,(eid,''))
+                    out.write(rowFormat % (type,longid[0].s,longid[1],eid,name,sname))
+                else:
+                    out.write(rowFormat % (type,longid[0].s,longid[1],eid,name))
         out.close()
 #------------------------------------------------------------------------------
 class SigilStoneDetails:
