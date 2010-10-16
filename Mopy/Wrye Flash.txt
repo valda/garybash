@@ -14,6 +14,12 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 21 [10/17/2010]
+* Added new BOSS support (port from WB288).
+* Added a short name subrecord support to importnames.
+* Fixed the bug that cannot perform order movement by DnD (on not English OS).
+* Double clicking an installer will open it in explorer/associated archive viewer (port from WB288).
+
 === 20 [10/08/2010] [Valda,Sativarg]
 * Change AppName.
 * Added Japanese language catalog.
