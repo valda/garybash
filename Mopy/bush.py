@@ -31,19 +31,21 @@ from bolt import _,GPath
 # Installer -------------------------------------------------------------------
 bethDataFiles = set((
     #--Vanilla
-    'fallout3.esm',
-    'fallout - menuvoices.bsa',
+    'FalloutNV.esm',
     'fallout - meshes.bsa',
     'fallout - misc.bsa',
     'fallout - sounds.bsa',
     'fallout - textures.bsa',
-    'fallout - voices.bsa',
+    'fallout - textures2.bsa',
+    'fallout - voices1.bsa',
+    #-- Preorder Packs
+    'CaravanPack.esm',
     #-- DLC
-    'anchorage.esm',
-    'thepitt.esm',
-    'brokensteel.esm',
-    'pointlookout.esm',
-    'zeta.esm',
+    # 'anchorage.esm',
+    # 'thepitt.esm',
+    # 'brokensteel.esm',
+    # 'pointlookout.esm',
+    # 'zeta.esm',
     ))
 
 # Balo Canonical Groups -------------------------------------------------------
@@ -87,7 +89,7 @@ groupTypes = [
 #     'SGST', 'LVLI', 'WTHR', 'CLMT', 'REGN', 'CELL', 'WRLD', 'DIAL', 'QUST', 'IDLE',
 #     'PACK', 'CSTY', 'LSCR', 'LVSP', 'ANIO', 'WATR', 'EFSH']
 
-#--Top types in Fallout3 order.
+#--Top types in FalloutNV order.
 topTypes = ['GMST', 'TXST', 'MICN', 'GLOB', 'CLAS', 'FACT', 'HDPT', 'HAIR', 'EYES',
     'RACE', 'SOUN', 'ASPC', 'MGEF', 'SCPT', 'LTEX', 'ENCH', 'SPEL', 'ACTI', 'TACT',
     'TERM', 'ARMO', 'BOOK', 'CONT', 'DOOR', 'INGR', 'LIGH', 'MISC', 'STAT', 'SCOL',
@@ -97,7 +99,7 @@ topTypes = ['GMST', 'TXST', 'MICN', 'GLOB', 'CLAS', 'FACT', 'HDPT', 'HAIR', 'EYE
     'ANIO', 'WATR', 'EFSH', 'EXPL', 'DEBR', 'IMGS', 'IMAD', 'FLST', 'PERK', 'BPTD',
     'ADDN', 'AVIF', 'RADS', 'CAMS', 'CPTH', 'VTYP', 'IPCT', 'IPDS', 'ARMA', 'ECZN',
     'MESG', 'RGDL', 'DOBJ', 'LGTM', 'MUSC',
-    # Unused types in fallout3. (dummy)
+    # Unused types in falloutNV. (dummy)
     'SLGM', 'BSGN', 'FLOR', 'SGST', 'CLOT', 'SBSP', 'SKIL', 'LVSP', 'APPA',
     ]
 
@@ -119,7 +121,7 @@ recordTypes = set(topTypes + 'GRUP,TES4,ROAD,REFR,ACHR,ACRE,PGRD,LAND,INFO,PGRE,
 def getIdFunc(modName):
     return lambda x: (GPath(modName),x)
 
-ob = getIdFunc('fallout3.esm')
+ob = getIdFunc('FalloutNV.esm')
 cobl = getIdFunc('Cobl Main.esm')
 
 # Race Info -------------------------------------------------------------------
@@ -180,7 +182,7 @@ raceHairFemale = {
 standardEyes = [ob(x) for x in (0x27306,0x27308,0x27309)] + [cobl(x) for x in (0x000821, 0x000823, 0x000825, 0x000828, 0x000834, 0x000837, 0x000839, 0x00084F, )]
 
 defaultEyes = {
-    #--fallout3.esm
+    #--FalloutNV.esm
     ob(0x23FE9): #--Argonian
         [ob(0x3E91E)] + [cobl(x) for x in (0x01F407, 0x01F408, 0x01F40B, 0x01F40C, 0x01F410, 0x01F411, 0x01F414, 0x01F416, 0x01F417, 0x01F41A, 0x01F41B, 0x01F41E, 0x01F41F, 0x01F422, 0x01F424, )],
     ob(0x0224FC): #--Breton
@@ -429,13 +431,13 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (480, 'GetIsUsedItemEquipType', 1, 0, 0, 0),
     (398, 'IsLimbGone', 1, 0, 0, 0),
     # extended by FOSE
-    (1024, 'GetFOSEVersion', 0, 0, 0, 0),
-    (1025, 'GetFOSERevision', 0, 0, 0, 0),
-    (1213, 'GetFOSEBeta', 0, 0, 0, 0),
-    (1082, 'IsKeyPressed', 1, 0, 0, 0),
-    (1166, 'IsControlPressed', 1, 0, 0, 0),
-    (1028, 'GetWeight', 2, 0, 0, 0),
-    (1165, 'GetWeaponHasScope', 0, 0, 0, 0),
+    # (1024, 'GetFOSEVersion', 0, 0, 0, 0),
+    # (1025, 'GetFOSERevision', 0, 0, 0, 0),
+    # (1213, 'GetFOSEBeta', 0, 0, 0, 0),
+    # (1082, 'IsKeyPressed', 1, 0, 0, 0),
+    # (1166, 'IsControlPressed', 1, 0, 0, 0),
+    # (1028, 'GetWeight', 2, 0, 0, 0),
+    # (1165, 'GetWeaponHasScope', 0, 0, 0, 0),
     )
 allConditions = set(entry[0] for entry in conditionFunctionData)
 fid1Conditions = set(entry[0] for entry in conditionFunctionData if entry[2] == 2)

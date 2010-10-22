@@ -471,9 +471,9 @@ class PageVersions(PageInstaller):
         # sizerVersions.Add(wx.StaticText(self, -1, fogeHave))
         # sizerVersions.Add(wx.StaticBitmap(self, -1, bmp[bFOGEOk]))
 
-        linkWB = wx.HyperlinkCtrl(self, -1, 'Gary Bash (WB for FO3)', 'http://fallout3nexus.com/downloads/file.php?id=11336')
+        linkWB = wx.HyperlinkCtrl(self, -1, 'Wrye Flash:NV', 'http://newvegasnexus.com/downloads/file.php?id=999999999')
         linkWB.SetVisitedColour(linkWB.GetNormalColour())
-        linkWB.SetToolTip(wx.ToolTip('http://fallout3nexus.com/'))
+        linkWB.SetToolTip(wx.ToolTip('http://newvegasnexus.com/'))
         sizerVersions.Add(linkWB)
         sizerVersions.Add(wx.StaticText(self, -1, wbNeed))
         sizerVersions.Add(wx.StaticText(self, -1, wbHave))
@@ -710,7 +710,7 @@ class WryeParser(ScriptParser.Parser):
 
     # Functions...
     def fnCompareFalloutVersion(self, foWant):
-        ret = self._TestVersion(self._TestVersion_Want(foWant), bosh.dirs['app'].join('fallout3.exe'))
+        ret = self._TestVersion(self._TestVersion_Want(foWant), bosh.dirs['app'].join('FalloutNV.exe'))
         return ret[0]
     def fnCompareFOSEVersion(self, foseWant):
         ret = self._TestVersion(self._TestVersion_Want(foseWant), bosh.dirs['app'].join('fose_loader.exe'))
@@ -903,7 +903,7 @@ class WryeParser(ScriptParser.Parser):
         if fogeWant == 'None': foge = 'None'
         wbHave = bosh.settings['bash.readme'][1]
 
-        ret = self._TestVersion(foWant, bosh.dirs['app'].join('fallout3.exe'))
+        ret = self._TestVersion(foWant, bosh.dirs['app'].join('FalloutNV.exe'))
         bFoOk = ret[0] >= 0
         foHave = ret[1]
         ret = self._TestVersion(foseWant, bosh.dirs['app'].join('fose_loader.exe'))

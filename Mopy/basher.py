@@ -117,7 +117,7 @@ settingDefaults = {
     #--Wrye Bash: Load Lists
     'bash.loadLists.data': {
         'Bethesda ESMs': [
-            GPath('Fallout3.esm'),
+            GPath('FalloutNV.esm'),
             ],
         },
     #--Wrye Bash: Statistics
@@ -641,7 +641,7 @@ class List(wx.Panel):
                 try:
                     self.data.select(fileName)
                     changed = bolt.listSubtract(bosh.modInfos.ordered,oldFiles)
-                    if len(changed) > ((fileName in changed) + (GPath('Fallout3.esm') in changed)):
+                    if len(changed) > ((fileName in changed) + (GPath('FalloutNV.esm') in changed)):
                         changed.remove(fileName)
                         changed = [x.s for x in changed]
                         balt.showList(self,_('${count} Masters activated:'),changed,10,_("%s") % fileName.s)
@@ -852,7 +852,7 @@ class MasterList(List):
             col = cols[colDex]
             if col == 'File':
                 value = masterName.s
-                if masterName == 'Fallout3.esm':
+                if masterName == 'FalloutNV.esm':
                     voCurrent = bosh.modInfos.voCurrent
                     if voCurrent: value += ' ['+voCurrent+']'
             elif col == 'Num':
@@ -1285,7 +1285,7 @@ class ModList(List):
             #--Get Value
             if col == 'File':
                 value = fileName.s
-                if fileName == 'Fallout3.esm' and bosh.modInfos.voCurrent:
+                if fileName == 'FalloutNV.esm' and bosh.modInfos.voCurrent:
                     value += ' ['+bosh.modInfos.voCurrent+']'
             elif col == 'Rating':
                 value = bosh.modInfos.table.getItem(fileName,'rating','')
@@ -2971,7 +2971,7 @@ class ReplacersPanel(NotebookPanel):
 
     def ContinueEdit(self):
         """Continuation warning for Invalidate and Reset."""
-        message = _("Edit Textures BSA?\n\nThis command directly edits the Fallout - Textures.bsa file. If the file becomes corrupted (very unlikely), you will need to reinstall Fallout3 or restore it from another source.")
+        message = _("Edit Textures BSA?\n\nThis command directly edits the Fallout - Textures.bsa file. If the file becomes corrupted (very unlikely), you will need to reinstall FalloutNV or restore it from another source.")
         return balt.askContinue(self,message,'bash.replacers.editBSAs.continue',_('Textures BSA'))
 
     def OnAutomatic(self,event=None):
@@ -3969,9 +3969,9 @@ class BashFrame(wx.Frame):
         if not title:
             ###Remove from Bash after CBash integrated
             if(CBash == None):
-                title = "Wrye Flash %s: " % (settings['bash.readme'][1],)
+                title = "Wrye Flash NV %s: " % (settings['bash.readme'][1],)
             else:
-                title = "Wrye Flash %s, CBash v%u.%u.%u: " % (settings['bash.readme'][1], CBash.GetMajor(), CBash.GetMinor(), CBash.GetRevision())
+                title = "Wrye Flash NV %s, CBash v%u.%u.%u: " % (settings['bash.readme'][1], CBash.GetMajor(), CBash.GetMinor(), CBash.GetRevision())
 
             maProfile = re.match(r'Saves\\(.+)\\$',bosh.saveInfos.localSave)
             if maProfile:
@@ -4095,7 +4095,7 @@ class BashFrame(wx.Frame):
         testFile = GPath(bosh.dirs['app']).join('Data','Docs','wtxt_teal.css')
         if not self.incompleteInstallError and not testFile.exists():
             self.incompleteInstallError = True
-            message = _("Installation appears incomplete. Please re-unzip bash to Fallout3 directory so that ALL files are installed.\n\nCorrect installation will create Fallout 3\\Mopy, Fallout 3\\Data\\Docs and Fallout 3\\Data\\INI Tweaks directories.")
+            message = _("Installation appears incomplete. Please re-unzip bash to FalloutNV directory so that ALL files are installed.\n\nCorrect installation will create Fallout 3\\Mopy, Fallout 3\\Data\\Docs and Fallout 3\\Data\\INI Tweaks directories.")
             balt.showWarning(self,message,_("Incomplete Installation"))
         #--Merge info
         oldMergeable = set(bosh.modInfos.mergeable)
@@ -5256,7 +5256,7 @@ class ListPatcher(Patcher):
     def OnAdd(self,event):
         """Add button clicked."""
         srcDir = bosh.modInfos.dir
-        wildcard = _('Fallout3 Mod Files')+' (*.esp;*.esm)|*.esp;*.esm'
+        wildcard = _('FalloutNV Mod Files')+' (*.esp;*.esm)|*.esp;*.esm'
         #--File dialog
         title = _("Get ")+self.__class__.listLabel
         srcPaths = balt.askOpenMulti(self.gConfigPanel,title,srcDir, '', wildcard)
@@ -5645,14 +5645,14 @@ class Files_Unhide(Link):
     def Execute(self,event):
         srcDir = bosh.dirs['modsBash'].join('Hidden')
         if self.type == 'mod':
-            wildcard = 'Fallout3 Mod Files (*.esp;*.esm)|*.esp;*.esm'
+            wildcard = 'FalloutNV Mod Files (*.esp;*.esm)|*.esp;*.esm'
             destDir = self.window.data.dir
         elif self.type == 'save':
-            wildcard = 'Fallout3 Save files (*.fos)|*.fos'
+            wildcard = 'FalloutNV Save files (*.fos)|*.fos'
             srcDir = self.window.data.bashDir.join('Hidden')
             destDir = self.window.data.dir
         elif self.type == 'installer':
-            wildcard = 'Fallout3 Mod Archives (*.7z;*.zip;*.rar)|*.7z;*.zip;*.rar'
+            wildcard = 'FalloutNV Mod Archives (*.7z;*.zip;*.rar)|*.7z;*.zip;*.rar'
             destDir = bosh.dirs['installers']
             srcPaths = balt.askOpenMulti(self.gTank,_('Unhide files:'),srcDir, '', wildcard)
         else:
@@ -6784,20 +6784,20 @@ class Installer_Open(balt.Tank_Open):
         menuItem.Enable(bool(self.selected))
 
 #------------------------------------------------------------------------------
-class Installer_OpenFallout3Nexus(InstallerLink):
+class Installer_OpenNewVegasNexus(InstallerLink):
     """Open selected file(s)."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Open at Fallout3Nexus'))
+        menuItem = wx.MenuItem(menu,self.id,_('Open at NewVegasNexus'))
         menu.AppendItem(menuItem)
-        menuItem.Enable(bool(self.isSingleArchive() and bosh.reFallout3Nexus.search(data[0].s)))
+        menuItem.Enable(bool(self.isSingleArchive() and bosh.reNewVegasNexus.search(data[0].s)))
 
     def Execute(self,event):
         """Handle selection."""
-        message = _("Attempt to open this as a mod at Fallout3Nexus? This assumes that the trailing digits in the package's name are actually the id number of the mod at Fallout3Nexus. If this assumption is wrong, you'll just get a random mod page (or error notice) at Fallout3Nexus.")
-        if balt.askContinue(self.gTank,message,'bash.installers.openFallout3Nexus',_('Open at Fallout3Nexus')):
-            id = bosh.reFallout3Nexus.search(self.selected[0].s).group(1)
-            os.startfile('http://fallout3nexus.com/downloads/file.php?id='+id)
+        message = _("Attempt to open this as a mod at NewVegasNexus? This assumes that the trailing digits in the package's name are actually the id number of the mod at NewVegasNexus. If this assumption is wrong, you'll just get a random mod page (or error notice) at NewVegasNexus.")
+        if balt.askContinue(self.gTank,message,'bash.installers.openNewVegasNexus',_('Open at NewVegasNexus')):
+            id = bosh.reNewVegasNexus.search(self.selected[0].s).group(1)
+            os.startfile('http://newvegasnexus.com/downloads/file.php?id='+id)
 
 
 class Installer_OpenSearch(InstallerLink):
@@ -7800,8 +7800,8 @@ class Mods_BossMasterList(Link):
         self.path.start()
 
 #------------------------------------------------------------------------------
-class Mods_Fallout3Version(Link):
-    """Specify/set Fallout3 version."""
+class Mods_FalloutNVVersion(Link):
+    """Specify/set FalloutNV version."""
     def __init__(self,key,setProfile=False):
         Link.__init__(self)
         self.key = key
@@ -7817,11 +7817,11 @@ class Mods_Fallout3Version(Link):
     def Execute(self,event):
         """Handle selection."""
         if bosh.modInfos.voCurrent == self.key: return
-        bosh.modInfos.setFallout3Version(self.key)
+        bosh.modInfos.setFalloutNVVersion(self.key)
         bosh.modInfos.refresh()
         modList.RefreshUI()
         if self.setProfile:
-            bosh.saveInfos.profiles.setItem(bosh.saveInfos.localSave,'vFallout3',self.key)
+            bosh.saveInfos.profiles.setItem(bosh.saveInfos.localSave,'vFalloutNV',self.key)
         bashFrame.SetTitle()
 
 #------------------------------------------------------------------------------
@@ -7952,13 +7952,13 @@ class Mod_AddMaster(Link):
             return
         fileName = GPath(self.data[0])
         fileInfo = self.window.data[fileName]
-        wildcard = _('Fallout3 Masters')+' (*.esm;*.esp)|*.esm;*.esp'
+        wildcard = _('FalloutNV Masters')+' (*.esm;*.esp)|*.esm;*.esp'
         masterPath = balt.askOpen(self.window,_('Add master:'),fileInfo.dir, '', wildcard)
         if not masterPath: return
         (dir,name) = masterPath.headTail
         if dir != fileInfo.dir:
             return balt.showError(self.window,
-                _("File must be selected from Fallout3 Data Files directory."))
+                _("File must be selected from FalloutNV Data Files directory."))
         if name in fileInfo.header.masters:
             return balt.showError(self.window,_("%s is already a master!") % (name.s,))
         if name in bosh.modInfos:
@@ -8338,7 +8338,7 @@ class Mod_CleanMod(Link):
         try:
             fixed = []
             for index,fileName in enumerate(map(GPath,self.data)):
-                if fileName == 'Fallout3.esm': continue
+                if fileName == 'FalloutNV.esm': continue
                 progress(index,_("Scanning %s.") % (fileName.s,))
                 fileInfo = bosh.modInfos[fileName]
                 cleanMod = bosh.CleanMod(fileInfo)
@@ -8377,7 +8377,7 @@ class Mod_CreateBlank(Link):
         newInfo = bosh.ModInfo(fileInfo.dir,newName)
         newInfo.mtime = fileInfo.mtime+20
         newFile = bosh.ModFile(newInfo,bosh.LoadFactory(True))
-        newFile.tes4.masters = [GPath('Fallout3.esm')]
+        newFile.tes4.masters = [GPath('FalloutNV.esm')]
         newFile.safeSave()
         mod_group = bosh.modInfos.table.getColumn('group')
         mod_group[newName] = mod_group.get(fileName,'')
@@ -8480,7 +8480,7 @@ class Mod_MarkMergeable(Link):
         yes,no = [],[]
         mod_mergeInfo = bosh.modInfos.table.getColumn('mergeInfo')
         for fileName in map(GPath,self.data):
-            if fileName == 'Fallout3.esm': continue
+            if fileName == 'FalloutNV.esm': continue
             fileInfo = bosh.modInfos[fileName]
             descTags = fileInfo.getBashTagsDesc()
             if descTags and 'Merge' in descTags:
@@ -8557,7 +8557,7 @@ class Mod_Face_Import(Link):
     def Execute(self,event):
         #--Select source face file
         srcDir = bosh.saveInfos.dir
-        wildcard = _('Fallout3 Files')+' (*.fos;*.for)|*.fos;*.for'
+        wildcard = _('FalloutNV Files')+' (*.fos;*.for)|*.fos;*.for'
         #--File dialog
         srcPath = balt.askOpen(self.window,'Face Source:',srcDir, '', wildcard)
         if not srcPath: return
@@ -8955,7 +8955,7 @@ class Mod_DecompileAll(Link):
         Link.AppendToMenu(self,menu,window,data)
         menuItem = wx.MenuItem(menu,self.id,_('Decompile All'))
         menu.AppendItem(menuItem)
-        menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'Fallout3.esm'))
+        menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'FalloutNV.esm'))
 
 
     def Execute(self,event):
@@ -8964,7 +8964,7 @@ class Mod_DecompileAll(Link):
             return
         for item in self.data:
             fileName = GPath(item)
-            if item == 'Fallout3.esm':
+            if item == 'FalloutNV.esm':
                 balt.showWarning(self.window,_("Skipping %s") % fileName.s,_('Decompile All'))
                 continue
             fileInfo = bosh.modInfos[fileName]
@@ -9292,7 +9292,7 @@ class Mod_RemoveWorldOrphans(Link):
         Link.AppendToMenu(self,menu,window,data)
         menuItem = wx.MenuItem(menu,self.id,_('Remove World Orphans'))
         menu.AppendItem(menuItem)
-        menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'Fallout3.esm'))
+        menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'FalloutNV.esm'))
 
     def Execute(self,event):
         message = _("In some circumstances, editing a mod will leave orphaned cell records in the world group. This command will remove such orphans.")
@@ -9300,7 +9300,7 @@ class Mod_RemoveWorldOrphans(Link):
             return
         for item in self.data:
             fileName = GPath(item)
-            if item == 'Fallout3.esm':
+            if item == 'FalloutNV.esm':
                 balt.showWarning(self.window,_("Skipping %s") % fileName.s,_('Remove World Orphans'))
                 continue
             fileInfo = bosh.modInfos[fileName]
@@ -9634,7 +9634,7 @@ class Mod_UndeleteRefs(Link):
         Link.AppendToMenu(self,menu,window,data)
         menuItem = wx.MenuItem(menu,self.id,_('Undelete Refs'))
         menu.AppendItem(menuItem)
-        menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'Fallout3.esm'))
+        menuItem.Enable(len(self.data) != 1 or (self.data[0] != 'FalloutNV.esm'))
 
     def Execute(self,event):
         message = _("Changes deleted refs to ignored. This is a very advanced feature and should only be used by modders who know exactly what they're doing.")
@@ -9647,7 +9647,7 @@ class Mod_UndeleteRefs(Link):
             hasFixed = False
             log = bolt.LogFile(cStringIO.StringIO())
             for index,fileName in enumerate(map(GPath,self.data)):
-                if fileName == 'Fallout3.esm':
+                if fileName == 'FalloutNV.esm':
                     balt.showWarning(self.window,_("Skipping %s") % fileName.s,_('Undelete Refs'))
                     continue
                 progress(index,_("Scanning %s.") % (fileName.s,))
@@ -9716,7 +9716,7 @@ class Saves_ProfilesData(balt.ListEditorData):
             return False
         self.baseSaves.join(newName).makedirs()
         newSaves = 'Saves\\'+newName+'\\'
-        bosh.saveInfos.profiles.setItem(newSaves,'vFallout3',bosh.modInfos.voCurrent)
+        bosh.saveInfos.profiles.setItem(newSaves,'vFalloutNV',bosh.modInfos.voCurrent)
         return newName
 
     def rename(self,oldName,newName):
@@ -9756,8 +9756,8 @@ class Saves_ProfilesData(balt.ListEditorData):
             if not balt.askYes(self.parent,message,_('Delete Profile')):
                 return False
         #--Remove directory
-        if GPath('Fallout3/Saves').s not in profileDir.s:
-            raise BoltError(_('Sanity check failed: No "Fallout3\\Saves" in %s.') % (profileDir.s,))
+        if GPath('FalloutNV/Saves').s not in profileDir.s:
+            raise BoltError(_('Sanity check failed: No "FalloutNV\\Saves" in %s.') % (profileDir.s,))
         shutil.rmtree(profileDir.s) #--DO NOT SCREW THIS UP!!!
         bosh.saveInfos.profiles.delRow(profileSaves)
         return True
@@ -9804,7 +9804,7 @@ class Saves_Profiles:
         arcSaves,newSaves = bosh.saveInfos.localSave,'Saves\\'
         bosh.saveInfos.setLocalSave(newSaves)
         self.swapPlugins(arcSaves,newSaves)
-        self.swapFallout3Version(newSaves)
+        self.swapFalloutNVVersion(newSaves)
         bashFrame.SetTitle()
         self.window.details.SetFile(None)
         modList.RefreshUI()
@@ -9817,7 +9817,7 @@ class Saves_Profiles:
         newSaves = 'Saves\\%s\\' % (profile,)
         bosh.saveInfos.setLocalSave(newSaves)
         self.swapPlugins(arcSaves,newSaves)
-        self.swapFallout3Version(newSaves)
+        self.swapFalloutNVVersion(newSaves)
         bashFrame.SetTitle()
         self.window.details.SetFile(None)
         bashFrame.RefreshData()
@@ -9834,11 +9834,11 @@ class Saves_Profiles:
         if newPath.exists():
             newPath.copyTo(bosh.modInfos.plugins.path)
 
-    def swapFallout3Version(self,newSaves):
-        """Swaps Fallout3 version to memorized version."""
-        voNew = bosh.saveInfos.profiles.setItemDefault(newSaves,'vFallout3',bosh.modInfos.voCurrent)
+    def swapFalloutNVVersion(self,newSaves):
+        """Swaps FalloutNV version to memorized version."""
+        voNew = bosh.saveInfos.profiles.setItemDefault(newSaves,'vFalloutNV',bosh.modInfos.voCurrent)
         if voNew in bosh.modInfos.voAvailable:
-            bosh.modInfos.setFallout3Version(voNew)
+            bosh.modInfos.setFalloutNVVersion(voNew)
 
 #------------------------------------------------------------------------------
 class Save_LoadMasters(Link):
@@ -9874,7 +9874,7 @@ class Save_ImportFace(Link):
         fileInfo = self.window.data[fileName]
         #--Select source face file
         srcDir = fileInfo.dir
-        wildcard = _('Fallout3 Files')+' (*.esp;*.esm;*.fos;*.for)|*.esp;*.esm;*.fos;*.for'
+        wildcard = _('FalloutNV Files')+' (*.esp;*.esm;*.fos;*.for)|*.esp;*.esm;*.fos;*.for'
         #--File dialog
         srcPath = balt.askOpen(self.window,'Face Source:',srcDir, '', wildcard)
         if not srcPath: return
@@ -10896,7 +10896,7 @@ class Master_ChangeTo(Link):
         masterInfo = self.window.data[itemId]
         masterName = masterInfo.name
         #--File Dialog
-        wildcard = _('Fallout3 Mod Files')+' (*.esp;*.esm)|*.esp;*.esm'
+        wildcard = _('FalloutNV Mod Files')+' (*.esp;*.esm)|*.esp;*.esm'
         newPath = balt.askOpen(self.window,_('Change master name to:'),
             bosh.modInfos.dir, masterName, wildcard)
         if not newPath: return
@@ -10904,7 +10904,7 @@ class Master_ChangeTo(Link):
         #--Valid directory?
         if newDir != bosh.modInfos.dir:
             balt.showError(self.window,
-                _("File must be selected from Fallout3 Data Files directory."))
+                _("File must be selected from FalloutNV Data Files directory."))
             return
         elif newName == masterName:
             return
@@ -11121,7 +11121,7 @@ class App_BOSS(App_Button):
             raise StateError('Application missing: %s' % self.exePath.s)
 
 #------------------------------------------------------------------------------
-class Fallout3_Button(App_Button):
+class FalloutNV_Button(App_Button):
     """Will close app on execute if autoquit is on."""
     def Execute(self,event):
         App_Button.Execute(self,event)
@@ -11167,7 +11167,7 @@ class Fose_Button(Link):
 
 #------------------------------------------------------------------------------
 class AutoQuit_Button(Link):
-    """Button toggling application closure when launching Fallout3."""
+    """Button toggling application closure when launching FalloutNV."""
     def __init__(self):
         Link.__init__(self)
         self.gButton = None
@@ -11289,7 +11289,7 @@ def InitImages():
     images['save.on'] = Image(r'images/save_on.png',wx.BITMAP_TYPE_PNG)
     images['save.off'] = Image(r'images/save_off.png',wx.BITMAP_TYPE_PNG)
     #--Misc
-    #images['fallout3'] = Image(r'images/fallout3.png',wx.BITMAP_TYPE_PNG)
+    #images['falloutNV'] = Image(r'images/falloutNV.png',wx.BITMAP_TYPE_PNG)
     images['help'] = Image(r'images/help'+bosh.inisettings['iconSize']+'.png',wx.BITMAP_TYPE_PNG)
     #--Tools
     images['doc.on'] = Image(r'images/page_find'+bosh.inisettings['iconSize']+'.png',wx.BITMAP_TYPE_PNG)
@@ -11337,12 +11337,12 @@ def InitStatusBar():
     #--Bash Status/LinkBar
     BashStatusBar.buttons.append(Fose_Button())
     BashStatusBar.buttons.append(AutoQuit_Button())
-    BashStatusBar.buttons.append( #Fallout 3
-        Fallout3_Button(
-            bosh.dirs['app'].join('Fallout3.exe'),
-            Image(r'images/fallout3'+bosh.inisettings['iconSize']+'.png'),
-            _("Launch Fallout3"),
-            _("Launch Fallout3 + FOSE"),
+    BashStatusBar.buttons.append( #Fallout NV
+        FalloutNV_Button(
+            bosh.dirs['app'].join('FalloutNV.exe'),
+            Image(r'images/falloutNV'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch FalloutNV"),
+            _("Launch FalloutNV + FOSE"),
             ''))
     BashStatusBar.buttons.append( #GECK
         App_Button(
@@ -11899,7 +11899,7 @@ def InitInstallerLinks():
     InstallersPanel.itemMenu.append(Installer_Open())
     InstallersPanel.itemMenu.append(Installer_Duplicate())
     InstallersPanel.itemMenu.append(balt.Tank_Delete())
-    InstallersPanel.itemMenu.append(Installer_OpenFallout3Nexus())
+    InstallersPanel.itemMenu.append(Installer_OpenNewVegasNexus())
     #InstallersPanel.itemMenu.append(Installer_OpenSearch())
     #InstallersPanel.itemMenu.append(Installer_OpenTESA())
     InstallersPanel.itemMenu.append(Installer_Hide())
@@ -11978,10 +11978,10 @@ def InitModLinks():
         sortMenu.links.append(Files_SortBy('Status'))
         ModList.mainMenu.append(sortMenu)
     if True: #--Versions
-        versionsMenu = MenuLink("Fallout3.esm")
-        versionsMenu.links.append(Mods_Fallout3Version('1.0'))
-        versionsMenu.links.append(Mods_Fallout3Version('1.1'))
-        versionsMenu.links.append(Mods_Fallout3Version('1.4~'))
+        versionsMenu = MenuLink("FalloutNV.esm")
+        versionsMenu.links.append(Mods_FalloutNVVersion('1.0'))
+        #versionsMenu.links.append(Mods_FalloutNVVersion('1.1'))
+        #versionsMenu.links.append(Mods_FalloutNVVersion('1.4~'))
         ModList.mainMenu.append(versionsMenu)
     #--------------------------------------------
     ModList.mainMenu.append(SeparatorLink())
@@ -12095,10 +12095,10 @@ def InitSaveLinks():
         sortMenu.links.append(Files_SortBy('Status'))
         SaveList.mainMenu.append(sortMenu)
     if True: #--Versions
-        versionsMenu = MenuLink("Fallout3.esm")
-        versionsMenu.links.append(Mods_Fallout3Version('1.0',True))
-        versionsMenu.links.append(Mods_Fallout3Version('1.1',True))
-        versionsMenu.links.append(Mods_Fallout3Version('1.4~',True))
+        versionsMenu = MenuLink("FalloutNV.esm")
+        versionsMenu.links.append(Mods_FalloutNVVersion('1.0',True))
+        #versionsMenu.links.append(Mods_FalloutNVVersion('1.1',True))
+        #versionsMenu.links.append(Mods_FalloutNVVersion('1.4~',True))
         SaveList.mainMenu.append(versionsMenu)
     if True: #--Save Profiles
         subDirMenu = MenuLink(_("Profile"))

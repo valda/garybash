@@ -22,7 +22,7 @@
 """This module starts the Wrye Bash application. Basically, it runs some
 initialization functions, and then starts the main application loop.
 
-bash [-o Fallout3Path] [-u userPath] [-p personalPath] [-l localAppDataPath] [-d] [0]
+bash [-o FalloutNVPath] [-u userPath] [-p personalPath] [-l localAppDataPath] [-d] [0]
 ----
 For all arguments:
 Note that Python reads the backslash "\" as an escape character,
@@ -35,10 +35,10 @@ Arguments have precedence over ini settings.
 You can use a mix of arguments and ini settings.
 Ini settings don't require a double backslash and can have relative paths.
 ----
-Fallout3 directory argument (-o).
--o Fallout3Path: Specify Fallout3 directory (containing Fallout3.exe).
-Use this argument if Bash is located outside of the Fallout3 directory.
-Example: -o "C:\\Games\\Fallout 3\\"
+FalloutNV directory argument (-o).
+-o FalloutNVPath: Specify FalloutNV directory (containing FalloutNV.exe).
+Use this argument if Bash is located outside of the FalloutNV directory.
+Example: -o "C:\\Games\\Fallout New Vegas\\"
 ----
 User directory arguments (-u, -p, and -l).
 These arguments allow you to specify your user directories in several ways. These

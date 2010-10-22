@@ -19,7 +19,7 @@
 #
 # =============================================================================
 
-"""This module defines provides objects and functions for working with Fallout3
+"""This module defines provides objects and functions for working with FalloutNV
 files and environment. It does not provide interface functions which instead
 provided by separate modules: bish for CLI and bash/basher for GUI."""
 
@@ -300,7 +300,7 @@ reCsvExt  = re.compile(r'\.csv$',re.I)
 reINIExt  = re.compile(r'\.ini$',re.I)
 reQuoted  = re.compile(r'^"(.*)"$')
 reGroupHeader = re.compile(r'^(\+\+|==)')
-reFallout3Nexus = re.compile(r'-(\d{4,6})(-bain)?\.(7z|zip|rar)$',re.I)
+reNewVegasNexus = re.compile(r'-(\d{4,6})(-bain)?\.(7z|zip|rar)$',re.I)
 reTESA = re.compile(r'-(\d{1,6})(\.tessource)?(-bain)?\.(7z|zip|rar)$',re.I)
 reSplitOnNonAlphaNumeric = re.compile(r'\W+')
 
@@ -2773,7 +2773,7 @@ class MreDial(MelRecord):
 class MreDoor(MelRecord):
     """Container record."""
     classType = 'DOOR'
-    _flags = Flags(0,Flags.getNames('fallout3Gate','automatic','hidden','minimalUse'))
+    _flags = Flags(0,Flags.getNames('oblivionGate','automatic','hidden','minimalUse'))
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -2974,7 +2974,7 @@ class MreGlob(MelRecord):
 #------------------------------------------------------------------------------
 class MreGmst(MelRecord):
     """Gmst record"""
-    fallout3Ids = None
+    falloutIds = None
     classType = 'GMST'
     class MelGmstValue(MelBase):
         def loadData(self,record,ins,type,size,readId):
@@ -2995,12 +2995,12 @@ class MreGmst(MelRecord):
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-    def getFallout3Fid(self):
-        """Returns Fallout3.esm fid in long format for specified eid."""
+    def getFalloutNVFid(self):
+        """Returns FalloutNV.esm fid in long format for specified eid."""
         myClass = self.__class__
-        if not myClass.fallout3Ids:
-            myClass.fallout3Ids = cPickle.load(GPath(r'Data\Fallout3_ids.pkl').open())['GMST']
-        return (GPath('Fallout3.esm'), myClass.fallout3Ids[self.eid])
+        if not myClass.falloutIds:
+            myClass.fallout3Ids = cPickle.load(GPath(r'Data\FalloutNV_ids.pkl').open())['GMST']
+        return (GPath('FalloutNV.esm'), myClass.falloutIds[self.eid])
 
 #------------------------------------------------------------------------------
 class MreGras(MelRecord):
@@ -4149,7 +4149,7 @@ class MreRegn(MelRecord):
             'maxHeight', 'sink', 'sinkVar', 'sizeVar', 'angleVarX',
             'angleVarY',  'angleVarZ', ('unused2',null2), ('unk2',null4)),
             MelRegnString('RDMP', 'mapName'),
-            #MelRegnString('ICON', 'iconPath'),  ####Obsolete? Only one record in Fallout3.esm
+            #MelRegnString('ICON', 'iconPath'),  ####Obsolete? Only one record in FalloutNV.esm
             MelRegnStructA('RDGS', 'I4s', 'grasses', (FID,'grass'), ('unk1',null4)),
             MelRegnOptStruct('RDMD', 'I', ('musicType',None)),
             MelRegnStructA('RDSD', '3I', 'sounds', (FID, 'sound'), (sdflags, 'flags'), 'chance'),
@@ -6613,7 +6613,7 @@ class ModFile:
     def getMastersUsed(self):
         """Updates set of master names according to masters actually used."""
         if not self.longFids: raise StateError("ModFile fids not in long form.")
-        masters = MasterSet([GPath('Fallout3.esm')]) #--Not so good for TCs. Fix later.
+        masters = MasterSet([GPath('FalloutNV.esm')]) #--Not so good for TCs. Fix later.
         for block in self.tops.values():
             block.updateMasters(masters)
         return masters.getOrdered()
@@ -6925,7 +6925,7 @@ class FoseFile:
         self.formatVersion = None
         self.foseVersion = None
         self.foseMinorVersion = None
-        self.fallout3Version = None
+        self.falloutNVVersion = None
         self.plugins = None
         self.valid = False
 
@@ -6943,7 +6943,7 @@ class FoseFile:
         self.signature = ins.read(4)
         if self.signature != 'FOSE':
             raise FileError(self.name,'File signature != "FOSE"')
-        self.formatVersion,self.foseVersion,self.foseMinorVersion,self.fallout3Version, = unpack('IHHI',12)
+        self.formatVersion,self.foseVersion,self.foseMinorVersion,self.falloutNVVersion, = unpack('IHHI',12)
         # if self.formatVersion < X:
         #   raise FileError(self.name,'Unsupported file version: %I' % self.formatVersion)
         #--Plugins
@@ -6979,7 +6979,7 @@ class FoseFile:
         pack('=I',self.formatVersion)
         pack('=H',self.foseVersion)
         pack('=H',self.foseMinorVersion)
-        pack('=I',self.fallout3Version)
+        pack('=I',self.falloutNVVersion)
         #--Plugins
         pack('=I',len(self.plugins))
         for (opcodeBase,chunks) in self.plugins:
@@ -7203,7 +7203,7 @@ class SaveFile:
         'form','baseid','moved','havocMoved','scale','allExtra','lock','owner','unk8','unk9',
         'mapMarkerFlags','hadHavokMoveFlag','unk12','unk13','unk14','unk15',
         'emptyFlag','droppedItem','doorDefaultState','doorState','teleport',
-        'extraMagic','furnMarkers','fallout3Flag','movementExtra','animation',
+        'extraMagic','furnMarkers','falloutNVFlag','movementExtra','animation',
         'script','inventory','created','unk29','enabled'))
 
     def __init__(self,saveInfo=None,canSave=True):
@@ -7598,7 +7598,7 @@ class SaveFile:
         log('=' * 80)
         log(_('  Format version:   %08X') % (foseFile.formatVersion,))
         log(_('  FOSE version:     %u.%u') % (foseFile.foseVersion,foseFile.foseMinorVersion,))
-        log(_('  Fallout3 version: %08X') % (foseFile.fallout3Version,))
+        log(_('  FalloutNV version: %08X') % (foseFile.fallout3Version,))
         #--Plugins
         if foseFile.plugins != None:
             for (opcodeBase,chunks) in foseFile.plugins:
@@ -8482,7 +8482,7 @@ class Plugins:
         """Write data to Plugins.txt file."""
         self.selected.sort()
         out = self.path.open('w')
-        out.write('# This file is used to tell Fallout3 which data files to load.\n\n')
+        out.write('# This file is used to tell FalloutNV which data files to load.\n\n')
         for modName in self.selected:
             out.write(modName.s+'\n')
         out.close()
@@ -9331,7 +9331,7 @@ class ResourceReplacer:
     def validate(self):
         """Does archive invalidation according to settings."""
         if settings.get('bash.replacers.autoEditBSAs',False):
-            bsaPath = dirs['mods'].join('Fallout3 - Textures - Compressed.bsa')
+            bsaPath = dirs['mods'].join('FalloutNV - Textures - Compressed.bsa')
             bsaFile = BsaFile(bsaPath)
             bsaFile.scan()
             bsaFile.invalidate()
@@ -9449,12 +9449,12 @@ class ResourceReplacer:
         aiModsPath.remove()
         #--Fix the data of a few archive files
         bsaTimes = (
-            ('Fallout3 - Meshes.bsa',1138575220),
-            ('Fallout3 - Misc.bsa',1139433736),
-            ('Fallout3 - Sounds.bsa',1138660560),
-            ('Fallout3 - Textures - Compressed.bsa',1138162634),
-            ('Fallout3 - Voices1.bsa',1138162934),
-            ('Fallout3 - Voices2.bsa',1138166742),
+            ('FalloutNV - Meshes.bsa',1138575220),
+            ('FalloutNV - Misc.bsa',1139433736),
+            ('FalloutNV - Sounds.bsa',1138660560),
+            ('FalloutNV - Textures - Compressed.bsa',1138162634),
+            ('FalloutNV - Voices1.bsa',1138162934),
+            ('FalloutNV - Voices2.bsa',1138166742),
             )
         for bsaFile,mtime in bsaTimes:
             bsaPath = dirs['mods'].join(bsaFile)
@@ -9478,7 +9478,7 @@ class INIInfos(FileInfos):
         return dirs['modsBash'].join('INI Data')
 #------------------------------------------------------------------------------
 class ModInfos(FileInfos):
-    """Collection of modinfos. Represents mods in the Fallout3\Data directory."""
+    """Collection of modinfos. Represents mods in the FalloutNV\Data directory."""
 
     def __init__(self):
         """Initialize."""
@@ -9503,11 +9503,12 @@ class ModInfos(FileInfos):
         self.autoHeaders = set() #--Full balo headers
         self.autoGroups = {} #--Auto groups as read from group files.
         self.group_header = {}
-        #--Fallout3 version 
+        #--FalloutNV version 
         self.version_voSize = {
-            '1.0':int(_("288769595")),
-            '1.1':int(_("288771181")),
-            '1.4':int(_("288771262"))}
+            '1.0':int(_("245570393")),
+            #'1.1':int(_("288771181")),
+            #'1.4':int(_("288771262")),
+            }
         self.size_voVersion = bolt.invertDict(self.version_voSize)
         self.voCurrent = None
         self.voAvailable = set()
@@ -9543,7 +9544,7 @@ class ModInfos(FileInfos):
         hasGhosted = self.autoGhost()
         hasSorted = self.autoSort()
         self.refreshInfoLists()
-        self.getFallout3Versions()
+        self.getFalloutNVVersions()
         return bool(hasChanged) or hasSorted or hasGhosted
 
     def refreshHeaders(self):
@@ -9757,7 +9758,7 @@ class ModInfos(FileInfos):
                     newInfo = ModInfo(self.dir,newName)
                     newInfo.mtime = time.time()
                     newFile = ModFile(newInfo,LoadFactory(True))
-                    newFile.tes4.masters = [GPath('Fallout3.esm')]
+                    newFile.tes4.masters = [GPath('FalloutNV.esm')]
                     newFile.tes4.author = '======'
                     newFile.tes4.description = _('Balo group header.')
                     newFile.safeSave()
@@ -10122,30 +10123,30 @@ class ModInfos(FileInfos):
                         requires[key] = float(value or 0)
         return requires
 
-    #--Fallout3 1.0/1.1/1.4 Swapping -----------------------------------------------
-    def getFallout3Versions(self):
-        """Returns tuple of Fallout3 versions."""
-        reFallout3 = re.compile('^Fallout3(|_1.0|_1.1|_1.4).esm$')
+    #--FalloutNV 1.0/1.1/1.4 Swapping -----------------------------------------------
+    def getFalloutNVVersions(self):
+        """Returns tuple of FalloutNV versions."""
+        reFalloutNV = re.compile('^FalloutNV(|_1.0|_1.1|_1.4).esm$')
         self.voAvailable.clear()
         for name,info in self.data.iteritems():
-            maFallout3 = reFallout3.match(name.s)
-            if maFallout3 and info.size in self.size_voVersion:
+            maFalloutNV = reFalloutNV.match(name.s)
+            if maFalloutNV and info.size in self.size_voVersion:
                 self.voAvailable.add(self.size_voVersion[info.size])
-        self.voCurrent = self.size_voVersion.get(self.data[GPath('Fallout3.esm')].size,None)
+        self.voCurrent = self.size_voVersion.get(self.data[GPath('FalloutNV.esm')].size,None)
 
-    def setFallout3Version(self,newVersion):
-        """Swaps Fallout3.esm to to specified version."""
+    def setFalloutNVVersion(self,newVersion):
+        """Swaps FalloutNV.esm to to specified version."""
         #--Old info
-        baseName = GPath('Fallout3.esm')
+        baseName = GPath('FalloutNV.esm')
         newSize = self.version_voSize[newVersion]
         oldSize = self.data[baseName].size
         if newSize == oldSize: return
         if oldSize not in self.size_voVersion:
-            raise StateError(_("Can't match current Fallout3.esm to known version."))
-        oldName = GPath('Fallout3_'+self.size_voVersion[oldSize]+'.esm')
+            raise StateError(_("Can't match current FalloutNV.esm to known version."))
+        oldName = GPath('FalloutNV_'+self.size_voVersion[oldSize]+'.esm')
         if self.dir.join(oldName).exists():
             raise StateError(_("Can't swap: %s already exists.") % oldName)
-        newName = GPath('Fallout3_'+newVersion+'.esm')
+        newName = GPath('FalloutNV_'+newVersion+'.esm')
         if newName not in self.data:
             raise StateError(_("Can't swap: %s doesn't exist.") % newName)
         #--Rename
@@ -11630,7 +11631,7 @@ class Installer(object):
         return (self.status != oldStatus or self.underrides != oldUnderrides)
 
     def install(self,archive,destFiles,data_sizeCrcDate,progress=None):
-        """Install specified files to Fallout 3\Data directory."""
+        """Install specified files to Fallout New Vegas\Data directory."""
         raise AbstractError
 
     def listSource(self,archive):
@@ -12022,7 +12023,7 @@ class InstallerMarker(Installer):
         pass
 
     def install(self,name,destFiles,data_sizeCrcDate,progress=None):
-        """Install specified files to Fallout 3\Data directory."""
+        """Install specified files to Fallout New Vegas\Data directory."""
         pass
 
 #------------------------------------------------------------------------------
@@ -12110,7 +12111,7 @@ class InstallerArchive(Installer):
         #--Done
 
     def install(self,archive,destFiles,data_sizeCrcDate,progress=None):
-        """Install specified files to Fallout 3\Data directory."""
+        """Install specified files to Fallout New Vegas\Data directory."""
         progress = progress or bolt.Progress()
         destDir = dirs['mods']
         destFiles = set(destFiles)
@@ -12244,7 +12245,7 @@ class InstallerProject(Installer):
         self.refreshed = True
 
     def install(self,name,destFiles,data_sizeCrcDate,progress=None):
-        """Install specified files to Fallout 3\Data directory."""
+        """Install specified files to Fallout New Vegas\Data directory."""
         destDir = dirs['mods']
         destFiles = set(destFiles)
         data_sizeCrc = self.data_sizeCrc
@@ -12265,7 +12266,7 @@ class InstallerProject(Installer):
         return count
 
     def syncToData(self,package,projFiles):
-        """Copies specified projFiles from Fallout 3\Data to project directory."""
+        """Copies specified projFiles from Fallout New Vegas\Data to project directory."""
         srcDir = dirs['mods']
         projFiles = set(projFiles)
         srcProj = tuple((x,y) for x,y in self.refreshDataSizeCrc().iteritems() if x in projFiles)
@@ -13309,10 +13310,10 @@ class ActorLevels:
             for npc in modFile.NPC_.records:
                 if npc.flags.pcLevelOffset:
                     npcLevels[npc.fid] = (npc.eid,npc.level,npc.calcMin, npc.calcMax)
-            #--Fallout3 Levels (for comparison)
-            progress(0.25,_('Loading Fallout3.esm'))
+            #--FalloutNV Levels (for comparison)
+            progress(0.25,_('Loading FalloutNV.esm'))
             obFactory= LoadFactory(False,MreNpc)
-            obInfo = modInfos[GPath('Fallout3.esm')]
+            obInfo = modInfos[GPath('FalloutNV.esm')]
             obFile = ModFile(obInfo,obFactory)
             obFile.load(True)
             obNPCs = {}
@@ -13340,7 +13341,7 @@ class ActorLevels:
             #--Mod levels
             progress(0,_('Loading:')+modInfo.name.s)
             Current = Collection(ModsPath=dirs['mods'].s)
-            obFile = Current.addMod('Fallout3.esm')
+            obFile = Current.addMod('FalloutNV.esm')
             modFile = Current.addMod(modInfo.name.s)
             Current.minimalLoad(LoadMasters=False)
             
@@ -13349,7 +13350,7 @@ class ActorLevels:
             for npc in modFile.NPC_:
                 if npc.IsPCLevelOffset:
                     npcLevels[npc.fid] = (npc.eid,npc.level,npc.calcMin, npc.calcMax)
-            #--Fallout3 Levels (for comparison)
+            #--FalloutNV Levels (for comparison)
             obNPCs = {}
             for npc in obFile.NPC_:
                 obNPCs[npc.fid] = npc
@@ -15533,8 +15534,8 @@ class PCFaces:
             tes4.author = '[wb]'
         if not tes4.description:
             tes4.description = _('Face dump from save game.')
-        if GPath('Fallout3.esm') not in tes4.masters:
-            tes4.masters.append(GPath('Fallout3.esm'))
+        if GPath('FalloutNV.esm') not in tes4.masters:
+            tes4.masters.append(GPath('FalloutNV.esm'))
         masterMap = MasterMap(face.masters,tes4.masters+[modInfo.name])
         #--Eid
         npcEids = set([record.eid for record in modFile.NPC_.records])
@@ -15883,7 +15884,7 @@ class PatchFile(ModFile):
         """Initialization."""
         ModFile.__init__(self,modInfo,None)
         self.tes4.author = 'BASHED PATCH'
-        self.tes4.masters = [GPath('Fallout3.esm')]
+        self.tes4.masters = [GPath('FalloutNV.esm')]
         self.longFids = True
         #--New attrs
         self.aliases = {} #--Aliases from one mod name to another. Used by text file patchers.
@@ -15971,7 +15972,7 @@ class PatchFile(ModFile):
                 #--Error checks
                 if 'WRLD' in modFile.tops and modFile.WRLD.orphansSkipped:
                     self.worldOrphanMods.append(modName)
-                if 'SCPT' in modFile.tops and modName != 'Fallout3.esm':
+                if 'SCPT' in modFile.tops and modName != 'FalloutNV.esm':
                     gls = modFile.SCPT.getRecord(0x00025811)
                     if gls and gls.compiledSize == 4 and gls.lastIndex == 0:
                         self.compiledAllMods.append(modName)
@@ -16001,7 +16002,7 @@ class PatchFile(ModFile):
         mergeIds = self.mergeIds
         loadSet = self.loadSet
         modFile.convertToLongFids()
-        badForm = (GPath("Fallout3.esm"),0xA31D) #--DarkPCB record
+        badForm = (GPath("FalloutNV.esm"),0xA31D) #--DarkPCB record
         for blockType,block in modFile.tops.iteritems():
             iiSkipMerge = iiMode and blockType not in ('LVLC','LVLI','LVSP','LVLN')
             #--Make sure block type is also in read and write factories
@@ -16064,7 +16065,7 @@ class PatchFile(ModFile):
             for mod in self.worldOrphanMods: log ('* '+mod.s)
         if self.compiledAllMods:
             log.setHeader(_("=== Compiled All"))
-            log(_("The following mods have an empty compiled version of genericLoreScript. This is usually a sign that the mod author did a __compile all__ while editing scripts. This may interfere with the behavior of other mods that intentionally modify scripts from Fallout3.esm. (E.g. Cobl and Unofficial Fallout 3 Patch.) You can use Bash's [[http://wrye.ufrealms.net/Wrye%20Bash.html#DecompileAll|Decompile All]] command to repair the mods."))
+            log(_("The following mods have an empty compiled version of genericLoreScript. This is usually a sign that the mod author did a __compile all__ while editing scripts. This may interfere with the behavior of other mods that intentionally modify scripts from FalloutNV.esm. (E.g. Cobl and Unofficial Fallout New Vegas Patch.) You can use Bash's [[http://wrye.ufrealms.net/Wrye%20Bash.html#DecompileAll|Decompile All]] command to repair the mods."))
             for mod in self.compiledAllMods: log ('* '+mod.s)
         log.setHeader(_("=== Active Mods"),True)
         for name in self.allMods:
@@ -18007,7 +18008,7 @@ class NamesPatcher(ImportPatcher):
     name = _('Import Names')
     text = _("Import names from source mods/files.")
     defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
-    autoRe = re.compile(r"^Fallout3.esm$",re.I)
+    autoRe = re.compile(r"^FalloutNV.esm$",re.I)
     autoKey = 'Names'
 
     #--Patch Phase ------------------------------------------------------------
@@ -19964,7 +19965,7 @@ class GmstTweak(MultiTweakItem):
         for eid,value in zip(eids,self.choiceValues[self.chosen]):
             gmst = MreGmst(('GMST',0,0,0,0,0))
             gmst.eid,gmst.value,gmst.longFids = eid,value,True
-            fid = gmst.fid = keep(gmst.getFallout3Fid())
+            fid = gmst.fid = keep(gmst.getFalloutNVFid())
             patchFile.GMST.setRecord(gmst)
         if len(self.choiceLabels) > 1:
             if self.choiceLabels[self.chosen].startswith('Custom'):
@@ -21972,14 +21973,14 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 keep(race.fid)
         #--Eye Mesh filtering
         # eye_mesh = self.eye_mesh
-        # hazelEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x4255)]
+        # hazelEyeMesh = eye_mesh[(GPath('FalloutNV.esm'),0x4255)]
         # #argonianEyeMesh = eye_mesh[(GPath('Oblivion.esm'),0x3e91e)]
         # if debug:
         #     print '== Eye Mesh Filtering'
         #     print 'hazelEyeMesh',hazelEyeMesh
         #     #print 'argonianEyeMesh',argonianEyeMesh
         # for eye in (
-        #     (GPath('Fallout3.esm'),0x1a), #--Reanimate
+        #     (GPath('FalloutNV.esm'),0x1a), #--Reanimate
         #     #(GPath('Oblivion.esm'),0x54bb9), #--Dark Seducer
         #     #(GPath('Oblivion.esm'),0x54bba), #--Golden Saint
         #     #(GPath('Oblivion.esm'),0x5fa43), #--Ordered
@@ -22463,9 +22464,9 @@ class SEWorldEnforcer(SpecialPatcher,Patcher):
         """Prepare to handle specified patch mod. All functions are called after this."""
         Patcher.initPatchFile(self,patchFile,loadMods)
         self.cyrodiilQuests = set()
-        if GPath('Fallout3.esm') in loadMods:
+        if GPath('FalloutNV.esm') in loadMods:
             loadFactory = LoadFactory(False,MreQust)
-            modInfo = modInfos[GPath('Fallout3.esm')]
+            modInfo = modInfos[GPath('FalloutNV.esm')]
             modFile = ModFile(modInfo,loadFactory)
             modFile.load(True)
             mapper = modFile.getLongMapper()
@@ -22490,7 +22491,7 @@ class SEWorldEnforcer(SpecialPatcher,Patcher):
         """Scans specified mod file to extract info. May add record to patch mod,
         but won't alter it."""
         if not self.isActive: return
-        if modFile.fileInfo.name == GPath('Fallout3.esm'): return
+        if modFile.fileInfo.name == GPath('FalloutNV.esm'): return
         cyrodiilQuests = self.cyrodiilQuests
         mapper = modFile.getLongMapper()
         patchBlock = self.patchFile.QUST
@@ -22628,7 +22629,7 @@ class ContentsChecker(SpecialPatcher,Patcher):
                             log('  . %s: %06X' % (mod.s,index))
 
 # Initialization --------------------------------------------------------------
-def initDirs(personal='',localAppData='',fallout3Path=''):      
+def initDirs(personal='',localAppData='',falloutNVPath=''):      
     #--Bash Ini
     bashIni = None
     if GPath('bash.ini').exists():
@@ -22641,17 +22642,17 @@ def initDirs(personal='',localAppData='',fallout3Path=''):
     dirs['mopyExtras'] = dirs['mopy'].join('Extras')
     dirs['mopyImages'] = dirs['mopy'].join('Images')
     
-    #--Fallout 3 (Application) Directories
-    if fallout3Path: dirs['app'] = GPath(fallout3Path)
-    elif bashIni and bashIni.has_option('General', 'sFallout3Path') and not bashIni.get('General', 'sFallout3Path') == '.':
-        dirs['app'] = GPath(bashIni.get('General', 'sFallout3Path').strip())
-    else: dirs['app'] = bolt.Path.getcwd().head #Assume bash is in right place (\Fallout 3\Mopy\)
+    #--Fallout New Vegas (Application) Directories
+    if falloutNVPath: dirs['app'] = GPath(falloutNVPath)
+    elif bashIni and bashIni.has_option('General', 'sFalloutNVPath') and not bashIni.get('General', 'sFalloutNVPath') == '.':
+        dirs['app'] = GPath(bashIni.get('General', 'sFalloutNVPath').strip())
+    else: dirs['app'] = bolt.Path.getcwd().head #Assume bash is in right place (\Fallout New Vegas\Mopy\)
     #--If path is relative, make absolute
     if not dirs['app'].isabs():
         dirs['app'] = dirs['mopy'].join(dirs['app'])
     #--Error check
-    if not dirs['app'].join('Fallout3.exe').exists():
-        raise BoltError(_("Install Error\nFailed to find Fallout3.exe in %s.\nNote that the Mopy folder should be in the same folder as Fallout3.exe.") % dirs['app'])
+    if not dirs['app'].join('FalloutNV.exe').exists():
+        raise BoltError(_("Install Error\nFailed to find FalloutNV.exe in %s.\nNote that the Mopy folder should be in the same folder as FalloutNV.exe.") % dirs['app'])
     #--Subdirectories
     dirs['mods'] = dirs['app'].join('Data')
     dirs['builds'] = dirs['app'].join('Builds')
@@ -22727,8 +22728,8 @@ def initDirs(personal='',localAppData='',fallout3Path=''):
         raise BoltError(_("Local app data folder does not exist.\nLocal app data folder: %s\nAdditional info:\n%s")
             % (localAppData.s, lErrorInfo))
     #  User sub folders
-    dirs['saveBase'] = personal.join(r'My Games','Fallout3')
-    dirs['userApp'] = localAppData.join('Fallout3')
+    dirs['saveBase'] = personal.join(r'My Games','FalloutNV')
+    dirs['userApp'] = localAppData.join('FalloutNV')
     
     #-- Other tool directories
     #   First to default path
@@ -22809,15 +22810,15 @@ def initDirs(personal='',localAppData='',fallout3Path=''):
     tooldirs['FO3MasterRestorePath'] = tooldirs['FO3EditPath'].head.join('FO3MasterRestore.exe')
     
     #--Mod Data, Installers
-    if bashIni and bashIni.has_option('General','sFallout3Mods'):
-        fallout3Mods = GPath(bashIni.get('General','sFallout3Mods').strip())
+    if bashIni and bashIni.has_option('General','sFalloutNVMods'):
+        fallout3Mods = GPath(bashIni.get('General','sFalloutNVMods').strip())
     else:
-        fallout3Mods = GPath(r'..\Fallout 3 Mods')
-    if not fallout3Mods.isabs():
-        fallout3Mods = dirs['app'].join(fallout3Mods)
+        falloutNVMods = GPath(r'..\Fallout New Vegas Mods')
+    if not falloutNVMods.isabs():
+        falloutNVMods = dirs['app'].join(falloutNVMods)
     for key,oldDir,newDir in (
-        ('modsBash', dirs['app'].join('Data','Bash'), fallout3Mods.join('Bash Mod Data')),
-        ('installers', dirs['app'].join('Installers'), fallout3Mods.join('Bash Installers')),
+        ('modsBash', dirs['app'].join('Data','Bash'), falloutNVMods.join('Bash Mod Data')),
+        ('installers', dirs['app'].join('Installers'), falloutNVMods.join('Bash Installers')),
         ):
         dirs[key] = (oldDir,newDir)[newDir.isdir() or not oldDir.isdir()]
         dirs[key].makedirs()

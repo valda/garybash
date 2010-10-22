@@ -19,7 +19,7 @@
 #
 # =============================================================================
 
-"""This module provides a command line interface for working with Fallout3 files 
+"""This module provides a command line interface for working with FalloutNV files 
 and environment. Functions are defined here and added to the callables
 singleton. Callables.main() is then used to parse command line arguments.
 
@@ -33,7 +33,7 @@ Practice:
 
 Rational Names:
     Rational names is a mod that "Rationalizes" names of many objects in the
-    Fallout 3 world. Many of those names were generated here by functions working
+    Fallout New Vegas world. Many of those names were generated here by functions working
     on the basis of the eid or pre-existing name. Naturally these tend to be
     use-once functions, but they also tended to be modified and then used again.
 """
@@ -202,7 +202,7 @@ def convertFace(fileName,eid,fromEid,toEid):
     """Converts faces from one race to another."""
     init(3)
     #--Race faces
-    raceInfo = bosh.modInfos[GPath('Fallout3.esm')]
+    raceInfo = bosh.modInfos[GPath('FalloutNV.esm')]
     raceFaces = bosh.PCFaces.mod_getRaceFaces(raceInfo)
     fromRace = raceFaces.get(fromEid, bosh.PCFaces.PCFace())
     toRace   = raceFaces.get(toEid,   bosh.PCFaces.PCFace())
@@ -546,7 +546,7 @@ def csFunctions(fileName="CS Functions.txt"):
     print 'Read',fileName
     #--Page writer
     def groupLink(group):
-        group = re.sub('OBSE','[[:Category:Fallout3_Script_Extender|OBSE]]',group)
+        group = re.sub('OBSE','[[:Category:FalloutNV_Script_Extender|OBSE]]',group)
         group = re.sub('Pluggy','[[:Category:Pluggy|]]',group)
         group = re.sub('TSFC','[[:Category:TSFC|]]',group)
         return group
@@ -590,7 +590,7 @@ def csFunctions(fileName="CS Functions.txt"):
     dumpPage('CS CS.txt',records,'CS',
         "[[Category:Scripting]]\nThis page lists all native CS scripting functions. For a more comprehensive list (including OBSE and OBSE plugin functions), see [[List of Functions]].")
     dumpPage('CS OBSE.txt',records,'OBSE',
-        "[[Category:Scripting]][[Category:Fallout3 Script Extender]]\nThis page lists all functions for [[:Category:Fallout3_Script_Extender|]]. For a more comprehensive list (including native CS and OBSE plugin functions), see [[List of Functions]].")
+        "[[Category:Scripting]][[Category:FalloutNV Script Extender]]\nThis page lists all functions for [[:Category:FalloutNV_Script_Extender|]]. For a more comprehensive list (including native CS and OBSE plugin functions), see [[List of Functions]].")
     dumpPage('CS Pluggy.txt',records,'Pluggy',
         "[[Category:Scripting]][[Category:Pluggy]]\nThis page lists all functions for [[:Category:Pluggy|]]. For a more comprehesive list of functions (including native CS and other OBSE related functions), see [[List of Functions]].")
     dumpPage('CS TSFC.txt',records,'TSFC',
@@ -599,7 +599,7 @@ def csFunctions(fileName="CS Functions.txt"):
 #------------------------------------------------------------------------------
 @mainfunc
 def getIds(fileName=None):
-    """Gets fids and returns as a set. Primarily for analysis of Fallout3.esm.
+    """Gets fids and returns as a set. Primarily for analysis of FalloutNV.esm.
     NOTE: Does a low level read and hence can read fids of ALL records in all
     groups. Including CELLs WRLDs, etc."""
     def getRecordReader(ins,flags,size):
@@ -651,12 +651,12 @@ def getIds(fileName=None):
 #------------------------------------------------------------------------------
 @mainfunc
 def gmstIds(fileName=None):
-    """Updates map of GMST eids to fids in Data\Fallout3_ids.pkl, based either
+    """Updates map of GMST eids to fids in Data\FalloutNV_ids.pkl, based either
     on a list of new eids or the gmsts in the specified mod file. Updated pkl file
     is dropped in Mopy directory."""
     #--Data base
     import cPickle
-    fids = cPickle.load(GPath(r'Data\Fallout3_ids.pkl').open('r'))['GMST']
+    fids = cPickle.load(GPath(r'Data\FalloutNV_ids.pkl').open('r'))['GMST']
     maxId = max(fids.values())
     maxId = max(maxId,0xf12345)
     maxOld = maxId
@@ -685,8 +685,8 @@ def gmstIds(fileName=None):
     #--Changes?
     if maxId > maxOld:
         outData = {'GMST':fids}
-        cPickle.dump(outData,GPath(r'Fallout3_ids.pkl').open('w'))
-        print "%d news gmst ids written to Fallout3_ids.pkl" % ((maxId - maxOld),)
+        cPickle.dump(outData,GPath(r'FalloutNV_ids.pkl').open('w'))
+        print "%d news gmst ids written to FalloutNV_ids.pkl" % ((maxId - maxOld),)
 
 #------------------------------------------------------------------------------
 @mainfunc
@@ -725,7 +725,7 @@ def findSaveRecord(srcName,fid):
 
 #------------------------------------------------------------------------------
 @mainfunc
-def renameArchives(root=r'C:\Program Files\Bethesda Softworks\Fallout 3\Downloads'):
+def renameArchives(root=r'C:\Program Files\Bethesda Softworks\Fallout New Vegas\Downloads'):
     """Renames TesSource archive files to sort a little better.
     E.g., change 12345-2.23-My Wicked Mod-TESSource.zip to My Wicked Mod 2.23.zip."""
     reTesSource = re.compile(r'^\d{4}-(\d[^-]*)-(.+)-TESSource.(zip|rar|7z|ace|exe)$',re.I)
@@ -822,7 +822,7 @@ def parseDials(srcName=None,dstName='Wrye Test.esp'):
     dstFile.askSave(True)
 
 @mainfunc
-def parseRecords(fileName='Fallout3.esm'):
+def parseRecords(fileName='FalloutNV.esm'):
     import psyco
     psyco.full()
     init(3)
