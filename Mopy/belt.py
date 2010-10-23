@@ -471,7 +471,7 @@ class PageVersions(PageInstaller):
         # sizerVersions.Add(wx.StaticText(self, -1, fogeHave))
         # sizerVersions.Add(wx.StaticBitmap(self, -1, bmp[bFOGEOk]))
 
-        linkWB = wx.HyperlinkCtrl(self, -1, 'Wrye Flash:NV', 'http://newvegasnexus.com/downloads/file.php?id=999999999')
+        linkWB = wx.HyperlinkCtrl(self, -1, 'Wrye Flash NV', 'http://newvegasnexus.com/downloads/file.php?id=35003')
         linkWB.SetVisitedColour(linkWB.GetNormalColour())
         linkWB.SetToolTip(wx.ToolTip('http://newvegasnexus.com/'))
         sizerVersions.Add(linkWB)
