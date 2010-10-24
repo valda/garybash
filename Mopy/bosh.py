@@ -2999,7 +2999,7 @@ class MreGmst(MelRecord):
         """Returns FalloutNV.esm fid in long format for specified eid."""
         myClass = self.__class__
         if not myClass.falloutIds:
-            myClass.fallout3Ids = cPickle.load(GPath(r'Data\FalloutNV_ids.pkl').open())['GMST']
+            myClass.falloutIds = cPickle.load(GPath(r'Data\FalloutNV_ids.pkl').open())['GMST']
         return (GPath('FalloutNV.esm'), myClass.falloutIds[self.eid])
 
 #------------------------------------------------------------------------------
@@ -7046,6 +7046,7 @@ class SaveHeader:
     """Represents selected info from a Tes4SaveGame file."""
     def __init__(self,path=None):
         """Initialize."""
+        self.language = None
         self.pcName = None
         self.pcNick = None
         self.pcLocation = None
@@ -7063,6 +7064,8 @@ class SaveHeader:
             ins.seek(11) # FO3SAVEGAME
             headerSize, = struct.unpack('I',ins.read(4))
             unknown,delim = struct.unpack('Ic',ins.read(5))
+            self.language = cstrip(ins.read(64))
+            delim, = struct.unpack('c',ins.read(1))
             ssWidth,delim1,ssHeight,delim2,ssDepth,delim3 = struct.unpack('=IcIcIc',ins.read(15))
             #--Name, nickname, level, location, playtime
             size,delim = struct.unpack('Hc',ins.read(3))
@@ -7083,8 +7086,8 @@ class SaveHeader:
             self.image = (ssWidth,ssHeight,ssData)
             #--Masters
             unknown,masterListSize = struct.unpack('=BI',ins.read(5))
-            if unknown != 0x15:
-                raise "%s: Unknown byte is not 0x15." % path
+            if unknown != 0x1B:
+                raise "%s: Unknown byte is not 0x1B." % path
             del self.masters[:]
             numMasters,delim = struct.unpack('Bc',ins.read(2))
             for count in range(numMasters):
@@ -7113,15 +7116,16 @@ class SaveHeader:
         size, = unpack('I',4)
         pack('I',size)
         out.write(ins.read(5))
+        out.write(ins.read(65))
         ssWidth,delim1,ssHeight,delim2 = unpack('=IcIc',10)
         pack('=IcIc',ssWidth,delim1,ssHeight,delim2)
-        out.write(ins.read(size-15))
+        out.write(ins.read(size-80))
         #--Image Data
         out.write(ins.read(3*ssWidth*ssHeight))
         #--Skip old masters
         unknown,oldMasterListSize = unpack('=BI',5)
-        if unknown != 0x15:
-            raise "%s: Unknown byte is not 0x15." % path
+        if unknown != 0x1B:
+            raise "%s: Unknown byte is not 0x1B." % path
         numMasters,delim = unpack('Bc',2)
         oldMasters = []
         for count in range(numMasters):
@@ -7142,6 +7146,15 @@ class SaveHeader:
         offset = out.tell() - ins.tell()
         fidsAddress, = unpack('I',4)
         pack('I',fidsAddress+offset)
+        #--???? Address
+        unknownAddress, = unpack('I',4)
+        pack('I',unknownAddress+offset)
+        #--???? Address
+        unknownAddress, = unpack('I',4)
+        pack('I',unknownAddress+offset)
+        #--???? Address
+        unknownAddress, = unpack('I',4)
+        pack('I',unknownAddress+offset)
         #--???? Address
         unknownAddress, = unpack('I',4)
         pack('I',unknownAddress+offset)
@@ -7598,7 +7611,7 @@ class SaveFile:
         log('=' * 80)
         log(_('  Format version:   %08X') % (foseFile.formatVersion,))
         log(_('  FOSE version:     %u.%u') % (foseFile.foseVersion,foseFile.foseMinorVersion,))
-        log(_('  FalloutNV version: %08X') % (foseFile.fallout3Version,))
+        log(_('  FalloutNV version: %08X') % (foseFile.falloutNVVersion,))
         #--Plugins
         if foseFile.plugins != None:
             for (opcodeBase,chunks) in foseFile.plugins:
@@ -22811,7 +22824,7 @@ def initDirs(personal='',localAppData='',falloutNVPath=''):
     
     #--Mod Data, Installers
     if bashIni and bashIni.has_option('General','sFalloutNVMods'):
-        fallout3Mods = GPath(bashIni.get('General','sFalloutNVMods').strip())
+        falloutNVMods = GPath(bashIni.get('General','sFalloutNVMods').strip())
     else:
         falloutNVMods = GPath(r'..\Fallout New Vegas Mods')
     if not falloutNVMods.isabs():

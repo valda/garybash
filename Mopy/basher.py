@@ -4095,7 +4095,7 @@ class BashFrame(wx.Frame):
         testFile = GPath(bosh.dirs['app']).join('Data','Docs','wtxt_teal.css')
         if not self.incompleteInstallError and not testFile.exists():
             self.incompleteInstallError = True
-            message = _("Installation appears incomplete. Please re-unzip bash to FalloutNV directory so that ALL files are installed.\n\nCorrect installation will create Fallout 3\\Mopy, Fallout 3\\Data\\Docs and Fallout 3\\Data\\INI Tweaks directories.")
+            message = _("Installation appears incomplete. Please re-unzip bash to FalloutNV directory so that ALL files are installed.\n\nCorrect installation will create Fallout New Vegas\\Mopy, Fallout New Vegas\\Data\\Docs and Fallout New Vegas\\Data\\INI Tweaks directories.")
             balt.showWarning(self,message,_("Incomplete Installation"))
         #--Merge info
         oldMergeable = set(bosh.modInfos.mergeable)
