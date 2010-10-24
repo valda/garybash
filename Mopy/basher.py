@@ -299,8 +299,8 @@ settingDefaults = {
         'Date':150,
         },
     'bash.messages.colAligns': {},
-    #--FO3Edit
-    'fo3Edit.iKnowWhatImDoing':False,
+    #--FNVEdit
+    'fnvEdit.iKnowWhatImDoing':False,
     #--BOSS:
     'BOSS.ClearLockTimes':False,
     'BOSS.AlwaysUpdate':False,
@@ -7825,16 +7825,16 @@ class Mods_FalloutNVVersion(Link):
         bashFrame.SetTitle()
 
 #------------------------------------------------------------------------------
-class Mods_FO3EditExpert(Link):
+class Mods_FNVEditExpert(Link):
     """Turn on deprint/delist."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('FO3Edit Expert'),kind=wx.ITEM_CHECK)
+        menuItem = wx.MenuItem(menu,self.id,_('FNVEdit Expert'),kind=wx.ITEM_CHECK)
         menu.AppendItem(menuItem)
-        menuItem.Check(settings['fo3Edit.iKnowWhatImDoing'])
+        menuItem.Check(settings['fnvEdit.iKnowWhatImDoing'])
 
     def Execute(self,event):
-        settings['fo3Edit.iKnowWhatImDoing'] ^= True
+        settings['fnvEdit.iKnowWhatImDoing'] ^= True
 
 #------------------------------------------------------------------------------
 class Mods_BOSSDisableLockTimes(Link):
@@ -11045,14 +11045,14 @@ class App_Tes4Gecko(App_Button):
         cwd.setcwd()
 
 #------------------------------------------------------------------------------
-class App_FO3Edit(App_Button):
-    """Allow some extra args for FO3Edit."""
+class App_FNVEdit(App_Button):
+    """Allow some extra args for FNVEdit."""
 
     def Execute(self,event):
         extraArgs = []
         if wx.GetKeyState(wx.WXK_CONTROL):
             extraArgs.append('-FixupPGRD')
-        if settings['fo3Edit.iKnowWhatImDoing']:
+        if settings['fnvEdit.iKnowWhatImDoing']:
             extraArgs.append('-IKnowWhatImDoing')
         App_Button.Execute(self,event,tuple(extraArgs))
 
@@ -11404,21 +11404,21 @@ def InitStatusBar():
 #        App_Tes4Gecko(None,
 #            Image(r'images/TES4Gecko'+bosh.inisettings['iconSize']+'.png'),
 #            _("Launch Tes4Gecko")))
-    BashStatusBar.buttons.append( #FO3MasterRestore
-        App_FO3Edit(
-            bosh.tooldirs['FO3MasterRestorePath'],
-            Image(r'images/FO3MasterRestore'+bosh.inisettings['iconSize']+'.png'),
-            _("Launch FO3MasterRestore")))
-    BashStatusBar.buttons.append( #FO3Edit
-        App_FO3Edit(
-            bosh.tooldirs['FO3EditPath'],
-            Image(r'images/FO3Edit'+bosh.inisettings['iconSize']+'.png'),
-            _("Launch FO3Edit")))
-    BashStatusBar.buttons.append( #FO3MasterUpdate
-        App_FO3Edit(
-            bosh.tooldirs['FO3MasterUpdatePath'],
-            Image(r'images/FO3MasterUpdate'+bosh.inisettings['iconSize']+'.png'),
-            _("Launch FO3MasterUpdate")))
+    BashStatusBar.buttons.append( #FNVMasterRestore
+        App_FNVEdit(
+            bosh.tooldirs['FNVMasterRestorePath'],
+            Image(r'images/FNVMasterRestore'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch FNVMasterRestore")))
+    BashStatusBar.buttons.append( #FNVEdit
+        App_FNVEdit(
+            bosh.tooldirs['FNVEditPath'],
+            Image(r'images/FNVEdit'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch FNVEdit")))
+    BashStatusBar.buttons.append( #FNVMasterUpdate
+        App_FNVEdit(
+            bosh.tooldirs['FNVMasterUpdatePath'],
+            Image(r'images/FNVMasterUpdate'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch FNVMasterUpdate")))
 #    BashStatusBar.buttons.append( #Tes4LODGen
 #        App_Button(
 #            bosh.tooldirs['Tes4LodGenPath'],
@@ -11998,7 +11998,7 @@ def InitModLinks():
     ModList.mainMenu.append(SeparatorLink())
     ModList.mainMenu.append(Mods_Deprint())
     ModList.mainMenu.append(Mods_DumpTranslator())
-    ModList.mainMenu.append(Mods_FO3EditExpert())
+    ModList.mainMenu.append(Mods_FNVEditExpert())
     ModList.mainMenu.append(Mods_BOSSDisableLockTimes())
     ModList.mainMenu.append(Mods_BOSSShowUpdate())
 

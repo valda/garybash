@@ -22747,7 +22747,7 @@ def initDirs(personal='',localAppData='',falloutNVPath=''):
     #-- Other tool directories
     #   First to default path
     #tooldirs['Tes4FilesPath'] = dirs['app'].join('TES4Files.exe')
-    tooldirs['FO3EditPath'] = dirs['app'].join('FO3Edit.exe')
+    tooldirs['FNVEditPath'] = dirs['app'].join('FNVEdit.exe')
     #tooldirs['Tes4LodGenPath'] = dirs['app'].join('TES4LodGen.exe')
     tooldirs['NifskopePath'] = GPath(r'C:\Program Files\NifTools\NifSkope\Nifskope.exe')
     tooldirs['BlenderPath'] = GPath(r'C:\Program Files\Blender Foundation\Blender\blender.exe')
@@ -22819,8 +22819,8 @@ def initDirs(personal='',localAppData='',falloutNVPath=''):
                 if not tooldirs[dir].isabs():
                     tooldirs[dir] = dirs['app'].join(tooldirs[dir])
     
-    tooldirs['FO3MasterUpdatePath'] = tooldirs['FO3EditPath'].head.join('FO3MasterUpdate.exe')
-    tooldirs['FO3MasterRestorePath'] = tooldirs['FO3EditPath'].head.join('FO3MasterRestore.exe')
+    tooldirs['FNVMasterUpdatePath'] = tooldirs['FNVEditPath'].head.join('FNVMasterUpdate.exe')
+    tooldirs['FNVMasterRestorePath'] = tooldirs['FNVEditPath'].head.join('FNVMasterRestore.exe')
     
     #--Mod Data, Installers
     if bashIni and bashIni.has_option('General','sFalloutNVMods'):
