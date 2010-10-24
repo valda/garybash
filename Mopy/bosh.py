@@ -7145,6 +7145,15 @@ class SaveHeader:
         #--???? Address
         unknownAddress, = unpack('I',4)
         pack('I',unknownAddress+offset)
+        #--???? Address
+        unknownAddress, = unpack('I',4)
+        pack('I',unknownAddress+offset)
+        #--???? Address
+        unknownAddress, = unpack('I',4)
+        pack('I',unknownAddress+offset)
+        #--???? Address
+        unknownAddress, = unpack('I',4)
+        pack('I',unknownAddress+offset)
         #--Copy remainder
         while True:
             buffer= ins.read(0x5000000)
