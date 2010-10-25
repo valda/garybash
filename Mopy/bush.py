@@ -427,6 +427,9 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (430, 'IsActorTalkingThroughActivator', 0, 0, 0, 0),
     (480, 'GetIsUsedItemEquipType', 1, 0, 0, 0),
     (398, 'IsLimbGone', 1, 0, 0, 0),
+    (586, 'IsHardcore', 0, 0, 0, 0),
+    (420, 'GetObjectiveCompleted', 2, 1, 0, 0),
+    (421, 'GetObjectiveDisplayed', 2, 1, 0, 0),
     # extended by FOSE
     # (1024, 'GetFOSEVersion', 0, 0, 0, 0),
     # (1025, 'GetFOSERevision', 0, 0, 0, 0),

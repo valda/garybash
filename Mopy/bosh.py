@@ -2137,8 +2137,10 @@ class MreActi(MelRecord):
         MelDestructable(),
         MelFid('SNAM','soundLooping'),
         MelFid('VNAM','soundActivation'),
+        MelFid('INAM','radioTemplate'),
         MelFid('RNAM','radioStation'),
         MelFid('WNAM','waterType'),
+        MelString('XATO','activationPrompt'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -2246,21 +2248,22 @@ class MreArmo(MelRecord):
         'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
     ))
 
-    # class MelArmoModel(MelGroup):
-    #     """Represents a model record."""
-    #     typeSets = (
-    #         ('MODL','MODT','MODS','MODD'),
-    #         ('MOD2','MO2T','MO2S','MO2D'),
-    #         ('MOD3','MO3T','MO3S','MOSD'),
-    #         ('MOD4','MO4T','MO4S','MO4D'),)
-    #     def __init__(self,attr='model',index=0):
-    #         """Initialize. Index is 0,2,3,4 for corresponding type id."""
-    #         types = self.typeSets[(0,index-1)[index>0]]
-    #         MelGroup.__init__(self,attr,
-    #                           MelString(types[0],'modPath'),
-    #                           MelBase(types[1],'modt_p'), ###Texture Files Hashes, Byte Array
-    #                           MelAlternateTextures(types[2],'alternateTextures'),
-    #                           MelOptStruct(types[3],'B','facegenModelFlags'),)
+    class MelArmoDnam(MelStruct):
+        """Handle older trucated DNAM for ARMO subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 12:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 4:
+                unpacked = ins.unpack('=HH',size,readId)
+            else:
+                raise "Unexpected size encountered for ARMO subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked, record.flags.getTrueAttrs()
 
     melSet = MelSet(
         MelString('EDID','eid'),
@@ -2287,7 +2290,10 @@ class MreArmo(MelRecord):
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
         MelStruct('DATA','=IIf','value','health','weight'),
-        MelStruct('DNAM','=HH','ar','flags'),
+        MelArmoDnam('DNAM','=HHfI','ar','flags','dt',('unknown',0L)),
+        MelStruct('BNAM','I',('overridesAnimationSound',0L)),
+        MelStructs('SNAM','IB3sI','animationSounds',(FID,'sound'),'chance',('unused','\xb7\xe7\x0b'),'type'),
+        MelFid('TNAM','animationSoundsTemplate'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -2516,6 +2522,7 @@ class MreCont(MelRecord):
         MelStruct('DATA','=Bf',(_flags,'flags',0L),'weight'),
         MelFid('SNAM','soundOpen'),
         MelFid('QNAM','soundClose'),
+        MelFid('RNAM','soundRandomLooping'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -2922,6 +2929,7 @@ class MreFact(MelRecord):
             MelString('MNAM','male'),
             MelString('FNAM','female'),
             MelString('INAM','insigniaPath'),),
+        MelOptStruct('WMI1','I',(FID,'reputation',None)),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -3340,6 +3348,7 @@ class MreMisc(MelRecord):
         MelFid('YNAM','soundPickUp'),
         MelFid('ZNAM','soundDrop'),
         MelStruct('DATA','if','value','weight'),
+        MelFid('RNAM','soundRandomLooping'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -4271,6 +4280,7 @@ class MreSoun(MelRecord):
                   'corner0X','corner0Y','corner0Z',
                   'corner1X','corner1Y','corner1Z'),
         MelString('FNAM','soundFile'),
+        MelStruct('RNAM','B','_rnam'),
         # SNDD (0007E719 CSpecialHeavyMetal)
         # \x1b              minDistance / 5
         # \x0f              maxDistance / 10
@@ -4333,6 +4343,8 @@ class MreStat(MelRecord):
                   'corner0X','corner0Y','corner0Z',
                   'corner1X','corner1Y','corner1Z'),
         MelModel(),
+        MelStruct('BRUS','=B',('passthroughSound',255)),
+        MelFid('RNAM','soundRandomLooping'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -4565,6 +4577,7 @@ class MreWeap(MelRecord):
         MelModel('scopeModel',3),
         MelFid('EFSD','scopeEffect'),
         MelModel('worldModel',4),
+        MelString('VANM','vatsAttackName'),
         MelString('NNAM','embeddedWeaponNode'),
         MelFid('INAM','impactDataset'),
         MelFid('WNAM','firstPersonModel'),
@@ -4585,7 +4598,9 @@ class MreWeap(MelRecord):
                     'onHit',(_dflags2,'dnamFlags2',0L),'animationAttackMultiplier','fireRate','overrideActionPoint',
                     'rumbleLeftMotorStrength','rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult',
                     'attackShotsPerSec','reloadTime','jamTime','aimArc','skill','rumblePattern','rambleWavelangth','limbDmgMult',
-                    ('resistType',0xFFFFFFFF),'sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax'),
+                    ('resistType',0xFFFFFFFF),'sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
+                    # NV additions
+                    ),
         MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',0L)),
         MelBase('VNAM','_vnam','sountLevel'),
         )
