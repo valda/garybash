@@ -2725,18 +2725,43 @@ class MreCsty(MelRecord):
 class MreDial(MelRecord):
     """Dialog record."""
     classType = 'DIAL'
+    class MelDialData(MelStruct):
+        """Handle older trucated DATA for DIAL subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 2:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 1:
+                unpacked = ins.unpack('B',size,readId)
+            else:
+                raise "Unexpected size encountered for DIAL subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked, record.flags.getTrueAttrs()
     melSet = MelSet(
         MelString('EDID','eid'),
-        MelFids('QSTI','quests'), ### QSTRs?
+        MelGroups('quests',
+            MelFid('QSTI','quest'),
+            MelGroups('unknown',
+                MelFid('INFC','infc_p'),
+                MelBase('INFX','infx_p'),
+            ),
+        ),
         MelString('FULL','full'),
-        MelStruct('DATA','B','dialType'),
+        MelStruct('PNAM','f','priority'),
+        MelString('TDUM','tdum_p'),
+        MelDialData('DATA','BB','dialType','dialFlags'),
     )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed() + ['infoStamp','infos']
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed() + ['infoStamp','infoStamp2','infos']
 
     def __init__(self,header,ins=None,unpack=False):
         """Initialize."""
         MelRecord.__init__(self,header,ins,unpack)
         self.infoStamp = 0 #--Stamp for info GRUP
+        self.infoStamp2 = 0 #--Stamp for info GRUP
         self.infos = []
 
     def loadInfos(self,ins,endPos,infoClass):
@@ -2760,7 +2785,7 @@ class MreDial(MelRecord):
         MreRecord.dump(self,out)
         if not self.infos: return
         size = 20 + sum([20 + info.getSize() for info in self.infos])
-        out.pack('4sIIII','GRUP',size,self.fid,7,self.infoStamp)
+        out.pack('4sIIIII','GRUP',size,self.fid,7,self.infoStamp,self.infoStamp2)
         for info in self.infos: info.dump(out)
 
     def updateMasters(self,masters):
@@ -3077,6 +3102,7 @@ class MreInfo(MelRecord):
     classType = 'INFO'
     _flags = Flags(0,Flags.getNames(
         'goodbye','random','sayOnce','runImmediately','infoRefusal','randomEnd','runForRumors','sayOnceADay','alwaysDarken'))
+    _variableFlags = Flags(0L,Flags.getNames('isLongOrShort'))
     class MelInfoData(MelStruct):
         """Support older 2 byte version."""
         def loadData(self,record,ins,type,size,readId):
@@ -3104,18 +3130,43 @@ class MreInfo(MelRecord):
         MelFid('PNAM','prevInfo'),
         MelFids('NAME','addTopics'),
         MelGroups('responses',
-            MelStruct('TRDT','Ii4sB3s','emotionType','emotionValue',('unused1',null4),'responseNum',('unused2',null3)),
+            MelStruct('TRDT','Ii4sB3sIB3s','emotionType','emotionValue',('unused1',null4),'responseNum',('unused2','0xcd0xcd0xcd'),
+                      (FID,'sound'),'flags',('unused3','0xcd0xcd0xcd')),
             MelString('NAM1','responseText'),
             MelString('NAM2','actorNotes'),
+            MelString('NAM3','edits'),
+            MelFid('SNAM','speakerAnimation'),
+            MelFid('LNAM','listenerAnimation'),
             ),
         MelConditions(),
         MelFids('TCLT','choices'),
         MelFids('TCLF','linksFrom'),
-        MelBase('SCHD','schd_p'), #--Old format script header?
-        MelInfoSchr('SCHR','4s4I',('unused2',null4),'numRefs','compiledSize','lastIndex','scriptType'),
-        MelBase('SCDA','compiled_p'),
-        MelString('SCTX','scriptText'),
-        MelScrxen('SCRV/SCRO','references')
+        MelFids('TCFU','tcfu_p'),
+        # MelBase('SCHD','schd_p'), #--Old format script header?
+        MelGroup('scriptBegin',
+            MelInfoSchr('SCHR','4s4I',('unused2',null4),'numRefs','compiledSize','lastIndex','scriptType'),
+            MelBase('SCDA','compiled_p'),
+            MelString('SCTX','scriptText'),
+            MelGroups('vars',
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
+                MelString('SCVR','name')),
+            MelScrxen('SCRV/SCRO','references'),
+            ),
+        MelGroup('scriptEnd',
+            MelBase('NEXT','marker'),
+            MelInfoSchr('SCHR','4s4I',('unused2',null4),'numRefs','compiledSize','lastIndex','scriptType'),
+            MelBase('SCDA','compiled_p'),
+            MelString('SCTX','scriptText'),
+            MelGroups('vars',
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
+                MelString('SCVR','name')),
+            MelScrxen('SCRV/SCRO','references'),
+            ),
+        # MelFid('SNDD','sndd_p'),
+        MelString('RNAM','prompt'),
+        MelFid('ANAM','speaker'),
+        MelFid('KNAM','acterValuePeak'),
+        MelStruct('DNAM', 'I', 'speechChallenge')
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 

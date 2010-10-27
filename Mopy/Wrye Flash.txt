@@ -14,12 +14,14 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 3 [10/24/2010]
+
 === 2 [10/24/2010]
 * Saves tab works.
-* An masterlist editor of savedata works.
+* Masterlist editor of savedata works.
 * Some tweaks works.
 * update icons.
-* FNVEdit support.
+* Added FNVEdit launcher.
 
 === 1 [10/22/2010]
 * Branch from Wrye Flash 21.

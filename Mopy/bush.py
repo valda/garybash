@@ -430,6 +430,14 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (586, 'IsHardcore', 0, 0, 0, 0),
     (420, 'GetObjectiveCompleted', 2, 1, 0, 0),
     (421, 'GetObjectiveDisplayed', 2, 1, 0, 0),
+    (575, 'GetReputationThreshold', 2, 1, 0, 0),
+    (610, 'GetCasinoWinningStage', 2, 0, 0, 0),
+    (573, 'GetReputation', 2, 1, 0, 0),
+    (397, 'GetCauseofDeath', 0, 0, 0, 0),
+    (117, 'GetMajorCrimeCount', 0, 0, 0, 0),
+    (415, 'Exists', 2, 0, 0, 0),
+
+
     # extended by FOSE
     # (1024, 'GetFOSEVersion', 0, 0, 0, 0),
     # (1025, 'GetFOSERevision', 0, 0, 0, 0),
