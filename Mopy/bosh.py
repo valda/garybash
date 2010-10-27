@@ -4535,9 +4535,13 @@ class MreWeap(MelRecord):
     class MelWeapDnam(MelStruct):
         """Handle older trucated DNAM for WEAP subrecord."""
         def loadData(self,record,ins,type,size,readId):
-            if size == 136:
+            if size == 208:
                 MelStruct.loadData(self,record,ins,type,size,readId)
                 return
+            elif size == 204:
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff4s3I3fIIBB2s4s6f',size,readId)
+            elif size == 136:
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff',size,readId)
             elif size == 124:
                 #--Else 124 byte record (skips sightUsage, semiAutomaticFireDelayMin and semiAutomaticFireDelayMax...
                 unpacked = ins.unpack('Iff4B5fI4BffII11fIIffI',size,readId)
@@ -4579,8 +4583,31 @@ class MreWeap(MelRecord):
         MelModel('worldModel',4),
         MelString('VANM','vatsAttackName'),
         MelString('NNAM','embeddedWeaponNode'),
+        MelGroup('modelWithMods',
+                 MelString('MWD1','mod1Path'),
+                 MelString('MWD2','mod2Path'),
+                 MelString('MWD3','mod1and2Path'),
+                 MelString('MWD4','mod3Path'),
+                 MelString('MWD5','mod1and3Path'),
+                 MelString('MWD6','mod2and3Path'),
+                 MelString('MWD7','mod1and2and3Path'),
+                 ),
         MelFid('INAM','impactDataset'),
         MelFid('WNAM','firstPersonModel'),
+        MelGroup('firstPersonModelWithMods',
+                 MelFid('WNM1','mod1Path'),
+                 MelFid('WNM2','mod2Path'),
+                 MelFid('WNM3','mod1and2Path'),
+                 MelFid('WNM4','mod3Path'),
+                 MelFid('WNM5','mod1and3Path'),
+                 MelFid('WNM6','mod2and3Path'),
+                 MelFid('WNM7','mod1and2and3Path'),
+                 ),
+        MelGroup('weaponMods',
+                 MelFid('WMI1','mod1'),
+                 MelFid('WMI2','mod2'),
+                 MelFid('WMI3','mod3'),
+                 ),
         MelFid('SNAM','soundGunShot3D'),
         MelFid('XNAM','soundGunShot2D'),
         MelFid('NAM7','soundGunShot3DLooping'),
@@ -4590,7 +4617,7 @@ class MreWeap(MelRecord):
         MelFid('NAM9','equip'),
         MelFid('NAM8','unequip'),
         MelStruct('DATA','2IfHB','value','health','weight','damage','clipsize'),
-        MelWeapDnam('DNAM','Iff4B5fI4BffII11fIIffIfff',
+        MelWeapDnam('DNAM','Iff4B5fI4BffII11fIIffIfff4s3I3fIIBB2s4s6fI',
                     'animationType','animationMultiplier','reach',(_dflags1,'dnamFlags1',0L),
                     'gripAnimation','ammoUse','reloadAnimation','minSpread','spread',
                     'unknown','sightFov','unknown2',(FID,'projectile',0L),
@@ -4600,8 +4627,12 @@ class MreWeap(MelRecord):
                     'attackShotsPerSec','reloadTime','jamTime','aimArc','skill','rumblePattern','rambleWavelangth','limbDmgMult',
                     ('resistType',0xFFFFFFFF),'sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
                     # NV additions
+                    'unknown3','effectMod1','effectMod2','effectMod3','valueAMod1','valueAMod2','valueAMod3',
+                    'powerAttackAnimation','strengthReq','unknown4','reloadAnimationMod','unknown5','unknown6',
+                    'regenRate','killImpulse','valueBMod1','valueBMod2','valueBMod3','impulseDist','skillReq'
                     ),
         MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',0L)),
+        MelStruct('VATS','IfffBB2s','vatsEffect','vatsSkill','vatsDamMult','vatsAp','vatsSilent','vatsModReqiured','unused1'),
         MelBase('VNAM','_vnam','sountLevel'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
