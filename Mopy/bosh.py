@@ -2741,8 +2741,35 @@ class MreDial(MelRecord):
                 if callable(action): value = action(value)
                 setter(attr,value)
             if self._debug: print unpacked, record.flags.getTrueAttrs()
+    class MelDialDistributor(MelNull):
+        def __init__(self):
+            self._debug = False
+        def getLoaders(self,loaders):
+            """Self as loader for structure types."""
+            for type in ('INFC','INFX',):
+                loaders[type] = self
+        def setMelSet(self,melSet):
+            """Set parent melset. Need this so that can reassign loaders later."""
+            self.melSet = melSet
+            self.loaders = {}
+            for element in melSet.elements:
+                attr = element.__dict__.get('attr',None)
+                if attr: self.loaders[attr] = element
+        def loadData(self,record,ins,type,size,readId):
+            if type in ('INFC', 'INFX'):
+                quests = record.__getattribute__('quests')
+                if quests:
+                    element = self.loaders['quests']
+                else:
+                    if type == 'INFC':
+                        element = self.loaders['bare_infc_p']
+                    elif type == 'INFX':
+                        element = self.loaders['bare_infx_p']
+            element.loadData(record,ins,type,size,readId)
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelFid('INFC','bare_infc_p'),
+        MelFid('INFX','bare_infx_p'),
         MelGroups('quests',
             MelFid('QSTI','quest'),
             MelGroups('unknown',
@@ -2754,7 +2781,9 @@ class MreDial(MelRecord):
         MelStruct('PNAM','f','priority'),
         MelString('TDUM','tdum_p'),
         MelDialData('DATA','BB','dialType','dialFlags'),
+        MelDialDistributor(),
     )
+    melSet.elements[-1].setMelSet(melSet)
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed() + ['infoStamp','infoStamp2','infos']
 
     def __init__(self,header,ins=None,unpack=False):
