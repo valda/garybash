@@ -20978,11 +20978,12 @@ class NamesTweak_AmmoWeight(MultiTweakItem):
         weightRe = re.compile(r"^(.*)( \(WG \d+\.\d+\))$")
         listEidRe = re.compile(r"^AmmoWeight(\d)(\d{2})List$")
         for record in patchFile.FLST.records:
-            m = listEidRe.match(record.eid)
-            if m:
-                weight = format % (m.group(1), m.group(2))
-                for fid in record.fids:
-                    weights[fid] = weight
+            if record.eid:
+                m = listEidRe.match(record.eid)
+                if m:
+                    weight = format % (m.group(1), m.group(2))
+                    for fid in record.fids:
+                        weights[fid] = weight
         for record in patchFile.AMMO.records:
             if not record.full: continue
             weight = weights.get(record.fid)
