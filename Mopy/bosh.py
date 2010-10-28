@@ -8505,7 +8505,7 @@ class OBSEIniFile(IniFile):
 #--------------------------------------------------------------------------------
 class FalloutIni(IniFile):
     """FALLOUT.INI file."""
-    bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa',r'..\fomm\bsaredirection.bsa'))
+    bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa',r'..\nvmm\bsaredirection.bsa'))
 
     def __init__(self):
         """Initialize."""
@@ -9661,11 +9661,11 @@ class ModInfos(FileInfos):
         """Returns a boolean indicating if mtime setting is allowed."""
         self.lockTimes = settings['bosh.modInfos.resetMTimes']
         self.fullBalo = settings.get('bash.balo.full',False)
-        fommWarn = settings.setdefault('bosh.modInfos.fommWarn',0)
-        if self.lockTimes and fommWarn == 0 and dirs['app'].join('fomm').exists():
-            settings['bosh.modInfos.fommWarn'] = 1
+        nvmmWarn = settings.setdefault('bosh.modInfos.nvmmWarn',0)
+        if self.lockTimes and nvmmWarn == 0 and dirs['app'].join('nvmm').exists():
+            settings['bosh.modInfos.nvmmWarn'] = 1
         if not self.lockTimes: return False
-        if settings['bosh.modInfos.fommWarn'] == 1: return False
+        if settings['bosh.modInfos.nvmmWarn'] == 1: return False
         if settings.dictFile.readOnly: return False
         #--Else
         return True
@@ -12489,7 +12489,7 @@ class InstallerProject(Installer):
             self.groups = []
 
     def getFomodConfig(self,name):
-        """Get fomm config file for project."""
+        """Get nvmm config file for project."""
         config = InstallerProject.FomodConfig(name)
         configPath = dirs['installers'].join(name,'fomod','info.xml')
         if configPath.exists():
@@ -12511,7 +12511,7 @@ class InstallerProject(Installer):
         return config
 
     def writeFomodConfig(self,name,config):
-        """Write fomm config file for project."""
+        """Write nvmm config file for project."""
         configPath = dirs['installers'].join(name,'fomod','info.xml')
         configPath.head.makedirs()
         out = configPath.temp.open('wb')
