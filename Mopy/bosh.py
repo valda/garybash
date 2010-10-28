@@ -2724,12 +2724,13 @@ class MreDial(MelRecord):
         MelString('FULL','full'),
         MelStruct('DATA','B','dialType'),
     )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed() + ['infoStamp','infos']
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed() + ['infoStamp','infoStamp2','infos']
 
     def __init__(self,header,ins=None,unpack=False):
         """Initialize."""
         MelRecord.__init__(self,header,ins,unpack)
         self.infoStamp = 0 #--Stamp for info GRUP
+        self.infoStamp2 = 0 #--Stamp for info GRUP
         self.infos = []
 
     def loadInfos(self,ins,endPos,infoClass):
@@ -2753,7 +2754,7 @@ class MreDial(MelRecord):
         MreRecord.dump(self,out)
         if not self.infos: return
         size = 20 + sum([20 + info.getSize() for info in self.infos])
-        out.pack('4sIIII','GRUP',size,self.fid,7,self.infoStamp)
+        out.pack('4sIIIII','GRUP',size,self.fid,7,self.infoStamp,self.infoStamp2)
         for info in self.infos: info.dump(out)
 
     def updateMasters(self,masters):
