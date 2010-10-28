@@ -2183,6 +2183,22 @@ class MreAmmo(MelRecord):
     """Ammo (arrow) record."""
     classType = 'AMMO'
     _flags = Flags(0L,Flags.getNames('notNormalWeapon'))
+    class MelAmmoDat2(MelStruct):
+        """Handle older trucated DAT2 for AMMO subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 20:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 12:
+                unpacked = ins.unpack('IIf',size,readId)
+            else:
+                raise "Unexpected size encountered for AMMO:DAT2 subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -2192,19 +2208,15 @@ class MreAmmo(MelRecord):
         MelModel(),
         MelString('ICON','largeIconPath'),
         MelString('MICO','smallIconPath'),
+        MelFid('SCRI','script'),
         MelDestructable(),
-        #MelFid('ENAM','enchantment'),
-        #MelOptStruct('ANAM','H','enchantPoints'),
         MelFid('YNAM','soundPickup'),
         MelFid('ZNAM','soundDrop'),
-        # DATA 000615AF..AmmoElectronChargePackRobot
-        # \x00\x00 A speed f
-        # \x02 flags B
-        # \x00\x00\x00 unused1
-        # \x01\x00\x00\x00 value I
-        # \x14 clipRounds B
         MelStruct('DATA','fB3sIB','speed',(_flags,'flags',0L),('unused1',null3),'value','clipRounds'),
+        MelAmmoDat2('DAT2','IIfIf','projPerShot',(FID,'projectile',0L),'weight',(FID,'consumedAmmo'),'consumedPercentage'),
         MelString('ONAM','shortName'),
+        MelString('QNAM','abbrev'),
+        MelFids('RCIL','effects'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -4611,15 +4623,22 @@ class MreWeap(MelRecord):
             'unknown1','unknown2','unknown3','unknown4',
             'unknown5','unknown6','unknown7',
         ))
-
     class MelWeapDnam(MelStruct):
         """Handle older trucated DNAM for WEAP subrecord."""
         def loadData(self,record,ins,type,size,readId):
-            if size == 208:
+            if size == 204:
                 MelStruct.loadData(self,record,ins,type,size,readId)
                 return
-            elif size == 204:
-                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff4s3I3fIIBB2s4s6f',size,readId)
+            elif size == 200:
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff f3I3fIIsB2s6f',size,readId)
+            elif size == 196:
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff f3I3fIIsB2s5f',size,readId)
+            elif size == 180:
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff f3I3fIIsB2sf',size,readId)
+            elif size == 172:
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff f3I3fII',size,readId)
+            elif size == 164:
+                unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff f3I3f',size,readId)
             elif size == 136:
                 unpacked = ins.unpack('Iff4B5fI4BffII11fIIffIfff',size,readId)
             elif size == 124:
@@ -4636,6 +4655,44 @@ class MreWeap(MelRecord):
                 if callable(action): value = action(value)
                 setter(attr,value)
             if self._debug: print unpacked
+    class MelWeapVats(MelStruct):
+        """Handle older trucated VATS for WEAP subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 20:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 16:
+                unpacked = ins.unpack('Ifff',size,readId)
+            else:
+                raise "Unexpected size encountered for WEAP:VATS subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
+    class MelWeapDistributor(MelNull):
+        def __init__(self):
+            self._debug = False
+        def getLoaders(self,loaders):
+            """Self as loader for structure types."""
+            for type in ('WMS1',):
+                loaders[type] = self
+        def setMelSet(self,melSet):
+            """Set parent melset. Need this so that can reassign loaders later."""
+            self.melSet = melSet
+            self.loaders = {}
+            for element in melSet.elements:
+                attr = element.__dict__.get('attr',None)
+                if attr: self.loaders[attr] = element
+        def loadData(self,record,ins,type,size,readId):
+            if type == 'WMS1':
+                firstWms1 = record.__getattribute__('soundMod1Shoot3D')
+                if not firstWms1:
+                    element = self.loaders['soundMod1Shoot3D']
+                else:
+                    element = self.loaders['soundMod1ShootDist']
+            element.loadData(record,ins,type,size,readId)
 
     melSet = MelSet(
         MelString('EDID','eid'),
@@ -4696,8 +4753,14 @@ class MreWeap(MelRecord):
         MelFid('UNAM','idle'),
         MelFid('NAM9','equip'),
         MelFid('NAM8','unequip'),
+
+        MelFid('WMS1','soundMod1Shoot3D'),
+        MelFid('WMS1','soundMod1ShootDist'),
+        MelFid('WMS2','soundMod1Shoot2D'),
+
+
         MelStruct('DATA','2IfHB','value','health','weight','damage','clipsize'),
-        MelWeapDnam('DNAM','Iff4B5fI4BffII11fIIffIfff4s3I3fIIBB2s4s6fI',
+        MelWeapDnam('DNAM','Iff4B5fI4BffII11fIIffIfff f3I3fIIsB2s6fI',
                     'animationType','animationMultiplier','reach',(_dflags1,'dnamFlags1',0L),
                     'gripAnimation','ammoUse','reloadAnimation','minSpread','spread',
                     'unknown','sightFov','unknown2',(FID,'projectile',0L),
@@ -4712,9 +4775,11 @@ class MreWeap(MelRecord):
                     'regenRate','killImpulse','valueBMod1','valueBMod2','valueBMod3','impulseDist','skillReq'
                     ),
         MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',0L)),
-        MelStruct('VATS','IfffBB2s','vatsEffect','vatsSkill','vatsDamMult','vatsAp','vatsSilent','vatsModReqiured','unused1'),
+        MelWeapVats('VATS','IfffBB2s','vatsEffect','vatsSkill','vatsDamMult','vatsAp','vatsSilent','vatsModReqiured','unused1'),
         MelBase('VNAM','_vnam','sountLevel'),
+        MelWeapDistributor(),
         )
+    melSet.elements[-1].setMelSet(melSet)
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
