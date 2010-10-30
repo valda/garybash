@@ -437,6 +437,9 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (117, 'GetMajorCrimeCount', 0, 0, 0, 0),
     (415, 'Exists', 2, 0, 0, 0),
     (612, 'PlayerInRegion', 2, 0, 0, 0),
+    (471, 'GetDestructionStage', 0, 0, 0, 0),
+    (601, 'GetForceHitReaction', 0, 0, 0, 0),
+    (460, 'GetActorFactionPlayerEnemy', 0, 0, 0, 0),
 
     # extended by FOSE
     # (1024, 'GetFOSEVersion', 0, 0, 0, 0),

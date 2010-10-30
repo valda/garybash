@@ -3303,6 +3303,7 @@ class MreLscr(MelRecord):
         MelString('ICON','iconPath'),
         MelString('DESC','text'),
         MelStructs('LNAM','2I2h','Locations',(FID,'direct'),(FID,'indirect'),'gridy','gridx'),
+        MelFid('WMI1','loadScreenType'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -4245,16 +4246,19 @@ class MreRegn(MelRecord):
         MelGroups('entries',
             MelStruct('RDAT', 'I2B2s','entryType', (_flags,'flags'), 'priority', ('unused1',null2)), ####flags actually an enum...
             MelRegnStructA('RDOT', 'IH2sf4B2H4s4f3H2s4s', 'objects', (FID,'objectId'), 'parentIndex',
-            ('unused1',null2), 'density', 'clustering', 'minSlope', 'maxSlope',
-            (obflags, 'flags'), 'radiusWRTParent', 'radius', ('unk1',null4),
-            'maxHeight', 'sink', 'sinkVar', 'sizeVar', 'angleVarX',
-            'angleVarY',  'angleVarZ', ('unused2',null2), ('unk2',null4)),
+                ('unused1',null2), 'density', 'clustering', 'minSlope', 'maxSlope',
+                (obflags, 'flags'), 'radiusWRTParent', 'radius', ('unk1',null4),
+                'maxHeight', 'sink', 'sinkVar', 'sizeVar', 'angleVarX',
+                'angleVarY',  'angleVarZ', ('unused2',null2), ('unk2',null4)),
             MelRegnString('RDMP', 'mapName'),
-            #MelRegnString('ICON', 'iconPath'),  ####Obsolete? Only one record in FalloutNV.esm
-            MelRegnStructA('RDGS', 'I4s', 'grasses', (FID,'grass'), ('unk1',null4)),
-            MelRegnOptStruct('RDMD', 'I', ('musicType',None)),
+            #MelRegnStructA('RDGS', 'I4s', 'grasses', (FID,'grass'), ('unk1',null4)),
+            #MelRegnOptStruct('RDMD', 'I', ('musicType',None)),
+            MelFid('RDMO','music'),
+            MelFid('RDSI','incidentalMediaSet'),
+            MelFids('RDSB','battleMediaSets'),
             MelRegnStructA('RDSD', '3I', 'sounds', (FID, 'sound'), (sdflags, 'flags'), 'chance'),
-            MelRegnStructA('RDWT', '3I', 'weather', (FID, 'weather', None), 'chance', (FID, 'global', None))),
+            MelRegnStructA('RDWT', '3I', 'weather', (FID, 'weather', None), 'chance', (FID, 'global', None)),
+            MelFidList('RDID','imposters')),
     )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -4824,6 +4828,8 @@ class MreWthr(MelRecord):
         MelFid("\x01IAD", 'dayImageSpaceModifier'),
         MelFid("\x02IAD", 'sunsetImageSpaceModifier'),
         MelFid("\x03IAD", 'nightImageSpaceModifier'),
+        MelFid("\x04IAD", 'unknown1ImageSpaceModifier'),
+        MelFid("\x05IAD", 'unknown2ImageSpaceModifier'),
         MelString('DNAM','upperLayer'),
         MelString('CNAM','lowerLayer'),
         MelString('ANAM','layer2'),
@@ -4831,23 +4837,6 @@ class MreWthr(MelRecord):
         MelModel(),
         MelBase('LNAM','unknown1'),
         MelStruct('ONAM','4B','cloudSpeed0','cloudSpeed1','cloudSpeed3','cloudSpeed4'),
-        # 0006A076..MegatonFalloutDecay..WTHR.PNAM..64..
-        # \xb5\xb1\x84\x00
-        # \xd1\xec\xdd\x00
-        # tws\x00
-        # \x16 !\x00
-        # \x9e\xa5\x81\x00
-        # \xa3\xbd\xaa\x00
-        # v\x83w\x00
-        # \x1b,)\x00
-        # \x00\x00\x00\x00
-        # \x00\x00\x00\x00
-        # \x95wY\x00
-        # \x00\x00\x00\x00
-        # \x9b\x9by\x00
-        # \xc7\xda\xcf\x00
-        # tvv\x00
-        # \x14\x1d\x1d\x00
         MelBase('PNAM','_pnam'), #--RGB(3Bs) * 16?
         MelStructA('NAM0','3Bs3Bs3Bs3Bs','colors',
                    'riseRed','riseGreen','riseBlue',('unused1',null1),
@@ -4856,13 +4845,6 @@ class MreWthr(MelRecord):
                    'nightRed','nightGreen','nightBlue',('unused4',null1),
                    ),
         MelStruct('FNAM','6f','fogDayNear','fogDayFar','fogNightNear','fogNightFar','fogDayPower','fogNightPower'),
-        # MelStruct('HNAM','14f',
-        #     'eyeAdaptSpeed', 'blurRadius', 'blurPasses', 'emissiveMult',
-        #     'targetLum', 'upperLumClamp', 'brightScale', 'brightClamp',
-        #     'lumRampNoTex', 'lumRampMin', 'lumRampMax', 'sunlightDimmer',
-        #     'grassDimmer', 'treeDimmer'),
-        # 0006A076..MegatonFalloutDecay..WTHR.INAM..304..
-        # \x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
         MelBase('INAM','_inam'), #--Should be a struct. Maybe later.
         MelStruct('DATA','15B',
             'windSpeed','lowerCloudSpeed','upperCloudSpeed','transDelta',
@@ -5204,6 +5186,22 @@ class MreProj(MelRecord):
                                     'superSonic',
                                     'pinsLimbs',
                                     'passThroughSmallTransparent'))
+    class MelProjData(MelStruct):
+        """Handle older trucated DATA for PROJ subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 84:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 68:
+                unpacked = ins.unpack('HHfffIIfffIIfffIII',size,readId)
+            else:
+                raise "Unexpected size encountered for PROJ:DATA subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -5212,33 +5210,16 @@ class MreProj(MelRecord):
         MelString('FULL','full'),
         MelModel(),
         MelDestructable(),
-        MelStruct('DATA','HHfffIIfffIIfffIII',(_flags,'flags'),'type',
+        MelProjData('DATA','HHfffIIfffIIfffIII ffff',(_flags,'flags'),'type',
                   ('gravity',0.00000),('speed',10000.00000),('range',10000.00000),
                   (FID,'light',0),(FID,'muzzleFlash',0),('tracerChance',0.00000),
                   ('explosionAltTrigerProximity',0.00000),('explosionAltTrigerTimer',0.00000),
                   (FID,'explosion',0),(FID,'sound',0),('muzzleFlashDuration',0.00000),
                   ('fadeDuration',0.00000),('impactForce',0.00000),
-                  (FID,'soundCountDown',0),(FID,'soundDisable',0),(FID,'defaultWeaponSource',0.00000)),
+                  (FID,'soundCountDown',0),(FID,'soundDisable',0),(FID,'defaultWeaponSource',0),
+                  ('rotationX',0.00000),('rotationY',0.00000),('rotationZ',0.00000),
+                  ('bouncyMult',0.00000)),
         MelString('NAM1','muzzleFlashPath'),
-        ## Loading: 00014B0F..BeamLaserProjectile..PROJ.NAM2..72..
-        # \xf9\xf7\x0ff
-        # \x84\xe6\x121
-        # yw\x0ff
-        # \x89\xe6\x121
-        # st\x10t
-        # \xb3\xe1\xc9m
-        # \xf3\xeb\x0cf
-        # \xcbno\xfd
-        # sk\x0cf
-        # \xd0no\xfd
-        # st\x10t
-        # \xb3\xe1\xc9m
-        # \xf4\xec\tf
-        # #\x7f\xec)
-        # tl\tf
-        # (\x7f\xec)
-        # st\x10t
-        # \xb3\xe1\xc9m
         MelBase('NAM2','_nam2'), #--Should be a struct. Maybe later.
         MelStruct('VNAM','I','soundLevel'),
         )
@@ -5360,6 +5341,8 @@ class MreImad(MelRecord):
         MelBase('\x14IAD','_14iad_p'),
         MelBase('uIAD','_uiad_p'),
         MelBase('TIAD','tiad_p'),
+        MelFid('RDSD','soundIntro'),
+        MelFid('RDSI','soundOutro'),
     )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -5547,6 +5530,18 @@ class MreEczn(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreLsct(MelRecord):
+    """Load screen tip."""
+    classType = 'LSCT'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('DATA','I 4IfI3fI20s I3f4sI','type','data1X','data1Y','data1Width','data1Height','data1Orientation',
+            'data1Font','data1ColorR','data1ColorG','data1ColorB','data1Align','unknown1',
+            'data2Font','data2ColorR','data2ColorG','data2ColorB','unknown2','stats'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5556,7 +5551,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn))
+    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreLsct, ))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
