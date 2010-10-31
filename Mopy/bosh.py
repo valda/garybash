@@ -5503,6 +5503,137 @@ class MreEczn(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreImod(MelRecord):
+    """Item mod."""
+    classType = 'IMOD'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
+        MelFid('SCRI','script'),
+        MelString('DESC','description'),
+        MelDestructable(),
+        MelFid('YNAM','soundPickUp'),
+        MelFid('ZNAM','soundDrop'),
+        MelStruct('DATA','If','value','weight'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreRepu(MelRecord):
+    """Reputation."""
+    classType = 'REPU'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
+        MelStruct('DATA','I','value'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreRcpe(MelRecord):
+    """Recipe."""
+    classType = 'RCPE'
+    class MelRcpeDistributor(MelNull):
+        def __init__(self):
+            self._debug = False
+        def getLoaders(self,loaders):
+            """Self as loader for structure types."""
+            for type in ('RCQY',):
+                loaders[type] = self
+        def setMelSet(self,melSet):
+            """Set parent melset. Need this so that can reassign loaders later."""
+            self.melSet = melSet
+            self.loaders = {}
+            for element in melSet.elements:
+                attr = element.__dict__.get('attr',None)
+                if attr: self.loaders[attr] = element
+        def loadData(self,record,ins,type,size,readId):
+            if type in ('RCQY',):
+                outputs = record.__getattribute__('outputs')
+                if outputs:
+                    element = self.loaders['outputs']
+                else:
+                    element = self.loaders['ingredients']
+            element.loadData(record,ins,type,size,readId)
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelConditions(),
+        MelStruct('DATA','4I','skill','level',(FID,'category'),(FID,'subCategory')),
+        MelGroups('ingredients',
+            MelFid('RCIL','item'),
+            MelStruct('RCQY','I','quantity'),
+            ),
+        MelGroups('outputs',
+            MelFid('RCOD','item'),
+            MelStruct('RCQY','I','quantity'),
+            ),
+        MelRcpeDistributor(),
+        )
+    melSet.elements[-1].setMelSet(melSet)
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreRcct(MelRecord):
+    """Recipe Category."""
+    classType = 'RCCT'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelStruct('DATA','=B','flags'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreChip(MelRecord):
+    """Casino Chip."""
+    classType = 'CHIP'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
+        MelDestructable(),
+        MelFid('YNAM','soundPickUp'),
+        MelFid('ZNAM','soundDrop'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreCsno(MelRecord):
+    """Casino."""
+    classType = 'CSNO'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelStruct('DATA','2f9I2II','decksPercentBeforeShuffle','BlackjackPayoutRatio',
+            'slotReel0','slotReel1','slotReel2','slotReel3','slotReel4','slotReel5','slotReel6',
+            'numberOfDecks','maxWinnings',(FID,'currency'),(FID,'casinoWinningQuest'),'flags'),
+        MelGroups('chipModels',
+            MelString('MODL','model')),
+        MelString('MOD2','slotMachineModel'),
+        MelString('MOD3','blackjackTableModel'),
+        MelString('MOD4','rouletteTableModel'),
+        MelGroups('slotReelTextures',
+            MelString('ICON','texture')),
+        MelGroups('blackjackDecks',
+            MelString('ICO2','texture')),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 class MreLsct(MelRecord):
     """Load screen tip."""
     classType = 'LSCT'
@@ -5511,6 +5642,48 @@ class MreLsct(MelRecord):
         MelStruct('DATA','I 4IfI3fI20s I3f4sI','type','data1X','data1Y','data1Width','data1Height','data1Orientation',
             'data1Font','data1ColorR','data1ColorG','data1ColorB','data1Align','unknown1',
             'data2Font','data2ColorR','data2ColorG','data2ColorB','unknown2','stats'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreCcrd(MelRecord):
+    """Caravan Card."""
+    classType = 'CCRD'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
+        MelFid('SCRI','script'),
+        MelFid('YNAM','soundPickUp'),
+        MelFid('ZNAM','soundDrop'),
+        MelString('TX00','textureFace'),
+        MelString('TX01','textureBack'),
+        MelStructs('INTV','I','card'),
+        MelStruct('DATA','I','value'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreCmny(MelRecord):
+    """Caravan Money."""
+    classType = 'CMNY'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
+        MelFid('YNAM','soundPickUp'),
+        MelFid('ZNAM','soundDrop'),
+        MelStruct('DATA','I','absoluteValue'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -5524,7 +5697,9 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreLsct, ))
+    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn,
+    MreImod, MreRepu, MreRcpe, MreRcct, MreChip, MreCsno, MreLsct, 
+    MreCcrd, MreCmny))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
@@ -13969,7 +14144,8 @@ class FullNames:
     defaultTypes = set((
         'ALCH', 'AMMO', 'APPA', 'ARMO', 'BOOK', 'CLAS', 'CLOT', 'CONT', 'CREA', 'DOOR',
         'EYES', 'FACT', 'FLOR', 'HAIR', 'INGR', 'KEYM', 'LIGH', 'MISC', 'NOTE', 'NPC_',
-        'RACE', 'SPEL', 'TERM', 'WEAP',))
+        'RACE', 'SPEL', 'TERM', 'WEAP', 'CMNY', 'CCRD', 'IMOD', 'REPU', 'RCPE', 'RCCT',
+        'CHIP', 'CSNO'))
     hasShortNameTypes = set((
         'AMMO', 'AVIF', ))
 
@@ -16806,10 +16982,16 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('model',)
         for recClass in (MreLigh,):
             recAttrs_class[recClass] = ('iconPath','model')
-        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreMisc, MreSgst, MreSlgm, MreTree):
+        for recClass in (MreRepu):
+            recAttrs_class[recClass] = ('largeIconPath','smallIconPath')
+        for recClass in (MreCsno):
+            recAttrs_class[recClass] = ('chipModels','slotMachineModel','blackjackTableModel','rouletteTableModel','slotReelTextures','blackjackDecks')
+        for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreMisc, MreSgst, MreSlgm, MreTree, MreCmny, MreImod, MreChip):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model')
         for recClass in (MreNote,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','texture')
+        for recClass in (MreCcrd,):
+            recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','textureFace','textureBack')
         for recClass in (MreWeap,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel','animationType','gripAnimation','reloadAnimation')
         for recClass in (MreArmo, MreClot):
@@ -16833,7 +17015,7 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreProj,):
             recAttrs_class[recClass] = ('model','light','muzzleFlash','explosion','muzzleFlashDuration','fadeDuration','muzzleFlashPath')
         #--Needs Longs
-        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL'))
+        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL','CMNY','CCRD','IMOD','REPU'))
 
     def initData(self,progress):
         """Get graphics from source files."""
@@ -17783,9 +17965,9 @@ class ImportScripts(ImportPatcher):
         self.isActive = len(self.sourceMods) != 0
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
-        for recClass in (MreWeap,MreActi,MreAlch,MreArmo,MreBook,MreCont,MreCrea,MreDoor,MreFlor,MreFurn,MreIngr,MreKeym,MreLigh,MreMisc,MreNpc,MreQust,MreTerm):
+        for recClass in (MreWeap,MreActi,MreAlch,MreArmo,MreBook,MreCont,MreCrea,MreDoor,MreFlor,MreFurn,MreIngr,MreKeym,MreLigh,MreMisc,MreNpc,MreQust,MreTerm,MreCcrd):
             recAttrs_class[recClass] = ('script',)
-        self.longTypes = set(('WEAP','ACTI','ALCH','ARMO','BOOK','CONT','CREA','DOOR','FLOR','FURN','INGR','KEYM','LIGH','MISC','NPC_','QUST','TERM'))
+        self.longTypes = set(('WEAP','ACTI','ALCH','ARMO','BOOK','CONT','CREA','DOOR','FLOR','FURN','INGR','KEYM','LIGH','MISC','NPC_','QUST','TERM','CCRD'))
 
     def initData(self,progress):
         """Get script links from source files."""
@@ -18870,9 +19052,9 @@ class DestructablePatcher(ImportPatcher):
         self.classestemp = set()
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
-        for recClass in (MreActi,MreAlch,MreAmmo,MreBook,MreCont,MreCrea,MreDoor,MreFurn,MreKeym,MreMisc,MreNpc,MreWeap,MreProj,MreMstt,MreTerm):
+        for recClass in (MreActi,MreAlch,MreAmmo,MreBook,MreCont,MreCrea,MreDoor,MreFurn,MreKeym,MreMisc,MreNpc,MreWeap,MreProj,MreMstt,MreTerm,MreImod):
             recAttrs_class[recClass] = ('destructable',)
-        self.longTypes = set(('ACTI','ALCH','AMMO','ARMO','BOOK','CONT','CREA','DEBR','DIAL','DOOR','ENCH','EXPL','FACT','FLOR','FLST','FURN','INFO','INGR','IPDS','KEYM','LIGH','MGEF','MISC','MSTT','NOTE','NPC_','PROJ','QUST','REFR','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR','WEAP'))
+        self.longTypes = set(('ACTI','ALCH','AMMO','ARMO','BOOK','CONT','CREA','DEBR','DIAL','DOOR','ENCH','EXPL','FACT','FLOR','FLST','FURN','INFO','INGR','IPDS','KEYM','LIGH','MGEF','MISC','MSTT','NOTE','NPC_','PROJ','QUST','REFR','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR','WEAP','IMOD','CHIP'))
 
     def initData(self,progress):
         """Get graphics from source files."""
@@ -22648,7 +22830,7 @@ class ContentsChecker(SpecialPatcher,Patcher):
             'LVLC':'LVLC,CREA,'.split(','),
             'LVLN':'LVLN,NPC_,'.split(','),
             #--LVLI will also be applied for containers.
-            'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP,NOTE,MSTT,STAT'.split(','),
+            'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP,NOTE,MSTT,STAT,CMNY,CCRD,IMOD'.split(','),
             }
         self.contType_entryTypes['CONT'] = self.contType_entryTypes['LVLI']
         self.contType_entryTypes['CREA'] = self.contType_entryTypes['LVLI']
