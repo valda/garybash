@@ -5267,7 +5267,7 @@ Pack to Archive
 === basher.py, 7129
 Pack %s to Archive
 >>>>
-%s をアーカイブに圧縮
+
 === basher.py, 7136
 %s is not a valid archive name
 >>>>
