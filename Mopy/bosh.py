@@ -4675,29 +4675,6 @@ class MreWeap(MelRecord):
                 if callable(action): value = action(value)
                 setter(attr,value)
             if self._debug: print unpacked
-    class MelWeapDistributor(MelNull):
-        def __init__(self):
-            self._debug = False
-        def getLoaders(self,loaders):
-            """Self as loader for structure types."""
-            for type in ('WMS1',):
-                loaders[type] = self
-        def setMelSet(self,melSet):
-            """Set parent melset. Need this so that can reassign loaders later."""
-            self.melSet = melSet
-            self.loaders = {}
-            for element in melSet.elements:
-                attr = element.__dict__.get('attr',None)
-                if attr: self.loaders[attr] = element
-        def loadData(self,record,ins,type,size,readId):
-            if type == 'WMS1':
-                firstWms1 = record.__getattribute__('soundMod1Shoot3D')
-                if not firstWms1:
-                    element = self.loaders['soundMod1Shoot3D']
-                else:
-                    element = self.loaders['soundMod1ShootDist']
-            element.loadData(record,ins,type,size,readId)
-
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -4758,10 +4735,8 @@ class MreWeap(MelRecord):
         MelFid('NAM9','equip'),
         MelFid('NAM8','unequip'),
 
-        MelFid('WMS1','soundMod1Shoot3D'),
-        MelFid('WMS1','soundMod1ShootDist'),
+        MelFids('WMS1','soundMod1Shoot3Ds'),
         MelFid('WMS2','soundMod1Shoot2D'),
-
 
         MelStruct('DATA','2IfHB','value','health','weight','damage','clipsize'),
         MelWeapDnam('DNAM','Iff4B5fI4BffII11fIIffIfff f3I3fIIsB2s6fI',
@@ -4775,15 +4750,13 @@ class MreWeap(MelRecord):
                     ('resistType',0xFFFFFFFF),'sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
                     # NV additions
                     'unknown3','effectMod1','effectMod2','effectMod3','valueAMod1','valueAMod2','valueAMod3',
-                    'powerAttackAnimation','strengthReq','unknown4','reloadAnimationMod','unknown5','unknown6',
+                    'powerAttackAnimation','strengthReq',('unknown4',null1),'reloadAnimationMod',('unknown5',null2),
                     'regenRate','killImpulse','valueBMod1','valueBMod2','valueBMod3','impulseDist','skillReq'
                     ),
         MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',0L)),
-        MelWeapVats('VATS','IfffBB2s','vatsEffect','vatsSkill','vatsDamMult','vatsAp','vatsSilent','vatsModReqiured','unused1'),
+        MelWeapVats('VATS','I3fBB2s','vatsEffect','vatsSkill','vatsDamMult','vatsAp','vatsSilent','vatsModReqiured',('unused1',null2)),
         MelBase('VNAM','_vnam','sountLevel'),
-        MelWeapDistributor(),
         )
-    melSet.elements[-1].setMelSet(melSet)
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
@@ -20996,71 +20969,6 @@ class NamesTweak_SortInventory(MultiTweakItem):
         for srcMod in modInfos.getOrdered(count.keys()):
             log('  * %s: %d' % (srcMod.s,count[srcMod]))
 
-class NamesTweak_AmmoWeight(MultiTweakItem):
-    #--Config Phase -----------------------------------------------------------
-    def __init__(self):
-        MultiTweakItem.__init__(self,False,_("Append Ammo Weight"),
-            _("Append ammo weight of FWE to tail of the ammo name."),
-            'AmmoWeight',
-            (_('BB (WG 0.01)'), ' (WG %s.%s)'),
-            (_('BB (0.01)'), ' (%s.%s)'),
-            )
-
-    #--Config Phase -----------------------------------------------------------
-    #--Patch Phase ------------------------------------------------------------
-    def getReadClasses(self):
-        """Returns load factory classes needed for reading."""
-        return (MreAmmo,MreFlst)
-
-    def getWriteClasses(self):
-        """Returns load factory classes needed for writing."""
-        return (MreAmmo,MreFlst)
-
-    def scanModFile(self,modFile,progress,patchFile):
-        """Scans specified mod file to extract info. May add record to patch mod,
-        but won't alter it."""
-        mapper = modFile.getLongMapper()
-        for blockType in ('AMMO','FLST'):
-            modBlock = getattr(modFile,blockType)
-            patchBlock = getattr(patchFile,blockType)
-            id_records = patchBlock.id_records
-            for record in modBlock.getActiveRecords():
-                if mapper(record.fid) not in id_records:
-                    record = record.getTypeCopy(mapper)
-                    patchBlock.setRecord(record)
-
-    def buildPatch(self,log,progress,patchFile):
-        """Edits patch file as desired. Will write to log."""
-        count = {}
-        format = self.choiceValues[self.chosen][0]
-        keep = patchFile.getKeeper()
-        weights = {}
-        weightRe = re.compile(r"^(.*)( \(WG \d+\.\d+\))$")
-        listEidRe = re.compile(r"^AmmoWeight(\d)(\d{2})List$")
-        for record in patchFile.FLST.records:
-            if record.eid:
-                m = listEidRe.match(record.eid)
-                if m:
-                    weight = format % (m.group(1), m.group(2))
-                    for fid in record.fids:
-                        weights[fid] = weight
-        for record in patchFile.AMMO.records:
-            if not record.full: continue
-            weight = weights.get(record.fid)
-            if weight:
-                m = weightRe.match(record.full)
-                if m:
-                    record.full = m.group(1) + weight
-                else:
-                    record.full = record.full + weight
-                keep(record.fid)
-                srcMod = record.fid[0]
-                count[srcMod] = count.get(srcMod,0) + 1
-        #--Log
-        log(_('* %s: %d') % (self.label,sum(count.values())))
-        for srcMod in modInfos.getOrdered(count.keys()):
-            log('  * %s: %d' % (srcMod.s,count[srcMod]))
-
 #------------------------------------------------------------------------------
 class NamesTweaker(MultiTweaker):
     """Tweaks record full names in various ways."""
@@ -21091,7 +20999,6 @@ class NamesTweaker(MultiTweaker):
         # NamesTweak_Spells(),
         NamesTweak_Weapons(),
         #NamesTweak_Dwarven(),
-        NamesTweak_AmmoWeight(),
         ],key=lambda a: a.label.lower())
     tweaks.insert(0,NamesTweak_BodyTags())
     tweaks.append(NamesTweak_SortInventory())
