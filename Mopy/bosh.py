@@ -5028,27 +5028,8 @@ class MreProj(MelRecord):
                   ('explosionAltTrigerProximity',0.00000),('explosionAltTrigerTimer',0.00000),
                   (FID,'explosion',0),(FID,'sound',0),('muzzleFlashDuration',0.00000),
                   ('fadeDuration',0.00000),('impactForce',0.00000),
-                  (FID,'soundCountDown',0),(FID,'soundDisable',0),(FID,'defaultWeaponSource',0.00000)),
+                  (FID,'soundCountDown',0),(FID,'soundDisable',0),(FID,'defaultWeaponSource',0)),
         MelString('NAM1','muzzleFlashPath'),
-        ## Loading: 00014B0F..BeamLaserProjectile..PROJ.NAM2..72..
-        # \xf9\xf7\x0ff
-        # \x84\xe6\x121
-        # yw\x0ff
-        # \x89\xe6\x121
-        # st\x10t
-        # \xb3\xe1\xc9m
-        # \xf3\xeb\x0cf
-        # \xcbno\xfd
-        # sk\x0cf
-        # \xd0no\xfd
-        # st\x10t
-        # \xb3\xe1\xc9m
-        # \xf4\xec\tf
-        # #\x7f\xec)
-        # tl\tf
-        # (\x7f\xec)
-        # st\x10t
-        # \xb3\xe1\xc9m
         MelBase('NAM2','_nam2'), #--Should be a struct. Maybe later.
         MelStruct('VNAM','I','soundLevel'),
         )
