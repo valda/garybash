@@ -8398,9 +8398,9 @@ class BsaFile:
             ('Fallout - Meshes.bsa',1138575220),
             ('Fallout - Misc.bsa',1139433736),
             ('Fallout - Sounds.bsa',1138660560),
-            ('Fallout - Textures - Compressed.bsa',1138162634),
-            ('Fallout - Voices1.bsa',1138162934),
-            ('Fallout - Voices2.bsa',1138166742),
+            ('Fallout - Textures.bsa',1138162634),
+            ('Fallout - Textures2.bsa',1138162934),
+            ('Fallout - Voices1.bsa',1138166742),
             )
         for bsaFile,mtime in bsaTimes:
             dirs['mods'].join(bsaFile).mtime = mtime
@@ -8769,10 +8769,16 @@ class FalloutIni(IniFile):
 #--------------------------------------------------------------------------------
 class FalloutPrefsIni(FalloutIni):
     """FalloutPrefs.ini file."""
-
     def __init__(self):
         """Initialize."""
         IniFile.__init__(self,dirs['saveBase'].join('FalloutPrefs.ini'),'General')
+
+#--------------------------------------------------------------------------------
+class FalloutDefaultIni(FalloutIni):
+    """Fallout_default.ini file."""
+    def __init__(self):
+        """Initialize."""
+        IniFile.__init__(self,dirs['app'].join('Fallout_default.ini'),'General')
 
 #------------------------------------------------------------------------------
 class PluginsFullError(BoltError):
