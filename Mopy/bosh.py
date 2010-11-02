@@ -17025,9 +17025,9 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('model',)
         for recClass in (MreLigh,):
             recAttrs_class[recClass] = ('iconPath','model')
-        for recClass in (MreRepu):
+        for recClass in (MreRepu,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath')
-        for recClass in (MreCsno):
+        for recClass in (MreCsno,):
             recAttrs_class[recClass] = ('chipModels','slotMachineModel','blackjackTableModel','rouletteTableModel','slotReelTextures','blackjackDecks')
         for recClass in (MreAlch, MreAmmo, MreAppa, MreBook, MreIngr, MreKeym, MreMisc, MreSgst, MreSlgm, MreTree, MreCmny, MreImod, MreChip):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model')
