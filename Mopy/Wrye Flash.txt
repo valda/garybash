@@ -14,8 +14,9 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
-=== 3 [10/31/2010]
-* Fixed many record definitions.
+=== 3 [11/03/2010]
+* Fixed/Added many record definitions.
+* Fixed/Added many condition function definitions.
 * Added NVMM launcher.
 * Remove ammo weight names tweak.
 
