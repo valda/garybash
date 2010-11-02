@@ -5646,6 +5646,94 @@ class MreLsct(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreMset(MelRecord):
+    """Media Set."""
+    classType = 'MSET'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelStruct('NAM1','I','type'),
+        MelString('NAM2','I','nam2'),
+        MelString('NAM3','I','nam3'),
+        MelString('NAM4','I','nam4'),
+        MelString('NAM5','I','nam5'),
+        MelString('NAM6','I','nam6'),
+        MelString('NAM7','I','nam7'),
+        MelStruct('NAM8','f','nam8'),
+        MelStruct('NAM9','f','nam9'),
+        MelStruct('NAM0','f','nam0'),
+        MelStruct('ANAM','f','anam'),
+        MelStruct('BNAM','f','bnam'),
+        MelStruct('CNAM','f','cnam'),
+        MelStruct('JNAM','f','jnam'),
+        MelStruct('KNAM','f','knam'),
+        MelStruct('LNAM','f','lnam'),
+        MelStruct('MNAM','f','mnam'),
+        MelStruct('NNAM','f','nnam'),
+        MelStruct('ONAM','f','onam'),
+        MelStruct('PNAM','B','enableFlags'),
+        MelStruct('DNAM','f','dnam'),
+        MelStruct('ENAM','f','enam'),
+        MelStruct('FNAM','f','fnam'),
+        MelStruct('GNAM','f','gnam'),
+        MelFid('HNAM','I','hnam'),
+        MelFid('INAM','I','inam'),
+        MelNull('DATA'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreAloc(MelRecord):
+    """Media location controller."""
+    classType = 'ALOC'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelStruct('NAM1','I','flags'),
+        MelStruct('NAM2','I','num2'),
+        MelStruct('NAM3','I','nam3'),
+        MelStruct('NAM4','f','locationDelay'),
+        MelStruct('NAM5','I','dayStart'),
+        MelStruct('NAM6','I','nightStart'),
+        MelStruct('NAM7','f','retrigerDelay'),
+        MelFids('HNAM','neutralSets'),
+        MelFids('ZNAM','allySets'),
+        MelFids('XNAM','friendSets'),
+        MelFids('YNAM','enemySets'),
+        MelFids('LNAM','locationSets'),
+        MelFids('GNAM','battleSets'),
+        MelFid('RNAM','conditionalFaction'),
+        MelStruct('FNAM','I','fnam'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreChal(MelRecord):
+    """Challenge record."""
+    classType = 'CHAL'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelFid('SCRI','script'),
+        MelString('DESC','description'),
+        MelStruct('DATA','2IB3sI2s2s4s','type','threshold','flags','unused','interval','dependOnType1','dependOnType2','dependOnType3'),
+        MelFid('SNAM','dependOnType4'),
+        MelFid('XNAM','dependOnType5'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreAmef(MelRecord):
+    """Ammo effect record."""
+    classType = 'AMEF'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelStruct('DATA','2If','type','operation','value'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 class MreCcrd(MelRecord):
     """Caravan Card."""
     classType = 'CCRD'
@@ -5688,39 +5776,44 @@ class MreCmny(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
-class MreMset(MelRecord):
-    """Media Set."""
-    classType = 'MSET'
+class MreCdck(MelRecord):
+    """Caravan deck record."""
+    classType = 'CDCK'
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FULL','full'),
-        MelStruct('NAM1','I','type'),
-        MelString('NAM2','I','nam2'),
-        MelString('NAM3','I','nam3'),
-        MelString('NAM4','I','nam4'),
-        MelString('NAM5','I','nam5'),
-        MelString('NAM6','I','nam6'),
-        MelString('NAM7','I','nam7'),
-        MelStruct('NAM8','f','nam8'),
-        MelStruct('NAM9','f','nam9'),
-        MelStruct('NAM0','f','nam0'),
-        MelStruct('ANAM','f','anam'),
-        MelStruct('BNAM','f','bnam'),
-        MelStruct('CNAM','f','cnam'),
-        MelStruct('JNAM','f','jnam'),
-        MelStruct('KNAM','f','knam'),
-        MelStruct('LNAM','f','lnam'),
-        MelStruct('MNAM','f','mnam'),
-        MelStruct('NNAM','f','nnam'),
-        MelStruct('ONAM','f','onam'),
-        MelStruct('PNAM','B','enableFlags'),
-        MelStruct('DNAM','f','dnam'),
-        MelStruct('ENAM','f','enam'),
-        MelStruct('FNAM','f','fnam'),
-        MelStruct('GNAM','f','gnam'),
-        MelFid('HNAM','I','hnam'),
-        MelFid('INAM','I','inam'),
-        MelNull('DATA'),
+        MelFids('CARD','cards'),
+        MelStruct('DATA','I','count'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreDehy(MelRecord):
+    """Dehydration stage record."""
+    classType = 'DEHY'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreHung(MelRecord):
+    """Hunger stage record."""
+    classType = 'HUNG'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreSlpd(MelRecord):
+    """Sleep deprivation stage record."""
+    classType = 'SLPD'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -5735,8 +5828,8 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
     MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn,
-    MreImod, MreRepu, MreRcpe, MreRcct, MreChip, MreCsno, MreLsct, MreMset,
-    MreCcrd, MreCmny))
+    MreImod, MreRepu, MreRcpe, MreRcct, MreChip, MreCsno, MreLsct, MreMset, MreAloc, MreChal,
+    MreAmef, MreCcrd, MreCmny, MreCdck, MreDehy, MreHung, MreSlpd))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
@@ -16227,7 +16320,10 @@ class PatchFile(ModFile):
         MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr,
         MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp, MreSkil,
         MreTxst, MreMicn, MreFlst, MreLvln, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-        MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn)
+        MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn,
+        MreImod, MreRepu, MreRcpe, MreRcct, MreChip, MreCsno, MreLsct, MreMset, MreAloc, MreChal,
+        MreAmef, MreCcrd, MreCmny, MreCdck, MreDehy, MreHung, MreSlpd,
+        )
 
     @staticmethod
     def modIsMergeable(modInfo,progress=None):
