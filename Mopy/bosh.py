@@ -5338,6 +5338,54 @@ class MreEczn(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreBptd(MelRecord):
+    """Body part data record."""
+    classType = 'BPTD'
+    _flags = Flags(0L,Flags.getNames('severable','ikData','ikBipedData','explodable','ikIsHead','ikHeadtracking','toHitChanceAbsolute'))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelModel(),
+        MelGroups('bodyParts',
+            MelString('BPTN','partName'),
+            MelString('BPNN','nodeName'),
+            MelString('BPNT','vatsTarget'),
+            MelString('BPNI','ikDataStartNode'),
+            MelStruct('BPND','f6BH2I2f3I7f2I2B2sf','damageMult',(_flags,'flagss'),'partType','healthPercent','actorValue'
+                      'toHitChance','explodableChancePercent','explodableDebrisCount',(FID,'explodableDebris'),(FID,'explodableExplosion'),
+                      'trackingMaxAngle','explodableDebrisScale','severableDebrisCount',(FID,'severableDebris'),(FID,'severableExplosion'),
+                      'severableDebrisScale','goreEffectPosTransX','goreEffectPosTransY','goreEffectPosTransZ',
+                      'goreEffectPosRotX','goreEffectPosRotY','goreEffectPosRotZ',(FID,'severableImpactDataSet'),(FID,'explodableImpactDataSet'),
+                      'severableDecalCount','explodableDecalCount',('unused',null2),'limbReplacementScale'),
+            MelString('NAM1','limbReplacementModel'),
+            MelString('NAM4','goreEffectsTargetBone'),
+            MelBase('NAM5','endMarker'),
+            ),
+        MelFid('RAGA','ragdoll'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreVtyp(MelRecord):
+    """Voice type record."""
+    classType = 'VTYP'
+    _flags = Flags(0L,Flags.getNames('allowDefaultDialog','female'))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('DNAM','B',(_flags,'flags')),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreMusc(MelRecord):
+    """Music type record."""
+    classType = 'MUSC'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FNAM','filename'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5347,7 +5395,8 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn))
+    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreBptd, MreVtyp,
+    MreMusc))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
@@ -15826,7 +15875,8 @@ class PatchFile(ModFile):
         MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr,
         MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp, MreSkil,
         MreTxst, MreMicn, MreFlst, MreLvln, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-        MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn)
+        MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreBptd, MreVtyp,
+        MreMusc)
 
     @staticmethod
     def modIsMergeable(modInfo,progress=None):
