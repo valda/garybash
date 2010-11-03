@@ -4856,8 +4856,8 @@ class MreMicn(MelRecord):
     classType = 'MICN'
     melSet = MelSet(
         MelString('EDID','eid'),
-        MelString('ICON','icon'),
-        MelBase('MICO','mico'),
+        MelString('ICON','largeIconPath'),
+        MelString('MICO','smallIconPath'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -5503,6 +5503,132 @@ class MreEczn(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreBptd(MelRecord):
+    """Body part data record."""
+    classType = 'BPTD'
+    _flags = Flags(0L,Flags.getNames('severable','ikData','ikBipedData','explodable','ikIsHead','ikHeadtracking','toHitChanceAbsolute'))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelModel(),
+        MelGroups('bodyParts',
+            MelString('BPTN','partName'),
+            MelString('BPNN','nodeName'),
+            MelString('BPNT','vatsTarget'),
+            MelString('BPNI','ikDataStartNode'),
+            MelStruct('BPND','f6BH2I2f3I7f2I2B2sf','damageMult',(_flags,'flagss'),'partType','healthPercent','actorValue'
+                      'toHitChance','explodableChancePercent','explodableDebrisCount',(FID,'explodableDebris'),(FID,'explodableExplosion'),
+                      'trackingMaxAngle','explodableDebrisScale','severableDebrisCount',(FID,'severableDebris'),(FID,'severableExplosion'),
+                      'severableDebrisScale','goreEffectPosTransX','goreEffectPosTransY','goreEffectPosTransZ',
+                      'goreEffectPosRotX','goreEffectPosRotY','goreEffectPosRotZ',(FID,'severableImpactDataSet'),(FID,'explodableImpactDataSet'),
+                      'severableDecalCount','explodableDecalCount',('unused',null2),'limbReplacementScale'),
+            MelString('NAM1','limbReplacementModel'),
+            MelString('NAM4','goreEffectsTargetBone'),
+            MelBase('NAM5','endMarker'),
+            ),
+        MelFid('RAGA','ragdoll'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreVtyp(MelRecord):
+    """Voice type record."""
+    classType = 'VTYP'
+    _flags = Flags(0L,Flags.getNames('allowDefaultDialog','female'))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('DNAM','B',(_flags,'flags')),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreMusc(MelRecord):
+    """Music type record."""
+    classType = 'MUSC'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FNAM','filename'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MrePwat(MelRecord):
+    """Placeable water record."""
+    classType = 'PWAT'
+    _flags = Flags(0L,Flags.getNames(
+        ( 0,'reflects'),
+        ( 1,'reflectsActers'),
+        ( 2,'reflectsLand'),
+        ( 3,'reflectsLODLand'),
+        ( 4,'reflectsLODBuildings'),
+        ( 5,'reflectsTrees'),
+        ( 6,'reflectsSky'),
+        ( 7,'reflectsDynamicObjects'),
+        ( 8,'reflectsDeadBodies'),
+        ( 9,'reflects2'),
+        (10,'reflects2Actors'),
+        (11,'reflects2Lands'),
+        (16,'reflects2DynamicObjects'),
+        (17,'reflects2DeadBodies'),
+        (18,'silhouetteReflections'),
+        (28,'depth'),
+        (29,'objectTextureCoordinates'),
+        (31,'noUnderwaterFog'),
+        ))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelModel(),
+        MelStruct('DNAM','2I',(_flags,'flags'),(FID,'water'))
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreAspc(MelRecord):
+    """Acoustic space record."""
+    classType = 'ASPC'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelFid('SNAM','soundLooping'),
+        MelFid('RDAT','useSoundFromRegion'),
+        MelStruct('ANAM','I','environmentType'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreHdpt(MelRecord):
+    """Head part record."""
+    classType = 'HDPT'
+    _flags = Flags(0L,Flags.getNames('playable',))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelString('FULL','full'),
+        MelModel(),
+        MelStruct('DATA','B',(_flags,'flags')),
+        MelFids('HNAM','extraParts'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreDobj(MelRecord):
+    """Default object manager record."""
+    classType = 'DOBJ'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('DATA','21I',(FID,'stimpack'),(FID,'superStimpack'),(FID,'radX'),(FID,'radAway'),
+            (FID,'morphine'),(FID,'perkParalysis'),(FID,'playerFaction'),(FID,'mysteriousStrangerNpc'),
+            (FID,'mysteriousStrangerFaction'),(FID,'defaultMusic'),(FID,'battleMusic'),(FID,'deathMusic'),
+            (FID,'successMusic'),(FID,'levelUpMusic'),(FID,'playerVoiceMale'),(FID,'playerVoiceMaleChild'),
+            (FID,'playerVoiceFemale'),(FID,'playerVoiceFemaleChild'),(FID,'eatPackageDefaultFood'),
+            (FID,'everyActorAbility'),(FID,'drugWearsOffImageSpace'),),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 class MreImod(MelRecord):
     """Item mod."""
     classType = 'IMOD'
@@ -5678,7 +5804,7 @@ class MreMset(MelRecord):
         MelStruct('GNAM','f','gnam'),
         MelFid('HNAM','I','hnam'),
         MelFid('INAM','I','inam'),
-        MelNull('DATA'),
+        MelBase('DATA','data'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -5827,7 +5953,8 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreRoad, MreScpt, MreSgst, MreSkil, MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreTes4,
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn,
+    MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreBptd, MreVtyp,
+    MreMusc, MrePwat, MreAspc, MreHdpt, MreDobj,
     MreImod, MreRepu, MreRcpe, MreRcct, MreChip, MreCsno, MreLsct, MreMset, MreAloc, MreChal,
     MreAmef, MreCcrd, MreCmny, MreCdck, MreDehy, MreHung, MreSlpd))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
@@ -16320,7 +16447,8 @@ class PatchFile(ModFile):
         MreSlgm, MreSoun, MreSpel, MreStat, MreTree, MreWatr, MreWeap, MreWthr,
         MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp, MreSkil,
         MreTxst, MreMicn, MreFlst, MreLvln, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
-        MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn,
+        MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreBptd, MreVtyp,
+        MreMusc, MrePwat, MreAspc, MreHdpt, MreDobj,
         MreImod, MreRepu, MreRcpe, MreRcct, MreChip, MreCsno, MreLsct, MreMset, MreAloc, MreChal,
         MreAmef, MreCcrd, MreCmny, MreCdck, MreDehy, MreHung, MreSlpd,
         )
@@ -17117,10 +17245,12 @@ class GraphicsPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreBsgn,MreLscr, MreClas, MreLtex, MreRegn):
             recAttrs_class[recClass] = ('iconPath',)
-        for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat, MreMstt):
+        for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat, MreMstt, MrePwat, MreAspc, MreHdpt, MreDobj):
             recAttrs_class[recClass] = ('model',)
         for recClass in (MreLigh,):
             recAttrs_class[recClass] = ('iconPath','model')
+        for recClass in (MreMicn,):
+            recAttrs_class[recClass] = ('largeIconPath','smallIconPath')
         for recClass in (MreRepu,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath')
         for recClass in (MreCsno,):
@@ -18823,8 +18953,10 @@ class SoundPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('soundLevel','sound1','sound2')
         for recClass in (MreProj,):
             recAttrs_class[recClass] = ('sound','soundCountDown','soundDisable','soundLevel')
+        for recClass in (MreAspc,):
+            recAttrs_class[recClass] = ('soundLooping','useSoundFromRegion','environmentType')
         #--Needs Longs
-        self.longTypes = set(('MGEF','ACTI','LIGH','WTHR','CONT','DOOR','EXPL','IPCT','PROJ'))
+        self.longTypes = set(('MGEF','ACTI','LIGH','WTHR','CONT','DOOR','EXPL','IPCT','PROJ','ASPC','SOUN','REGN'))
 
     def initData(self,progress):
         """Get sounds from source files."""
