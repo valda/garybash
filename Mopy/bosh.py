@@ -5507,10 +5507,28 @@ class MreBptd(MelRecord):
     """Body part data record."""
     classType = 'BPTD'
     _flags = Flags(0L,Flags.getNames('severable','ikData','ikBipedData','explodable','ikIsHead','ikHeadtracking','toHitChanceAbsolute'))
+    class MelBptdGroups(MelGroups):
+        def loadData(self,record,ins,type,size,readId):
+            """Reads data from ins into record attribute."""
+            if type == self.type0:
+                target = self.getDefault()
+                record.__getattribute__(self.attr).append(target)
+            else:
+                targets = record.__getattribute__(self.attr)
+                if targets:
+                    target = targets[-1]
+                elif type == 'BPNN': # for NVVoidBodyPartData, NVraven02
+                    target = self.getDefault()
+                    record.__getattribute__(self.attr).append(target)
+            slots = []
+            for element in self.elements:
+                slots.extend(element.getSlotsUsed())
+            target.__slots__ = slots
+            self.loaders[type].loadData(target,ins,type,size,readId)
     melSet = MelSet(
         MelString('EDID','eid'),
         MelModel(),
-        MelGroups('bodyParts',
+        MelBptdGroups('bodyParts',
             MelString('BPTN','partName'),
             MelString('BPNN','nodeName'),
             MelString('BPNT','vatsTarget'),
@@ -5547,6 +5565,7 @@ class MreMusc(MelRecord):
     melSet = MelSet(
         MelString('EDID','eid'),
         MelString('FNAM','filename'),
+        MelStruct('ANAM','f','dB'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -5593,9 +5612,11 @@ class MreAspc(MelRecord):
         MelStruct('OBND','=6h',
                   'corner0X','corner0Y','corner0Z',
                   'corner1X','corner1Y','corner1Z'),
-        MelFid('SNAM','soundLooping'),
+        MelFids('SNAM','soundLooping'),
+        MelStruct('WNAM','I','wallaTrigerCount'),
         MelFid('RDAT','useSoundFromRegion'),
         MelStruct('ANAM','I','environmentType'),
+        MelStruct('INAM','I','isInterior'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -5619,12 +5640,15 @@ class MreDobj(MelRecord):
     classType = 'DOBJ'
     melSet = MelSet(
         MelString('EDID','eid'),
-        MelStruct('DATA','21I',(FID,'stimpack'),(FID,'superStimpack'),(FID,'radX'),(FID,'radAway'),
+        MelStruct('DATA','34I',(FID,'stimpack'),(FID,'superStimpack'),(FID,'radX'),(FID,'radAway'),
             (FID,'morphine'),(FID,'perkParalysis'),(FID,'playerFaction'),(FID,'mysteriousStrangerNpc'),
             (FID,'mysteriousStrangerFaction'),(FID,'defaultMusic'),(FID,'battleMusic'),(FID,'deathMusic'),
             (FID,'successMusic'),(FID,'levelUpMusic'),(FID,'playerVoiceMale'),(FID,'playerVoiceMaleChild'),
             (FID,'playerVoiceFemale'),(FID,'playerVoiceFemaleChild'),(FID,'eatPackageDefaultFood'),
-            (FID,'everyActorAbility'),(FID,'drugWearsOffImageSpace'),),
+            (FID,'everyActorAbility'),(FID,'drugWearsOffImageSpace'),(FID,'doctersBag'),(FID,'missFortuneNpc'),
+            (FID,'missFortuneFaction'),(FID,'meltdownExplosion'),(FID,'unarmedForwardPA'),(FID,'unarmedBackwardPA'),
+            (FID,'unarmedLeftPA'),(FID,'unarmedRightPA'),(FID,'unarmedCrouchPA'),(FID,'unarmedCounterPA'),
+            (FID,'spotterEffect'),(FID,'itemDetectedEffect'),(FID,'cateyeMobileEffect'),),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
