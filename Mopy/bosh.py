@@ -5464,6 +5464,91 @@ class MreDobj(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreIdlm(MelRecord):
+    """Idle marker record."""
+    classType = 'IDLM'
+    class MelIdlmIdlc(MelStruct):
+        """Handle older trucated IDLC for IDLM subrecord."""
+        def loadData(self,record,ins,type,size,readId):
+            if size == 4:
+                MelStruct.loadData(self,record,ins,type,size,readId)
+                return
+            elif size == 1:
+                unpacked = ins.unpack('B',size,readId)
+            else:
+                raise "Unexpected size encountered for TERM:DNAM subrecord: %s" % size
+            unpacked += self.defaults[len(unpacked):]
+            setter = record.__setattr__
+            for attr,value,action in zip(self.attrs,unpacked,self.actions):
+                if callable(action): value = action(value)
+                setter(attr,value)
+            if self._debug: print unpacked
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelStruct('IDLF','B','flags'),
+        MelIdlmIdlc('IDLC','B3s','animationCount',('unused',null3)),
+        MelStruct('IDLT','f','idleTimerSetting'),
+        MelFidList('IDLA','animations'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreArma(MelRecord):
+    """Armor addon record."""
+    classType = 'ARMA'
+    _flags = MelBipedFlags(0L,Flags.getNames())
+    _generalFlags = Flags(0L,Flags.getNames(
+        (5,'powerArmor'),
+        (6,'notPlayable'),
+        (7,'heavyArmor')
+    ))
+    _etype = Flags(0L,Flags.getNames(
+        'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
+        'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
+    ))
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelStruct('BMDT','=2I',(_flags,'bipedFlags',0L),(_generalFlags,'generalFlags',0L)),
+        MelModel('maleBody'),
+        MelModel('maleWorld',2),
+        MelString('ICON','maleLargeIconPath'),
+        MelString('MICO','maleSmallIconPath'),
+        MelModel('femaleBody',3),
+        MelModel('femaleWorld',4),
+        MelString('ICO2','femaleLargeIconPath'),
+        MelString('MIC2','femaleSmallIconPath'),
+        MelStruct('ETYP','I',(_etype,'etype',0L)),
+        MelStruct('DATA','IIf','value','health','weight'),
+        MelStruct('DNAM','HH','ar','flags'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
+class MreTact(MelRecord):
+    """Talking activator record."""
+    classType = 'TACT'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('OBND','=6h',
+                  'corner0X','corner0Y','corner0Z',
+                  'corner1X','corner1Y','corner1Z'),
+        MelString('FULL','full'),
+        MelModel('model'),
+        MelFid('SCRI','script'),
+        MelDestructable(),
+        MelFid('SNAM','sound'),
+        MelFid('VNAM','voiceType'),
+        )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -5474,7 +5559,7 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
     MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreBptd, MreVtyp,
-    MreMusc, MrePwat, MreAspc, MreHdpt, MreDobj))
+    MreMusc, MrePwat, MreAspc, MreHdpt, MreDobj, MreIdlm, MreArma, MreTact))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
     set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
 
@@ -13914,7 +13999,7 @@ class FullNames:
     defaultTypes = set((
         'ALCH', 'AMMO', 'APPA', 'ARMO', 'BOOK', 'CLAS', 'CLOT', 'CONT', 'CREA', 'DOOR',
         'EYES', 'FACT', 'FLOR', 'HAIR', 'INGR', 'KEYM', 'LIGH', 'MISC', 'NOTE', 'NPC_',
-        'RACE', 'SPEL', 'TERM', 'WEAP',))
+        'RACE', 'SPEL', 'TERM', 'WEAP', 'ACTI', 'TACT'))
     hasShortNameTypes = set((
         'AMMO', 'AVIF', ))
 
@@ -14188,11 +14273,12 @@ class ItemStats:
         #--AMMO: (eid, weight, value, damage, speed, epoints)
         #--ARMO: (eid, weight, value, health, strength)
         #--WEAP: (eid, weight, value, health, damage, speed, reach, epoints)
-        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
+        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'ARMA':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'weight', 'value'),
             'AMMO':('eid', 'speed',  'value', 'clipRounds'),
             'ARMO':('eid', 'weight', 'value', 'health', 'ar'),
+            'ARMA':('eid', 'weight', 'value', 'health', 'ar'),
             'BOOK':('eid', 'weight', 'value'),
             'INGR':('eid', 'weight', 'value'),
             'KEYM':('eid', 'weight', 'value'),
@@ -14209,7 +14295,7 @@ class ItemStats:
 
     def readFromMod(self,modInfo):
         """Reads stats from specified mod."""
-        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
+        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreArma,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -14222,7 +14308,7 @@ class ItemStats:
 
     def writeToMod(self,modInfo):
         """Writes stats to specified mod."""
-        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
+        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreArma,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -14241,7 +14327,7 @@ class ItemStats:
 
     def readFromText(self,textPath):
         """Reads stats from specified text file."""
-        alch, ammo, armor, books, ingredients, keys, lights, misc, weapons = [self.type_stats[type] for type in ('ALCH','AMMO','ARMO','BOOK','INGR','KEYM','LIGH','MISC','WEAP')]
+        alch, ammo, armor, armoraddon, books, ingredients, keys, lights, misc, weapons = [self.type_stats[type] for type in ('ALCH','AMMO','ARMO','ARMA','BOOK','INGR','KEYM','LIGH','MISC','WEAP')]
         aliases = self.aliases
         ins = bolt.CsvReader(textPath)
         pack,unpack = struct.pack,struct.unpack
@@ -14261,6 +14347,10 @@ class ItemStats:
                     zip((sfloat,int,int),fields[4:7]))
             elif type == 'ARMO':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
+                    #--(weight, value, health, ar)
+                    zip((sfloat,int,int,int),fields[4:8]))
+            elif type == 'ARMA':
+                armoraddon[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value, health, ar)
                     zip((sfloat,int,int,int),fields[4:8]))
             elif type == 'BOOK':
@@ -14320,6 +14410,10 @@ class ItemStats:
             ('ARMO', bolt.csvFormat('sfiii')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'))) + '"\n')),
+            #--Armor Addon
+            ('ARMA', bolt.csvFormat('sfiii')+'\n',
+                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
+                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'))) + '"\n')),
             #Books
             ('BOOK', bolt.csvFormat('sfi')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
@@ -14368,11 +14462,12 @@ class ItemPrices:
         #--AMMO: (eid, weight, value, damage, speed, epoints)
         #--ARMO: (eid, weight, value, health, strength)
         #--WEAP: (eid, weight, value, health, damage, speed, reach, epoints)
-        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
+        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'ARMA':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('value', 'eid', 'full'),
             'AMMO':('value', 'eid', 'full'),
             'ARMO':('value', 'eid', 'full'),
+            'ARMA':('value', 'eid', 'full'),
             'BOOK':('value', 'eid', 'full'),
             'INGR':('value', 'eid', 'full'),
             'KEYM':('value', 'eid', 'full'),
@@ -14384,7 +14479,7 @@ class ItemPrices:
 
     def readFromMod(self,modInfo):
         """Reads stats from specified mod."""
-        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
+        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreArma,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -14397,7 +14492,7 @@ class ItemPrices:
 
     def writeToMod(self,modInfo):
         """Writes stats to specified mod."""
-        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
+        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreArma,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -14434,6 +14529,10 @@ class ItemPrices:
                 _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
             #--Armor
             ('ARMO', bolt.csvFormat('iss')+'\n',
+                ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
+                _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
+            #--Armor Addon
+            ('ARMA', bolt.csvFormat('iss')+'\n',
                 ('"' + '","'.join((_('Mod Name'),_('ObjectIndex'),
                 _('Value'),_('Editor Id'),_('Name'))) + '"\n')),
             #Books
@@ -14475,11 +14574,12 @@ class CompleteItemData:
 
     def __init__(self,types=None,aliases=None):
         """Initialize."""
-        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
+        self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'ARMA':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
             'AMMO':('eid', 'full', 'speed',  'value', 'clipRounds', 'largeIconPath', 'smallIconPath'),
             'ARMO':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
+            'ARMA':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
             'BOOK':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
             'INGR':('eid', 'full', 'weight', 'value', 'iconPath'),
             'KEYM':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
@@ -14507,7 +14607,7 @@ class CompleteItemData:
         """Reads stats from specified mod."""
         ###Remove from Bash after CBash integrated
 ##        if(CBash == None):
-        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
+        loadFactory= LoadFactory(False,MreAlch,MreAmmo,MreArmo,MreArma,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -14529,7 +14629,7 @@ class CompleteItemData:
                         self.Scopemodel[longid] = record.scopeModel.modPath
                     if record.worldModel:
                         self.Gndmodel[longid] = record.worldModel.modPath
-                elif type in ['ARMO',]:
+                elif type in ['ARMO','ARMA']:
                     if record.maleBody:
                         self.Mmodel[longid] = record.maleBody.modPath
                     if record.maleWorld:
@@ -14570,7 +14670,7 @@ class CompleteItemData:
         """Writes stats to specified mod."""
         ###Remove from Bash after CBash integrated
 ##        if(CBash == None):
-        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
+        loadFactory= LoadFactory(True,MreAlch,MreAmmo,MreArmo,MreArma,MreBook,MreIngr,MreKeym,MreLigh,MreMisc,MreWeap)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
@@ -14608,7 +14708,7 @@ class CompleteItemData:
 
     def readFromText(self,textPath):
         """Reads stats from specified text file."""
-        alch, ammo, armor, books, ingredients, keys, lights, misc, weapons = [self.type_stats[type] for type in ('ALCH','AMMO','ARMO','BOOK','INGR','KEYM','LIGH','MISC','WEAP')]
+        alch, ammo, armor, armoraddon, books, ingredients, keys, lights, misc, weapons = [self.type_stats[type] for type in ('ALCH','AMMO','ARMO','ARMA','BOOK','INGR','KEYM','LIGH','MISC','WEAP')]
         aliases = self.aliases
         ins = bolt.CsvReader(textPath)
         pack,unpack = struct.pack,struct.unpack
@@ -14628,6 +14728,10 @@ class CompleteItemData:
                     zip((str,sfloat,int,int,str,str),fields[4:10]))
             elif type == 'ARMO':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
+                    #--(weight, value, health, ar)
+                    zip((str,sfloat,int,int,int,str,str,str,str),fields[4:13]))
+            elif type == 'ARMA':
+                armoraddon[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value, health, ar)
                     zip((str,sfloat,int,int,int,str,str,str,str),fields[4:13]))
             elif type == 'BOOK':
@@ -14689,6 +14793,12 @@ class CompleteItemData:
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),
                 _('Male Large Icon Path'),_('Male Small Icon Path'),_('Female Large Icon Path'),_('Female Small Icon Path'),
                 _('Male Model Path'),_('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
+            #--Armor Addon
+            ('ARMA', bolt.csvFormat('ssfiiissssssss')+'\n',
+                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),
+                _('Male Large Icon Path'),_('Male Small Icon Path'),_('Female Large Icon Path'),_('Female Small Icon Path'),
+                _('Male Model Path'),_('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
             #Books
             ('BOOK', bolt.csvFormat('ssfisss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
@@ -14726,7 +14836,7 @@ class CompleteItemData:
             for longid in getSortedIds(stats):
                 out.write('"%s","%s","0x%06X",' % (type,longid[0].s,longid[1]))
                 tempstats = list(stats[longid])
-                if type == 'ARMO':
+                if type in ('ARMO', 'ARMA'):
                     tempstats.append(self.Mmodel.get(longid, 'NONE'))
                     tempstats.append(self.Fmodel.get(longid, 'NONE'))
                     tempstats.append(self.MGndmodel.get(longid, 'NONE'))
@@ -15954,7 +16064,7 @@ class PatchFile(ModFile):
         MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp, MreSkil,
         MreTxst, MreMicn, MreFlst, MreLvln, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
         MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreBptd, MreVtyp,
-        MreMusc, MrePwat, MreAspc, MreHdpt, MreDobj)
+        MreMusc, MrePwat, MreAspc, MreHdpt, MreDobj, MreIdlm, MreArma, MreTact)
 
     @staticmethod
     def modIsMergeable(modInfo,progress=None):
@@ -16748,7 +16858,7 @@ class GraphicsPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreBsgn,MreLscr, MreClas, MreLtex, MreRegn):
             recAttrs_class[recClass] = ('iconPath',)
-        for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat, MreMstt, MreBptd, MreTerm, MrePwat, MreHdpt):
+        for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat, MreMstt, MreBptd, MreTerm, MrePwat, MreHdpt, MreTact):
             recAttrs_class[recClass] = ('model',)
         for recClass in (MreLigh,):
             recAttrs_class[recClass] = ('iconPath','model')
@@ -16760,7 +16870,7 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','texture')
         for recClass in (MreWeap,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel','animationType','gripAnimation','reloadAnimation')
-        for recClass in (MreArmo, MreClot):
+        for recClass in (MreArmo, MreArma, MreClot):
             recAttrs_class[recClass] = ('maleBody','maleWorld','maleLargeIconPath','maleSmallIconPath','femaleBody','femaleWorld','femaleLargeIconPath','femaleSmallIconPath','flags')
         for recClass in (MreCrea,):
             recAttrs_class[recClass] = ('model','bodyParts','nift_p','bodyPartData','impactDataset')
@@ -16781,7 +16891,7 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreProj,):
             recAttrs_class[recClass] = ('model','light','muzzleFlash','explosion','muzzleFlashDuration','fadeDuration','muzzleFlashPath')
         #--Needs Longs
-        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL'))
+        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','ARMA','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL','TACT'))
 
     def initData(self,progress):
         """Get graphics from source files."""
@@ -17731,9 +17841,9 @@ class ImportScripts(ImportPatcher):
         self.isActive = len(self.sourceMods) != 0
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
-        for recClass in (MreWeap,MreActi,MreAlch,MreArmo,MreBook,MreCont,MreCrea,MreDoor,MreFlor,MreFurn,MreIngr,MreKeym,MreLigh,MreMisc,MreNpc,MreQust,MreTerm):
+        for recClass in (MreWeap,MreActi,MreAlch,MreArmo,MreBook,MreCont,MreCrea,MreDoor,MreFlor,MreFurn,MreIngr,MreKeym,MreLigh,MreMisc,MreNpc,MreQust,MreTerm,MreTact):
             recAttrs_class[recClass] = ('script',)
-        self.longTypes = set(('WEAP','ACTI','ALCH','ARMO','BOOK','CONT','CREA','DOOR','FLOR','FURN','INGR','KEYM','LIGH','MISC','NPC_','QUST','TERM'))
+        self.longTypes = set(('WEAP','ACTI','ALCH','ARMO','BOOK','CONT','CREA','DOOR','FLOR','FURN','INGR','KEYM','LIGH','MISC','NPC_','QUST','TERM','TACT'))
 
     def initData(self,progress):
         """Get script links from source files."""
@@ -18438,7 +18548,7 @@ class SoundPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('castingSound','boltSound','hitSound','areaSound')
         for recClass in (MreActi,):
             recAttrs_class[recClass] = ('soundLooping','soundActivation')
-        for recClass in (MreLigh,):
+        for recClass in (MreLigh,MreTact):
             recAttrs_class[recClass] = ('sound',)
         for recClass in (MreWthr,):
             recAttrs_class[recClass] = ('sounds',)
@@ -18683,7 +18793,7 @@ class StatsPatcher(ImportPatcher):
         log(_("\n=== Modified Stats"))
         for type,count,counts in allCounts:
             if not count: continue
-            typeName = {'ALCH':_('alch'),'AMMO':_('Ammo'),'ARMO':_('Armor'),'INGR':_('Ingr'),'MISC':_('Misc'),'WEAP':_('Weapons'),'SLGM':_('Soulgem'),'SGST':_('Sigil Stone'),'LIGH':_('Lights'),'KEYM':_('Keys'),'CLOT':_('Clothes'),'BOOK':_('Books'),'APPA':_('Apparatus')}[type]
+            typeName = {'ALCH':_('alch'),'AMMO':_('Ammo'),'ARMO':_('Armor'),'ARMA':_('Armor Addon'),'INGR':_('Ingr'),'MISC':_('Misc'),'WEAP':_('Weapons'),'SLGM':_('Soulgem'),'SGST':_('Sigil Stone'),'LIGH':_('Lights'),'KEYM':_('Keys'),'CLOT':_('Clothes'),'BOOK':_('Books'),'APPA':_('Apparatus')}[type]
             log("* %s: %d" % (typeName,count))
             for modName in sorted(counts):
                 log("  * %s: %d" % (modName.s,counts[modName]))
@@ -18820,9 +18930,9 @@ class DestructablePatcher(ImportPatcher):
         self.classestemp = set()
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
-        for recClass in (MreActi,MreAlch,MreAmmo,MreBook,MreCont,MreCrea,MreDoor,MreFurn,MreKeym,MreMisc,MreNpc,MreWeap,MreProj,MreMstt,MreTerm):
+        for recClass in (MreActi,MreAlch,MreAmmo,MreBook,MreCont,MreCrea,MreDoor,MreFurn,MreKeym,MreMisc,MreNpc,MreWeap,MreProj,MreMstt,MreTerm,MreTact):
             recAttrs_class[recClass] = ('destructable',)
-        self.longTypes = set(('ACTI','ALCH','AMMO','ARMO','BOOK','CONT','CREA','DEBR','DIAL','DOOR','ENCH','EXPL','FACT','FLOR','FLST','FURN','INFO','INGR','IPDS','KEYM','LIGH','MGEF','MISC','MSTT','NOTE','NPC_','PROJ','QUST','REFR','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR','WEAP'))
+        self.longTypes = set(('ACTI','ALCH','AMMO','ARMO','BOOK','CONT','CREA','DEBR','DIAL','DOOR','ENCH','EXPL','FACT','FLOR','FLST','FURN','INFO','INGR','IPDS','KEYM','LIGH','MGEF','MISC','MSTT','NOTE','NPC_','PROJ','QUST','REFR','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR','WEAP','TACT'))
 
     def initData(self,progress):
         """Get graphics from source files."""
