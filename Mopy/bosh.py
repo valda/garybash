@@ -14811,9 +14811,9 @@ class ItemStats:
         self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'ARMA':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'weight', 'value'),
-            'AMMO':('eid', 'speed',  'value', 'clipRounds'),
-            'ARMO':('eid', 'weight', 'value', 'health', 'ar'),
-            'ARMA':('eid', 'weight', 'value', 'health', 'ar'),
+            'AMMO':('eid', 'weight', 'value', 'speed', 'clipRounds','projPerShot'),
+            'ARMO':('eid', 'weight', 'value', 'health', 'ar','dt'),
+            'ARMA':('eid', 'weight', 'value', 'health', 'ar','dt'),
             'BOOK':('eid', 'weight', 'value'),
             'INGR':('eid', 'weight', 'value'),
             'KEYM':('eid', 'weight', 'value'),
@@ -14824,7 +14824,10 @@ class ItemStats:
                     'minRange','maxRange','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
                     'rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult','attackShotsPerSec',
                     'reloadTime','jamTime','aimArc','rambleWavelangth','limbDmgMult','sightUsage',
-                    'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax','criticalDamage','criticalMultiplier'),
+                    'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
+                    'strengthReq','regenRate','killImpulse','impulseDist','skillReq',
+                    'criticalDamage','criticalMultiplier',
+                    'vatsSkill','vatsDamMult','vatsAp'),
             }
         self.aliases = aliases or {} #--For aliasing mod names
 
@@ -14878,16 +14881,16 @@ class ItemStats:
                     zip((sfloat,int),fields[4:6]))
             elif type == 'AMMO':
                 ammo[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(speed, value, clipRounds)
-                    zip((sfloat,int,int),fields[4:7]))
+                    #--(weight, value, speed, clipRounds, projPerShot)
+                    zip((sfloat,int,sfloat,int,int),fields[4:9]))
             elif type == 'ARMO':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, health, ar)
-                    zip((sfloat,int,int,int),fields[4:8]))
+                    #--(weight, value, health, ar, dt)
+                    zip((sfloat,int,int,int,int),fields[4:9]))
             elif type == 'ARMA':
                 armoraddon[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, health, ar)
-                    zip((sfloat,int,int,int),fields[4:8]))
+                    #--(weight, value, health, ar, dt)
+                    zip((sfloat,int,int,int,int),fields[4:9]))
             elif type == 'BOOK':
                 books[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
@@ -14915,13 +14918,19 @@ class ItemStats:
                     #-- minRange, maxRange, fireRate, overrideActionPoint, rumbleLeftMotorStrength,
                     #-- rumbleRightMotorStrength, rumbleDuration, overrideDamageToWeaponMult, attackShotsPerSec,
                     #-- reloadTime, jamTime, aimArc, rambleWavelangth, limbDmgMult, sightUsage,
-                    #-- semiAutomaticFireDelayMin, semiAutomaticFireDelayMax, criticalDamage, criticalMultiplier)
+                    #-- semiAutomaticFireDelayMin, semiAutomaticFireDelayMax,
+                    #-- strengthReq, regenRate, killImpulse, impulseDist, skillReq,
+                    #-- criticalDamage, criticalMultiplier,
+                    #-- vatsSkill, vatsDamMult, vatsAp)
                     zip((sfloat,int,int,int,int,
                          sfloat,int,sfloat,sfloat,sfloat,int,int,
                          sfloat,sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,sfloat,sfloat,sfloat,sfloat,
-                         sfloat,sfloat,int,sfloat),fields[4:35]))
+                         sfloat,sfloat,
+                         int,sfloat,sfloat,sfloat,int,
+                         int,sfloat,
+                         sfloat,sfloat,sfloat),fields[4:43]))
         ins.close()
 
     def writeToText(self,textPath):
@@ -14938,17 +14947,17 @@ class ItemStats:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'))) + '"\n')),
             #Ammo
-            ('AMMO', bolt.csvFormat('sfii')+'\n',
+            ('AMMO', bolt.csvFormat('sfifii')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Speed'),_('Value'),_('Clip Rounds'))) + '"\n')),
+                _('Editor Id'),_('Weight'),_('Value'),_('Speed'),_('Clip Rounds'),_('Proj/Shot'))) + '"\n')),
             #--Armor
-            ('ARMO', bolt.csvFormat('sfiii')+'\n',
+            ('ARMO', bolt.csvFormat('sfiiii')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'))) + '"\n')),
+                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'),_('DT'))) + '"\n')),
             #--Armor Addon
-            ('ARMA', bolt.csvFormat('sfiii')+'\n',
+            ('ARMA', bolt.csvFormat('sfiiii')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'))) + '"\n')),
+                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'),_('DT'))) + '"\n')),
             #Books
             ('BOOK', bolt.csvFormat('sfi')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
@@ -14970,14 +14979,17 @@ class ItemStats:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'))) + '"\n')),
             #--Weapons
-            ('WEAP', bolt.csvFormat('sfiiiififffiifffffffffffffffffif')+'\n',
+            ('WEAP', bolt.csvFormat('sfiiiififffiifffffffffffffffffifffiiffff')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('Damage'),_('Clip Size'),
                 _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
                 _('Min Range'), _('Max Range'), _('Fire Rate'), _('Override - Action Point'), _('Rumble - Left Motor Strength'),
                 _('rRmble - Right Motor Strength'), _('Rumble - Duration'), _('Override - Damage To Weapon Mult'), _('Attack Shots/Sec'),
                 _('Reload Time'), _('Jam Time'), _('Aim Arc'), _('Ramble - Wavelangth'), _('Limb Dmg Mult'), _('Sight Usage'),
-                _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'), _('Critical Damage'), _('Crit % Mult'))) + '"\n')),
+                _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'),
+                _('Strength Req'), _('Regen Rate'), _('Kill Impulse'), _('Impulse Dist'), _('Skill Req'),
+                _('Critical Damage'), _('Crit % Mult'),
+                _('VATS Skill'), _('VATS Dam. Mult'), _('VATS AP'))) + '"\n')),
             ):
             stats = self.type_stats[type]
             if not stats: continue
@@ -15112,9 +15124,9 @@ class CompleteItemData:
         self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'ARMA':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
-            'AMMO':('eid', 'full', 'speed',  'value', 'clipRounds', 'largeIconPath', 'smallIconPath'),
-            'ARMO':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
-            'ARMA':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
+            'AMMO':('eid', 'full', 'weight', 'value', 'speed', 'clipRounds', 'projPerShot', 'largeIconPath', 'smallIconPath'),
+            'ARMO':('eid', 'full', 'weight', 'value', 'health', 'ar', 'dt', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
+            'ARMA':('eid', 'full', 'weight', 'value', 'health', 'ar', 'dt', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
             'BOOK':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
             'INGR':('eid', 'full', 'weight', 'value', 'iconPath'),
             'KEYM':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
@@ -15125,7 +15137,10 @@ class CompleteItemData:
                     'minRange','maxRange','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
                     'rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult','attackShotsPerSec',
                     'reloadTime','jamTime','aimArc','rambleWavelangth','limbDmgMult','sightUsage',
-                    'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax','criticalDamage','criticalMultiplier',
+                    'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
+                    'strengthReq','regenRate','killImpulse','impulseDist','skillReq',
+                    'criticalDamage','criticalMultiplier',
+                    'vatsSkill','vatsDamMult','vatsAp',
                     'largeIconPath', 'smallIconPath'),
             }
         self.aliases = aliases or {} #--For aliasing mod fulls
@@ -15259,16 +15274,16 @@ class CompleteItemData:
                     zip((str,sfloat,int,str,str),fields[4:9]))
             elif type == 'AMMO':
                 ammo[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(speed, value, clipRounds)
-                    zip((str,sfloat,int,int,str,str),fields[4:10]))
+                    #--(weight, value, speed, clipRounds, projPerShot)
+                    zip((str,sfloat,int,sfloat,int,int,str,str),fields[4:12]))
             elif type == 'ARMO':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, health, ar)
-                    zip((str,sfloat,int,int,int,str,str,str,str),fields[4:13]))
+                    #--(weight, value, health, ar, dt)
+                    zip((str,sfloat,int,int,int,int,str,str,str,str),fields[4:14]))
             elif type == 'ARMA':
                 armoraddon[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(weight, value, health, ar)
-                    zip((str,sfloat,int,int,int,str,str,str,str),fields[4:13]))
+                    #--(weight, value, health, ar, dt)
+                    zip((str,sfloat,int,int,int,int,str,str,str,str),fields[4:14]))
             elif type == 'BOOK':
                 books[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value)
@@ -15296,13 +15311,20 @@ class CompleteItemData:
                     #-- minRange, maxRange, fireRate, overrideActionPoint, rumbleLeftMotorStrength,
                     #-- rumbleRightMotorStrength, rumbleDuration, overrideDamageToWeaponMult, attackShotsPerSec,
                     #-- reloadTime, jamTime, aimArc, rambleWavelangth, limbDmgMult, sightUsage,
-                    #-- semiAutomaticFireDelayMin, semiAutomaticFireDelayMax, criticalDamage, criticalMultiplier)
+                    #-- semiAutomaticFireDelayMin, semiAutomaticFireDelayMax,
+                    #-- strengthReq, regenRate, killImpulse, impulseDist, skillReq,
+                    #-- criticalDamage, criticalMultiplier,
+                    #-- vatsSkill, vatsDamMult, vatsAp)
                     zip((str,sfloat,int,int,int,int,
                          sfloat,int,sfloat,sfloat,sfloat,int,int,
                          sfloat,sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,sfloat,sfloat,sfloat,sfloat,
-                         sfloat,sfloat,int,sfloat,str,str),fields[4:38]))
+                         sfloat,sfloat,
+                         int,sfloat,sfloat,sfloat,int,
+                         int,sfloat,
+                         sfloat,sfloat,sfloat,
+                         str,str),fields[4:46]))
         ins.close()
 
     def writeToText(self,textPath):
@@ -15319,19 +15341,19 @@ class CompleteItemData:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #Ammo
-            ('AMMO', bolt.csvFormat('ssfiisss')+'\n',
+            ('AMMO', bolt.csvFormat('ssfifiisss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Speed'),_('Value'),_('Clip Rounds'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Speed'),_('Clip Rounds'),_('Proj/Shot'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #--Armor
-            ('ARMO', bolt.csvFormat('ssfiiissssssss')+'\n',
+            ('ARMO', bolt.csvFormat('ssfiiiissssssss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),_('DT'),
                 _('Male Large Icon Path'),_('Male Small Icon Path'),_('Female Large Icon Path'),_('Female Small Icon Path'),
                 _('Male Model Path'),_('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
             #--Armor Addon
-            ('ARMA', bolt.csvFormat('ssfiiissssssss')+'\n',
+            ('ARMA', bolt.csvFormat('ssfiiiissssssss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),
+                _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),_('DT'),
                 _('Male Large Icon Path'),_('Male Small Icon Path'),_('Female Large Icon Path'),_('Female Small Icon Path'),
                 _('Male Model Path'),_('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
             #Books
@@ -15355,14 +15377,17 @@ class CompleteItemData:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #--Weapons
-            ('WEAP', bolt.csvFormat('ssfiiiififffiifffffffffffffffffifssssss')+'\n',
+            ('WEAP', bolt.csvFormat('ssfiiiififffiifffffffffffffffffifffiiffffssssss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('Damage'),_('Clip Size'),
                 _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
                 _('Min Range'), _('Max Range'), _('Fire Rate'), _('Override - Action Point'), _('Rumble - Left Motor Strength'),
                 _('rRmble - Right Motor Strength'), _('Rumble - Duration'), _('Override - Damage To Weapon Mult'), _('Attack Shots/Sec'),
                 _('Reload Time'), _('Jam Time'), _('Aim Arc'), _('Ramble - Wavelangth'), _('Limb Dmg Mult'), _('Sight Usage'),
-                _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'), _('Critical Damage'), _('Crit % Mult'),
+                _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'),
+                _('Strength Req'), _('Regen Rate'), _('Kill Impulse'), _('Impulse Dist'), _('Skill Req'),
+                _('Critical Damage'), _('Crit % Mult'),
+                _('VATS Skill'), _('VATS Dam. Mult'), _('VATS AP'),
                 _('Large Icon Path'),_('Small Icon Path'),_('Model'),_('Shell Casing Model'),_('Scope Model'),_('World Model'))) + '"\n')),
             ):
             stats = self.type_stats[type]
