@@ -8251,12 +8251,12 @@ class BsaFile:
         """Reset dates of bsa files to 'correct' values."""
         #--Fix the data of a few archive files
         bsaTimes = (
-            ('Fallout - Meshes.bsa',1138575220),
-            ('Fallout - Misc.bsa',1139433736),
-            ('Fallout - Sounds.bsa',1138660560),
-            ('Fallout - Textures - Compressed.bsa',1138162634),
-            ('Fallout - Voices1.bsa',1138162934),
-            ('Fallout - Voices2.bsa',1138166742),
+            ('Fallout - MenuVoices.bsa',1138575220),
+            ('Fallout - Meshes.bsa',1139433736),
+            ('Fallout - Misc.bsa',1138660560),
+            ('Fallout - Sounds.bsa',1138162634),
+            ('Fallout - Textures.bsa',1138162934),
+            ('Fallout - Voices.bsa',1138166742),
             )
         for bsaFile,mtime in bsaTimes:
             dirs['mods'].join(bsaFile).mtime = mtime
@@ -20590,13 +20590,13 @@ class NamesTweak_Body(MultiTweakItem):
             if not record.full: continue
             if record.full[0] in '+-=()[]<>': continue
             flags = record.bipedFlags
-            if flags.head or flags.hair or flags.headband or flags.hat: type = head
-            elif flags.upperBody: type = body
+            if flags.upperBody: type = body
+            elif flags.head or flags.hair or flags.headband or flags.hat: type = head
             elif flags.leftHand or flags.rightHand: type = gloves
-            elif flags.pipboy: type = pipboy
-            elif flags.backpack: type = backpack
             elif flags.necklace or flags.eyeGlasses or flags.noseRing or flags.earrings or flags.mask or flags.choker or flags.mouthObject: type = fancy
+            elif flags.backpack: type = backpack
             elif flags.bodyAddOn1 or flags.bodyAddOn2 or flags.bodyAddOn3: type = accessory
+            elif flags.pipboy: type = pipboy
             else: continue
             if record.recType == 'ARMO':
                 if record.generalFlags.powerArmor: type += 'P'
