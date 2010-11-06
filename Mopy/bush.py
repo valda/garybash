@@ -482,13 +482,13 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (619, 'IsAlwaysHardcore', 0, 0, 0, 0),
 
     # extended by NVSE
-    # (1024, 'GetNVSEVersion', 0, 0, 0, 0),
-    # (1025, 'GetNVSERevision', 0, 0, 0, 0),
-    # (1213, 'GetNVSEBeta', 0, 0, 0, 0),
-    # (1082, 'IsKeyPressed', 1, 0, 0, 0),
-    # (1166, 'IsControlPressed', 1, 0, 0, 0),
-    # (1028, 'GetWeight', 2, 0, 0, 0),
-    # (1165, 'GetWeaponHasScope', 0, 0, 0, 0),
+    (1024, 'GetNVSEVersion', 0, 0, 0, 0),
+    (1025, 'GetNVSERevision', 0, 0, 0, 0),
+    (1213, 'GetNVSEBeta', 0, 0, 0, 0),
+    (1082, 'IsKeyPressed', 1, 0, 0, 0),
+    (1166, 'IsControlPressed', 1, 0, 0, 0),
+    (1028, 'GetWeight', 2, 0, 0, 0),
+    (1165, 'GetWeaponHasScope', 0, 0, 0, 0),
     )
 allConditions = set(entry[0] for entry in conditionFunctionData)
 fid1Conditions = set(entry[0] for entry in conditionFunctionData if entry[2] == 2)

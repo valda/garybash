@@ -422,10 +422,10 @@ class PageFinish(PageInstaller):
 # PageVersions ---------------------------------------
 #  Page for displaying what versions an installer
 #  requires/recommends and what you have installed
-#  for Fallout, FOSE, and FOGE, and Wrye Bash
+#  for Fallout, NVSE, and FOGE, and Wrye Bash
 #-----------------------------------------------------
 class PageVersions(PageInstaller):
-    def __init__(self, parent, bFoOk, foHave, foNeed, bFOSEOk, foseHave, foseNeed, bFOGEOk, fogeHave, fogeNeed, bWBOk, wbHave, wbNeed):
+    def __init__(self, parent, bFoOk, foHave, foNeed, bNVSEOk, nvseHave, nvseNeed, bFOGEOk, fogeHave, fogeNeed, bWBOk, wbHave, wbNeed):
         PageInstaller.__init__(self, parent)
 
         bmp = [wx.Bitmap(bosh.dirs['mopy'].join('images', 'x.png').s),
@@ -455,13 +455,13 @@ class PageVersions(PageInstaller):
         sizerVersions.Add(wx.StaticText(self, -1, foHave))
         sizerVersions.Add(wx.StaticBitmap(self, -1, bmp[bFoOk]))
 
-        linkFOSE = wx.HyperlinkCtrl(self, -1, 'Fallout Script Extender', 'http://fose.silverlock.org/')
-        linkFOSE.SetVisitedColour(linkFOSE.GetNormalColour())
-        linkFOSE.SetToolTip(wx.ToolTip('http://fose.silverlock.org/'))
-        sizerVersions.Add(linkFOSE)
-        sizerVersions.Add(wx.StaticText(self, -1, foseNeed))
-        sizerVersions.Add(wx.StaticText(self, -1, foseHave))
-        sizerVersions.Add(wx.StaticBitmap(self, -1, bmp[bFOSEOk]))
+        linkNVSE = wx.HyperlinkCtrl(self, -1, 'Fallout Script Extender', 'http://nvse.silverlock.org/')
+        linkNVSE.SetVisitedColour(linkNVSE.GetNormalColour())
+        linkNVSE.SetToolTip(wx.ToolTip('http://nvse.silverlock.org/'))
+        sizerVersions.Add(linkNVSE)
+        sizerVersions.Add(wx.StaticText(self, -1, nvseNeed))
+        sizerVersions.Add(wx.StaticText(self, -1, nvseHave))
+        sizerVersions.Add(wx.StaticBitmap(self, -1, bmp[bNVSEOk]))
 
         # linkFOGE = wx.HyperlinkCtrl(self, -1, 'Fallout Graphics Extender', 'http://timeslip.chorrol.com/foge.html')
         # linkFOGE.SetVisitedColour(linkFOGE.GetNormalColour())
@@ -570,7 +570,7 @@ class WryeParser(ScriptParser.Parser):
 
         #--Functions
         self.SetFunction('CompareFalloutVersion', self.fnCompareFalloutVersion, 1)
-        self.SetFunction('CompareFOSEVersion', self.fnCompareFOSEVersion, 1)
+        self.SetFunction('CompareNVSEVersion', self.fnCompareNVSEVersion, 1)
         self.SetFunction('CompareFOGEVersion', self.fnCompareFOGEVersion, 1)
         self.SetFunction('CompareWBVersion', self.fnCompareWBVersion, 1)
         self.SetFunction('DataFileExists', self.fnDataFileExists, 1)
@@ -712,8 +712,8 @@ class WryeParser(ScriptParser.Parser):
     def fnCompareFalloutVersion(self, foWant):
         ret = self._TestVersion(self._TestVersion_Want(foWant), bosh.dirs['app'].join('FalloutNV.exe'))
         return ret[0]
-    def fnCompareFOSEVersion(self, foseWant):
-        ret = self._TestVersion(self._TestVersion_Want(foseWant), bosh.dirs['app'].join('fose_loader.exe'))
+    def fnCompareNVSEVersion(self, nvseWant):
+        ret = self._TestVersion(self._TestVersion_Want(nvseWant), bosh.dirs['app'].join('nvse_loader.exe'))
         return ret[0]
     def fnCompareFOGEVersion(self, fogeWant):
         ret = self._TestVersion_FOGE(self._TestVersion_Want(fogeWant))
@@ -892,13 +892,13 @@ class WryeParser(ScriptParser.Parser):
             else:
                 temp.append(str(i.text))
         self.notes.append('- %s\n' % ' '.join(temp))
-    def kwdRequireVersions(self, fo, fose='None', foge='None', wbWant=0):
+    def kwdRequireVersions(self, fo, nvse='None', foge='None', wbWant=0):
         if self.bAuto: return
         
         foWant = self._TestVersion_Want(fo)
         if foWant == 'None': fo = 'None'
-        foseWant = self._TestVersion_Want(fose)
-        if foseWant == 'None': fose = 'None'
+        nvseWant = self._TestVersion_Want(nvse)
+        if nvseWant == 'None': nvse = 'None'
         fogeWant = self._TestVersion_Want(foge)
         if fogeWant == 'None': foge = 'None'
         wbHave = bosh.settings['bash.readme'][1]
@@ -906,19 +906,19 @@ class WryeParser(ScriptParser.Parser):
         ret = self._TestVersion(foWant, bosh.dirs['app'].join('FalloutNV.exe'))
         bFoOk = ret[0] >= 0
         foHave = ret[1]
-        ret = self._TestVersion(foseWant, bosh.dirs['app'].join('fose_loader.exe'))
-        bFOSEOk = ret[0] >= 0
-        foseHave = ret[1]
+        ret = self._TestVersion(nvseWant, bosh.dirs['app'].join('nvse_loader.exe'))
+        bNVSEOk = ret[0] >= 0
+        nvseHave = ret[1]
         ret = self._TestVersion_FOGE(fogeWant)
         bFOGEOk = ret[0] >= 0
         fogeHave = ret[1]
         bWBOk = float(wbHave) >= float(wbWant)
 
-        if not bFoOk or not bFOSEOk or not bFOGEOk:
-            self.page = PageVersions(self.parent, bFoOk, foHave, fo, bFOSEOk, foseHave, fose, bFOGEOk, fogeHave, foge, bWBOk, wbHave, wbWant)
+        if not bFoOk or not bNVSEOk or not bFOGEOk:
+            self.page = PageVersions(self.parent, bFoOk, foHave, fo, bNVSEOk, nvseHave, nvse, bFOGEOk, fogeHave, foge, bWBOk, wbHave, wbWant)
     def _TestVersion_FOGE(self, want):
-        retFOGEOld = self._TestVersion(want, bosh.dirs['mods'].join('fose', 'plugins', 'foge.dll'))
-        retFOGENew = self._TestVersion(want, bosh.dirs['mods'].join('fose', 'plugins', 'fogev2.dll'))
+        retFOGEOld = self._TestVersion(want, bosh.dirs['mods'].join('nvse', 'plugins', 'foge.dll'))
+        retFOGENew = self._TestVersion(want, bosh.dirs['mods'].join('nvse', 'plugins', 'fogev2.dll'))
         haveNew = retFOGENew[1]
         haveOld = retFOGEOld[1]
         if haveNew != 'None':

@@ -4727,7 +4727,7 @@ class MreWeap(MelRecord):
                  MelFid('WMI2','mod2'),
                  MelFid('WMI3','mod3'),
                  ),
-        MelFid('SNAM','soundGunShot3D'),
+        MelFids('SNAM','soundGunShot3D'),
         MelFid('XNAM','soundGunShot2D'),
         MelFid('NAM7','soundGunShot3DLooping'),
         MelFid('TNAM','soundMeleeSwingGunNoAmmo'),
@@ -4735,10 +4735,8 @@ class MreWeap(MelRecord):
         MelFid('UNAM','idle'),
         MelFid('NAM9','equip'),
         MelFid('NAM8','unequip'),
-
         MelFids('WMS1','soundMod1Shoot3Ds'),
         MelFid('WMS2','soundMod1Shoot2D'),
-
         MelStruct('DATA','2IfHB','value','health','weight','damage','clipsize'),
         MelWeapDnam('DNAM','Iff4B5fI4BffII11fIIffIfff f3I3fIIsB2s6fI',
                     'animationType','animationMultiplier','reach',(_dflags1,'dnamFlags1',0L),
@@ -7634,15 +7632,15 @@ class PluggyFile:
         self.path.untemp()
 
 #------------------------------------------------------------------------------
-class FoseFile:
-    """Represents a .fose cofile for saves. Used for editing masters list."""
+class NvseFile:
+    """Represents a .nvse cofile for saves. Used for editing masters list."""
     def __init__(self,path):
         self.path = path
         self.name = path.tail
         self.signature = None
         self.formatVersion = None
-        self.foseVersion = None
-        self.foseMinorVersion = None
+        self.nvseVersion = None
+        self.nvseMinorVersion = None
         self.falloutNVVersion = None
         self.plugins = None
         self.valid = False
@@ -7659,9 +7657,9 @@ class FoseFile:
         def unpack(format,size):
             return struct.unpack(format,ins.read(size))
         self.signature = ins.read(4)
-        if self.signature != 'FOSE':
-            raise FileError(self.name,'File signature != "FOSE"')
-        self.formatVersion,self.foseVersion,self.foseMinorVersion,self.falloutNVVersion, = unpack('IHHI',12)
+        if self.signature != 'NVSE':
+            raise FileError(self.name,'File signature != "NVSE"')
+        self.formatVersion,self.nvseVersion,self.nvseMinorVersion,self.falloutNVVersion, = unpack('IHHI',12)
         # if self.formatVersion < X:
         #   raise FileError(self.name,'Unsupported file version: %I' % self.formatVersion)
         #--Plugins
@@ -7693,10 +7691,10 @@ class FoseFile:
         #--Save
         def pack(format,*args):
             buff.write(struct.pack(format,*args))
-        buff.write('FOSE')
+        buff.write('NVSE')
         pack('=I',self.formatVersion)
-        pack('=H',self.foseVersion)
-        pack('=H',self.foseMinorVersion)
+        pack('=H',self.nvseVersion)
+        pack('=H',self.nvseMinorVersion)
         pack('=I',self.falloutNVVersion)
         #--Plugins
         pack('=I',len(self.plugins))
@@ -7894,13 +7892,13 @@ class SaveHeader:
             pluggy.load()
             pluggy.mapMasters(masterMap)
             pluggy.safeSave()
-        #--FOSE File?
-        fosePath = CoSaves.getPaths(path)[1]
-        if masterMap and fosePath.exists():
-            fose = FoseFile(fosePath)
-            fose.load()
-            fose.mapMasters(masterMap)
-            fose.safeSave()
+        #--NVSE File?
+        nvsePath = CoSaves.getPaths(path)[1]
+        if masterMap and nvsePath.exists():
+            nvse = NvseFile(nvsePath)
+            nvse.load()
+            nvse.mapMasters(masterMap)
+            nvse.safeSave()
 
 #------------------------------------------------------------------------------
 class BSAHeader:
@@ -8318,21 +8316,21 @@ class SaveFile:
                 else:
                     parentid = self.fids[iref]
                 log('%6d %08X %08X %6d kb' % (count,iref,parentid,cumSize/1024))
-    def logStatFose(self,log=None):
+    def logStatNvse(self,log=None):
         """Print stats to log."""
         log = log or bolt.Log()
-        foseFileName = self.fileInfo.getPath().root+'.fose'
-        foseFile = FoseFile(foseFileName)
-        foseFile.load()
+        nvseFileName = self.fileInfo.getPath().root+'.nvse'
+        nvseFile = NvseFile(nvseFileName)
+        nvseFile.load()
         #--Header
         log.setHeader(_('Header'))
         log('=' * 80)
-        log(_('  Format version:   %08X') % (foseFile.formatVersion,))
-        log(_('  FOSE version:     %u.%u') % (foseFile.foseVersion,foseFile.foseMinorVersion,))
-        log(_('  FalloutNV version: %08X') % (foseFile.falloutNVVersion,))
+        log(_('  Format version:   %08X') % (nvseFile.formatVersion,))
+        log(_('  NVSE version:     %u.%u') % (nvseFile.nvseVersion,nvseFile.nvseMinorVersion,))
+        log(_('  FalloutNV version: %08X') % (nvseFile.falloutNVVersion,))
         #--Plugins
-        if foseFile.plugins != None:
-            for (opcodeBase,chunks) in foseFile.plugins:
+        if nvseFile.plugins != None:
+            for (opcodeBase,chunks) in nvseFile.plugins:
                 log.setHeader(_('Plugin opcode=%08X chunkNum=%u') % (opcodeBase,len(chunks),))
                 log('=' * 80)
                 log(_('  Type  Ver   Size'))
@@ -8347,16 +8345,16 @@ class SaveFile:
                     ins = cStringIO.StringIO(chunkBuff)
                     def unpack(format,size):
                         return struct.unpack(format,ins.read(size))
-                    if (opcodeBase == 0x1400):  # FOSE
+                    if (opcodeBase == 0x1400):  # NVSE
                         if chunkType == 'RVTS':
-                            #--FOSE String
+                            #--NVSE String
                             modIndex,stringID,stringLength, = unpack('=BIH',7)
                             stringData = ins.read(stringLength)
                             log(_('    Mod :  %02X (%s)') % (modIndex, self.masters[modIndex].s))
                             log(_('    ID  :  %u') % stringID)
                             log(_('    Data:  %s') % stringData)
                         elif chunkType == 'RVRA':
-                            #--FOSE Array
+                            #--NVSE Array
                             modIndex,arrayID,keyType,isPacked, = unpack('=BIBB',7)
                             if modIndex == 255:
                                 log(_('    Mod :  %02X (Save File)') % (modIndex))
@@ -8632,7 +8630,7 @@ class SaveFile:
 
 #--------------------------------------------------------------------------------
 class CoSaves:
-    """Handles co-files (.pluggy, .fose) for saves."""
+    """Handles co-files (.pluggy, .nvse) for saves."""
     reSave  = re.compile(r'\.ess(f?)$',re.I)
 
     @staticmethod
@@ -8641,7 +8639,7 @@ class CoSaves:
         maSave = CoSaves.reSave.search(savePath.s)
         if maSave: savePath = savePath.root
         first = maSave and maSave.group(1) or ''
-        return tuple(savePath+ext+first for ext in  ('.pluggy','.fose'))
+        return tuple(savePath+ext+first for ext in  ('.pluggy','.nvse'))
 
     def __init__(self,savePath,saveName=None):
         """Initialize with savePath."""
@@ -8671,14 +8669,14 @@ class CoSaves:
 
     def getTags(self):
         """Returns tags expressing whether cosaves exist and are correct."""
-        cPluggy,cFose = ('','')
+        cPluggy,cNvse = ('','')
         save = self.savePath
-        pluggy,fose = self.paths
+        pluggy,nvse = self.paths
         if pluggy.exists():
             cPluggy = 'XP'[abs(pluggy.mtime - save.mtime) < 10]
-        if fose.exists():
-            cFose = 'XO'[abs(fose.mtime - save.mtime) < 10]
-        return (cFose,cPluggy)
+        if nvse.exists():
+            cNvse = 'XO'[abs(nvse.mtime - save.mtime) < 10]
+        return (cNvse,cPluggy)
 
 # File System -----------------------------------------------------------------
 #--------------------------------------------------------------------------------
@@ -10052,7 +10050,7 @@ class ResourceReplacer:
         'fonts': ['.fnt', '.tex'],
         'menus': ['.bat', '.html', '.scc', '.txt', '.xml'],
         'meshes': ['.egm', '.egt', '.fim', '.kf', '.kfm', '.nif', '.tri', '.txt'],
-        'fose':['.dll','.dlx','.txt','.mp3'],
+        'nvse':['.dll','.dlx','.txt','.mp3'],
         'shaders': ['.sdp','.fx'],
         'sound': ['.lip', '.mp3', '.wav'],
         'textures': ['.dds', '.ifl', '.psd', '.txt'],
@@ -11887,7 +11885,7 @@ class Installer(object):
     dataDirs = set(('bash patches','distantlod','docs','facegen','fonts',
         'menus','meshes','music','shaders','sound', 'textures', 'trees','video'))
     dataDirsPlus = dataDirs | docDirs | set(('streamline','_tejon','ini tweaks','scripts','pluggy'))
-    dataDirsMinus = set(('bash','fose','replacers')) #--Will be skipped even if hasExtraData == True.
+    dataDirsMinus = set(('bash','nvse','replacers')) #--Will be skipped even if hasExtraData == True.
     reDataFile = re.compile(r'(masterlist.txt|dlclist.txt|\.(esp|esm|bsa))$',re.I)
     reReadMe = re.compile(r'^([^\\]*)(read[ _]?me|lisez[ _]?moi)([^\\]*)\.(txt|rtf|htm|html|doc|odt)$',re.I)
     skipExts = set(('.dll','.dlx','.exe','.py','.pyc','.7z','.zip','.rar','.db','.ace','.tgz','.tar','.tar.gz','.omod'))

@@ -6010,7 +6010,7 @@ class File_RevertToBackup:
             dest = fileInfo.dir.join(fileName)
             backup.copyTo(dest)
             fileInfo.setmtime()
-            if fileInfo.isEss(): #--Handle CoSave (.pluggy and .fose) files.
+            if fileInfo.isEss(): #--Handle CoSave (.pluggy and .nvse) files.
                 bosh.CoSaves(backup).copy(dest)
             try:
                 self.window.data.refreshFile(fileName)
@@ -10500,30 +10500,30 @@ class Save_Stats(Link):
             progress.Destroy()
 
 #------------------------------------------------------------------------------
-class Save_StatFose(Link):
-    """Dump .fose records."""
+class Save_StatNvse(Link):
+    """Dump .nvse records."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('.fose Statistics'))
+        menuItem = wx.MenuItem(menu,self.id,_('.nvse Statistics'))
         menu.AppendItem(menuItem)
         if len(data) != 1:
             menuItem.Enable(False)
         else:
             fileName = GPath(self.data[0])
             fileInfo = self.window.data[fileName]
-            fileName = fileInfo.getPath().root+'.fose'
+            fileName = fileInfo.getPath().root+'.nvse'
             menuItem.Enable(fileName.exists())
 
     def Execute(self,event):
         fileName = GPath(self.data[0])
         fileInfo = self.window.data[fileName]
         saveFile = bosh.SaveFile(fileInfo)
-        progress = balt.Progress(_(".fose"))
+        progress = balt.Progress(_(".nvse"))
         try:
             saveFile.load(SubProgress(progress,0,0.9))
             log = bolt.LogFile(cStringIO.StringIO())
             progress(0.9,_("Calculating statistics."))
-            saveFile.logStatFose(log)
+            saveFile.logStatNvse(log)
             progress.Destroy()
             text = log.out.getvalue()
             log.out.close()
@@ -10946,9 +10946,9 @@ class Master_Disable(Link):
 #------------------------------------------------------------------------------
 class App_Button(Link):
     """Launch an application."""
-    foseButtons = []
+    nvseButtons = []
 
-    def __init__(self,exePathArgs,image,tip,foseTip=None,foseArg=None):
+    def __init__(self,exePathArgs,image,tip,nvseTip=None,nvseArg=None):
         """Initialize
         exePathArgs (string): exePath
         exePathArgs (tuple): (exePath,*exeArgs)"""
@@ -10975,10 +10975,10 @@ class App_Button(Link):
             self.appArgs = ''.join(self.exeArgs)
         else:
             self.isJava = False
-        #--FOSE stuff
-        self.foseTip = foseTip
-        self.foseArg = foseArg
-        exeFose = bosh.dirs['app'].join('fose_loader.exe')
+        #--NVSE stuff
+        self.nvseTip = nvseTip
+        self.nvseArg = nvseArg
+        exeNvse = bosh.dirs['app'].join('nvse_loader.exe')
 
     def IsPresent(self):
         if self.isJava:
@@ -10990,11 +10990,11 @@ class App_Button(Link):
         if self.IsPresent():
             self.gButton = bitmapButton(window,self.image.GetBitmap(),style=style,
                 onClick=self.Execute,tip=self.tip)
-            if self.foseArg != None:
-                App_Button.foseButtons.append(self)
-                exeFose = bosh.dirs['app'].join('fose_loader.exe')
-                if settings.get('bash.fose.on',False) and exeFose.exists():
-                    self.gButton.SetToolTip(tooltip(self.foseTip))
+            if self.nvseArg != None:
+                App_Button.nvseButtons.append(self)
+                exeNvse = bosh.dirs['app'].join('nvse_loader.exe')
+                if settings.get('bash.nvse.on',False) and exeNvse.exists():
+                    self.gButton.SetToolTip(tooltip(self.nvseTip))
             return self.gButton
         else:
             return None
@@ -11006,11 +11006,11 @@ class App_Button(Link):
             os.spawnv(os.P_NOWAIT,self.java.s,(self.java.stail,'-jar',self.jar.stail,self.appArgs))
             cwd.setcwd()
         elif self.isExe:
-            exeFose = bosh.dirs['app'].join('fose_loader.exe')
+            exeNvse = bosh.dirs['app'].join('nvse_loader.exe')
             exeArgs = self.exeArgs
-            if self.foseArg != None and settings.get('bash.fose.on',False) and exeFose.exists():
-                exePath = exeFose
-                if self.foseArg != '': exeArgs += (self.foseArg,)
+            if self.nvseArg != None and settings.get('bash.nvse.on',False) and exeNvse.exists():
+                exePath = exeNvse
+                if self.nvseArg != '': exeArgs += (self.nvseArg,)
             else:
                 exePath = self.exePath
             exeArgs = (exePath.stail,)+exeArgs
@@ -11070,11 +11070,11 @@ class App_BOSS(App_Button):
 
     def Execute(self,event,extraArgs=None):
         if self.IsPresent():
-            exeFose = bosh.dirs['app'].join('fose_loader.exe')
+            exeNvse = bosh.dirs['app'].join('nvse_loader.exe')
             exeArgs = self.exeArgs
-            if self.foseArg != None and settings.get('bash.fose.on',False) and exeFose.exists():
-                exePath = exeFose
-                if self.foseArg != '': exeArgs += (self.foseArg,)
+            if self.nvseArg != None and settings.get('bash.nvse.on',False) and exeNvse.exists():
+                exePath = exeNvse
+                if self.nvseArg != '': exeArgs += (self.nvseArg,)
             else:
                 exePath = self.exePath
             exeArgs = (exePath.stail,)+exeArgs
@@ -11137,8 +11137,8 @@ class FalloutNV_Button(App_Button):
             bashFrame.Close()
 
 #------------------------------------------------------------------------------
-class Fose_Button(Link):
-    """Fose on/off state button."""
+class Nvse_Button(Link):
+    """Nvse on/off state button."""
     def __init__(self):
         Link.__init__(self)
         self.gButton = None
@@ -11147,21 +11147,21 @@ class Fose_Button(Link):
         """Sets state related info. If newState != none, sets to new state first.
         For convenience, returns state when done."""
         if state == None: #--Default
-            state = settings.get('bash.fose.on',False)
+            state = settings.get('bash.nvse.on',False)
         elif state == -1: #--Invert
-            state = not settings.get('bash.fose.on',False)
-        settings['bash.fose.on'] = state
+            state = not settings.get('bash.nvse.on',False)
+        settings['bash.nvse.on'] = state
         image = images[('checkbox.green.off.' + bosh.inisettings['iconSize'],'checkbox.green.on.' + bosh.inisettings['iconSize'])[state]]
-        tip = (_("FOSE Disabled"),_("FOSE Enabled"))[state]
+        tip = (_("NVSE Disabled"),_("NVSE Enabled"))[state]
         self.gButton.SetBitmapLabel(image.GetBitmap())
         self.gButton.SetToolTip(tooltip(tip))
-        tipAttr = ('tip','foseTip')[state]
-        for button in App_Button.foseButtons:
+        tipAttr = ('tip','nvseTip')[state]
+        for button in App_Button.nvseButtons:
             button.gButton.SetToolTip(tooltip(getattr(button,tipAttr,'')))
 
     def GetBitmapButton(self,window,style=0):
-        exeFose = bosh.dirs['app'].join('fose_loader.exe')
-        if exeFose.exists():
+        exeNvse = bosh.dirs['app'].join('nvse_loader.exe')
+        if exeNvse.exists():
             bitmap = images['checkbox.green.off.' + bosh.inisettings['iconSize']].GetBitmap()
             self.gButton = bitmapButton(window,bitmap,style=style,onClick=self.Execute)
             self.SetState()
@@ -11343,21 +11343,21 @@ def InitImages():
 def InitStatusBar():
     """Initialize status bar links."""
     #--Bash Status/LinkBar
-    BashStatusBar.buttons.append(Fose_Button())
+    BashStatusBar.buttons.append(Nvse_Button())
     BashStatusBar.buttons.append(AutoQuit_Button())
     BashStatusBar.buttons.append( #Fallout NV
         FalloutNV_Button(
             bosh.dirs['app'].join('FalloutNV.exe'),
             Image(r'images/falloutNV'+bosh.inisettings['iconSize']+'.png'),
             _("Launch FalloutNV"),
-            _("Launch FalloutNV + FOSE"),
+            _("Launch FalloutNV + NVSE"),
             ''))
     BashStatusBar.buttons.append( #GECK
         App_Button(
             bosh.dirs['app'].join('GECK.exe'),
             Image(r'images/geck'+bosh.inisettings['iconSize']+'.png'),
             _("Launch GECK"),
-            _("Launch GECK + FOSE"),
+            _("Launch GECK + NVSE"),
             '-editor'))
     BashStatusBar.buttons.append( #NVMM
         App_Button(
@@ -12143,7 +12143,7 @@ def InitSaveLinks():
     SaveList.itemMenu.append(File_ListMasters())
     SaveList.itemMenu.append(Save_DiffMasters())
     #SaveList.itemMenu.append(Save_Stats())
-    #SaveList.itemMenu.append(Save_StatFose())
+    #SaveList.itemMenu.append(Save_StatNvse())
     #--------------------------------------------
     #SaveList.itemMenu.append(SeparatorLink())
     #SaveList.itemMenu.append(Save_EditPCSpells())
