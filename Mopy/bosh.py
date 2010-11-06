@@ -14838,8 +14838,8 @@ class ItemStats:
             'LIGH':('eid', 'weight', 'value', 'duration'),
             'MISC':('eid', 'weight', 'value'),
             'WEAP':('eid', 'weight', 'value', 'health', 'damage','clipsize',
-                    'reach','ammoUse','minSpread','spread','sightFov','baseVatsToHitChance','projectileCount',
-                    'minRange','maxRange','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
+                    'animationMultiplier','reach','ammoUse','minSpread','spread','sightFov','baseVatsToHitChance','projectileCount',
+                    'minRange','maxRange','animationAttackMultiplier','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
                     'rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult','attackShotsPerSec',
                     'reloadTime','jamTime','aimArc','rambleWavelangth','limbDmgMult','sightUsage',
                     'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
@@ -14932,8 +14932,8 @@ class ItemStats:
             elif type == 'WEAP':
                 weapons[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value, health, damage, clipsize,
-                    #-- reach, ammoUse, minSpread, spread, sightFov, baseVatsToHitChance, projectileCount,
-                    #-- minRange, maxRange, fireRate, overrideActionPoint, rumbleLeftMotorStrength,
+                    #-- animationMultiplier, reach, ammoUse, minSpread, spread, sightFov, baseVatsToHitChance, projectileCount,
+                    #-- minRange, maxRange, animationAttackMultiplier, fireRate, overrideActionPoint, rumbleLeftMotorStrength,
                     #-- rumbleRightMotorStrength, rumbleDuration, overrideDamageToWeaponMult, attackShotsPerSec,
                     #-- reloadTime, jamTime, aimArc, rambleWavelangth, limbDmgMult, sightUsage,
                     #-- semiAutomaticFireDelayMin, semiAutomaticFireDelayMax,
@@ -14941,14 +14941,14 @@ class ItemStats:
                     #-- criticalDamage, criticalMultiplier,
                     #-- vatsSkill, vatsDamMult, vatsAp)
                     zip((sfloat,int,int,int,int,
-                         sfloat,int,sfloat,sfloat,sfloat,int,int,
-                         sfloat,sfloat,sfloat,sfloat,sfloat,
+                         sfloat,sfloat,int,sfloat,sfloat,sfloat,int,int,
+                         sfloat,sfloat,sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,
                          int,sfloat,sfloat,sfloat,int,
                          int,sfloat,
-                         sfloat,sfloat,sfloat),fields[4:43]))
+                         sfloat,sfloat,sfloat),fields[4:45]))
         ins.close()
 
     def writeToText(self,textPath):
@@ -14997,11 +14997,11 @@ class ItemStats:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'))) + '"\n')),
             #--Weapons
-            ('WEAP', bolt.csvFormat('sfiiiififffiifffffffffffffffffifffiiffff')+'\n',
+            ('WEAP', bolt.csvFormat('sfiiiiffifffiiffffffffffffffffffifffiiffff')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('Damage'),_('Clip Size'),
-                _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
-                _('Min Range'), _('Max Range'), _('Fire Rate'), _('Override - Action Point'), _('Rumble - Left Motor Strength'),
+                _('Animation Multiplier'), _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
+                _('Min Range'), _('Max Range'), _('Animation Attack Multiplier'), _('Fire Rate'), _('Override - Action Point'), _('Rumble - Left Motor Strength'),
                 _('rRmble - Right Motor Strength'), _('Rumble - Duration'), _('Override - Damage To Weapon Mult'), _('Attack Shots/Sec'),
                 _('Reload Time'), _('Jam Time'), _('Aim Arc'), _('Ramble - Wavelangth'), _('Limb Dmg Mult'), _('Sight Usage'),
                 _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'),
@@ -15151,8 +15151,8 @@ class CompleteItemData:
             'LIGH':('eid', 'full', 'weight', 'value', 'duration','iconPath'),
             'MISC':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
             'WEAP':('eid', 'full', 'weight', 'value', 'health', 'damage','clipsize',
-                    'reach','ammoUse','minSpread','spread','sightFov','baseVatsToHitChance','projectileCount',
-                    'minRange','maxRange','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
+                    'animationMultiplier','reach','ammoUse','minSpread','spread','sightFov','baseVatsToHitChance','projectileCount',
+                    'minRange','maxRange','animationAttackMultiplier','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
                     'rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult','attackShotsPerSec',
                     'reloadTime','jamTime','aimArc','rambleWavelangth','limbDmgMult','sightUsage',
                     'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
@@ -15325,8 +15325,8 @@ class CompleteItemData:
             elif type == 'WEAP':
                 weapons[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value, health, damage, clipsize,
-                    #-- reach, ammoUse, minSpread, spread, sightFov, baseVatsToHitChance, projectileCount,
-                    #-- minRange, maxRange, fireRate, overrideActionPoint, rumbleLeftMotorStrength,
+                    #-- animationMultiplier, reach, ammoUse, minSpread, spread, sightFov, baseVatsToHitChance, projectileCount,
+                    #-- minRange, maxRange, animationAttackMultiplier, fireRate, overrideActionPoint, rumbleLeftMotorStrength,
                     #-- rumbleRightMotorStrength, rumbleDuration, overrideDamageToWeaponMult, attackShotsPerSec,
                     #-- reloadTime, jamTime, aimArc, rambleWavelangth, limbDmgMult, sightUsage,
                     #-- semiAutomaticFireDelayMin, semiAutomaticFireDelayMax,
@@ -15334,8 +15334,8 @@ class CompleteItemData:
                     #-- criticalDamage, criticalMultiplier,
                     #-- vatsSkill, vatsDamMult, vatsAp)
                     zip((str,sfloat,int,int,int,int,
-                         sfloat,int,sfloat,sfloat,sfloat,int,int,
-                         sfloat,sfloat,sfloat,sfloat,sfloat,
+                         sfloat,sfloat,int,sfloat,sfloat,sfloat,int,int,
+                         sfloat,sfloat,sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,sfloat,sfloat,sfloat,sfloat,
                          sfloat,sfloat,
@@ -15395,11 +15395,11 @@ class CompleteItemData:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #--Weapons
-            ('WEAP', bolt.csvFormat('ssfiiiififffiifffffffffffffffffifffiiffffssssss')+'\n',
+            ('WEAP', bolt.csvFormat('ssfiiiiffifffiiffffffffffffffffffifffiiffffssssss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('Damage'),_('Clip Size'),
-                _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
-                _('Min Range'), _('Max Range'), _('Fire Rate'), _('Override - Action Point'), _('Rumble - Left Motor Strength'),
+                _('Animation Multiplier'), _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
+                _('Min Range'), _('Max Range'), _('Animation Attack Multiplier'), _('Fire Rate'), _('Override - Action Point'), _('Rumble - Left Motor Strength'),
                 _('rRmble - Right Motor Strength'), _('Rumble - Duration'), _('Override - Damage To Weapon Mult'), _('Attack Shots/Sec'),
                 _('Reload Time'), _('Jam Time'), _('Aim Arc'), _('Ramble - Wavelangth'), _('Limb Dmg Mult'), _('Sight Usage'),
                 _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'),
