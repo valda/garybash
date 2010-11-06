@@ -15342,7 +15342,7 @@ class CompleteItemData:
                          int,sfloat,sfloat,sfloat,int,
                          int,sfloat,
                          sfloat,sfloat,sfloat,
-                         str,str),fields[4:46]))
+                         str,str),fields[4:48]))
         ins.close()
 
     def writeToText(self,textPath):
