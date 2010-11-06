@@ -1,4 +1,4 @@
-\ Taglist for Wrye BASH for FO3; derived from BOSS-F Masterlist revision 1672.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 1710.
 \ % A Bashed Patch suggestion for the mod above.
 
 BrokenSteel.esm
@@ -105,6 +105,14 @@ FF_DestructibleRadios.esp
 % {{BASH: Destructable}}
 Angry Scientists.esp
 % {{BASH: Invent}}
+ScrapMetal.esp
+% {{BASH: Invent}}
+ScrapMetal_H.esp
+% {{BASH: Invent}}
+ScrapMetal_Q.esp
+% {{BASH: Invent}}
+CreateScrapMetal.esp
+% {{BASH: Invent}}
 MrLabTechnician - FWE.esp
 % {{BASH: Deflst,Delev}}
 SelfSurgeryKit.esp
@@ -163,8 +171,6 @@ FO3 Wanderers Edition - DLC Point Lookout.esp
 % {{BASH: Relev,Delev}}
 FO3 Wanderers Edition - Optional Worn Weapons.esp
 % {{BASH: Delev,Relev}}
-FNNsys - FWE.esp
-% {{BASH: Scripts}}
 
 WeaponModKits.esp
 % {{BASH: Names}}
@@ -385,6 +391,10 @@ URWL47.esp
 % {{BASH: C.Light}}
 URWL48.esp
 % {{BASH: C.Light}}
+URWL.esp
+% {{BASH: C.Light}}
+URWL-Normal Color Saturation.esp
+% {{BASH: C.Light}}
 NColorDCInteriors.esp
 % {{BASH: C.Light}}
 Xepha's Dynamic Weather - Main.esp
@@ -471,6 +481,8 @@ EZCompanion_Type-N.esp
 
 Mez's Merged Patch 5-0 - DLC-FWE-WMK-MMM.esp
 % {{BASH: Deflst,Delev,Factions,Invent,Relations,Relev,Scripts}}
+FNNsys - FWE.esp
+% {{BASH: Scripts}}
 xCALIBRuniverse.esp
 % {{BASH: Names,Graphics,Invent,Sound,Stats}}
 xCALIBRUniverse - WMK.esp

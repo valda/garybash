@@ -14,6 +14,17 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 22 [11/06/2010]
+* Fixed an address offset at the time of the savedata writing.
+* Added firepower_autobalance.py into Extras folder (Thanks for TheTalkieToaster).
+* Added 'animationMultiplier' and 'animationAttackMultiplier' to the import object of Stats tag.
+* Fixed/Added so many record definitions (Dial, Proj, Vtyp, Musc, Pwat, Aspc, Hdpt, Dobj, Idlm, Arma, Tact).
+* Fixed/Added many condition function definitions.
+* Fixed BsaFile.resetMTTimes.
+* Changed a bodytag priority of names tweak.
+* Copied and pasted a BOSS launch code from WB291(svn).
+* Taglist updated to BOSS masterlist revision 1710.
+
 === 21 [10/17/2010]
 * Added new BOSS support (port from WB288).
 * Added a short name subrecord support to importnames.
