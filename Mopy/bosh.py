@@ -87,6 +87,7 @@ question = False
 
 #--File Singletons
 falloutIni = None
+falloutDefaultIni = None
 falloutPrefsIni = None
 modInfos  = None  #--ModInfos singleton
 saveInfos = None #--SaveInfos singleton
@@ -8979,6 +8980,10 @@ class IniFile:
 def BestIniFile(path):
     if path.csbody == 'fallout':
         return falloutIni
+    elif path.csbody == 'fallout_default':
+        return falloutDefaultIni
+    elif path.csbody == 'falloutprefs':
+        return falloutPrefsIni
     ini = IniFile(path)
     ini_settings = ini.getSettings()
     if len(ini_settings) > 0:
@@ -13209,7 +13214,11 @@ class InstallersData(bolt.TankData, DataDict):
         self.bashDir.makedirs()
         #--Archive invalidation
         if settings.get('bash.bsaRedirection'):
-            falloutIni.setBsaRedirection(True)
+            try:
+                falloutIni.setBsaRedirection(True)
+            except WindowsError:
+                pass
+            falloutDefaultIni.setBsaRedirection(True)
         #--Refresh Data
         changed = False
         if not self.loaded:
@@ -21161,13 +21170,13 @@ class NamesTweak_Body(MultiTweakItem):
             if not record.full: continue
             if record.full[0] in '+-=()[]<>': continue
             flags = record.bipedFlags
-            if flags.head or flags.hair or flags.headband or flags.hat: type = head
-            elif flags.upperBody: type = body
+            if flags.upperBody: type = body
+            elif flags.head or flags.hair or flags.headband or flags.hat: type = head
             elif flags.leftHand or flags.rightHand: type = gloves
-            elif flags.pipboy: type = pipboy
-            elif flags.backpack: type = backpack
             elif flags.necklace or flags.eyeGlasses or flags.noseRing or flags.earrings or flags.mask or flags.choker or flags.mouthObject: type = fancy
+            elif flags.backpack: type = backpack
             elif flags.bodyAddOn1 or flags.bodyAddOn2 or flags.bodyAddOn3: type = accessory
+            elif flags.pipboy: type = pipboy
             else: continue
             if record.recType == 'ARMO':
                 if record.generalFlags.powerArmor: type += 'P'

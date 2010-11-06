@@ -1925,6 +1925,9 @@ class INIPanel(NotebookPanel):
         if 'FalloutPrefs.ini' not in self.choices:
             self.choices['FalloutPrefs.ini'] = bosh.falloutPrefsIni.path
             changed = True
+        if 'Fallout_default.ini' not in self.choices:
+            self.choices['Fallout_default.ini'] = bosh.falloutDefaultIni.path
+            changed = True
         if 'Browse...' not in self.choices:
             self.choices['Browse...'] = None
             changed = True
@@ -4602,6 +4605,7 @@ class BashApp(wx.App):
         bosh.configHelpers.refresh()
         bosh.falloutIni = bosh.FalloutIni()
         bosh.falloutPrefsIni = bosh.FalloutPrefsIni()
+        bosh.falloutDefaultIni = bosh.FalloutDefaultIni()
         bosh.modInfos = bosh.ModInfos()
         bosh.modInfos.refresh(doAutoGroup=True)
         progress.Update(30,_("Initializing SaveInfos"))
@@ -6144,7 +6148,11 @@ class Installers_BsaRedirection(Link):
             bsaFile.scan()
             resetCount = bsaFile.reset()
             #balt.showOk(self,_("BSA Hashes reset: %d") % (resetCount,))
-        bosh.falloutIni.setBsaRedirection(settings['bash.bsaRedirection'])
+        try:
+            bosh.falloutIni.setBsaRedirection(settings['bash.bsaRedirection'])
+        except WindowsError:
+            pass
+        bosh.falloutDefaultIni.setBsaRedirection(settings['bash.bsaRedirection'])
 
 #------------------------------------------------------------------------------
 class Installers_ConflictsReportShowsInactive(Link):
