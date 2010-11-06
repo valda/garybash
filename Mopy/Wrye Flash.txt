@@ -14,6 +14,12 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 4 [11/06/2010] [DJ_Kovrik,Valda]
+* Fixed/Added so many record definitions.
+* Some tags came to import NV attributes.
+* Updated Russian translation (contributed by DJ_Kovrik).
+* Fixed so that fallout_default.ini might be updated instead of the write-protected fallout.ini.
+
 === 3 [11/03/2010]
 * Fixed/Added many record definitions.
 * Fixed/Added many condition function definitions.
