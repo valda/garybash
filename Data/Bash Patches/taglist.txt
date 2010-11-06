@@ -1,17 +1,20 @@
-\ Taglist for Wrye Flash NV; derived from BOSS Masterlist revision 1820.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 1822.
 \ % A Bashed Patch suggestion for the mod above.
 
 FOOK - New Vegas.esm
 % {{BASH: Names,Stats,Delev}}
 
+Compiled Patch.esp
+% {{BASH: Stats}}
+
 Cuter Boone.esp
-% {{BASH: NpcFaces}}
+% {{BASH: NpcFaces,NoMerge}}
 Cuter Boone NEW.esp
-% {{BASH: NpcFaces}}
+% {{BASH: NpcFaces,NoMerge}}
 Cuter Veronica Felicia Day.esp
-% {{BASH: NpcFaces}}
+% {{BASH: NpcFaces,NoMerge}}
 Raul - Danny Trejo.esp
-% {{BASH: NpcFaces}}
+% {{BASH: NpcFaces,NoMerge}}
 
 Arwen_NV_Realism_Core.esp
 % {{BASH: Stats}}
@@ -19,13 +22,13 @@ hardercore_combat.esp
 % {{BASH: Stats}}
 hardercore_wealth.esp
 % {{BASH: Delev}}
+hardercore_healing.esp
+% {{BASH: Stats}}
 
 ImmaSightinMahLazor.esp
 % {{BASH: Stats}}
 PlasmaRifleAwesomefied.esp
 % {{BASH: Sound}}
-Moddable Unique Weps.esp
-% {{BASH: Graphics}}
 
 NVPhalanx.esp
 % {{BASH: Actors.AIPackages,Actors.CombatStyle}}
