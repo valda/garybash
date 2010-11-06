@@ -19,6 +19,7 @@ Wrye Flash is released under Version 2 of the GNU General Public License. See en
 * Some tags came to import NV attributes.
 * Updated Russian translation (contributed by DJ_Kovrik).
 * Fixed so that fallout_default.ini might be updated instead of the write-protected fallout.ini.
+* Taglist updated to BOSS masterlist revision 1820.
 
 === 3 [11/03/2010]
 * Fixed/Added many record definitions.
