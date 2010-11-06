@@ -11075,7 +11075,8 @@ class App_BOSS(App_Button):
             cwd = bolt.Path.getcwd()
             exePath.head.setcwd()
             progress = balt.Progress(_("Executing BOSS"))
-            if settings.get('bash.mods.autoGhost') and not bosh.configHelpers.bossVersion:
+            version = bosh.configHelpers.bossVersion
+            if settings.get('bash.mods.autoGhost') and not version:
                 progress(0.05,_("Processing... deghosting mods"))
                 ghosted = []
                 for root, dirs, files in os.walk(bosh.dirs['mods'].s):
@@ -11093,16 +11094,21 @@ class App_BOSS(App_Button):
                     bosh.modInfos.mtimes.clear()
                     settings['bosh.modInfos.resetMTimes'] = bosh.modInfos.lockTimes = lockTimesActive
                     lockTimesActive = True
-            if settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85):
-                exeArgs += ('-u',) # Update - BOSS version 1.6+
-            if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
-                exeArgs += ('-r 2',) # Revert level 2 - BOSS version 1.6+
-            elif wx.GetKeyState(82):
-                exeArgs += ('-r 1',) # Revert level 1 - BOSS version 1.6+
-            if wx.GetKeyState(83):
-                exeArgs += ('-s',) # Silent Mode - BOSS version 1.6+
-            if wx.GetKeyState(86):
-                exeArgs += ('-V-',) # Disable version parsing - BOSS version 1.6+
+            if version >= 1:
+                if settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85):
+                    exeArgs += ('-u',) # Update - BOSS version 1.6+
+                if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
+                    exeArgs += ('-r 2',) # Revert level 2 - BOSS version 1.6+
+                elif wx.GetKeyState(82):
+                    exeArgs += ('-r 1',) # Revert level 1 - BOSS version 1.6+
+                if wx.GetKeyState(83):
+                    exeArgs += ('-s',) # Silent Mode - BOSS version 1.6+
+            if version in [1, 393217]:        
+                if wx.GetKeyState(86):
+                    exeArgs += ('-V-',) # Disable version parsing - syntax BOSS version 1.6 - 1.6.1
+            elif version >= 393218:
+                if wx.GetKeyState(86) or wx.GetKeyState(78):
+                    exeArgs += ('-n',) # Disable version parsing - syntax BOSS version 1.6.2+
             progress(0.05,_("Processing... launching BOSS."))
             try:
                 os.spawnv(os.P_WAIT,exePath.s,exeArgs)
@@ -11426,9 +11432,11 @@ def InitStatusBar():
 #            _("Launch Tes4LODGen")))
     configHelpers = bosh.ConfigHelpers()
     configHelpers.refresh()
-    BashStatusBar.buttons.append( #BOSS -- will u
+    if configHelpers.bossVersion > 0: version = 1
+    else: version = 0
+    BashStatusBar.buttons.append( #BOSS --
         App_BOSS(
-            (bosh.dirs['app'].join('Data\\BOSS-F.bat'),bosh.dirs['app'].join('Data\\BOSS.exe'))[configHelpers.bossVersion],
+            (bosh.dirs['app'].join('Data\\BOSS-F.bat'),bosh.dirs['app'].join('Data\\BOSS.exe'))[version],
             Image(r'images/Boss'+bosh.inisettings['iconSize']+'.png'),
             _("Launch BOSS")))
     if bosh.inisettings['showmodelingtoollaunchers']:
