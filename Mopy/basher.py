@@ -58,6 +58,7 @@ import struct
 import sys
 import textwrap
 import time
+import subprocess
 from types import *
 from operator import attrgetter,itemgetter
 
@@ -11096,12 +11097,6 @@ class App_BOSS(App_Button):
                                 ghosted.append(fileLower)
                                 newName = bosh.dirs['mods'].join(name[:-6])
                                 file.moveTo(newName)
-            lockTimesActive = False
-            if settings['BOSS.ClearLockTimes']:
-                if settings['bosh.modInfos.resetMTimes']:
-                    bosh.modInfos.mtimes.clear()
-                    settings['bosh.modInfos.resetMTimes'] = bosh.modInfos.lockTimes = lockTimesActive
-                    lockTimesActive = True
             if version >= 1:
                 if settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85):
                     exeArgs += ('-u',) # Update - BOSS version 1.6+
@@ -11119,7 +11114,11 @@ class App_BOSS(App_Button):
                     exeArgs += ('-n',) # Disable version parsing - syntax BOSS version 1.6.2+
             progress(0.05,_("Processing... launching BOSS."))
             try:
-                os.spawnv(os.P_WAIT,exePath.s,exeArgs)
+                subprocess.call((exePath.s,) + exeArgs[1:], startupinfo=bosh.startupinfo)
+                # Clear the saved times from before
+                bosh.modInfos.mtimes.clear()
+                # And refresh to get the new times so WB will keep the order that BOSS specifies
+                bosh.modInfos.refresh(doInfos=False)
             except Exception, error:
                 print str(error)
                 print _("Used Path: %s") % exePath.s
@@ -11128,8 +11127,6 @@ class App_BOSS(App_Button):
                 raise
             finally:
                 if progress: progress.Destroy()
-                if lockTimesActive: 
-                    settings['bosh.modInfos.resetMTimes'] = bosh.modInfos.lockTimes = lockTimesActive
                 cwd.setcwd()
         else:
             raise StateError('Application missing: %s' % self.exePath.s)
