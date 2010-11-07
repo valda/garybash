@@ -21100,6 +21100,13 @@ class GmstTweaker(MultiTweaker):
             (_('3000'),3000),
             (_('Custom'),0),
             ),
+        GmstTweak(False,_('Terminal Speed Adjustment'),
+            _("The display speed at the time of terminal hacking."),
+            ('iHackingDumpRate','iHackingInputRate','iHackingOutputRate','iHackingFlashOffDuration','iHackingFlashOnDuration','iComputersDisplayRateMenus','iComputersDisplayRateNotes'),
+            (_('x 2'),1000,40,134,250,375,300,300),
+            (_('x 4'),2000,80,268,125,188,600,600),
+            (_('x 6'),3000,120,402,83,126,900,900),
+            ),
         ],key=lambda a: a.label.lower())
     #--Patch Phase ------------------------------------------------------------
     def getWriteClasses(self):
