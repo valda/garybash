@@ -69,7 +69,17 @@ import struct
 import sys
 from types import *
 from operator import attrgetter,itemgetter
+import subprocess
+from subprocess import Popen, PIPE
 from xml.etree import ElementTree
+
+#-- To make commands executed with Popen hidden
+if os.name == 'nt':
+    startupinfo = subprocess.STARTUPINFO()
+    try: startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    except: 
+        import _subprocess
+        startupinfo.dwFlags |= _subprocess.STARTF_USESHOWWINDOW
 
 #--Local
 import balt
