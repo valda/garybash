@@ -14,6 +14,12 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 6 [11/08/2010]
+* Fixed a bug that raise exception when importing ItemData from CSV.
+* Add GMST Tweak: Terminal Speed Adjustment (referred from HackRate: http://www.fallout3nexus.com/downloads/file.php?id=2745).
+* Update BOSS launch code (from WryeBash svn655).
+* Fixed CCRD.INTV subrecord structure.
+
 === 5 [11/06/2010] [Sativarg,Valda]
 * Fixed a definition of BPTD.BPND subrecord struct.
 * Fixed a definition of WEAP.SNAM (reported by Space Oden69).
