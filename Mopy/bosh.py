@@ -6012,7 +6012,7 @@ class MreCcrd(MelRecord):
         MelFid('ZNAM','soundDrop'),
         MelString('TX00','textureFace'),
         MelString('TX01','textureBack'),
-        MelStructs('INTV','I','card'),
+        MelStructs('INTV','I','suitAndValue','value'),
         MelStruct('DATA','I','value'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
