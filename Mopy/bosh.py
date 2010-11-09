@@ -21575,26 +21575,27 @@ class NamesTweak_SortInventory(MultiTweakItem):
         MultiTweakItem.__init__(self,False,_("Sort Inventory"),
             _('Sort item by category in barter and container screens.'),
             'sortInventory',
-            # weapon,armor,stimpak,chem,food/drink,ammo
-            (_('Chem>Ammo>Weapon>Armor>Food>Misc'),3,2,6,5,1,4),
-            (_('Ammo>Chem>Weapon>Armor>Food>Misc'),3,2,5,4,1,6),
+            # weapon,armor,stimpak,chem,food/drink,mag,book,misc,card,ammo
+            (_('Chem>Ammo>Weapon>Armor>Food>Mag>Book>Misc>Card'),6,5,9,8,4,3,2,1,0,7),
+            (_('Ammo>Chem>Weapon>Armor>Food>Mag>Book>Misc>Card'),6,5,8,7,4,3,2,1,0,9),
+            (_('Weapon>Armor>Chem>Food>Mag>Book>Misc>Card>Ammo'),9,8,7,6,5,4,3,2,1,0),
             )
 
     #--Config Phase -----------------------------------------------------------
     #--Patch Phase ------------------------------------------------------------
     def getReadClasses(self):
         """Returns load factory classes needed for reading."""
-        return (MreAmmo,MreWeap,MreArmo,MreAlch)
+        return (MreAmmo,MreWeap,MreArmo,MreAlch,MreBook,MreMisc,MreCcrd)
 
     def getWriteClasses(self):
         """Returns load factory classes needed for writing."""
-        return (MreAmmo,MreWeap,MreArmo,MreAlch)
+        return (MreAmmo,MreWeap,MreArmo,MreAlch,MreBook,MreMisc,MreCcrd)
 
     def scanModFile(self,modFile,progress,patchFile):
         """Scans specified mod file to extract info. May add record to patch mod,
         but won't alter it."""
         mapper = modFile.getLongMapper()
-        for blockType in ('AMMO','WEAP','ARMO','ALCH'):
+        for blockType in ('AMMO','WEAP','ARMO','ALCH','BOOK','MISC','CCRD'):
             modBlock = getattr(modFile,blockType)
             patchBlock = getattr(patchFile,blockType)
             id_records = patchBlock.id_records
@@ -21606,10 +21607,11 @@ class NamesTweak_SortInventory(MultiTweakItem):
     def buildPatch(self,log,progress,patchFile):
         """Edits patch file as desired. Will write to log."""
         count = {}
-        cntWeap,cntArmo,cntStim,cntChem,cntFood,cntAmmo = self.choiceValues[self.chosen]
+        cntWeap,cntArmo,cntStim,cntChem,cntFood,cntMag,cntBook,cntMisc,cntCard,cntAmmo = self.choiceValues[self.chosen]
         keep = patchFile.getKeeper()
         reHead = re.compile(r"^\x07*")
-        for cnt,type in ((cntWeap,'WEAP'),(cntArmo,'ARMO'),(cntAmmo,'AMMO')):
+        for cnt,type in ((cntWeap,'WEAP'),(cntArmo,'ARMO'),(cntBook,'BOOK'),(cntMisc,'MISC'),(cntCard,'CCRD'),(cntAmmo,'AMMO')):
+            if cnt == 0: continue
             for record in getattr(patchFile,type).records:
                 if not record.full: continue
                 if record.full[0] in '+-=[]<>': continue
@@ -21625,8 +21627,13 @@ class NamesTweak_SortInventory(MultiTweakItem):
                 record.full = reHead.sub('\x07' * cntChem, record.full)
             elif record.etype == 11: # stimpak
                 record.full = reHead.sub('\x07' * cntStim, record.full)
-            else:                    # food/alcohol
+            elif record.etype == 13: # alcohol
                 record.full = reHead.sub('\x07' * cntFood, record.full)
+            else:
+                if record.soundConsume == (GPath('FalloutNV.esm'),0x07b73b): # magazine
+                    record.full = reHead.sub('\x07' * cntMag, record.full)
+                else: # food
+                    record.full = reHead.sub('\x07' * cntFood, record.full)
             keep(record.fid)
             srcMod = record.fid[0]
             count[srcMod] = count.get(srcMod,0) + 1
