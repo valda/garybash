@@ -9109,7 +9109,8 @@ class OBSEIniFile(IniFile):
 #--------------------------------------------------------------------------------
 class FalloutIni(IniFile):
     """FALLOUT.INI file."""
-    bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa',r'..\nvmm\bsaredirection.bsa'))
+    #bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa','..\nvmm\bsaredirection.bsa'))
+    bsaRedirectors = set(('Fallout - AI!.bsa',))
 
     def __init__(self):
         """Initialize."""
@@ -9148,7 +9149,7 @@ class FalloutIni(IniFile):
 
     def setBsaRedirection(self,doRedirect=True):
         """Activates or deactivates BSA redirection."""
-        aiBsa = dirs['mods'].join('ArchiveInvalidationInvalidated!.bsa')
+        aiBsa = dirs['mods'].join('Fallout - AI!.bsa')
         aiBsaMTime = time.mktime((2006, 1, 2, 0, 0, 0, 0, 2, 0))
         if aiBsa.exists() and aiBsa.mtime >  aiBsaMTime:
             aiBsa.mtime = aiBsaMTime
@@ -9158,7 +9159,7 @@ class FalloutIni(IniFile):
         archives = [x.strip() for x in sArchives.split(',') if x.strip().lower() not in self.bsaRedirectors]
         #--Add redirector back in?
         if doRedirect:
-            archives.insert(0,'ArchiveInvalidationInvalidated!.bsa')
+            archives.insert(0,'Fallout - AI!.bsa')
         sArchives = ', '.join(archives)
         self.saveSetting('Archive','sArchiveList',sArchives)
 
@@ -10271,11 +10272,11 @@ class ModInfos(FileInfos):
         """Returns a boolean indicating if mtime setting is allowed."""
         self.lockTimes = settings['bosh.modInfos.resetMTimes']
         self.fullBalo = settings.get('bash.balo.full',False)
-        nvmmWarn = settings.setdefault('bosh.modInfos.nvmmWarn',0)
-        if self.lockTimes and nvmmWarn == 0 and dirs['app'].join('nvmm').exists():
-            settings['bosh.modInfos.nvmmWarn'] = 1
+        fommWarn = settings.setdefault('bosh.modInfos.fommWarn',0)
+        if self.lockTimes and fommWarn == 0 and dirs['app'].join('fomm').exists():
+            settings['bosh.modInfos.fommWarn'] = 1
         if not self.lockTimes: return False
-        if settings['bosh.modInfos.nvmmWarn'] == 1: return False
+        if settings['bosh.modInfos.fommWarn'] == 1: return False
         if settings.dictFile.readOnly: return False
         #--Else
         return True
@@ -13110,7 +13111,7 @@ class InstallerProject(Installer):
             self.groups = []
 
     def getFomodConfig(self,name):
-        """Get nvmm config file for project."""
+        """Get fomm config file for project."""
         config = InstallerProject.FomodConfig(name)
         configPath = dirs['installers'].join(name,'fomod','info.xml')
         if configPath.exists():
@@ -13132,7 +13133,7 @@ class InstallerProject(Installer):
         return config
 
     def writeFomodConfig(self,name,config):
-        """Write nvmm config file for project."""
+        """Write fomm config file for project."""
         configPath = dirs['installers'].join(name,'fomod','info.xml')
         configPath.head.makedirs()
         out = configPath.temp.open('wb')
@@ -23516,6 +23517,7 @@ def initDirs(personal='',localAppData='',falloutNVPath=''):
     #tooldirs['Tes4FilesPath'] = dirs['app'].join('TES4Files.exe')
     tooldirs['FNVEditPath'] = dirs['app'].join('FNVEdit.exe')
     #tooldirs['Tes4LodGenPath'] = dirs['app'].join('TES4LodGen.exe')
+    tooldirs['FOMMPath'] = GPath(r'C:\Program Files\GeMM\fomm.exe')
     tooldirs['NifskopePath'] = GPath(r'C:\Program Files\NifTools\NifSkope\Nifskope.exe')
     tooldirs['BlenderPath'] = GPath(r'C:\Program Files\Blender Foundation\Blender\blender.exe')
     tooldirs['GmaxPath'] = GPath(r'C:\GMAX\gmax.exe')

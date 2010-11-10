@@ -2957,10 +2957,11 @@ class ReplacersPanel(NotebookPanel):
         """Panel is shown. Update self.data."""
         if bosh.replacersData.refresh():
             self.gList.RefreshUI()
-        #--vs. NVMM?
+        #--vs. FOMM?
         enableBsaEdits = not (
-            bosh.dirs['mods'].join('ConsoleBSAEditData2').exists() or
-            bosh.dirs['app'].join('NVMM','BSAedits').exists())
+            bosh.dirs['mods'].join('ConsoleBSAEditData2').exists() #or
+            #bosh.dirs['app'].join('FOMM','BSAedits').exists()
+            )
         self.gAuto.Enable(enableBsaEdits)
         self.gInvalidate.Enable(enableBsaEdits)
         self.gReset.Enable(enableBsaEdits)
@@ -2969,7 +2970,7 @@ class ReplacersPanel(NotebookPanel):
             settings['bash.replacers.autoEditBSAs'] = settings['bash.replacers.autoChecked']
         else:
             self.gTexturesBsa.GetStaticBox().SetToolTip(tooltip(
-                _("BSA editing disabled becase NVMM or BSAPatch is in use.")))
+                _("BSA editing disabled becase FOMM or BSAPatch is in use.")))
             settings['bash.replacers.autoEditBSAs'] = False
         self.SetStatusCount()
 
@@ -4083,10 +4084,10 @@ class BashFrame(wx.Frame):
             message += listFiles(sorted(bolt.Path.mtimeResets))
             del bolt.Path.mtimeResets[:]
             balt.showWarning(self,message)
-        #--NVMM Warning?
-        if settings['bosh.modInfos.nvmmWarn'] == 1:
-            settings['bosh.modInfos.nvmmWarn'] = 2
-            message = _("Turn Lock Times Off?\n\nLock Times a feature which resets load order to a previously memorized state. While this feature is good for maintaining your load order, it will also undo any load order changes that you have made in NVMM.")
+        #--FOMM Warning?
+        if settings['bosh.modInfos.fommWarn'] == 1:
+            settings['bosh.modInfos.fommWarn'] = 2
+            message = _("Turn Lock Times Off?\n\nLock Times a feature which resets load order to a previously memorized state. While this feature is good for maintaining your load order, it will also undo any load order changes that you have made in FOMM.")
             lockTimes = not balt.askYes(self,message,_("Lock Times"))
             bosh.modInfos.lockTimes = settings['bosh.modInfos.resetMTimes'] = lockTimes
             if lockTimes:
@@ -11362,6 +11363,11 @@ def InitStatusBar():
             _("Launch GECK"),
             _("Launch GECK + NVSE"),
             '-editor'))
+    BashStatusBar.buttons.append( #FOMM
+        App_Button(
+            (bosh.tooldirs['FOMMPath'],r'-game FalloutNV'),
+            Image(r'images/fomm'+bosh.inisettings['iconSize']+'.png'),
+            _("Launch FOMM")))
     BashStatusBar.buttons.append( #NVMM
         App_Button(
             bosh.dirs['app'].join('nvmm\\nvmm.exe'),
