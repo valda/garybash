@@ -9110,7 +9110,7 @@ class OBSEIniFile(IniFile):
 class FalloutIni(IniFile):
     """FALLOUT.INI file."""
     #bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa','..\nvmm\bsaredirection.bsa'))
-    bsaRedirectors = set(('Fallout - AI!.bsa',))
+    bsaRedirectors = set(('fallout - ai!.bsa',))
 
     def __init__(self):
         """Initialize."""
