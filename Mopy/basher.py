@@ -11356,7 +11356,7 @@ def InitStatusBar():
             '-editor'))
     BashStatusBar.buttons.append( #FOMM
         App_Button(
-            bosh.dirs['app'].join('fomm\\fomm.exe'),
+            (bosh.tooldirs['FOMMPath'],r'-game Fallout3'),
             Image(r'images/fomm'+bosh.inisettings['iconSize']+'.png'),
             _("Launch FOMM")))
 #    BashStatusBar.buttons.append( #ISOBL

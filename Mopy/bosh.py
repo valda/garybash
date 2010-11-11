@@ -22998,6 +22998,7 @@ def initDirs(personal='',localAppData='',fallout3Path=''):
     #tooldirs['Tes4FilesPath'] = dirs['app'].join('TES4Files.exe')
     tooldirs['FO3EditPath'] = dirs['app'].join('FO3Edit.exe')
     #tooldirs['Tes4LodGenPath'] = dirs['app'].join('TES4LodGen.exe')
+    tooldirs['FOMMPath'] = dirs['app'].join('fomm\\fomm.exe')
     tooldirs['NifskopePath'] = GPath(r'C:\Program Files\NifTools\NifSkope\Nifskope.exe')
     tooldirs['BlenderPath'] = GPath(r'C:\Program Files\Blender Foundation\Blender\blender.exe')
     tooldirs['GmaxPath'] = GPath(r'C:\GMAX\gmax.exe')
