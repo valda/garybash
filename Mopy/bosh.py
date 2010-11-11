@@ -14299,7 +14299,7 @@ class ItemStats:
         self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'ARMA':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'weight', 'value'),
-            'AMMO':('eid', 'speed',  'value', 'clipRounds','projPerShot'),
+            'AMMO':('eid', 'speed',  'value', 'clipRounds'),
             'ARMO':('eid', 'weight', 'value', 'health', 'ar'),
             'ARMA':('eid', 'weight', 'value', 'health', 'ar'),
             'BOOK':('eid', 'weight', 'value'),
@@ -14367,7 +14367,7 @@ class ItemStats:
             elif type == 'AMMO':
                 ammo[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(speed, value, clipRounds)
-                    zip((sfloat,int,int,int),fields[4:8]))
+                    zip((sfloat,int,int),fields[4:7]))
             elif type == 'ARMO':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value, health, ar)
@@ -14426,9 +14426,9 @@ class ItemStats:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Weight'),_('Value'))) + '"\n')),
             #Ammo
-            ('AMMO', bolt.csvFormat('sfiii')+'\n',
+            ('AMMO', bolt.csvFormat('sfii')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Speed'),_('Value'),_('Clip Rounds'),_('Proj/Shot'))) + '"\n')),
+                _('Editor Id'),_('Speed'),_('Value'),_('Clip Rounds'))) + '"\n')),
             #--Armor
             ('ARMO', bolt.csvFormat('sfiii')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
@@ -14600,7 +14600,7 @@ class CompleteItemData:
         self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'ARMA':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
-            'AMMO':('eid', 'full', 'speed',  'value', 'clipRounds', 'projPerShot', 'largeIconPath', 'smallIconPath'),
+            'AMMO':('eid', 'full', 'speed',  'value', 'clipRounds', 'largeIconPath', 'smallIconPath'),
             'ARMO':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
             'ARMA':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
             'BOOK':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
@@ -14747,8 +14747,8 @@ class CompleteItemData:
                     zip((str,sfloat,int,str,str),fields[4:9]))
             elif type == 'AMMO':
                 ammo[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(speed, value, clipRounds, projPerShot)
-                    zip((str,sfloat,int,int,int,str,str),fields[4:11]))
+                    #--(speed, value, clipRounds)
+                    zip((str,sfloat,int,int,str,str),fields[4:10]))
             elif type == 'ARMO':
                 armor[longid] = (eid,) + tuple(func(field) for func,field in
                     #--(weight, value, health, ar)
@@ -14807,9 +14807,9 @@ class CompleteItemData:
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                 _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #Ammo
-            ('AMMO', bolt.csvFormat('ssfiiisss')+'\n',
+            ('AMMO', bolt.csvFormat('ssfiisss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Speed'),_('Value'),_('Clip Rounds'),_('Proj/Shot'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
+                _('Editor Id'),_('Name'),_('Speed'),_('Value'),_('Clip Rounds'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
             #--Armor
             ('ARMO', bolt.csvFormat('ssfiiissssssss')+'\n',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
