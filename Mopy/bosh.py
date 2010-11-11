@@ -2030,7 +2030,9 @@ class MreLeveledList(MelRecord):
             for selfEntry,otherEntry in zip(self.entries,other.entries):
                 if (selfEntry.listId != otherEntry.listId or
                     selfEntry.level != otherEntry.level or
-                    selfEntry.count != otherEntry.count):
+                    selfEntry.count != otherEntry.count or
+                    selfEntry.owner != otherEntry.owner or
+                    selfEntry.condition != otherEntry.condition):
                     self.mergeOverLast = True
                     break
             else:
