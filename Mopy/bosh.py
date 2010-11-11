@@ -17452,7 +17452,7 @@ class GraphicsPatcher(ImportPatcher):
         recAttrs_class = self.recAttrs_class = {}
         for recClass in (MreBsgn,MreLscr, MreClas, MreLtex, MreRegn):
             recAttrs_class[recClass] = ('iconPath',)
-        for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat, MreMstt, MrePwat, MreAspc, MreHdpt, MreTact, MreDobj):
+        for recClass in (MreActi, MreDoor, MreFlor, MreFurn, MreGras, MreStat, MreMstt, MrePwat, MreHdpt, MreTact, MreDobj):
             recAttrs_class[recClass] = ('model',)
         for recClass in (MreLigh,):
             recAttrs_class[recClass] = ('iconPath','model')
