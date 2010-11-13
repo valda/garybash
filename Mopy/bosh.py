@@ -4629,11 +4629,8 @@ class MreWeap(MelRecord):
             'shortBurst',
             'RumbleAlternate',
             'longBurst',
-            'unknown12','unknown13','unknown14','unknown15',
-            'unknown16','unknown17','unknown18','unknown19',
-            'unknown20','unknown21','unknown22','unknown23',
-            'unknown24','unknown25','unknown26','unknown27',
-            'unknown28','unknown29','unknown30','unknown31',
+            'scopeHasNightVision',
+            'scopeFromMod',
         ))
     _cflags = Flags(0L,Flags.getNames(
             'onDeath',
@@ -17469,7 +17466,7 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreCcrd,):
             recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','textureFace','textureBack')
         for recClass in (MreWeap,):
-            recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel','animationType','gripAnimation','reloadAnimation')
+            recAttrs_class[recClass] = ('largeIconPath','smallIconPath','model','shellCasingModel','scopeModel','worldModel','firstPersonModel','animationType','gripAnimation','reloadAnimation','modelWithMods','firstPersonModelWithMods')
         for recClass in (MreArmo, MreArma, MreClot):
             recAttrs_class[recClass] = ('maleBody','maleWorld','maleLargeIconPath','maleSmallIconPath','femaleBody','femaleWorld','femaleLargeIconPath','femaleSmallIconPath','flags')
         for recClass in (MreCrea,):
@@ -19644,6 +19641,183 @@ class DestructablePatcher(ImportPatcher):
                     continue
                 for attr,value in id_data[fid].iteritems():
                     record.__setattr__(attr,value)
+                keep(fid)
+                type_count[type] += 1
+        id_data = None
+        log.setHeader('= '+self.__class__.name)
+        log(_("=== Source Mods"))
+        for mod in self.sourceMods:
+            log("* " +mod.s)
+        log(_("\n=== Modified Records"))
+        for type,count in sorted(type_count.iteritems()):
+            if count: log("* %s: %d" % (type,count))
+
+#------------------------------------------------------------------------------
+class WeaponModsPatcher(ImportPatcher):
+    """Merge changes to weapon modifications."""
+    scanOrder = 27
+    editOrder = 27
+    name = _("Import Weapon Modifications")
+    text = _("Merges changes to weapon modifications.")
+    tip = text
+    autoRe = re.compile(r"^UNDEFINED$",re.I)
+    autoKey = 'WeaponMods'
+
+    #--Patch Phase ------------------------------------------------------------
+    def initPatchFile(self,patchFile,loadMods):
+        """Prepare to handle specified patch mod. All functions are called after this."""
+        Patcher.initPatchFile(self,patchFile,loadMods)
+        self.id_data = {} #--Names keyed by long fid.
+        self.srcClasses = set() #--Record classes actually provided by src mods/files.
+        self.sourceMods = self.getConfigChecked()
+        self.isActive = len(self.sourceMods) != 0
+        self.classestemp = set()
+        #--Type Fields
+        recAttrs_class = self.recAttrs_class = {}
+        recFlags_class = self.recFlags_class = {}
+        for recClass in (MreWeap,):
+            recAttrs_class[recClass] = ('modelWithMods','firstPersonModelWithMods','weaponMods','soundMod1Shoot3Ds','soundMod1Shoot2D',
+                                        'effectMod1','effectMod2','effectMod3','valueAMod1','valueAMod2','valueAMod3',
+                                        'valueBMod1','valueBMod2','valueBMod3','reloadAnimationMod','vatsModReqiured','scopeModel')
+            recFlags_class[recClass] = {'dnamFlags1': ('hasScope',),
+                                        'dnamFlags2': ('scopeFromMod',)}
+        self.longTypes = set(('WEAP','STAT','IMOD','SOUN'))
+
+    def initData(self,progress):
+        """Get graphics from source files."""
+        if not self.isActive: return
+        id_data = self.id_data
+        recAttrs_class = self.recAttrs_class
+        recFlags_class = self.recFlags_class
+        loadFactory = LoadFactory(False,*recAttrs_class.keys())
+        longTypes = self.longTypes & set(x.classType for x in recAttrs_class)
+        progress.setFull(len(self.sourceMods))
+        cachedMasters = {}
+        for index,srcMod in enumerate(self.sourceMods):
+            temp_id_data = {}
+            if srcMod not in modInfos: continue
+            srcInfo = modInfos[srcMod]
+            srcFile = ModFile(srcInfo,loadFactory)
+            masters = srcInfo.header.masters
+            srcFile.load(True)
+            srcFile.convertToLongFids(longTypes)
+            mapper = srcFile.getLongMapper()
+            for recClass,recAttrs in recAttrs_class.iteritems():
+                if recClass.classType not in srcFile.tops: continue
+                self.srcClasses.add(recClass)
+                self.classestemp.add(recClass)
+                recFlags = recFlags_class[recClass]
+                for record in srcFile.tops[recClass.classType].getActiveRecords():
+                    fid = mapper(record.fid)
+                    temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+                    for flagsAttr,flags in recFlags.iteritems():
+                        temp_id_data[fid+(flagsAttr,)] = dict((flag,record.__getattribute__(flagsAttr).__getattr__(flag)) for flag in flags)
+            for master in masters:
+                if not master in modInfos: continue # or break filter mods
+                if master in cachedMasters:
+                    masterFile = cachedMasters[master]
+                else:
+                    masterInfo = modInfos[master]
+                    masterFile = ModFile(masterInfo,loadFactory)
+                    masterFile.load(True)
+                    masterFile.convertToLongFids(longTypes)
+                    cachedMasters[master] = masterFile
+                mapper = masterFile.getLongMapper()
+                for recClass,recAttrs in recAttrs_class.iteritems():
+                    if recClass.classType not in masterFile.tops: continue
+                    if recClass not in self.classestemp: continue
+                    for record in masterFile.tops[recClass.classType].getActiveRecords():
+                        fid = mapper(record.fid)
+                        if fid not in temp_id_data: continue
+                        for attr, value in temp_id_data[fid].iteritems():
+                            if value == record.__getattribute__(attr): continue
+                            else:
+                                if fid not in id_data: id_data[fid] = dict()
+                                try:
+                                    id_data[fid][attr] = temp_id_data[fid][attr]
+                                except KeyError:
+                                    id_data[fid].setdefault(attr,value)
+                        recFlags = recFlags_class[recClass]
+                        for flagsAttr,flags in recFlags.iteritems():
+                            fidflag = fid+(flagsAttr,)
+                            for flag, value in temp_id_data[fidflag].iteritems():
+                                if fidflag not in id_data: id_data[fidflag] = dict()
+                                try:
+                                    id_data[fidflag][flag] = temp_id_data[fidflag][flag]
+                                except KeyError:
+                                    id_data[fidflag].setdefault(flag,value)
+            progress.plus()
+        temp_id_data = None
+        self.longTypes = self.longTypes & set(x.classType for x in self.srcClasses)
+        self.isActive = bool(self.srcClasses)
+
+    def getReadClasses(self):
+        """Returns load factory classes needed for reading."""
+        if not self.isActive: return None
+        return self.srcClasses
+
+    def getWriteClasses(self):
+        """Returns load factory classes needed for writing."""
+        if not self.isActive: return None
+        return self.srcClasses
+
+    def scanModFile(self, modFile, progress):
+        """Scan mod file against source data."""
+        if not self.isActive: return
+        id_data = self.id_data
+        mapper = modFile.getLongMapper()
+        if self.longTypes:
+            modFile.convertToLongFids(self.longTypes)
+        for recClass in self.srcClasses:
+            type = recClass.classType
+            if type not in modFile.tops: continue
+            patchBlock = getattr(self.patchFile,type)
+            for record in modFile.tops[type].getActiveRecords():
+                fid = record.fid
+                if not record.longFids: fid = mapper(fid)
+                if fid not in id_data: continue
+                for attr,value in id_data[fid].iteritems():
+                    if record.__getattribute__(attr) != value:
+                        patchBlock.setRecord(record.getTypeCopy(mapper))
+                        break
+                recFlags = self.recFlags_class[recClass]
+                for flagsAttr,flags in recFlags.iteritems():
+                    fidflag = fid+(flagsAttr,)
+                    if fidflag not in id_data: continue
+                    for flag,value in id_data[fidflag].iteritems():
+                        if record.__getattribute__(flagsAttr).__getattr__(flag) != value:
+                            patchBlock.setRecord(record.getTypeCopy(mapper))
+                            break
+
+    def buildPatch(self,log,progress):
+        """Merge last version of record with patched destructable data as needed."""
+        if not self.isActive: return
+        modFile = self.patchFile
+        keep = self.patchFile.getKeeper()
+        id_data = self.id_data
+        type_count = {}
+        for recClass in self.srcClasses:
+            type = recClass.classType
+            if type not in modFile.tops: continue
+            type_count[type] = 0
+            for record in modFile.tops[type].records:
+                fid = record.fid
+                if fid not in id_data: continue
+                for attr,value in id_data[fid].iteritems():
+                    if record.__getattribute__(attr) != value:
+                        break
+                else:
+                    continue
+                for attr,value in id_data[fid].iteritems():
+                    record.__setattr__(attr,value)
+                recFlags = self.recFlags_class[recClass]
+                for flagsAttr,flags in recFlags.iteritems():
+                    fidflag = fid+(flagsAttr,)
+                    if fidflag not in id_data: continue
+                    for flag,value in id_data[fidflag].iteritems():
+                        newFlags = record.__getattribute__(flagsAttr)
+                        newFlags.__setattr__(flag,value)
+                        record.__setattr__(flagsAttr,newFlags)
                 keep(fid)
                 type_count[type] += 1
         id_data = None
