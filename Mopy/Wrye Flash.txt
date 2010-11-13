@@ -14,6 +14,9 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 8 [11/13/2010]
+* Fixed a bug which Sound patcher raises an exception.
+
 === 7 [11/13/2010]
 * Names Tweak: Sort inventory supported book/magazine and caravan cards.
 * Added support new FOMM (The installation path of FOMM can be changed in bash.ini).
