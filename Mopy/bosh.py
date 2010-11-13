@@ -8203,7 +8203,7 @@ class BsaFile:
         ins = bolt.StructFile(self.path.s,'rb')
         #--Header
         ins.seek(4*4)
-        (self.folderCount,self.fileCount,lenFolderNames,lenFileNames,fileFlags,fileFlags2) = ins.unpack('6I',recHeaderSize)
+        (self.folderCount,self.fileCount,lenFolderNames,lenFileNames,fileFlags) = ins.unpack('5I',20)
         #--FolderInfos (Initial)
         folderInfos = self.folderInfos = []
         for index in range(self.folderCount):
@@ -8266,7 +8266,7 @@ class BsaFile:
             ('Fallout - MenuVoices.bsa',1138575220),
             ('Fallout - Meshes.bsa',1139433736),
             ('Fallout - Misc.bsa',1138660560),
-            ('Fallout - Sounds.bsa',1138162634),
+            ('Fallout - Sound.bsa',1138162634),
             ('Fallout - Textures.bsa',1138162934),
             ('Fallout - Voices.bsa',1138166742),
             )
