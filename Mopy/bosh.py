@@ -4600,7 +4600,7 @@ class MreWeap(MelRecord):
                     'attackShotsPerSec','reloadTime','jamTime','aimArc','skill','rumblePattern','rambleWavelangth','limbDmgMult',
                     ('resistType',0xFFFFFFFF),'sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax'),
         MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',0L)),
-        MelBase('VNAM','_vnam','sountLevel'),
+        MelBase('VNAM','_vnam','soundLevel'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -18585,6 +18585,8 @@ class SoundPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('sound','soundCountDown','soundDisable','soundLevel')
         for recClass in (MreAspc,):
             recAttrs_class[recClass] = ('soundLooping','useSoundFromRegion','environmentType')
+        for recClass in (MreWeap,):
+            recAttrs_class[recClass] = ('soundGunShot3D','soundGunShot2D','soundGunShot3DLooping','soundLevel')
         #--Needs Longs
         self.longTypes = set(('MGEF','ACTI','LIGH','WTHR','CONT','DOOR','EXPL','IPCT','PROJ','ASPC','SOUN','REGN'))
 
