@@ -1,11 +1,18 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 1822.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 1851.
 \ % A Bashed Patch suggestion for the mod above.
 
 FOOK - New Vegas.esm
-% {{BASH: Names,Stats,Delev}}
+% {{BASH: Deflst,Delev,Graphics,Names,Relev,Sound,Stats,Scripts}}
 
 Compiled Patch.esp
-% {{BASH: Stats}}
+% {{BASH: Actors.AIPackages,Delev,Relev,Sound,Stats,Scripts}}
+
+NVORganizedItems.esp
+% {{BASH: Names}}
+Sorter - Combined.esp
+% {{BASH: Names}}
+Sorter - Combined - Aid Crafting.esp
+% {{BASH: Names}}
 
 Cuter Boone.esp
 % {{BASH: NpcFaces,NoMerge}}
@@ -13,25 +20,58 @@ Cuter Boone NEW.esp
 % {{BASH: NpcFaces,NoMerge}}
 Cuter Veronica Felicia Day.esp
 % {{BASH: NpcFaces,NoMerge}}
+MikotoBPCCArcade.esp
+% {{BASH: NpcFaces,NoMerge}}
+MikotoBPCCBoone.esp
+% {{BASH: NpcFaces,NoMerge}}
+MikotoBPCCCass.esp
+% {{BASH: NpcFaces,NoMerge}}
+MikotoBPWastersOverhaul.esp
+% {{BASH: NpcFaces,NoMerge}}
 Raul - Danny Trejo.esp
 % {{BASH: NpcFaces,NoMerge}}
+
+NVHarderCore.esp
+% {{BASH: Names,Stats}}
+NVWastelandUnlocked.esp
+% {{BASH: Delev,Names,Relations,Relev}}
+
+FOOK - New Vegas.esp
+% {{BASH: Deflst,Delev,Graphics,Names,Relev,Sound,Stats,Scripts}}
 
 Arwen_NV_Realism_Core.esp
 % {{BASH: Stats}}
 hardercore_combat.esp
 % {{BASH: Stats}}
 hardercore_wealth.esp
-% {{BASH: Delev}}
-hardercore_healing.esp
-% {{BASH: Stats}}
+% {{BASH: Delev,Relev}}
 
+LFox Bottle That Water.esp
+% {{BASH: Names,Scripts}}
+
+Better Ammo Crafting.esp
+% {{BASH: Names}}
+BetterCraftingSorting.esp
+% {{BASH: Names}}
+
+Classic Plasma Grenade.esp
+% {{BASH: Graphics}}
+Classic Pulse Grenade (classic sound).esp
+% {{BASH: Graphics,Sounds}}
+Classic Pulse Grenade (vanilla sound).esp
+% {{BASH: Graphics}}
 ImmaSightinMahLazor.esp
 % {{BASH: Stats}}
 PlasmaRifleAwesomefied.esp
 % {{BASH: Sound}}
 
+Armored PA Gloves.esp
+% {{BASH: Deflst}}
+
+RexReplacerEss.esp
+% {{BASH: Graphics}}
 NVPhalanx.esp
-% {{BASH: Actors.AIPackages,Actors.CombatStyle}}
+% {{BASH: Actors.AIPackages,Actors.CombatStyle,Scripts}}
 
 T3T_MiscItemIconsNV.esp
 % {{BASH: Graphics}}

@@ -14,11 +14,22 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 7 [11/13/2010]
+* Names Tweak: Sort inventory supported book/magazine and caravan cards.
+* Added support new FOMM (The installation path of FOMM can be changed in bash.ini).
+* Support for BsaRedirection specifications after the official patch.
+* Fixed a bug that wasn't considering the owner and condition attribute at leveledlist merger (reported by Space Oden69).
+* Fixed a bug in Graphics patcher (reported by Space Oden69).
+* Added WeaponMods bashtag.
+* Sound tag came to import the weapon sound.
+* Added Destructible tag (same as Destructable).
+* Taglist updated to BOSS masterlist revision 1851.
+
 === 6 [11/08/2010]
 * Fixed a bug that raise exception when importing ItemData from CSV.
 * Add GMST Tweak: Terminal Speed Adjustment (referred from HackRate: http://www.fallout3nexus.com/downloads/file.php?id=2745).
 * Update BOSS launch code (from WryeBash svn655).
-* Fixed CCRD.INTV subrecord structure.
+* Fixed CCRD.INTV subrecord structure (reported by platycus).
 
 === 5 [11/06/2010] [Sativarg,Valda]
 * Fixed a definition of BPTD.BPND subrecord struct.
