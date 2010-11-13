@@ -4600,7 +4600,7 @@ class MreWeap(MelRecord):
                     'attackShotsPerSec','reloadTime','jamTime','aimArc','skill','rumblePattern','rambleWavelangth','limbDmgMult',
                     ('resistType',0xFFFFFFFF),'sightUsage','semiAutomaticFireDelayMin','semiAutomaticFireDelayMax'),
         MelStruct('CRDT','IfHI','criticalDamage','criticalMultiplier',(_cflags,'criticalFlags',0L),(FID,'criticalEffect',0L)),
-        MelBase('VNAM','_vnam','soundLevel'),
+        MelBase('VNAM','soundLevel'),
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -18588,7 +18588,7 @@ class SoundPatcher(ImportPatcher):
         for recClass in (MreWeap,):
             recAttrs_class[recClass] = ('soundGunShot3D','soundGunShot2D','soundGunShot3DLooping','soundLevel')
         #--Needs Longs
-        self.longTypes = set(('MGEF','ACTI','LIGH','WTHR','CONT','DOOR','EXPL','IPCT','PROJ','ASPC','SOUN','REGN'))
+        self.longTypes = set(('MGEF','ACTI','LIGH','WTHR','CONT','DOOR','EXPL','IPCT','PROJ','ASPC','WEAP','SOUN','REGN'))
 
     def initData(self,progress):
         """Get sounds from source files."""
