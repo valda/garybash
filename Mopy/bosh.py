@@ -18942,7 +18942,7 @@ class DestructablePatcher(ImportPatcher):
     text = _("Merges changes to destructable records.\n\nWill have to use if Destruction Environment mod is installed and active.")
     tip = text
     autoRe = re.compile(r"^UNDEFINED$",re.I)
-    autoKey = 'Destructable'
+    autoKey = ('Destructable','Destructible')
 
     #--Patch Phase ------------------------------------------------------------
     def initPatchFile(self,patchFile,loadMods):
