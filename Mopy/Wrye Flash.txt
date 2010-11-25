@@ -14,6 +14,11 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 24 [11/25/2010]
+* Fixed a bug that memory error is thrown at the bsafile scan.
+* Fixed a bug which Sound patcher raises an exception.
+* Fixed a error in file error (from WBsvn657).
+
 === 23 [11/13/2010]
 * Add GMST Tweak: Terminal Speed Adjustment (referred from HackRate: http://www.fallout3nexus.com/downloads/file.php?id=2745).
 * Update BOSS launch code (from WryeBash svn655).
@@ -21,7 +26,6 @@ Wrye Flash is released under Version 2 of the GNU General Public License. See en
 * Added support new FOMM (The installation path of FOMM can be changed in bash.ini).
 * Sound tag came to import the weapon sound.
 * Added Destructible tag (same as Destructable).
-* Fixed a bug which Sound patcher raises an exception.
 
 === 22 [11/06/2010]
 * Fixed an address offset at the time of the savedata writing.
