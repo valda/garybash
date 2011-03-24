@@ -6351,6 +6351,16 @@ class MobObjects(MobBase):
             recordsAppend(record)
         self.setChanged()
 
+    def mergeRecords(self,rhs):
+        if self.data:
+            self.load(None,True)
+        if rhs.data:
+            rhs.load(None,True)
+        self.records.extend(rhs.records)
+        self.id_records.update(rhs.id_records)
+        self.numRecords = -1
+        self.setChanged()
+
     def getActiveRecords(self,getIgnored=True,getDeleted=True):
         """Returns non-ignored records."""
         return [record for record in self.records if not record.flags1.ignored]
@@ -7235,8 +7245,13 @@ class ModFile:
                 raise ModError(self.fileInfo.name,_('Improperly grouped file.'))
             topClass = selfGetTopClass(label)
             if topClass:
-                self.tops[label] = topClass(header,selfLoadFactory)
-                self.tops[label].load(ins,unpack and (topClass != MobBase))
+                records = topClass(header,selfLoadFactory)
+                if size - recHeaderSize > 0:
+                    records.load(ins,unpack and (topClass != MobBase))
+                if self.tops.get(label):
+                    self.tops[label].mergeRecords(records)
+                else:
+                    self.tops[label] = records
             else:
                 selfTopsSkipAdd(label)
                 insSeek(size-recHeaderSize,1,type + '.' + label)
@@ -23503,7 +23518,7 @@ class ContentsChecker(SpecialPatcher,Patcher):
             'LVLC':'LVLC,CREA,'.split(','),
             'LVLN':'LVLN,NPC_,'.split(','),
             #--LVLI will also be applied for containers.
-            'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP,NOTE,MSTT,STAT,CMNY,CCRD,IMOD'.split(','),
+            'LVLI':'LVLI,ALCH,AMMO,APPA,ARMO,BOOK,CLOT,INGR,KEYM,LIGH,MISC,SGST,SLGM,WEAP,NOTE,MSTT,STAT,CMNY,CCRD,IMOD,CHIP'.split(','),
             }
         self.contType_entryTypes['CONT'] = self.contType_entryTypes['LVLI']
         self.contType_entryTypes['CREA'] = self.contType_entryTypes['LVLI']
