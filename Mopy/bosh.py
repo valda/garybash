@@ -312,7 +312,7 @@ reCsvExt  = re.compile(r'\.csv$',re.I)
 reINIExt  = re.compile(r'\.ini$',re.I)
 reQuoted  = re.compile(r'^"(.*)"$')
 reGroupHeader = re.compile(r'^(\+\+|==)')
-reFallout3Nexus = re.compile(r'-(\d{4,6})(-bain)?\.(7z|zip|rar)$',re.I)
+reFallout3Nexus = re.compile(r'-(\d{4,6})(-bain)?(-\d{0,6}-\d{0,6})?\.(7z|zip|rar)$',re.I)
 reTESA = re.compile(r'-(\d{1,6})(\.tessource)?(-bain)?\.(7z|zip|rar)$',re.I)
 reSplitOnNonAlphaNumeric = re.compile(r'\W+')
 
