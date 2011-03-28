@@ -458,7 +458,7 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     # (410, 'IsKillerObject', 2, 0, 0, 0),
     # (436, 'GetDialogueEmotionValue', 0, 0, 0, 0),
     # (459, 'GetActorCrimePlayerEnemy', 0, 0, 0, 0),
-    # (462, 'IsPlayerTagSkill', 1, 0, 0, 0),
+    (462, 'IsPlayerTagSkill', 1, 0, 0, 0),
     # (464, 'IsPlayerGrabbedRef', 1, 0, 0, 0),
     # (478, 'GetThreatRatio', 2, 0, 0, 0),
     # (489, 'GetConcussed', 0, 0, 0, 0),
