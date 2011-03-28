@@ -17492,8 +17492,6 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('iconPath','model','effectShader','objectDisplayShader','light')
         for recClass in (MreEfsh,):
             recAttrs_class[recClass] = ('particleTexture','fillTexture')
-        for recClass in (MreTxst,):
-            recAttrs_class[recClass] = ('baseImage','normalMap','environmentMapMask','growMap','parallaxMap','environmentMap','decalData','flags')
         for recClass in (MreExpl,):
             recAttrs_class[recClass] = ('imageSpaceModifier','light','impactDataset','placedImpactObject')
         for recClass in (MreTxst,):
@@ -17505,7 +17503,7 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreProj,):
             recAttrs_class[recClass] = ('model','light','muzzleFlash','explosion','muzzleFlashDuration','fadeDuration','muzzleFlashPath')
         #--Needs Longs
-        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','ARMA','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL','TACT','CMNY','CCRD','IMOD','REPU'))
+        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','ARMA','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL','TACT','CMNY','CCRD','IMOD','REPU','HDPT'))
 
     def initData(self,progress):
         """Get graphics from source files."""
