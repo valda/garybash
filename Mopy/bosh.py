@@ -6351,16 +6351,6 @@ class MobObjects(MobBase):
             recordsAppend(record)
         self.setChanged()
 
-    def mergeRecords(self,rhs):
-        if self.data:
-            self.load(None,True)
-        if rhs.data:
-            rhs.load(None,True)
-        self.records.extend(rhs.records)
-        self.id_records.update(rhs.id_records)
-        self.numRecords = -1
-        self.setChanged()
-
     def getActiveRecords(self,getIgnored=True,getDeleted=True):
         """Returns non-ignored records."""
         return [record for record in self.records if not record.flags1.ignored]
@@ -6453,6 +6443,16 @@ class MobObjects(MobBase):
                 record = record.getTypeCopy(mapper)
                 self.setRecord(record)
                 mergeIds.discard(record.fid)
+
+    def mergeRecords(self,rhs):
+        if self.data:
+            self.load(None,True)
+        if rhs.data:
+            rhs.load(None,True)
+        self.records.extend(rhs.records)
+        self.id_records.update(rhs.id_records)
+        self.numRecords = -1
+        self.setChanged()
 
 #------------------------------------------------------------------------------
 class MobDials(MobObjects):
@@ -6712,7 +6712,7 @@ class MobCell(MobBase):
 
 #-------------------------------------------------------------------------------
 class MobCells(MobBase):
-    """A block containing cells. Subclassed by MobWorld and MobICells.
+    """A block containing cells. Subclassed by MobWorld and MobCells.
 
     Note that "blocks" here only roughly match the file block structure.
 
@@ -7083,6 +7083,16 @@ class MobWorlds(MobBase):
         self.id_worldBlocks = {}
         self.orphansSkipped = 0
         MobBase.__init__(self,header,loadFactory,ins,unpack)
+
+    def mergeRecords(self,rhs):
+        if self.data:
+            self.load(None,True)
+        if rhs.data:
+            rhs.load(None,True)
+        self.worldBlocks.extend(rhs.worldBlocks)
+        self.id_worldBlocks.update(rhs.id_worldBlocks)
+        self.numRecords = -1
+        self.setChanged()
 
     def loadData(self,ins,endPos):
         """Loads data from input stream. Called by load()."""
