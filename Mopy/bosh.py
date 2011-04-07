@@ -6828,6 +6828,16 @@ class MobCells(MobBase):
         for cellBlock in self.cellBlocks:
             cellBlock.updateMasters(masters)
 
+    def mergeRecords(self,rhs):
+        if self.data:
+            self.load(None,True)
+        if rhs.data:
+            rhs.load(None,True)
+        self.cellBlocks.extend(rhs.worldBlocks)
+        self.id_cellBlock.update(rhs.id_worldBlocks)
+        self.numRecords = -1
+        self.setChanged()
+
 #-------------------------------------------------------------------------------
 class MobICells(MobCells):
     """Tes4 top block for interior cell records."""
@@ -7084,16 +7094,6 @@ class MobWorlds(MobBase):
         self.orphansSkipped = 0
         MobBase.__init__(self,header,loadFactory,ins,unpack)
 
-    def mergeRecords(self,rhs):
-        if self.data:
-            self.load(None,True)
-        if rhs.data:
-            rhs.load(None,True)
-        self.worldBlocks.extend(rhs.worldBlocks)
-        self.id_worldBlocks.update(rhs.id_worldBlocks)
-        self.numRecords = -1
-        self.setChanged()
-
     def loadData(self,ins,endPos):
         """Loads data from input stream. Called by load()."""
         expType = self.label
@@ -7201,6 +7201,16 @@ class MobWorlds(MobBase):
         for worldBlock in self.worldBlocks: worldBlock.keepRecords(keepIds)
         self.worldBlocks = [x for x in self.worldBlocks if x.world.fid in keepIds]
         self.id_worldBlocks.clear()
+        self.setChanged()
+
+    def mergeRecords(self,rhs):
+        if self.data:
+            self.load(None,True)
+        if rhs.data:
+            rhs.load(None,True)
+        self.worldBlocks.extend(rhs.worldBlocks)
+        self.id_worldBlocks.update(rhs.id_worldBlocks)
+        self.numRecords = -1
         self.setChanged()
 
 #------------------------------------------------------------------------------
