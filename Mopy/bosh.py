@@ -6833,8 +6833,8 @@ class MobCells(MobBase):
             self.load(None,True)
         if rhs.data:
             rhs.load(None,True)
-        self.cellBlocks.extend(rhs.worldBlocks)
-        self.id_cellBlock.update(rhs.id_worldBlocks)
+        self.cellBlocks.extend(rhs.cellBlocks)
+        self.id_cellBlock.update(rhs.id_cellBlock)
         self.numRecords = -1
         self.setChanged()
 
