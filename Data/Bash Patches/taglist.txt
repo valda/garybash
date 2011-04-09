@@ -1,78 +1,282 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 1851.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2460.
 \ % A Bashed Patch suggestion for the mod above.
 
+Community Bugfix Compilation Patch.esm
+% {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts}}
+Moddable Unique Weps.esm
+% {{BASH: WeaponMods}}
+New Vegas Redesigned.esm
+% {{BASH: NpcFaces}}
+Machienzo - NPC Cosmetic Fixes - Ver 1.55.esm
+% {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+Machienzo - NPC Cosmetic Fixes - Ver 1.57.esm
+% {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+IWS-Core.esm
+% {{BASH: Delev, Relev}}
+Weapon Mod Expansion.esm
+% {{BASH: Names}}
 FOOK - New Vegas.esm
-% {{BASH: Deflst,Delev,Graphics,Names,Relev,Sound,Stats,Scripts}}
+% {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
+New Vegas Redesigned.esm
+% {{BASH: NpcFaces, Hair, Eyes, Body-M, Body-F}}
+Lings.esm
+% {{BASH: Hair, eyes}}
+MikotoBeauty.esm
+% {{BASH: Hair, eyes}}
 
+Community Bugfix Compilation Patch.esp
+% {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts}}
 Compiled Patch.esp
-% {{BASH: Actors.AIPackages,Delev,Relev,Sound,Stats,Scripts}}
+% {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts}}
 
 NVORganizedItems.esp
 % {{BASH: Names}}
-Sorter - Combined.esp
-% {{BASH: Names}}
-Sorter - Combined - Aid Crafting.esp
-% {{BASH: Names}}
+Realistic Weight.esp
+% {{BASH: Stats}}
+Weight_Balance.esp
+% {{BASH: Stats}}
+Weight_Balance_v07.esp
+% {{BASH: Stats}}
+Weight_Balance_v10.esp
+% {{BASH: Stats}}
 
 Cuter Boone.esp
-% {{BASH: NpcFaces,NoMerge}}
+% {{BASH: NpcFaces, NoMerge}}
 Cuter Boone NEW.esp
-% {{BASH: NpcFaces,NoMerge}}
+% {{BASH: NpcFaces, NoMerge}}
 Cuter Veronica Felicia Day.esp
-% {{BASH: NpcFaces,NoMerge}}
+% {{BASH: NpcFaces, NoMerge}}
+Cuter Veronica Felicia Day-Essential.esp
+% {{BASH: NpcFaces}}
+Lore version.esp
+% {{BASH: NpcFaces}}
 MikotoBPCCArcade.esp
-% {{BASH: NpcFaces,NoMerge}}
+% {{BASH: NpcFaces, NoMerge}}
 MikotoBPCCBoone.esp
-% {{BASH: NpcFaces,NoMerge}}
+% {{BASH: NpcFaces, NoMerge}}
 MikotoBPCCCass.esp
-% {{BASH: NpcFaces,NoMerge}}
+% {{BASH: NpcFaces, NoMerge}}
 MikotoBPWastersOverhaul.esp
-% {{BASH: NpcFaces,NoMerge}}
+% {{BASH: NpcFaces, NoMerge}}
+MikotoBPCCFull.esp
+% {{BASH: NpcFaces, NoMerge}}
 Raul - Danny Trejo.esp
-% {{BASH: NpcFaces,NoMerge}}
+% {{BASH: NpcFaces, NoMerge}}
+VyntageCass02.esp
+% {{BASH: NpcFaces}}
 
 NVHarderCore.esp
-% {{BASH: Names,Stats}}
+% {{BASH: Names, Stats}}
 NVWastelandUnlocked.esp
-% {{BASH: Delev,Names,Relations,Relev}}
+% {{BASH: Delev, Names, Relations, Relev, Stats, WeaponMods}}
+NVWeaponAmmoTweaks.esp
+% {{BASH: Stats, WeaponMods}}
 
 FOOK - New Vegas.esp
-% {{BASH: Deflst,Delev,Graphics,Names,Relev,Sound,Stats,Scripts}}
+% {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
+LinkesAuge - Bug fixing compilation.esp
+% {{BASH: Deflst, Names, Scripts, Stats}}
+LinkesAuge - Retexture edits.esp
+% {{BASH: Graphics}}
+
+NoWeaponZoom.esp
+% {{BASH: Stats}}
+ImprovedBinocs.esp
+% {{BASH: Invent}}
+HeadWearShaderFX.esp
+% {{BASH: Scripts, Stats}}
+LootOverhaul.esp
+% {{BASH: Invent}}
+Food&DrinkDontHeal.esp
+% {{BASH: Stats}}
+CompanionsImproved.esp
+% {{BASH: Actors.AIPackages}}
+Npc&CreatureRespawn.esp
+% {{BASH: Relev}}
+M.M.A.T - Companion Module.esp
+% {{BASH: Actors.AIPackages}}
+M.M.A.T - Ingestible Module.esp
+% {{BASH: Stats}}
+M.M.A.T - Shader Module.esp
+% {{BASH: Stats}}
+M.M.A.T Loot Module.esp
+% {{BASH: Invent}}
+M.M.A.T - Loot Module.esp
+% {{BASH: Invent}}
+M.M.A.T - Weapon Module.esp
+% {{BASH: Stats}}
+M.M.A.T - Spawn Module.esp
+% {{BASH: Relev}}
+
+NEVAX - BEAUTYPACK.esp
+% {{BASH: Body-F, Body-M, NPCFaces}}
+NEVAX - FUNDE.esp
+% {{BASH: DefLst, Relev}}
+NEVAX - ITEMBALANCINGS.esp
+% {{BASH: Stats}}
+NEVAX - KAUFINHALTE.esp
+% {{BASH: DefLst, Invent, Relev}}
+NEVAX - MEHR MONSTER.esp
+% {{BASH: Relev, Scripts}}
+NEVAX - MONSTER.esp
+% {{BASH: DefLst, Relev}}
+NEVAX - NPC BALANCING.esp
+% {{BASH: DefLst, Relev, Scripts}}
+NEVAX - RAIDER u NPC.esp
+% {{BASH: DefLst, Relev, Scripts}}
+NEVAX - RUESTUNGEN.esp
+% {{BASH: DefLst, Relev}}
+NEVAX - WAFFEN.esp
+% {{BASH: DefLst, Relev}}
+
+PMT - XPadjust.esp
+% {{BASH: Invent}}
+PMT - Tougher XPadjust.esp
+% {{BASH: Invent}}
+PMT - Slower Reloading.esp
+% {{BASH: Stats}}
+PMT - Slower Reloading No Visible Perk.esp
+% {{BASH: Stats}}
+PMT - Reduced Ammo and Chems.esp
+% {{BASH: Delev, Relev}}
+PMT - Reduced Caps and Item Value.esp
+% {{BASH: Delev, Relev}}
+PMT - More Demanding Hardcore.esp
+% {{BASH: Stats}}
+PMT - Destructible Ordnance.esp
+% {{BASH: Destructable}}
+PMT - Deadlier Combat.esp
+% {{BASH: Stats}}
+PMT - Deadlier Combat Mk II.esp
+% {{BASH: Stats}}
+
+Reload.esp
+% {{BASH: Delev, Names, Relev}}
+Rebalance.esp
+% {{BASH: Names, Stats}}
+Rearm.esp
+% {{BASH: Delev, Relev}}
+RebalanceRearm.esp
+% {{BASH: Stats}}
+RearmRebalance.esp
+% {{BASH: Stats}}
+ReSort.esp
+% {{BASH: Names}}
+
+Superior Firepower - Unique Weaponry.esp
+% {{BASH: Stats}}
+Superior Firepower - Factional Changes.esp
+% {{BASH: Delev, Relev}}
 
 Arwen_NV_Realism_Core.esp
 % {{BASH: Stats}}
 hardercore_combat.esp
 % {{BASH: Stats}}
 hardercore_wealth.esp
-% {{BASH: Delev,Relev}}
+% {{BASH: Delev, Relev}}
+
+Improved Sound FX - Weapon Sharing Fix.esp
+% {{BASH: Sound}}
 
 LFox Bottle That Water.esp
-% {{BASH: Names,Scripts}}
+% {{BASH: Names, Scripts}}
+Project13 - Populated Wasteland.esp
+% {{BASH: Actors.AIPackages, Delev, Relev}}
 
 Better Ammo Crafting.esp
 % {{BASH: Names}}
 BetterCraftingSorting.esp
 % {{BASH: Names}}
 
+Assault Carbine mods.esp
+% {{BASH: WeaponMods}}
+better that gun 223.esp
+% {{BASH: Names, Stats}}
+better that gun 44mag.esp
+% {{BASH: Names, Stats}}
 Classic Plasma Grenade.esp
 % {{BASH: Graphics}}
 Classic Pulse Grenade (classic sound).esp
-% {{BASH: Graphics,Sounds}}
+% {{BASH: Graphics, Sounds}}
 Classic Pulse Grenade (vanilla sound).esp
 % {{BASH: Graphics}}
+EnergyBoost.esp
+% {{BASH: Stats}}
 ImmaSightinMahLazor.esp
 % {{BASH: Stats}}
+Moddable Anti-Materiel Rifle.esp
+% {{BASH: WeaponMods}}
+Moddable Unique Weps.esp
+% {{BASH: WeaponMods}}
 PlasmaRifleAwesomefied.esp
-% {{BASH: Sound}}
+% {{BASH: Sound, Stats}}
+Shotgun Commando.esp
+% {{BASH: Stats}}
+Shotgun Commando 1.2 Caravan.esp
+% {{BASH: Stats}}
 
+KDS Wearable Backpacks.esp
+% {{BASH: Invent}}
 Armored PA Gloves.esp
 % {{BASH: Deflst}}
+DragonskinNCRPersonnelWearingOutfits.esp
+% {{BASH: Relev}}
+Hereticus Faction Armors Fading.esp
+% {{BASH: Names}}
+Powered Power Armor.esp
+% {{BASH: Deflst}}
 
+CompanionLevel30Cap.esp
+% {{BASH: Actors.ACBS}}
+NVPhalanx.esp
+% {{BASH: Actors.AIPackages, Actors.CombatStyle, C.Owner, Scripts}}
 RexReplacerEss.esp
 % {{BASH: Graphics}}
-NVPhalanx.esp
-% {{BASH: Actors.AIPackages,Actors.CombatStyle,Scripts}}
 
 T3T_MiscItemIconsNV.esp
 % {{BASH: Graphics}}
+Sorter - Combined.esp
+% {{BASH: Names}}
+Sorter - Combined - T3T Icon Compatch.esp
+% {{BASH: Names}}
+Sorter - Combined - Aid Crafting.esp
+% {{BASH: Names}}
+Sorter - Combined - Weighted.esp
+% {{BASH: Names}}
+Inventory Sorter - Moddable Unique Weps.esp
+% {{BASH: Names}}
+DrugsAreBadMKay-IS.esp
+% {{BASH: Names}}
+FeelingIrradiated-IS.esp
+% {{BASH: Names}}
+
+LUMENARIUM - Working Sunglasses ONLY.esp
+% {{BASH: Names}}
+ELECTRO-CITY - CompletedWorkorders.esp
+% {{BASH: Names}}
+Nevada Skies.esp
+% {{BASH: C.Climate,C.Light}}
+Nevada Skies - URWLified.esp
+% {{BASH: C.Climate,C.Light}}
+
+RH_IronSights_NV_Vanilla.esp
+% {{BASH: Graphics}}
+Weapon Mod Expansion.esp
+% {{BASH: Graphics, Names, Stats, WeaponMods}}
+WME - Arwen Core.esp
+% {{BASH: Graphics, Names, Stats, WeaponMods}}
+WME - FOOK.esp
+% {{BASH: Delev, Graphics, Names, Sound, Stats}}
+WME Replacer - FOOK.esp
+% {{BASH: Graphics, Names, Stats, WeaponMods}}
+WME - that gun 44 mag.esp
+% {{BASH: Names, Stats, WeaponMods}}
+WME - that gun 556.esp
+% {{BASH: Names, Stats, WeaponMods}}
+WME - that gun 223.esp
+% {{BASH: Names, Stats, WeaponMods}}
+WME - 00 Commando.esp
+% {{BASH: Graphics, Names, Stats, WeaponMods}}
+WME - RH Ironsights.esp
+% {{BASH: Graphics, WeaponMods}}
 
