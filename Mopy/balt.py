@@ -25,7 +25,7 @@
 import bolt
 import bosh
 from bolt import _, GPath, deprint, delist
-from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError
+from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError, CancelError
 
 #--Python
 import cStringIO, cPickle
@@ -930,7 +930,8 @@ class Picture(wx.Window):
 class Progress(bolt.Progress):
     """Progress as progress dialog."""
     def __init__(self,title=_('Progress'),message=' '*60,parent=None,
-        style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE):
+        style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE, abort=False):
+        if abort: style |= wx.PD_CAN_ABORT
         if sys.version[:3] != '2.4': style |= wx.PD_SMOOTH
         self.dialog = wx.ProgressDialog(title,message,100,parent,style)
         bolt.Progress.__init__(self)
@@ -940,15 +941,22 @@ class Progress(bolt.Progress):
         self.prevState = -1
         self.prevTime = 0
 
+    def setCancel(self, enabled=True):
+        cancel = self.dialog.FindWindowById(wx.ID_CANCEL)
+        if cancel:
+            cancel.Enable(enabled)
+
     def doProgress(self,state,message):
         if not self.dialog:
             raise StateError(_('Dialog already destroyed.'))
         elif (state == 0 or state == 1 or (message != self.prevMessage) or
             (state - self.prevState) > 0.05 or (time.time() - self.prevTime) > 0.5):
             if message != self.prevMessage:
-                self.dialog.Update(int(state*100),message)
+                if not self.dialog.Update(int(state*100),message)[0]:
+                    raise CancelError
             else:
-                self.dialog.Update(int(state*100))
+                if not self.dialog.Update(int(state*100))[0]:
+                    raise CancelError
             self.prevMessage = message
             self.prevState = state
             self.prevTime = time.time()

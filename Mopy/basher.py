@@ -41,7 +41,7 @@ import bosh
 import bolt
 
 from bosh import formatInteger,formatDate
-from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError
+from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError, CancelError
 from bolt import _, LString,GPath, SubProgress, deprint, delist
 from cint import *
 startupinfo = bolt.startupinfo
@@ -2546,13 +2546,19 @@ class InstallersPanel(SashTankPanel):
             self.refreshed = False
         if not self.refreshed or (self.frameActivated and data.refreshInstallersNeeded()):
             self.refreshing = True
-            progress = balt.Progress(_("Refreshing Installers..."),'\n'+' '*60)
+            progress = balt.Progress(_("Refreshing Installers..."),'\n'+' '*60, abort=True)
             try:
                 what = ('DISC','IC')[self.refreshed]
                 if data.refresh(progress,what,self.fullRefresh):
                     self.gList.RefreshUI()
                 self.fullRefresh = False
                 self.frameActivated = False
+                self.refreshing = False
+                self.refreshed = True
+                cmd = r'attrib -R "%s\*" /S /D' % (bosh.dirs['mods'])
+                ins,err = subprocess.Popen(cmd, stdout=subprocess.PIPE, startupinfo=startupinfo).communicate()
+            except CancelError:
+                # User canceled the refresh
                 self.refreshing = False
                 self.refreshed = True
             finally:
@@ -2567,6 +2573,10 @@ class InstallersPanel(SashTankPanel):
                 self.fullRefresh = False
                 self.frameActivated = False
                 self.refreshing = False
+            except CancelError:
+                # User canceled the refresh
+                self.refreshing = False
+                self.refreshed = True
             finally:
                 if progress != None: progress.Destroy()
         self.SetStatusCount()
@@ -4890,7 +4900,7 @@ class PatchDialog(wx.Dialog):
         """Do the patch."""
         self.EndModal(wx.ID_OK)
         patchName = self.patchInfo.name
-        progress = balt.Progress(patchName.s,(' '*60+'\n'))
+        progress = balt.Progress(patchName.s,(' '*60+'\n'), abort=True)
         try:
             #--Save configs
             patchConfigs = {'ImportedMods':set()}
@@ -4954,9 +4964,10 @@ class PatchDialog(wx.Dialog):
         except bosh.FileEditError, error:
             progress.Destroy()
             balt.showError(self,str(error),_("File Edit Error"))
-        except:
+        except CancelError:
+            pass
+        finally:
             progress.Destroy()
-            raise
 
     def SaveConfig(self,event=None):
         """Save the configuration"""
@@ -6873,6 +6884,9 @@ class Installer_Refresh(InstallerLink):
                 apath = bosh.dirs['installers'].join(archive)
                 installer.refreshBasic(apath,SubProgress(progress,index,index+1),True)
                 self.data.hasChanged = True
+        except CancelError:
+            # User canceled the refresh
+            pass
         finally:
             if progress != None: progress.Destroy()
         self.data.refresh(what='NSC')
