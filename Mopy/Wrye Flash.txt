@@ -14,6 +14,15 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 25 [04/10/2011]
+* Bashed Patch:
+  * Omitted a function to discard empty sublist of FLST.
+* Ports from latest Wrye Bash.
+  * Fixed 'Open at TesNexus' to work with the new format (still works with the old format ofc) (from WryeBash 291).
+  * Read-Only files in installers (or in Data on uninstall) will no longer throw errors (automatically converted to non-ReadOnly) (from WryeBash 291).
+  * Some minor improvements and bug fixes.
+* Taglist updated to BOSS masterlist revision 2460.
+
 === 24 [11/25/2010]
 * Fixed a bug that memory error is thrown at the bsafile scan.
 * Fixed a bug which Sound patcher raises an exception.
