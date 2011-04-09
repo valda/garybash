@@ -41,11 +41,9 @@ bethDataFiles = set((
     #-- Preorder Packs
     'CaravanPack.esm',
     #-- DLC
-    # 'anchorage.esm',
-    # 'thepitt.esm',
-    # 'brokensteel.esm',
-    # 'pointlookout.esm',
-    # 'zeta.esm',
+    'DeadMoney.esm',
+    'DeadMoney - Main.bsa',
+    'DeadMoney - Sounds.bsa',
     ))
 
 # Balo Canonical Groups -------------------------------------------------------

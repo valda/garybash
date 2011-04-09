@@ -4906,15 +4906,21 @@ class PatchDialog(wx.Dialog):
             patchFile.scanLoadMods(SubProgress(progress,0.2,0.8)) #try to speed this up!
             patchFile.buildPatch(log,SubProgress(progress,0.8,0.9))#no speeding needed/really possible (less than 1/4 second even with large LO)
             #--Save
+            progress.setCancel(False)
             progress(0.9,patchName.s+_('\nSaving...'))
-            while True:
-                try:
-                    patchFile.safeSave()
-                except WindowsError:
-                    message = _("The patch cannot be written to (Data\\%s).\nIt might be locking by other processes.\nDo you want to retry or cancel?") % (patchName.s,)
-                    if balt.askWarning(self,fill(message,80),_("Couldn't write ")+patchName.s): continue
+            try:
+                patchFile.safeSave()
+            except WindowsError, werr:
+                if werr.winerror != 32: raise
+                while balt.askYes(self,_('Bash encountered an error when saving %s.\n\nThe file is in use by another process such as TES4Edit.\nPlease close the other program that is accessing %s.\n\nTry again?') % (patchName.s,patchName.s),_('Bash Patch - Save Error')):
+                    try:
+                        patchFile.safeSave()
+                    except WindowsError, werr:
+                        continue
+                    break
+                else:
                     raise
-                break
+
             #--Cleanup
             self.patchInfo.refresh()
             modList.RefreshUI(patchName)

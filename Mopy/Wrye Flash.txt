@@ -14,9 +14,16 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 10 [04/09/2011]
+* Add support for Dead Money DLC.
+* Fixed a bug in Graphics patcher.
+* Omitted a function to discard empty sublist of FLST.
+* Added IsPlayerTagSkill definition.
+* Fixed 'Open at TesNexus' to work with the new format (still works with the old format ofc) (WryeBash@680)
+
 === 9 [11/25/2010]
 * Fixed a bug that memory error is thrown at the bsafile scan.
-* Fix for error in file error (from WBsvn657).
+* Fixed a bug in Graphics patcher.
 
 === 8 [11/13/2010]
 * Fixed a bug which Sound patcher raises an exception.
