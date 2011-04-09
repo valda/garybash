@@ -44,6 +44,7 @@ from bosh import formatInteger,formatDate
 from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError
 from bolt import _, LString,GPath, SubProgress, deprint, delist
 from cint import *
+startupinfo = bolt.startupinfo
 
 #--Python
 import ConfigParser
