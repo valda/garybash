@@ -16903,8 +16903,6 @@ class GraphicsPatcher(ImportPatcher):
             recAttrs_class[recClass] = ('iconPath','model','effectShader','objectDisplayShader','light')
         for recClass in (MreEfsh,):
             recAttrs_class[recClass] = ('particleTexture','fillTexture')
-        for recClass in (MreTxst,):
-            recAttrs_class[recClass] = ('baseImage','normalMap','environmentMapMask','growMap','parallaxMap','environmentMap','decalData','flags')
         for recClass in (MreExpl,):
             recAttrs_class[recClass] = ('imageSpaceModifier','light','impactDataset','placedImpactObject')
         for recClass in (MreTxst,):
@@ -16916,7 +16914,7 @@ class GraphicsPatcher(ImportPatcher):
         for recClass in (MreProj,):
             recAttrs_class[recClass] = ('model','light','muzzleFlash','explosion','muzzleFlashDuration','fadeDuration','muzzleFlashPath')
         #--Needs Longs
-        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','ARMA','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL','TACT'))
+        self.longTypes = set(('BSGN','LSCR','CLAS','LTEX','REGN','ACTI','DOOR','FLOR','FURN','GRAS','STAT','ALCH','AMMO','BOOK','INGR','KEYM','LIGH','MISC','SGST','SLGM','WEAP','TREE','ARMO','ARMA','CLOT','CREA','MGEF','EFSH','TXST','EXPL','IPCT','IPDS','PROJ','NOTE','NPC_','DIAL','TACT','HDPT'))
 
     def initData(self,progress):
         """Get graphics from source files."""
@@ -21737,44 +21735,44 @@ class FidListsMerger(SpecialPatcher,ListPatcher):
                 log('* '+record.eid)
                 for mod in record.mergeSources:
                     log('  * ' + self.getItemLabel(mod))
-        #--Discard empty sublists
-        for label, type in ((_('FormID'),'FLST'),):
-            patchBlock = getattr(self.patchFile,type)
-            levLists = self.type_list[type]
-            #--Empty lists
-            empties = []
-            sub_supers = dict((x,[]) for x in levLists.keys())
-            for record in sorted(levLists.values()):
-                listId = record.fid
-                if not record.items:
-                    empties.append(listId)
-                else:
-                    subLists = [x for x in record.items if x in sub_supers]
-                    for subList in subLists:
-                        sub_supers[subList].append(listId)
-            #--Clear empties
-            removed = set()
-            cleaned = set()
-            while empties:
-                empty = empties.pop()
-                if empty not in sub_supers: continue
-                for super in sub_supers[empty]:
-                    record = levLists[super]
-                    #record.entries = [x for x in record.entries if x.listId != empty]
-                    record.fids = [x for x in record.fids if x != empty] # maybe
-                    record.items.remove(empty)
-                    patchBlock.setRecord(record)
-                    if not record.items:
-                        empties.append(super)
-                    cleaned.add(record.eid)
-                    removed.add(levLists[empty].eid)
-                    keep(super)
-            log.setHeader(_('=== Empty %s Sublists') % label)
-            for eid in sorted(removed,key=string.lower):
-                log('* '+eid)
-            log.setHeader(_('=== Empty %s Sublists Removed') % label)
-            for eid in sorted(cleaned,key=string.lower):
-                log('* '+eid)
+        # #--Discard empty sublists
+        # for label, type in ((_('FormID'),'FLST'),):
+        #     patchBlock = getattr(self.patchFile,type)
+        #     levLists = self.type_list[type]
+        #     #--Empty lists
+        #     empties = []
+        #     sub_supers = dict((x,[]) for x in levLists.keys())
+        #     for record in sorted(levLists.values()):
+        #         listId = record.fid
+        #         if not record.items:
+        #             empties.append(listId)
+        #         else:
+        #             subLists = [x for x in record.items if x in sub_supers]
+        #             for subList in subLists:
+        #                 sub_supers[subList].append(listId)
+        #     #--Clear empties
+        #     removed = set()
+        #     cleaned = set()
+        #     while empties:
+        #         empty = empties.pop()
+        #         if empty not in sub_supers: continue
+        #         for super in sub_supers[empty]:
+        #             record = levLists[super]
+        #             #record.entries = [x for x in record.entries if x.listId != empty]
+        #             record.fids = [x for x in record.fids if x != empty] # maybe
+        #             record.items.remove(empty)
+        #             patchBlock.setRecord(record)
+        #             if not record.items:
+        #                 empties.append(super)
+        #             cleaned.add(record.eid)
+        #             removed.add(levLists[empty].eid)
+        #             keep(super)
+        #     log.setHeader(_('=== Empty %s Sublists') % label)
+        #     for eid in sorted(removed,key=string.lower):
+        #         log('* '+eid)
+        #     log.setHeader(_('=== Empty %s Sublists Removed') % label)
+        #     for eid in sorted(cleaned,key=string.lower):
+        #         log('* '+eid)
 
 #------------------------------------------------------------------------------
 class MFactMarker(SpecialPatcher,ListPatcher):
