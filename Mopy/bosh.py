@@ -296,7 +296,7 @@ null4 = null1*4
 reGroup = re.compile(r'^Group: *(.*)',re.M)
 reRequires = re.compile(r'^Requires: *(.*)',re.M)
 reReqItem = re.compile(r'^([a-zA-Z]+) *([0-9]*\.?[0-9]*)$')
-reVersion = re.compile(r'^(Version:?) *([-0-9a-zA-Z\.]*\+?)',re.M)
+reVersion = re.compile(r'^(version[:\.]*|ver[:\.]*|rev[:\.]*|r[:\.\s]+|v[:\.\s]+) *([-0-9a-zA-Z\.]*\+?)',re.M|re.I)
 
 #--Mod Extensions
 reComment = re.compile('#.*')
