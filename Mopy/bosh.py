@@ -73,14 +73,6 @@ import subprocess
 from subprocess import Popen, PIPE
 from xml.etree import ElementTree
 
-#-- To make commands executed with Popen hidden
-if os.name == 'nt':
-    startupinfo = subprocess.STARTUPINFO()
-    try: startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    except: 
-        import _subprocess
-        startupinfo.dwFlags |= _subprocess.STARTF_USESHOWWINDOW
-
 #--Local
 import balt
 import bolt
@@ -88,6 +80,7 @@ import bush
 from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError
 from bolt import _, LString, GPath, Flags, DataDict, SubProgress, cstrip, deprint, delist
 from cint import *
+startupinfo = bolt.startupinfo
 
 # Singletons, Constants -------------------------------------------------------
 #--Constants
@@ -10894,6 +10887,7 @@ class ConfigHelpers:
         shouldMerge = active & modInfos.mergeable
         shouldDeactivateA = [x for x in modInfos.ordered if 'Deactivate' in modInfos[x].getBashTags()]
         shouldDeactivateB = [x for x in modInfos.ordered if 'NoMerge' in modInfos[x].getBashTags()]
+        shouldActivateA = [x for x in imported if 'MustBeActiveIfImported' in modInfos[x].getBashTags() and x not in active]
         for mod in tuple(shouldMerge):
             if 'NoMerge' in modInfos[mod].getBashTags():
                 shouldMerge.discard(mod)
@@ -10904,13 +10898,18 @@ class ConfigHelpers:
                 log('* __'+mod.s+'__')
         if shouldDeactivateB:
             log.setHeader(_("=== NoMerge Tagged Mods"))
-            log(_("Following mods are tagged NoMerge and should be deactivate and imported into the bashed patch but are currently active."))
+            log(_("Following mods are tagged NoMerge and should be deactivated and imported into the bashed patch but are currently active."))
             for mod in sorted(shouldDeactivateB):
                 log('* __'+mod.s+'__')
         if shouldDeactivateA:
             log.setHeader(_("=== Deactivate Tagged Mods"))
-            log(_("Following mods are tagged Deactivate and should be deactivate and imported into the bashed patch but are currently active."))
+            log(_("Following mods are tagged Deactivate and should be deactivated and imported into the bashed patch but are currently active."))
             for mod in sorted(shouldDeactivateA):
+                log('* __'+mod.s+'__')
+        if shouldActivateA:
+            log.setHeader(_("=== MustBeActiveIfImported Tagged Mods"))
+            log(_("Following mods to work correctly have to be active as well as imported into the bashed patch but are currently only imported."))
+            for mod in sorted(shouldActivateA):
                 log('* __'+mod.s+'__')
         #--Missing/Delinquent Masters
         if showModList:
@@ -11376,7 +11375,7 @@ class Installer(object):
     dataDirsMinus = set(('bash','fose','replacers')) #--Will be skipped even if hasExtraData == True.
     reDataFile = re.compile(r'(masterlist.txt|dlclist.txt|\.(esp|esm|bsa))$',re.I)
     reReadMe = re.compile(r'^([^\\]*)(read[ _]?me|lisez[ _]?moi)([^\\]*)\.(txt|rtf|htm|html|doc|odt)$',re.I)
-    skipExts = set(('.dll','.dlx','.exe','.py','.pyc','.7z','.zip','.rar','.db','.ace','.tgz','.tar','.tar.gz','.omod'))
+    skipExts = set(('.exe','.py','.pyc','.7z','.zip','.rar','.db','.ace','.tgz','.tar','.tar.gz','.fomod'))
     skipExts.update(set(readExts))
     docExts = set(('.txt','.rtf','.htm','.html','.doc','.docx','.odt','.mht','.pdf','.css','.xls'))
     imageExts = set(('.gif','.jpg','.png'))
@@ -12226,6 +12225,9 @@ class InstallerConverter(object):
                 index += 1
         result = ins.close()
         self.tempList.remove()
+        # Clear ReadOnly flag if set
+        cmd = r'attrib -R "%s\*" /S /D' % (subTempDir.s)
+        ins, err = Popen(cmd, stdout=PIPE, startupinfo=startupinfo).communicate()
         if result:
             raise StateError(_("%s: Extraction failed:\n%s") % (srcInstaller.s, "\n".join(errorLine)))
         #--Done
@@ -12333,6 +12335,9 @@ class InstallerArchive(Installer):
                 index += 1
         result = ins.close()
         self.tempList.remove()
+        # Clear ReadOnly flag if set
+        cmd = r'attrib -R "%s\*" /S /D' % (self.tempDir.s)
+        ins, err = Popen(cmd, stdout=PIPE, startupinfo=startupinfo).communicate()
         if result:
             raise StateError(_("%s: Extraction failed\n%s") % (archive.s,"\n".join(errorLine)))
         #--Done
@@ -12381,6 +12386,9 @@ class InstallerArchive(Installer):
         progress(0.9,project.s+_("\nMoving files..."))
         count = 0
         tempDir = self.tempDir
+        # Clear ReadOnly flag if set
+        cmd = r'attrib -R "%s\*" /S /D' % (self.tempDir.s)
+        ins, err = Popen(cmd, stdout=PIPE, startupinfo=startupinfo).communicate()
         for file in files:
             srcFull = tempDir.join(file)
             destFull = destDir.join(file)

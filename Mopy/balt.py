@@ -1098,10 +1098,10 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
             if self.fnDndAllow: return self.fnDndAllow()
             return True
         return False
-#------------------------------------------------------------------------------        
+#------------------------------------------------------------------------------
 class Tank(wx.Panel):
     """'Tank' format table. Takes the form of a wxListCtrl in Report mode, with
-    multiple columns and (optionally) column an item menus."""
+    multiple columns and (optionally) column and item menus."""
     #--Class-------------------------------------------------------------------
     mainMenu = None
     itemMenu = None
