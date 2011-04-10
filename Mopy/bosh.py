@@ -112,6 +112,9 @@ readExts.update(set(writeExts))
 noSolidExts = set(('.zip',))
 settings  = None
 
+undefinedPath = GPath(r'C:\not\a\valid\path.exe')
+undefinedPaths = set([GPath(r'C:\Path\exe.exe'),undefinedPath])
+
 #--Default settings
 settingDefaults = {
     'bosh.modInfos.resetMTimes':True,
@@ -11443,8 +11446,8 @@ class Installer(object):
             progress(0.05,_("%s: Pre-Scanning...\n%s") % (rootName,asDir[relPos:]))
             if rootIsMods and asDir == asRoot:
                 sDirs[:] = [x for x in sDirs if x.lower() not in Installer.dataDirsMinus]
-                if inisettings['keepLog'] >= 1:
-                    log = inisettings['logFile'].open("a")
+                if inisettings['KeepLog'] >= 1:
+                    log = inisettings['LogFile'].open("a")
                     log.write('(in refreshSizeCRCDate) sDirs = %s\n'%(sDirs[:]))
                     log.close()
                 if settings['bash.installers.skipDistantLOD']:
@@ -11453,8 +11456,8 @@ class Installer(object):
                     sDirs[:] = [x for x in sDirs if x.lower() != 'screenshots']
                 if settings['bash.installers.skipDocs'] and settings['bash.installers.skipImages']:
                     sDirs[:] = [x for x in sDirs if x.lower() != 'docs']
-                if inisettings['keepLog'] >= 1:
-                    log = inisettings['logFile'].open("a")
+                if inisettings['KeepLog'] >= 1:
+                    log = inisettings['LogFile'].open("a")
                     log.write('(in refreshSizeCRCDate after accounting for skipping) sDirs = %s\n'%(sDirs[:]))
                     log.close()
             dirDirsFilesAppend((asDir,sDirs,sFiles))
@@ -15046,7 +15049,7 @@ class ScriptText:
                 if r >= 1 and deprefix == name[:r]:
                     name = name[r:]
                 num += 1
-                outpath = dirs['patches'].join(folder).join(name+inisettings['scriptFileExt'])
+                outpath = dirs['patches'].join(folder).join(name+inisettings['ScriptFileExt'])
                 out = outpath.open('wb')
                 formid = '0x%06X' %(longid[1])
                 out.write(longid[0].s+'\r\n'+formid+'\r\n'+scriptTexts[longid][0]+'\r\n'+scriptTexts[longid][1])
@@ -22903,45 +22906,15 @@ class ContentsChecker(SpecialPatcher,Patcher):
                             log('  . %s: %06X' % (mod.s,index))
 
 # Initialization --------------------------------------------------------------
-def initDirs(personal='',localAppData='',fallout3Path=''):      
-    #--Bash Ini
-    bashIni = None
-    if GPath('bash.ini').exists():
-        bashIni = ConfigParser.ConfigParser()
-        bashIni.read('bash.ini')
-        
-    #--Mopy directories
-    dirs['mopy'] = bolt.Path.getcwd().root
-    dirs['mopyData'] = dirs['mopy'].join('Data')
-    dirs['mopyExtras'] = dirs['mopy'].join('Extras')
-    dirs['mopyImages'] = dirs['mopy'].join('Images')
-    
-    #--Fallout 3 (Application) Directories
-    if fallout3Path: dirs['app'] = GPath(fallout3Path)
-    elif bashIni and bashIni.has_option('General', 'sFallout3Path') and not bashIni.get('General', 'sFallout3Path') == '.':
-        dirs['app'] = GPath(bashIni.get('General', 'sFallout3Path').strip())
-    else: dirs['app'] = bolt.Path.getcwd().head #Assume bash is in right place (\Fallout 3\Mopy\)
-    #--If path is relative, make absolute
-    if not dirs['app'].isabs():
-        dirs['app'] = dirs['mopy'].join(dirs['app'])
-    #--Error check
-    if not dirs['app'].join('Fallout3.exe').exists():
-        raise BoltError(_("Install Error\nFailed to find Fallout3.exe in %s.\nNote that the Mopy folder should be in the same folder as Fallout3.exe.") % dirs['app'])
-    #--Subdirectories
-    dirs['mods'] = dirs['app'].join('Data')
-    dirs['builds'] = dirs['app'].join('Builds')
-    dirs['patches'] = dirs['mods'].join('Bash Patches')
-        
-    #--Determine User folders from Personal and Local Application Data directories
-    #  Attempt to pull from, in order: Command Line, Ini, win32com, Registry
-    #  Import win32com, in case it's necessary
-    try:
+
+#  Import win32com, in case it's necessary
+try:
         from win32com.shell import shell, shellcon
         def getShellPath(shellKey):
             path = shell.SHGetFolderPath (0, shellKey, None, 0)
             path = path.encode(locale.getpreferredencoding())
             return GPath(path)
-    except ImportError:
+except ImportError:
         shell = shellcon = None
         reEnv = re.compile('%(\w+)%')
         envDefs = os.environ
@@ -22962,49 +22935,125 @@ def initDirs(personal='',localAppData='',fallout3Path=''):
             path = path.encode(locale.getpreferredencoding())
             path = reEnv.sub(subEnv,path)
             return GPath(path)
-    #  Personal
-    if personal:
-        personal = GPath(personal)
-        pErrorInfo = _("Folder path specified on command line (-p)")
+
+def getFalloutPath(bashIni, path):
+    if path: path = GPath(path)
+    elif bashIni and bashIni.has_option('General', 'sFalloutPath') and not bashIni.get('General', 'sFalloutPath') == '.':
+        path = GPath(bashIni.get('General', 'sFalloutPath').strip())
+    else: path = bolt.Path.getcwd().head #Assume bash is in right place (\Fallout\Mopy\)
+    #--If path is relative, make absolute
+    if not path.isabs(): path = dirs['mopy'].join(path)
+    #--Error check
+    if not path.join('Fallout3.exe').exists():
+        raise BoltError(_("Install Error\nFailed to find Fallout3.exe in %s.\nNote that the Mopy folder should be in the same folder as Fallout3.exe.") % path)
+    return path
+
+def getPersonalPath(bashIni, path):
+    #--Determine User folders from Personal and Local Application Data directories
+    #  Attempt to pull from, in order: Command Line, Ini, win32com, Registry
+    if path:
+        path = GPath(path)
+        sErrorInfo = _("Folder path specified on command line (-p)")
     elif bashIni and bashIni.has_option('General', 'sPersonalPath') and not bashIni.get('General', 'sPersonalPath') == '.':
-        personal = GPath(bashIni.get('General', 'sPersonalPath').strip())
-        pErrorInfo = _("Folder path specified  in bash.ini (sPersonalPath)")
+        path = GPath(bashIni.get('General', 'sPersonalPath').strip())
+        sErrorInfo = _("Folder path specified in bash.ini (%s)") % ('sPersonalPath')
     elif shell and shellcon:
-        personal = getShellPath(shellcon.CSIDL_PERSONAL)
-        pErrorInfo = _("Folder paths extracted from win32com.shell.")
+        path = getShellPath(shellcon.CSIDL_PERSONAL)
+        sErrorInfo = _("Folder path extracted from win32com.shell.")
     else:
-        personal = getShellPath('Personal')
-        pErrorInfo = '\n'.join('  '+key+': '+`envDefs[key]` for key in sorted(envDefs))
-    #  Local Application Data
-    if localAppData:
-        localAppData = GPath(localAppData)
-        lErrorInfo = _("Folder path specified on command line (-l)")
-    elif bashIni and bashIni.has_option('General', 'sLocalAppDataPath') and not bashIni.get('General', 'sLocalAppDataPath') == '.':
-        localAppData = GPath(bashIni.get('General', 'sLocalAppDataPath').strip())
-        lErrorInfo = _("Folder path specified  in bash.ini (sLocalAppDataPath)")
-    elif shell and shellcon:
-        localAppData = getShellPath(shellcon.CSIDL_LOCAL_APPDATA)
-        lErrorInfo = _("Folder path extracted from win32com.shell.")
-    else:
-        localAppData = getShellPath('Local AppData')
-        lErrorInfo = '\n'.join('  '+key+': '+`envDefs[key]` for key in sorted(envDefs))
+        path = getShellPath('Personal')
+        sErrorInfo = '\n'.join('  '+key+': '+`envDefs[key]` for key in sorted(envDefs))
     #  If path is relative, make absolute
-    #    Not likely to be used, but guaranteed in Ini instructions
-    if not personal.isabs():
-        personal = dirs['app'].join(personal)
-    if not localAppData.isabs():
-        localAppData = dirs['app'].join(localAppData)
-    #  Error checks
-    if not personal.exists():
-        raise BoltError(_("Personal folder does not exist\nPersonal folder: %s\nAdditional info:\n%s")
-            % (personal.s,pErrorInfo))
-    if not localAppData.exists():
-        raise BoltError(_("Local app data folder does not exist.\nLocal app data folder: %s\nAdditional info:\n%s")
-            % (localAppData.s, lErrorInfo))
-    #  User sub folders
+    if not path.isabs():
+        path = dirs['app'].join(path)
+    #  Error check
+    if not path.exists():
+        raise BoltError(_("Personal folder does not exist.\nPersonal folder: %s\nAdditional info:\n%s")
+            % (path.s, sErrorInfo))
+    return path
+
+def getLocalAppDataPath(bashIni, path):
+    #--Determine User folders from Personal and Local Application Data directories
+    #  Attempt to pull from, in order: Command Line, Ini, win32com, Registry
+    if path:
+        path = GPath(path)
+        sErrorInfo = _("Folder path specified on command line (-l)")
+    elif bashIni and bashIni.has_option('General', 'sLocalAppDataPath') and not bashIni.get('General', 'sLocalAppDataPath') == '.':
+        path = GPath(bashIni.get('General', 'sLocalAppDataPath').strip())
+        sErrorInfo = _("Folder path specified  in bash.ini (%s)") % ('sLocalAppDataPath')
+    elif shell and shellcon:
+        path = getShellPath(shellcon.CSIDL_LOCAL_APPDATA)
+        sErrorInfo = _("Folder path extracted from win32com.shell.")
+    else:
+        path = getShellPath('Local AppData')
+        sErrorInfo = '\n'.join('  '+key+': '+`envDefs[key]` for key in sorted(envDefs))
+    #  If path is relative, make absolute
+    if not path.isabs():
+        path = dirs['app'].join(path)
+    #  Error check
+    if not path.exists():
+        raise BoltError(_("Local AppData folder does not exist.\nLocal AppData folder: %s\nAdditional info:\n%s")
+            % (path.s, sErrorInfo))
+    return path
+
+def getFalloutModsPath(bashIni):
+    if bashIni and bashIni.has_option('General','sFalloutMods'):
+        path = GPath(bashIni.get('General','sFalloutMods').strip())
+    else:
+        path = GPath(r'..\Fallout 3 Mods')
+    if not path.isabs(): path = dirs['app'].join(path)
+    return path
+
+def getLegacyPath(newPath, oldPath):
+    return (oldPath,newPath)[newPath.isdir() or not oldPath.isdir()]
+
+def initDirs(bashIni, personal, localAppData, falloutPath):
+    #--Mopy directories
+    dirs['mopy'] = bolt.Path.getcwd().root
+    dirs['mopyData'] = dirs['mopy'].join('Data')
+    dirs['mopyExtras'] = dirs['mopy'].join('Extras')
+    dirs['mopyImages'] = dirs['mopy'].join('Images')
+
+    #--Fallout (Application) Directories
+    dirs['app'] = getFalloutPath(bashIni,falloutPath)
+    dirs['mods'] = dirs['app'].join('Data')
+    dirs['builds'] = dirs['app'].join('Builds')
+    dirs['patches'] = dirs['mods'].join('Bash Patches')
+
+    #  Personal
+    personal = getPersonalPath(bashIni,personal)
     dirs['saveBase'] = personal.join(r'My Games','Fallout3')
+
+    #  Local Application Data
+    localAppData = getLocalAppDataPath(bashIni,localAppData)
     dirs['userApp'] = localAppData.join('Fallout3')
-    
+
+    # Use local paths if bUseMyGamesDirectory=0 in Fallout.ini
+    falloutIni = FalloutIni()
+    if falloutIni.getSetting('General','bUseMyGamesDirectory','1') == '0':
+        # Set the save game folder to the Fallout directory
+        dirs['saveBase'] = dirs['app']
+        # Set the data folder to sLocalMasterPath
+        dirs['mods'] = dirs['app'].join(falloutIni.getSetting('General', 'SLocalMasterPath','Data\\'))
+        # this one is relative to the mods path so it must be updated too
+        dirs['patches'] = dirs['mods'].join('Bash Patches')
+
+    #--Mod Data, Installers
+    falloutMods = getFalloutModsPath(bashIni)
+    dirs['modsBash'] = falloutMods.join('Bash Mod Data')
+    dirs['modsBash'] = getLegacyPath(dirs['modsBash'],dirs['app'].join('Data','Bash'))
+
+    dirs['installers'] = falloutMods.join('Bash Installers')
+    dirs['installers'] = getLegacyPath(dirs['installers'],dirs['app'].join('Installers'))
+
+    dirs['converters'] = dirs['installers'].join('Bain Converters')
+    dirs['dupeBCFs'] = dirs['converters'].join('--Duplicates')
+
+    # create bash user folders, keep these in order
+    for key in ('modsBash','installers','converters','dupeBCFs'):
+        dirs[key].makedirs()
+
+def initDefaultTools():
     #-- Other tool directories
     #   First to default path
     #tooldirs['Tes4FilesPath'] = dirs['app'].join('TES4Files.exe')
@@ -23014,19 +23063,19 @@ def initDirs(personal='',localAppData='',fallout3Path=''):
     tooldirs['NifskopePath'] = GPath(r'C:\Program Files\NifTools\NifSkope\Nifskope.exe')
     tooldirs['BlenderPath'] = GPath(r'C:\Program Files\Blender Foundation\Blender\blender.exe')
     tooldirs['GmaxPath'] = GPath(r'C:\GMAX\gmax.exe')
-    tooldirs['MaxPath'] = GPath('C:\something\dunnothedefaultpath.exe')
-    tooldirs['MayaPath'] = GPath('C:\something\dunnothedefaultpath.exe')
+    tooldirs['MaxPath'] = GPath(r'C:\Program Files\Autodesk\3ds Max 2010\3dsmax.exe')
+    tooldirs['MayaPath'] = undefinedPath
     tooldirs['PhotoshopPath'] = GPath(r'C:\Program Files\Adobe\Adobe Photoshop CS3\Photoshop.exe')
-    tooldirs['GIMP'] = GPath('C:\something\dunnothedefaultpath.exe')
+    tooldirs['GIMP'] = GPath(r'C:\Program Files\GIMP-2.0\bin\gimp-2.6.exe')
     tooldirs['ISOBL'] = dirs['app'].join('ISOBL.exe')
     tooldirs['ISRMG'] = dirs['app'].join('Insanitys ReadMe Generator.exe')
     tooldirs['ISRNG'] = dirs['app'].join('Random Name Generator.exe')
     tooldirs['ISRNPCG'] = dirs['app'].join('Random NPC.exe')
     tooldirs['NPP'] = GPath(r'C:\Program Files\Notepad++\notepad++.exe')
     tooldirs['Fraps'] = GPath(r'C:\Fraps\Fraps.exe')
-    tooldirs['Audacity'] = GPath(r'C:\Audacity\Audacity.exe')
+    tooldirs['Audacity'] = GPath(r'C:\Program Files\Audacity\Audacity.exe')
     tooldirs['Artweaver'] = GPath(r'C:\Program Files\Artweaver 1.0\Artweaver.exe')
-    tooldirs['DDSConverter'] = GPath(r'C:\Program Files\DDSConverter\DDSConverter.exe')
+    tooldirs['DDSConverter'] = GPath(r'C:\Program Files\DDS Converter 2\DDS Converter 2.exe')
     tooldirs['PaintNET'] = GPath(r'C:\Program Files\Paint.NET\PaintDotNet.exe')
     tooldirs['Milkshape3D'] = GPath(r'C:\Program Files\MilkShape 3D 1.8.4\ms3d.exe')
     tooldirs['Wings3D'] = GPath(r'C:\Program Files\wings3d_1.2\Wings3D.exe')
@@ -23039,235 +23088,192 @@ def initDirs(personal='',localAppData='',fallout3Path=''):
     tooldirs['GimpShop'] = GPath(r'C:\Program Files\GIMPshop\bin\gimp-2.2.exe')
     tooldirs['PixelStudio'] = GPath(r'C:\Program Files\Pixel\Pixel.exe')
     tooldirs['TwistedBrush'] = GPath(r'C:\Program Files\Pixarra\TwistedBrush Open Studio\tbrush_open_studio.exe')
+    tooldirs['PhotoScape'] = GPath(r'C:\Program Files\PhotoScape\PhotoScape.exe')
+    tooldirs['Photobie'] = GPath(r'C:\Program Files\Photobie\Photobie.exe')
+    tooldirs['PhotoFiltre'] = GPath(r'C:\Program Files\PhotoFiltre\PhotoFiltre.exe')
+    tooldirs['PaintShopPhotoPro'] = GPath(r'C:\Program Files\Corel\Corel PaintShop Photo Pro\X3\PSPClassic\Corel Paint Shop Pro Photo.exe')
     tooldirs['Dogwaffle'] = GPath(r'C:\Program Files\project dogwaffle\dogwaffle.exe')
     tooldirs['GeneticaViewer'] = GPath(r'C:\Program Files\Spiral Graphics\Genetica Viewer 3\Genetica Viewer 3.exe')
     tooldirs['LogitechKeyboard'] = GPath(r'C:\Program Files\Logitech\GamePanel Software\G-series Software\LGDCore.exe')
     tooldirs['AutoCad'] = GPath(r'C:\Program Files\Autodesk Architectural Desktop 3\acad.exe')
     tooldirs['Genetica'] = GPath(r'CC:\Program Files\Spiral Graphics\Genetica 3.5\Genetica.exe')
     tooldirs['IrfanView'] = GPath(r'C:\Program Files\IrfanView\i_view32.exe')
+    tooldirs['XnView'] = GPath(r'C:\Program Files\XnView\xnview.exe')
+    tooldirs['FastStone'] = GPath(r'C:\Program Files\FastStone Image Viewer\FSViewer.exe')
     tooldirs['Steam'] = GPath(r'C:\Program Files\Steam\steam.exe')
+    tooldirs['EVGAPrecision'] = GPath(r'C:\Program Files\EVGA Precision\EVGAPrecision.exe')
     tooldirs['IcoFX'] = GPath(r'C:\Program Files\IcoFX 1.6\IcoFX.exe')
     tooldirs['AniFX'] = GPath(r'C:\Program Files\AniFX 1.0\AniFX.exe')
     tooldirs['WinMerge'] = GPath(r'C:\Program Files\WinMerge\WinMergeU.exe')
+    tooldirs['FreeMind'] = GPath(r'C:\Program Files\FreeMind\Freemind.exe')
     tooldirs['MediaMonkey'] = GPath(r'C:\Program Files\MediaMonkey\MediaMonkey.exe')
     tooldirs['Inkscape'] = GPath(r'C:\Program Files\Inkscape\inkscape.exe')
-    tooldirs['FileZilla'] = GPath(r'C:\Program Files\FileZilla FTP Client\filezilla.exe')    
-    tooldirs['RADVideo'] = GPath(r'C:\Program Files\RADVideo\radvideo.exe')    
-    tooldirs['EggTranslator'] = GPath(r'C:\Program Files\Egg Translator\EggTranslator.exe')    
-    tooldirs['Custom1'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom2'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom3'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom4'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom5'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom6'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom7'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom8'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom9'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom10'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom11'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom12'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom13'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom14'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom15'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom16'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom17'] = GPath(r'C:\not\a\valid\path.exe')
-    tooldirs['Custom18'] = GPath(r'C:\not\a\valid\path.exe')
-    # Then if bash.ini exists set from the settings in there:
+    tooldirs['FileZilla'] = GPath(r'C:\Program Files\FileZilla FTP Client\filezilla.exe')
+    tooldirs['RADVideo'] = GPath(r'C:\Program Files\RADVideo\radvideo.exe')
+    tooldirs['EggTranslator'] = GPath(r'C:\Program Files\Egg Translator\EggTranslator.exe')
+    tooldirs['Sculptris'] = GPath(r'C:\Program Files\sculptris\Sculptris.exe')
+    tooldirs['Mudbox'] = GPath(r'C:\Program Files\Autodesk\Mudbox2011\mudbox.exe')
+    tooldirs['Tabula'] = dirs['app'].join(r'C:\Program Files\Bethesda Softworks\Oblivion\Modding Tools\Tabula\Tabula.exe')
+    tooldirs['MyPaint'] = GPath(r'CC:\Program Files\MyPaint\mypaint.exe')
+    tooldirs['Pixia'] = GPath(r'C:\Program Files\Pixia\pixia.exe')
+    tooldirs['DeepPaint'] = GPath(r'C:\Program Files\Right Hemisphere\Deep Paint\DeepPaint.exe')
+    tooldirs['CrazyBump'] = GPath(r'C:\Program Files\Crazybump\CrazyBump.exe')
+    tooldirs['xNormal'] = GPath(r'C:\Program Files\Santiago Orgaz\xNormal\3.17.3\x86\xNormal.exe')
+    tooldirs['SoftimageModTool'] = GPath(r'C:\Softimage\Softimage_Mod_Tool_7.5\Application\bin\XSI.bat')
+    tooldirs['SpeedTree'] = GPath(r'C:\not\a\valid\path.exe')
+    tooldirs['Treed'] = GPath(r'C:\Program Files\gile[s]\plugins\tree[d]\tree[d].exe')
+    tooldirs['WinSnap'] = GPath(r'C:\Program Files\WinSnap\WinSnap.exe')
+    tooldirs['PhotoSEAM'] = GPath(r'C:\Program Files\PhotoSEAM\PhotoSEAM.exe')
+    tooldirs['TextureMaker'] = GPath(r'C:\Program Files\Texture Maker\texturemaker.exe')
+    tooldirs['MaPZone'] = GPath(r'C:\Program Files\Allegorithmic\MaPZone 2.6\MaPZone2.exe')
+    tooldirs['NVIDIAMelody'] = GPath(r'C:\Program Files\NVIDIA Corporation\Melody\Melody.exe')
+    tooldirs['WTV'] = GPath(r'C:\Program Files\WindowsTextureViewer\WTV.exe')
+    tooldirs['Switch'] = GPath(r'C:\Program Files\NCH Swift Sound\Switch\switch.exe')
+    tooldirs['Freeplane'] = GPath(r'C:\Program Files\Freeplane\freeplane.exe')
+    tooldirs['Custom1'] = undefinedPath
+    tooldirs['Custom2'] = undefinedPath
+    tooldirs['Custom3'] = undefinedPath
+    tooldirs['Custom4'] = undefinedPath
+    tooldirs['Custom5'] = undefinedPath
+    tooldirs['Custom6'] = undefinedPath
+    tooldirs['Custom7'] = undefinedPath
+    tooldirs['Custom8'] = undefinedPath
+    tooldirs['Custom9'] = undefinedPath
+    tooldirs['Custom10'] = undefinedPath
+    tooldirs['Custom11'] = undefinedPath
+    tooldirs['Custom12'] = undefinedPath
+    tooldirs['Custom13'] = undefinedPath
+    tooldirs['Custom14'] = undefinedPath
+    tooldirs['Custom15'] = undefinedPath
+    tooldirs['Custom16'] = undefinedPath
+    tooldirs['Custom17'] = undefinedPath
+    tooldirs['Custom18'] = undefinedPath
+
+def initDefaultSettings():
+    #other settings from the INI:
+    inisettings['EnableUnicode'] = False
+    inisettings['ScriptFileExt']='.txt'
+    inisettings['KeepLog'] = 0
+    inisettings['LogFile'] = dirs['mopy'].join('bash.log')
+    inisettings['EnableWizard'] = False
+    inisettings['Tes4GeckoJavaArg'] = '-Xmx1024m'
+    inisettings['OblivionBookCreatorJavaArg'] = '-Xmx1024m'
+    inisettings['ShowTextureToolLaunchers'] = True
+    inisettings['ShowModelingToolLaunchers'] = True
+    inisettings['ShowAudioToolLaunchers'] = True
+    inisettings['7zExtraCompressionArguments'] = ''
+    inisettings['Custom1txt'] = 'Not Set in INI'
+    inisettings['Custom2txt'] = 'Not Set in INI'
+    inisettings['Custom3txt'] = 'Not Set in INI'
+    inisettings['Custom4txt'] = 'Not Set in INI'
+    inisettings['Custom5txt'] = 'Not Set in INI'
+    inisettings['Custom6txt'] = 'Not Set in INI'
+    inisettings['Custom7txt'] = 'Not Set in INI'
+    inisettings['Custom8txt'] = 'Not Set in INI'
+    inisettings['Custom9txt'] = 'Not Set in INI'
+    inisettings['Custom10txt'] = 'Not Set in INI'
+    inisettings['Custom11txt'] = 'Not Set in INI'
+    inisettings['Custom12txt'] = 'Not Set in INI'
+    inisettings['Custom13txt'] = 'Not Set in INI'
+    inisettings['Custom14txt'] = 'Not Set in INI'
+    inisettings['Custom15txt'] = 'Not Set in INI'
+    inisettings['Custom16txt'] = 'Not Set in INI'
+    inisettings['Custom17txt'] = 'Not Set in INI'
+    inisettings['Custom18txt'] = 'Not Set in INI'
+    inisettings['Custom1opt'] = ''
+    inisettings['Custom2opt'] = ''
+    inisettings['Custom3opt'] = ''
+    inisettings['Custom4opt'] = ''
+    inisettings['Custom5opt'] = ''
+    inisettings['Custom6opt'] = ''
+    inisettings['Custom7opt'] = ''
+    inisettings['Custom8opt'] = ''
+    inisettings['Custom9opt'] = ''
+    inisettings['Custom10opt'] = ''
+    inisettings['Custom11opt'] = ''
+    inisettings['Custom12opt'] = ''
+    inisettings['Custom13opt'] = ''
+    inisettings['Custom14opt'] = ''
+    inisettings['Custom15opt'] = ''
+    inisettings['Custom16opt'] = ''
+    inisettings['Custom17opt'] = ''
+    inisettings['Custom18opt'] = ''
+    inisettings['IconSize'] = '16'
+    inisettings['AutoItemCheck'] = False
+    inisettings['SkipHideConfirmation'] = False
+    inisettings['SkipResetTimeNotifications'] = False
+    #inisettings['show?toollaunchers'] = True
+
+def initOptions(bashIni):
+    initDefaultTools()
+    initDefaultSettings()
+
+    defaultOptions = {}
+    type_key = {str:'s',int:'i',bool:'b',bolt.Path:'s'}
+    allOptions = [tooldirs,inisettings]
+    unknownSettings = {}
+    for settingsDict in allOptions:
+        for defaultKey,defaultValue in settingsDict.iteritems():
+            settingType = type(defaultValue)
+            readKey = type_key[settingType] + defaultKey
+            if defaultKey == 'IconSize': #Hack to support misnamed variable
+                readKey = 'iIconSize'
+            defaultOptions[readKey.lower()] = (defaultKey,settingsDict)
+
+    # if bash.ini exists update the settings from there:
     if bashIni:
-        for dir in tooldirs:
-            key = 's' + dir
-            if bashIni.has_option('Tool Options', key):
-                tooldirs[dir] = GPath(bashIni.get('Tool Options', key).strip())
-                if not tooldirs[dir].isabs():
-                    tooldirs[dir] = dirs['app'].join(tooldirs[dir])
-    
+        for section in bashIni.sections():
+            options = bashIni.items(section)
+            for key,value in options:
+                usedKey, usedSettings = defaultOptions.get(key,(key[1:],unknownSettings))
+                defaultValue = usedSettings.get(usedKey,'')
+                settingType = type(defaultValue)
+                if settingType is bolt.Path:
+                    value = GPath(value)
+                    if not value.isabs():
+                        value = dirs['app'].join(value)
+                elif settingType is bool:
+                    value = bashIni.getboolean(section,key)
+                else:
+                    value = settingType(value)
+                compDefaultValue = defaultValue
+                compValue = value
+                if settingType is str:
+                    compDefaultValue = compDefaultValue.lower()
+                    compValue = compValue.lower()
+                    if compValue in (_('-option(s)'),_('tooltip text'),_('default')):
+                        compValue = compDefaultValue
+                if compValue != compDefaultValue:
+    ##                print section
+    ##                print "  ", usedKey
+    ##                print "  ", key,'=',defaultValue
+    ##                print "  ", key,'=',value
+    ##                print
+                    usedSettings[usedKey] = value
+    ##    print unknownSettings
+
     tooldirs['FO3MasterUpdatePath'] = tooldirs['FO3EditPath'].head.join('FO3MasterUpdate.exe')
     tooldirs['FO3MasterRestorePath'] = tooldirs['FO3EditPath'].head.join('FO3MasterRestore.exe')
-    
-    #--Mod Data, Installers
-    if bashIni and bashIni.has_option('General','sFallout3Mods'):
-        fallout3Mods = GPath(bashIni.get('General','sFallout3Mods').strip())
-    else:
-        fallout3Mods = GPath(r'..\Fallout 3 Mods')
-    if not fallout3Mods.isabs():
-        fallout3Mods = dirs['app'].join(fallout3Mods)
-    for key,oldDir,newDir in (
-        ('modsBash', dirs['app'].join('Data','Bash'), fallout3Mods.join('Bash Mod Data')),
-        ('installers', dirs['app'].join('Installers'), fallout3Mods.join('Bash Installers')),
-        ):
-        dirs[key] = (oldDir,newDir)[newDir.isdir() or not oldDir.isdir()]
-        dirs[key].makedirs()
-    dirs['converters'] = dirs['installers'].join('Bain Converters')
-    dirs['converters'].makedirs()
-    dirs['dupeBCFs'] = dirs['converters'].join('--Duplicates')
-    dirs['dupeBCFs'].makedirs()
 
-    #other settings from the INI:
-    inisettings['scriptFileExt']='.txt'
-    inisettings['keepLog'] = 0
-    inisettings['logFile'] = dirs['mopy'].join('bash.log')
-    inisettings['enablewizard'] = False
-    inisettings['showtexturetoollaunchers'] = True
-    inisettings['showmodelingtoollaunchers'] = True
-    inisettings['showaudiotoollaunchers'] = True
-    inisettings['custom1txt'] = 'Not Set in INI'
-    inisettings['custom2txt'] = 'Not Set in INI'
-    inisettings['custom3txt'] = 'Not Set in INI'
-    inisettings['custom4txt'] = 'Not Set in INI'
-    inisettings['custom5txt'] = 'Not Set in INI'
-    inisettings['custom6txt'] = 'Not Set in INI'
-    inisettings['custom7txt'] = 'Not Set in INI'
-    inisettings['custom8txt'] = 'Not Set in INI'
-    inisettings['custom9txt'] = 'Not Set in INI'
-    inisettings['custom10txt'] = 'Not Set in INI'
-    inisettings['custom11txt'] = 'Not Set in INI'
-    inisettings['custom12txt'] = 'Not Set in INI'
-    inisettings['custom13txt'] = 'Not Set in INI'
-    inisettings['custom14txt'] = 'Not Set in INI'
-    inisettings['custom15txt'] = 'Not Set in INI'
-    inisettings['custom16txt'] = 'Not Set in INI'
-    inisettings['custom17txt'] = 'Not Set in INI'
-    inisettings['custom18txt'] = 'Not Set in INI'
-    inisettings['custom1opt'] = ''
-    inisettings['custom2opt'] = ''
-    inisettings['custom3opt'] = ''
-    inisettings['custom4opt'] = ''
-    inisettings['custom5opt'] = ''
-    inisettings['custom6opt'] = ''
-    inisettings['custom7opt'] = ''
-    inisettings['custom8opt'] = ''
-    inisettings['custom9opt'] = ''
-    inisettings['custom10opt'] = ''
-    inisettings['custom11opt'] = ''
-    inisettings['custom12opt'] = ''
-    inisettings['custom13opt'] = ''
-    inisettings['custom14opt'] = ''
-    inisettings['custom15opt'] = ''
-    inisettings['custom16opt'] = ''
-    inisettings['custom17opt'] = ''
-    inisettings['custom18opt'] = ''
-    inisettings['iconSize'] = '16'
-    inisettings['AutoItemCheck'] = False
-    #inisettings['show?toollaunchers'] = True
-    if bashIni:
-        if bashIni.has_option('Settings','sScriptFileExt'):
-            inisettings['scriptFileExt'] = str(bashIni.get('Settings','sScriptFileExt').strip())
-        if bashIni.has_option('Settings','iKeepLog'):
-            inisettings['keepLog'] = int(bashIni.get('Settings','iKeepLog').strip())
-        if bashIni.has_option('Settings','iIconSize'):
-            inisettings['iconSize'] = str(bashIni.get('Settings','iIconSize').strip())
-        if bashIni.has_option('Settings','sLogFile'):
-            inisettings['logFile'] = GPath(bashIni.get('Settings','sLogFile').strip())
-            if not inisettings['logFile'].isabs():
-                inisettings['logFile'] = dirs['app'].join(inisettings['logFile'])
-        if bashIni.has_option('Settings','bEnableWizard'):
-            inisettings['enablewizard'] = bashIni.getboolean('Settings','bEnableWizard')
-        if bashIni.has_option('Settings','bAutoItemCheck') or bashIni.has_option('Settings','sAutoItemCheck'): #Check "s..." for backwards compatibility
-            if bashIni.has_option('Settings','bAutoItemCheck'): inisettings['AutoItemCheck'] = bashIni.getboolean('Settings','bAutoItemCheck')
-            else: inisettings['AutoItemCheck'] = bashIni.getboolean('Settings','sAutoItemCheck')
-        if bashIni.has_option('Tool Options','bshowtexturetoollaunchers'):
-            inisettings['showtexturetoollaunchers'] = bashIni.getboolean('Tool Options','bshowtexturetoollaunchers')
-        if bashIni.has_option('Tool Options','bshowmodelingtoollaunchers'):
-            inisettings['showmodelingtoollaunchers'] = bashIni.getboolean('Tool Options','bshowmodelingtoollaunchers')
-        if bashIni.has_option('Tool Options','bshowaudiotoollaunchers'):
-            inisettings['showaudiotoollaunchers'] = bashIni.getboolean('Tool Options','bshowaudiotoollaunchers')
-        if bashIni.has_option('Tool Options','sCustom1txt'):
-            inisettings['custom1txt'] = str(bashIni.get('Tool Options','sCustom1txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom2txt'):
-            inisettings['custom2txt'] = str(bashIni.get('Tool Options','sCustom2txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom3txt'):
-            inisettings['custom3txt'] = str(bashIni.get('Tool Options','sCustom3txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom4txt'):
-            inisettings['custom4txt'] = str(bashIni.get('Tool Options','sCustom4txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom5txt'):
-            inisettings['custom5txt'] = str(bashIni.get('Tool Options','sCustom5txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom6txt'):
-            inisettings['custom6txt'] = str(bashIni.get('Tool Options','sCustom6txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom7txt'):
-            inisettings['custom7txt'] = str(bashIni.get('Tool Options','sCustom7txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom8txt'):
-            inisettings['custom8txt'] = str(bashIni.get('Tool Options','sCustom8txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom9txt'):
-            inisettings['custom9txt'] = str(bashIni.get('Tool Options','sCustom9txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom10txt'):
-            inisettings['custom10txt'] = str(bashIni.get('Tool Options','sCustom10txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom11txt'):
-            inisettings['custom11txt'] = str(bashIni.get('Tool Options','sCustom11txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom12txt'):
-            inisettings['custom12txt'] = str(bashIni.get('Tool Options','sCustom12txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom13txt'):
-            inisettings['custom13txt'] = str(bashIni.get('Tool Options','sCustom13txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom14txt'):
-            inisettings['custom14txt'] = str(bashIni.get('Tool Options','sCustom14txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom15txt'):
-            inisettings['custom15txt'] = str(bashIni.get('Tool Options','sCustom15txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom16txt'):
-            inisettings['custom16txt'] = str(bashIni.get('Tool Options','sCustom16txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom17txt'):
-            inisettings['custom17txt'] = str(bashIni.get('Tool Options','sCustom17txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom18txt'):
-            inisettings['custom18txt'] = str(bashIni.get('Tool Options','sCustom18txt')).strip()
-        if bashIni.has_option('Tool Options','sCustom1opt'):
-            if not str(bashIni.get('Tool Options','sCustom1opt')).strip() == '-Option(s)':
-                inisettings['custom1opt'] = str(bashIni.get('Tool Options','sCustom1opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom2opt'):
-            if not str(bashIni.get('Tool Options','sCustom2opt')).strip() == '-Option(s)':
-                inisettings['custom2opt'] = str(bashIni.get('Tool Options','sCustom2opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom3opt'):
-            if not str(bashIni.get('Tool Options','sCustom3opt')).strip() == '-Option(s)':
-                inisettings['custom3opt'] = str(bashIni.get('Tool Options','sCustom3opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom4opt'):
-            if not str(bashIni.get('Tool Options','sCustom4opt')).strip() == '-Option(s)':
-                inisettings['custom4opt'] = str(bashIni.get('Tool Options','sCustom4opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom5opt'):
-            if not str(bashIni.get('Tool Options','sCustom5opt')).strip() == '-Option(s)':
-                inisettings['custom5opt'] = str(bashIni.get('Tool Options','sCustom5opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom6opt'):
-            if not str(bashIni.get('Tool Options','sCustom6opt')).strip() == '-Option(s)':
-                inisettings['custom6opt'] = str(bashIni.get('Tool Options','sCustom6opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom7opt'):
-            if not str(bashIni.get('Tool Options','sCustom7opt')).strip() == '-Option(s)':
-                inisettings['custom7opt'] = str(bashIni.get('Tool Options','sCustom7opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom8opt'):
-            if not str(bashIni.get('Tool Options','sCustom1opt')).strip() == '-Option(s)':
-                inisettings['custom8opt'] = str(bashIni.get('Tool Options','sCustom8opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom9opt'):
-            if not str(bashIni.get('Tool Options','sCustom9opt')).strip() == '-Option(s)':
-                inisettings['custom9opt'] = str(bashIni.get('Tool Options','sCustom9opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom10opt'):
-            if not str(bashIni.get('Tool Options','sCustom10opt')).strip() == '-Option(s)':
-                inisettings['custom10opt'] = str(bashIni.get('Tool Options','sCustom10opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom11opt'):
-            if not str(bashIni.get('Tool Options','sCustom11opt')).strip() == '-Option(s)':
-                inisettings['custom11opt'] = str(bashIni.get('Tool Options','sCustom11opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom12opt'):
-            if not str(bashIni.get('Tool Options','sCustom12opt')).strip() == '-Option(s)':
-                inisettings['custom12opt'] = str(bashIni.get('Tool Options','sCustom12opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom13opt'):
-            if not str(bashIni.get('Tool Options','sCustom13opt')).strip() == '-Option(s)':
-                inisettings['custom13opt'] = str(bashIni.get('Tool Options','sCustom13opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom14opt'):
-            if not str(bashIni.get('Tool Options','sCustom14opt')).strip() == '-Option(s)':
-                inisettings['custom14opt'] = str(bashIni.get('Tool Options','sCustom14opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom15opt'):
-            if not str(bashIni.get('Tool Options','sCustom15opt')).strip() == '-Option(s)':
-                inisettings['custom15opt'] = str(bashIni.get('Tool Options','sCustom15opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom16opt'):
-            if not str(bashIni.get('Tool Options','sCustom16opt')).strip() == '-Option(s)':
-                inisettings['custom16opt'] = str(bashIni.get('Tool Options','sCustom16opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom17opt'):
-            if not str(bashIni.get('Tool Options','sCustom17opt')).strip() == '-Option(s)':
-                inisettings['custom17opt'] = str(bashIni.get('Tool Options','sCustom17opt')).strip()
-        if bashIni.has_option('Tool Options','sCustom18opt'):
-            if not str(bashIni.get('Tool Options','sCustom18opt')).strip() == '-Option(s)':
-                inisettings['custom18opt'] = str(bashIni.get('Tool Options','sCustom18opt')).strip()
-    if inisettings['keepLog'] == 0:
-        if inisettings['logFile'].exists():
-            os.remove(inisettings['logFile'].s)
+def initLogFile():
+    if inisettings['KeepLog'] == 0:
+        if inisettings['LogFile'].exists():
+            os.remove(inisettings['LogFile'].s)
     else:
-        log = inisettings['logFile'].open("a")
-        log.write(_('%s Wrye Bash ini file read, Keep Log level: %d, initialized.\r\n') % (datetime.datetime.now(),inisettings['keepLog']))
+        log = inisettings['LogFile'].open("a")
+        log.write(_('%s Wrye Bash ini file read, Keep Log level: %d, initialized.\r\n') % (datetime.datetime.now(),inisettings['KeepLog']))
         log.close()
+
+def initBosh(personal='',localAppData='',falloutPath=''):
+    #--Bash Ini
+    bashIni = None
+    if GPath('bash.ini').exists():
+        bashIni = ConfigParser.ConfigParser()
+        bashIni.read('bash.ini')
+
+    initDirs(bashIni,personal,localAppData, falloutPath)
+    initOptions(bashIni)
+    initLogFile()
 
 def initSettings(readOnly=False):
     global settings
