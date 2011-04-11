@@ -22938,8 +22938,8 @@ except ImportError:
 
 def getFalloutPath(bashIni, path):
     if path: path = GPath(path)
-    elif bashIni and bashIni.has_option('General', 'sFalloutPath') and not bashIni.get('General', 'sFalloutPath') == '.':
-        path = GPath(bashIni.get('General', 'sFalloutPath').strip())
+    elif bashIni and bashIni.has_option('General', 'sFallout3Path') and not bashIni.get('General', 'sFallout3Path') == '.':
+        path = GPath(bashIni.get('General', 'sFallout3Path').strip())
     else: path = bolt.Path.getcwd().head #Assume bash is in right place (\Fallout\Mopy\)
     #--If path is relative, make absolute
     if not path.isabs(): path = dirs['mopy'].join(path)
@@ -22997,8 +22997,8 @@ def getLocalAppDataPath(bashIni, path):
     return path
 
 def getFalloutModsPath(bashIni):
-    if bashIni and bashIni.has_option('General','sFalloutMods'):
-        path = GPath(bashIni.get('General','sFalloutMods').strip())
+    if bashIni and bashIni.has_option('General','sFallout3Mods'):
+        path = GPath(bashIni.get('General','sFallout3Mods').strip())
     else:
         path = GPath(r'..\Fallout 3 Mods')
     if not path.isabs(): path = dirs['app'].join(path)
