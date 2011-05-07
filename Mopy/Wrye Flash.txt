@@ -14,6 +14,10 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 26 [05/08/2011]
+* Fixed a error of ini key.
+* Removed some ini tweaks.
+
 === 25 [04/10/2011]
 * Bashed Patch:
   * Omitted a function to discard empty sublist of FLST.

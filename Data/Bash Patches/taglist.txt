@@ -1,4 +1,4 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2538.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2616.
 \ % A Bashed Patch suggestion for the mod above.
 
 BrokenSteel.esm
