@@ -1,15 +1,15 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2460.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2645.
 \ % A Bashed Patch suggestion for the mod above.
 
 Community Bugfix Compilation Patch.esm
 % {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts}}
 Moddable Unique Weps.esm
 % {{BASH: WeaponMods}}
-New Vegas Redesigned.esm
-% {{BASH: NpcFaces}}
 Machienzo - NPC Cosmetic Fixes - Ver 1.55.esm
 % {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
 Machienzo - NPC Cosmetic Fixes - Ver 1.57.esm
+% {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+Machienzo - NPC Cosmetic Fixes.esm
 % {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
 IWS-Core.esm
 % {{BASH: Delev, Relev}}
@@ -17,12 +17,14 @@ Weapon Mod Expansion.esm
 % {{BASH: Names}}
 FOOK - New Vegas.esm
 % {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
+MoMod.esm
+% {{BASH:Relev}}
 New Vegas Redesigned.esm
 % {{BASH: NpcFaces, Hair, Eyes, Body-M, Body-F}}
 Lings.esm
-% {{BASH: Hair, eyes}}
+% {{BASH: Hair, Eyes}}
 MikotoBeauty.esm
-% {{BASH: Hair, eyes}}
+% {{BASH: Hair, Eyes, Graphics}}
 
 Community Bugfix Compilation Patch.esp
 % {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts}}
@@ -63,6 +65,8 @@ MikotoBPCCFull.esp
 Raul - Danny Trejo.esp
 % {{BASH: NpcFaces, NoMerge}}
 VyntageCass02.esp
+% {{BASH: NpcFaces}}
+VyntageVeronica02.esp
 % {{BASH: NpcFaces}}
 
 NVHarderCore.esp
@@ -180,6 +184,8 @@ Improved Sound FX - Weapon Sharing Fix.esp
 
 LFox Bottle That Water.esp
 % {{BASH: Names, Scripts}}
+monsterranch.esp
+% {{BASH:Relev}}
 Project13 - Populated Wasteland.esp
 % {{BASH: Actors.AIPackages, Delev, Relev}}
 
@@ -233,8 +239,14 @@ NVPhalanx.esp
 RexReplacerEss.esp
 % {{BASH: Graphics}}
 
+MiscItemIconsNV.esp
+% {{BASH: Graphics}}
 T3T_MiscItemIconsNV.esp
 % {{BASH: Graphics}}
+Sorter - Books.esp
+% {{BASH: Names}}
+Sorter - Magazines.esp
+% {{BASH: Names}}
 Sorter - Combined.esp
 % {{BASH: Names}}
 Sorter - Combined - T3T Icon Compatch.esp
@@ -249,15 +261,6 @@ DrugsAreBadMKay-IS.esp
 % {{BASH: Names}}
 FeelingIrradiated-IS.esp
 % {{BASH: Names}}
-
-LUMENARIUM - Working Sunglasses ONLY.esp
-% {{BASH: Names}}
-ELECTRO-CITY - CompletedWorkorders.esp
-% {{BASH: Names}}
-Nevada Skies.esp
-% {{BASH: C.Climate,C.Light}}
-Nevada Skies - URWLified.esp
-% {{BASH: C.Climate,C.Light}}
 
 RH_IronSights_NV_Vanilla.esp
 % {{BASH: Graphics}}
@@ -279,4 +282,19 @@ WME - 00 Commando.esp
 % {{BASH: Graphics, Names, Stats, WeaponMods}}
 WME - RH Ironsights.esp
 % {{BASH: Graphics, WeaponMods}}
+
+LUMENARIUM - Working Sunglasses ONLY.esp
+% {{BASH: Names}}
+ELECTRO-CITY - CompletedWorkorders.esp
+% {{BASH: Names}}
+Nevada Skies.esp
+% {{BASH: C.Climate,C.Light}}
+Nevada Skies - URWLified.esp
+% {{BASH: C.Climate,C.Light}}
+Interior Lighting Overhaul-Realistic Interiors-Full.esp
+% {{BASH: C.Light}}
+ILO-RI-Original Lucky38 Suite.esp
+% {{BASH: C.Light}}
+ILO-RI-Dead Money.esp
+% {{BASH: C.Light}}
 

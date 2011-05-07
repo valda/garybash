@@ -14,6 +14,11 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 11 [05/08/2011]
+* Fixed a error of ini key.
+* Removed some ini tweaks.
+* Taglist updated to BOSS masterlist revision 2645.
+
 === 10 [04/09/2011]
 * Bashed Patch:
   * Added support for Dead Money DLC.
