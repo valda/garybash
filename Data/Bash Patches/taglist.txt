@@ -1,4 +1,4 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2616.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2746.
 \ % A Bashed Patch suggestion for the mod above.
 
 BrokenSteel.esm
@@ -214,7 +214,7 @@ FO3 Wanderers Edition - Talon Loot Crash Fix.esp
 % {{BASH: Delev, Relev}}
 
 WeaponModKits.esp
-% {{BASH: Names}}
+% {{BASH: Delev, Relev, Names, Actors.AIData}}
 WeaponModKits - FWE Master Release.esp
 % {{BASH: Deflst, Relev, Names}}
 WeaponModKits - FWE Optional Worn Weapons.esp
@@ -254,6 +254,8 @@ WasteWearGloves.esp
 
 AutoGates.esp
 % {{BASH: Scripts}}
+SimpleSmokeo.esp
+% {{BASH: Actors.AIPackages, Actors.Animations, Delev, Invent, Names, Relev}}
 ZORTS - Custom HP.esp
 % {{BASH: Scripts}}
 ZORTS - Custom HP - FOOK2.esp
@@ -456,6 +458,8 @@ TenpennyGhoulsAtPeace.esp
 % {{BASH: ScriptContents}}
 AMPUTATE!.esp
 % {{BASH: Scripts}}
+Weapon Repair Kits.esp
+% {{BASH: Relev}}
 
 Phalanx-MainFollowerModule.esp
 % {{BASH: Actors.AIPackages, Actors.ACBS}}
