@@ -11350,63 +11350,87 @@ class ConfigHelpers:
     def __init__(self):
         """Initialialize."""
         #--Boss Master List or if that doesn't exist use the taglist
-        #version:
-        #>1.6.2 = 393218
+        #version notes:
+        # 1.7   = 2
+        #>1.6.2 = 393218+
         # 1.6.1 = 393217
-        # 1.6   = 1 
+        # 1.6   = 1
         #<1.6   = 0
-        try:
-            import win32api
-            self.bossVersion = win32api.GetFileVersionInfo(dirs['mods'].join('BOSS.exe').s, '\\')[u'FileVersionLS']
-        except: #any version prior to 1.6.1 will fail and hence set to None and then try to set based on masterlist path.
-            self.bossVersion = None
-        self.bossMasterPath = dirs['mods'].join('BOSS//masterlist.txt')
-        if self.bossVersion == None: 
-            if not self.bossMasterPath.exists():
-                self.bossMasterPath = dirs['mods'].join('masterlist.txt')
-                self.bossVersion = 0
+        if dirs['app'].join('BOSS//BOSS.exe').exists():
+            self.bossVersion = 2
+            self.bossMasterPath = dirs['app'].join('BOSS//masterlist.txt')
+            self.bossUserPath = dirs['app'].join('BOSS//userlist.txt')
+        else:
+            try:
+                import win32api
+                self.bossVersion = win32api.GetFileVersionInfo(dirs['mods'].join('BOSS.exe').s, '\\')[u'FileVersionLS']
+            except: #any version prior to 1.6.1 will fail and hence set to None and then try to set based on masterlist path.
+                self.bossVersion = None
+            self.bossMasterPath = dirs['mods'].join('BOSS//masterlist.txt')
+            if self.bossVersion == None:
                 if not self.bossMasterPath.exists():
-                    self.bossVersion = 1 # in case the BOSS masterlist hasn't yet been created but BOSS.exe exists.
-                    self.bossMasterPath = dirs['patches'].join('taglist.txt')
-            else: self.bossVersion = 1
-        self.bossUserPath = dirs['mods'].join('BOSS//userlist.txt')
+                    self.bossMasterPath = dirs['mods'].join('masterlist.txt')
+                    self.bossVersion = 0
+                    if not self.bossMasterPath.exists():
+                        self.bossVersion = 1 # in case the BOSS masterlist hasn't yet been created but BOSS.exe exists.
+                        self.bossMasterPath = dirs['patches'].join('taglist.txt')
+                else: self.bossVersion = 1
+            elif self.bossVersion in [393217,393218]: self.bossVersion = 1
+            self.bossUserPath = dirs['mods'].join('BOSS//userlist.txt')
         self.bossMasterTime = 0
         self.bossUserTime = 0
         self.bossMasterTags = {}
+        self.bossRemoveTags = {}
+        self.bossDirtyMods = {}
         #--Mod Rules
         self.name_ruleSet = {}
 
     def refresh(self):
         """Reloads tag info if file dates have changed."""
         #--Boss Master List or Taglist
-        path,userpath,mtime,utime,tags = (self.bossMasterPath, self.bossUserPath, self.bossMasterTime, self.bossUserTime, self.bossMasterTags,)
+        path,userpath,mtime,utime,tags,removeTags = (self.bossMasterPath, self.bossUserPath, self.bossMasterTime, self.bossUserTime, self.bossMasterTags,self.bossRemoveTags)
         reFcomSwitch = re.compile('^[<>]')
         reComment = re.compile(r'^\\.*')
         reMod = re.compile(r'(^[_[(\w!].*?\.es[pm]$)',re.I)
+        reBashTags = re.compile(r'(APPEND:\s|REPLACE:\s)?(%\s+{{BASH:|TAG\s+{{BASH:)([^}]+)(}})(.*remove \[)?([^\]]+)?(\])?')
+        reDirty = re.compile(r'IF\s*\(\s*(.*?)\s*\|\s*[\"\'](.*?)[\'\"]\s*\)\s*DIRTY:\s*(.*)\s*$')
         if path.exists():
             if path.mtime != mtime:
                 tags.clear()
                 ins = path.open('r')
                 mod = None
-                reBashTags = re.compile(r'%\s+{{BASH:([^}]+)}')
                 for line in ins:
                     line = reFcomSwitch.sub('',line)
                     line = reComment.sub('',line)
                     maMod = reMod.match(line)
                     maBashTags = reBashTags.match(line)
+                    maDirty = reDirty.match(line)
                     if maMod:
                         mod = maMod.group(1)
                     elif maBashTags and mod:
-                        modTags = maBashTags.group(1).split(',')
+                        modTags = maBashTags.group(3).split(',')
                         modTags = map(string.strip,modTags)
+                        if maBashTags.group(5) and maBashTags.group(6):
+                            modRemoveTags = maBashTags.group(6).split(',')
+                            modRemoveTags = map(string.strip,modRemoveTags)
+                            removeTags[GPath(mod)] = tuple(modRemoveTags)
                         tags[GPath(mod)] = tuple(modTags)
+                    elif maDirty:
+                        # BOSS 1.7+ dirty mod listing
+                        crc = long(maDirty.group(1),16)
+                        ##mod = LString(maDirty.group(2))
+                        action = maDirty.group(3)
+                        if 'tes4edit' in action.lower():
+                            cleanIt = True
+                        else:
+                            cleanIt = False
+                        self.bossDirtyMods[crc] = (cleanIt, action)
                 ins.close()
                 self.bossMasterTime = path.mtime
         if userpath.exists():
             if userpath.mtime != utime:
                 ins = userpath.open('r')
                 mod = None
-                reBashTags = re.compile(r'(APPEND:\s|REPLACE:\s)(%\s+{{BASH:)([^}]+)(}})')
                 reRule = re.compile(r'(ADD:\s|FOR:\s|OVERIDE:\s)([_[(\w!].*?\.es[pm]$)')
                 for line in ins:
                     maMod = reRule.match(line)
@@ -11418,8 +11442,16 @@ class ConfigHelpers:
                         modTags = map(string.strip,modTags)
                         if GPath(mod) in tags and maBashTags.group(1) != 'REPLACE: ':
                             tags[GPath(mod)] = tuple(list(tags[GPath(mod)]) + list(modTags))
+                            if maBashTags.group(5) and maBashTags.group(6):
+                                modRemoveTags = maBashTags.group(6).split(',')
+                                modRemoveTags = map(string.strip,modRemoveTags)
+                                removeTags[GPath(mod)] = tuple(list(removeTags[GPath(mod)]) + list(modRemoveTags))
                             continue
                         tags[GPath(mod)] = tuple(modTags)
+                        if maBashTags.group(6) and maBashTags.group(7):
+                            modRemoveTags = maBashTags.group(7).split(',')
+                            modRemoveTags = map(string.strip,modTags)
+                            removeTags[GPath(mod)] = tuple(modRemoveTags)
                 ins.close()
                 self.bossUserTime = userpath.mtime
 
@@ -11428,6 +11460,15 @@ class ConfigHelpers:
         if modName in self.bossMasterTags:
             return set(self.bossMasterTags[modName])
         else: return None
+
+    def getBashRemoveTags(self,modName):
+        """Retrieves bash tags for given file."""
+        if modName in self.bossRemoveTags:
+            return set(self.bossRemoveTags[modName])
+        else: return None
+
+    def getDirtyMessage(self, crc):
+        return self.bossDirtyMods.get(long(crc), (False, ''))
 
     #--Mod Checker ------------------------------------------------------------
     def refreshRuleSets(self):
@@ -11445,22 +11486,50 @@ class ConfigHelpers:
             if path.mtime != ruleSet.mtime:
                 ModRuleSet.RuleParser(ruleSet).parse(path)
 
-    def checkMods(self,showModList=False,showRuleSets=False,showNotes=False,showConfig=True,showSuggest=True,showWarn=True):
-        """Checks currently loaded mods against ruleset."""
+    def checkMods(self,showModList=False,showRuleSets=False,showNotes=False,showConfig=True,showSuggest=True,showWarn=True,scanDirty=None):
+        """Checks currently loaded mods against ruleset.
+           scanDirty should be the instance of ModChecker, to scan."""
         active = set(modInfos.ordered)
         merged = modInfos.merged
         imported = modInfos.imported
         activeMerged = active | merged
         warning = _('=== <font color=red>WARNING:</font> ')
         #--Header
-        log = bolt.LogFile(cStringIO.StringIO())
+        log = bolt.LogFile(stringBuffer())
         log.setHeader(_('= Check Mods'),True)
         log(_("This is a report on your currently active/merged mods."))
         #--Mergeable/NoMerge/Deactivate tagged mods
         shouldMerge = active & modInfos.mergeable
-        shouldDeactivateA = [x for x in modInfos.ordered if 'Deactivate' in modInfos[x].getBashTags()]
-        shouldDeactivateB = [x for x in modInfos.ordered if 'NoMerge' in modInfos[x].getBashTags()]
+        shouldDeactivateA = [x for x in active if 'Deactivate' in modInfos[x].getBashTags()]
+        shouldDeactivateB = [x for x in active if 'NoMerge' in modInfos[x].getBashTags()]
         shouldActivateA = [x for x in imported if 'MustBeActiveIfImported' in modInfos[x].getBashTags() and x not in active]
+        if True:
+            #--Look for dirty edits
+            shouldClean = {}
+            scan = []
+            for x in active:
+                dirtyMessage = modInfos[x].getDirtyMessage()
+                if dirtyMessage[0]:
+                    shouldClean[x] = dirtyMessage[1]
+                elif scanDirty:
+                    scan.append(modInfos[x])
+            if scanDirty:
+                try:
+                    with balt.Progress(_('Scanning for Dirty Edits...'),'\n'+' '*60,parent=scanDirty,abort=True) as progress:
+                        ret = ModCleaner.scan_Many(scan,ModCleaner.ITM|ModCleaner.UDR,progress)
+                        for i,mod in enumerate(scan):
+                            udrs,itms,fog = ret[i]
+                            if udrs or itms:
+                                cleanMsg = []
+                                if udrs:
+                                    cleanMsg.append('UDR(%i)' % len(udrs))
+                                if itms:
+                                    cleanMsg.append('ITM(%i)' % len(itms))
+                                cleanMsg = ', '.join(cleanMsg)
+                                shouldClean[mod.name] = cleanMsg
+                except bolt.CancelError:
+                    pass
+        shouldCleanMaybe = [(x,modInfos[x].getDirtyMessage()[1]) for x in active if not modInfos[x].getDirtyMessage()[0] and modInfos[x].getDirtyMessage()[1] != '']
         for mod in tuple(shouldMerge):
             if 'NoMerge' in modInfos[mod].getBashTags():
                 shouldMerge.discard(mod)
@@ -11484,6 +11553,16 @@ class ConfigHelpers:
             log(_("Following mods to work correctly have to be active as well as imported into the bashed patch but are currently only imported."))
             for mod in sorted(shouldActivateA):
                 log('* __'+mod.s+'__')
+        if shouldClean:
+            log.setHeader(_("=== Mods that need cleaning with FNVEdit"))
+            log(_("Following mods have identical to master (ITM) records, deleted records (UDR), or other issues that should be fixed with FNVEdit.  Visit the [[!http://cs.elderscrolls.com/constwiki/index.php/TES4Edit_Cleaning_Guide|TES4Edit Cleaning Guide]] for more information."))
+            for mod in sorted(shouldClean.keys()):
+                log('* __'+mod.s+':__  %s' % shouldClean[mod])
+        if shouldCleanMaybe:
+            log.setHeader(_("=== Mods with special cleaning instructions"))
+            log(_("Following mods have special instructions for cleaning with FNVEdit"))
+            for mod in sorted(shouldCleanMaybe):
+                log('* __'+mod[0].s+':__  '+mod[1])
         #--Missing/Delinquent Masters
         if showModList:
             log('\n'+modInfos.getModList(wtxt=True).strip())
