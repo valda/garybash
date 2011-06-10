@@ -1,4 +1,4 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2645.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2734.
 \ % A Bashed Patch suggestion for the mod above.
 
 Community Bugfix Compilation Patch.esm
@@ -18,7 +18,7 @@ Weapon Mod Expansion.esm
 FOOK - New Vegas.esm
 % {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
 MoMod.esm
-% {{BASH:Relev}}
+% {{BASH: Relev}}
 New Vegas Redesigned.esm
 % {{BASH: NpcFaces, Hair, Eyes, Body-M, Body-F}}
 Lings.esm
@@ -181,11 +181,11 @@ hardercore_wealth.esp
 
 Improved Sound FX - Weapon Sharing Fix.esp
 % {{BASH: Sound}}
+Improved Sound FX - HH Sharing Fix.esp
+% {{BASH: Sound}}
 
-LFox Bottle That Water.esp
-% {{BASH: Names, Scripts}}
 monsterranch.esp
-% {{BASH:Relev}}
+% {{BASH: Relev}}
 Project13 - Populated Wasteland.esp
 % {{BASH: Actors.AIPackages, Delev, Relev}}
 
@@ -243,17 +243,23 @@ MiscItemIconsNV.esp
 % {{BASH: Graphics}}
 T3T_MiscItemIconsNV.esp
 % {{BASH: Graphics}}
-Sorter - Books.esp
-% {{BASH: Names}}
-Sorter - Magazines.esp
-% {{BASH: Names}}
 Sorter - Combined.esp
+% {{BASH: Names}}
+Sorter - Dead Money.esp
 % {{BASH: Names}}
 Sorter - Combined - T3T Icon Compatch.esp
 % {{BASH: Names}}
 Sorter - Combined - Aid Crafting.esp
 % {{BASH: Names}}
+Sorter - Books.esp
+% {{BASH: Names}}
+Sorter - Magazines.esp
+% {{BASH: Names}}
 Sorter - Combined - Weighted.esp
+% {{BASH: Names}}
+Sorter - Empty Consumables.esp
+% {{BASH: Names}}
+Sorter - Empty Consumables - Dead Money.esp
 % {{BASH: Names}}
 Inventory Sorter - Moddable Unique Weps.esp
 % {{BASH: Names}}
@@ -261,6 +267,9 @@ DrugsAreBadMKay-IS.esp
 % {{BASH: Names}}
 FeelingIrradiated-IS.esp
 % {{BASH: Names}}
+
+LFox Bottle That Water.esp
+% {{BASH: Names, Scripts}}
 
 RH_IronSights_NV_Vanilla.esp
 % {{BASH: Graphics}}
@@ -283,6 +292,25 @@ WME - 00 Commando.esp
 WME - RH Ironsights.esp
 % {{BASH: Graphics, WeaponMods}}
 
+NV Game Stabilizer.esp
+% {{BASH: NoMerge}}
+NV GameStabilizerA.esp
+% {{BASH: NoMerge}}
+NV GameStabilizerA1.esp
+% {{BASH: NoMerge}}
+NV GameStabilizerA2.esp
+% {{BASH: NoMerge}}
+NV GameStabilizerA4.esp
+% {{BASH: NoMerge}}
+NV GameStabilizerA5.esp
+% {{BASH: NoMerge}}
+NV GameStabilizerA5F.esp
+% {{BASH: NoMerge}}
+NV GameStabilizerA6.esp
+% {{BASH: NoMerge}}
+NV GameStabilizerA7.esp
+% {{BASH: NoMerge}}
+
 LUMENARIUM - Working Sunglasses ONLY.esp
 % {{BASH: Names}}
 ELECTRO-CITY - CompletedWorkorders.esp
@@ -291,10 +319,18 @@ Nevada Skies.esp
 % {{BASH: C.Climate,C.Light}}
 Nevada Skies - URWLified.esp
 % {{BASH: C.Climate,C.Light}}
+Nevada Skies - URWLHH.esp
+% {{BASH: C.Climate,C.Light}}
+Interior Lighting Overhaul.esp
+% {{BASH: C.Light}}
+Interior Lighting Overhaul-Realistic.esp
+% {{BASH: C.Light}}
 Interior Lighting Overhaul-Realistic Interiors-Full.esp
 % {{BASH: C.Light}}
 ILO-RI-Original Lucky38 Suite.esp
 % {{BASH: C.Light}}
 ILO-RI-Dead Money.esp
+% {{BASH: C.Light}}
+ILO-RI-Honest Hearts.esp
 % {{BASH: C.Light}}
 
