@@ -11114,51 +11114,42 @@ class App_BOSS(App_Button):
             statusBar.SetStatusText(' '.join(exeArgs),1)
             cwd = bolt.Path.getcwd()
             exePath.head.setcwd()
-            progress = balt.Progress(_("Executing BOSS"))
-            version = bosh.configHelpers.bossVersion
-            if settings.get('bash.mods.autoGhost') and not version:
-                progress(0.05,_("Processing... deghosting mods"))
-                ghosted = []
-                for root, dirs, files in os.walk(bosh.dirs['mods'].s):
-                    for name in files:
-                        fileLower = name.lower()
-                        if fileLower[-10:] == '.esp.ghost' or fileLower[-10:] == '.esm.ghost':
-                            if not name[:-6] in files:
-                                file = bosh.dirs['mods'].join(name)
-                                ghosted.append(fileLower)
-                                newName = bosh.dirs['mods'].join(name[:-6])
-                                file.moveTo(newName)
-            if version >= 1:
-                if settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85):
-                    exeArgs += ('-u',) # Update - BOSS version 1.6+
-                if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
-                    exeArgs += ('-r 2',) # Revert level 2 - BOSS version 1.6+
-                elif wx.GetKeyState(82):
-                    exeArgs += ('-r 1',) # Revert level 1 - BOSS version 1.6+
-                if wx.GetKeyState(83):
-                    exeArgs += ('-s',) # Silent Mode - BOSS version 1.6+
-            if version in [1, 393217]:        
-                if wx.GetKeyState(86):
-                    exeArgs += ('-V-',) # Disable version parsing - syntax BOSS version 1.6 - 1.6.1
-            elif version >= 393218:
-                if wx.GetKeyState(86) or wx.GetKeyState(78):
-                    exeArgs += ('-n',) # Disable version parsing - syntax BOSS version 1.6.2+
-            progress(0.05,_("Processing... launching BOSS."))
-            try:
-                subprocess.call((exePath.s,) + exeArgs[1:], startupinfo=bosh.startupinfo)
-                # Clear the saved times from before
-                bosh.modInfos.mtimes.clear()
-                # And refresh to get the new times so WB will keep the order that BOSS specifies
-                bosh.modInfos.refresh(doInfos=False)
-            except Exception, error:
-                print str(error)
-                print _("Used Path: %s") % exePath.s
-                print _("Used Arguments: "), exeArgs
-                print
-                raise
-            finally:
-                if progress: progress.Destroy()
-                cwd.setcwd()
+            with balt.Progress(_("Executing BOSS")) as progress:
+                version = bosh.configHelpers.bossVersion
+                if settings.get('bash.mods.autoGhost') and not version:
+                    progress(0.05,_("Processing... deghosting mods"))
+                    for fileName in bosh.modInfos:
+                        bosh.modInfos[fileName].setGhost(False)
+                if version >= 1:
+                    if settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85):
+                        exeArgs += ('-u',) # Update - BOSS version 1.6+
+                    if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
+                        exeArgs += ('-r 2',) # Revert level 2 - BOSS version 1.6+
+                    elif wx.GetKeyState(82):
+                        exeArgs += ('-r 1',) # Revert level 1 - BOSS version 1.6+
+                    if wx.GetKeyState(83):
+                        exeArgs += ('-s',) # Silent Mode - BOSS version 1.6+
+                if version in [1, 393217]:
+                    if wx.GetKeyState(86):
+                        exeArgs += ('-V-',) # Disable version parsing - syntax BOSS version 1.6 - 1.6.1
+                elif version >= 393218:
+                    if wx.GetKeyState(86) or wx.GetKeyState(78):
+                        exeArgs += ('-n',) # Disable version parsing - syntax BOSS version 1.6.2+
+                progress(0.05,_("Processing... launching BOSS."))
+                try:
+                    subprocess.call((exePath.s,) + exeArgs[1:], startupinfo=bosh.startupinfo)
+                    # Clear the saved times from before
+                    bosh.modInfos.mtimes.clear()
+                    # And refresh to get the new times so WB will keep the order that BOSS specifies
+                    bosh.modInfos.refresh(doInfos=False)
+                except Exception, error:
+                    print error
+                    print _("Used Path: %s") % exePath.s
+                    print _("Used Arguments: "), exeArgs
+                    print
+                    raise
+                finally:
+                    cwd.setcwd()
         else:
             raise StateError('Application missing: %s' % self.exePath.s)
 
@@ -11471,11 +11462,12 @@ def InitStatusBar():
 #            _("Launch Tes4LODGen")))
     configHelpers = bosh.ConfigHelpers()
     configHelpers.refresh()
-    if configHelpers.bossVersion > 0: version = 1
-    else: version = 0
+    version = configHelpers.bossVersion
+    if version > 2: version = 1
+    elif version < 0: version = 0
     BashStatusBar.buttons.append( #BOSS --
         App_BOSS(
-            (bosh.dirs['app'].join('Data\\BOSS-F.bat'),bosh.dirs['app'].join('Data\\BOSS.exe'))[version],
+            (bosh.dirs['app'].join('Data\\BOSS-F.bat'),bosh.dirs['app'].join('Data\\BOSS.exe'),bosh.dirs['app'].join('BOSS\\BOSS.exe'))[version],
             Image(r'images/Boss'+bosh.inisettings['IconSize']+'.png'),
             _("Launch BOSS")))
     if bosh.inisettings['ShowModelingToolLaunchers']:
@@ -12176,6 +12168,8 @@ def InitModLinks():
     ModList.mainMenu.append(Mods_Deprint())
     ModList.mainMenu.append(Mods_DumpTranslator())
     ModList.mainMenu.append(Mods_FO3EditExpert())
+    #--BOSS options
+    ModList.mainMenu.append(SeparatorLink())
     ModList.mainMenu.append(Mods_BOSSDisableLockTimes())
     ModList.mainMenu.append(Mods_BOSSShowUpdate())
 
