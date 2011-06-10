@@ -1,120 +1,124 @@
-=== bolt.py, 115
+=== bolt.py, 125
 Abstract section called
 >>>>
 
-=== bolt.py, 121
+=== bolt.py, 131
 Argument is out of allowed ranged of values
 >>>>
 
-=== bolt.py, 127
+=== bolt.py, 137
 Object is in a bad state
 >>>>
 
-=== bolt.py, 133
+=== bolt.py, 143
 Section is not coded yet
 >>>>
 
-=== bolt.py, 506
+=== bolt.py, 149
+Action aboted by user
+>>>>
+
+=== bolt.py, 525
 cannot be moved because it does not exist
 >>>>
 
-=== bolt.py, 963
+=== bolt.py, 982
 String too long to convert
 >>>>
 
-=== balt.py, 120
+=== balt.py, 119
 Missing resource file: %s
 >>>>
 
-=== balt.py, 320
+=== balt.py, 319
 Choose a directory
 >>>>
 ディレクトリを選択
-=== balt.py, 332
+=== balt.py, 331
 Warning
 >>>>
 
-=== balt.py, 341
+=== balt.py, 340
 Don't show this in the future
 >>>>
-
-=== balt.py, 435
+今後、これを表示しない
+=== balt.py, 434
 Error
 >>>>
 エラー
-=== balt.py, 443
+=== balt.py, 442
 Information
 >>>>
 
-=== balt.py, 454
+=== balt.py, 453
 \n(And %d others.)
 >>>>
 
-=== balt.py, 735
+=== balt.py, 734
 Action
 >>>>
 アクション
-=== balt.py, 736
+=== balt.py, 735
 Add
 >>>>
 追加
-=== balt.py, 737
+=== balt.py, 736
 Edit
 >>>>
 編集
-=== balt.py, 738
+=== balt.py, 737
 Rename
 >>>>
 リネーム
-=== balt.py, 739
+=== balt.py, 738
 Remove
 >>>>
 削除
-=== balt.py, 740
+=== balt.py, 739
 Save
 >>>>
 セーブ
-=== balt.py, 741
+=== balt.py, 740
 Cancel
 >>>>
 キャンセル
-=== balt.py, 811
+=== balt.py, 810
 Rename to
 >>>>
 
-=== balt.py, 815
+=== balt.py, 814
 Name must be unique
 >>>>
 
-=== balt.py, 933
+=== balt.py, 932
 Progress
 >>>>
 
-=== balt.py, 946
+=== balt.py, 951
 Dialog already destroyed
 >>>>
 
-=== balt.py, 1436
+=== balt.py, 1449
 Delete Items
 >>>>
 
-=== balt.py, 1530
+=== balt.py, 1543
 Open
 >>>>
 開く
-=== balt.py, 1545
+=== balt.py, 1558
 Delete
 >>>>
 削除
-=== balt.py, 1575
+=== balt.py, 1588
 Duplicate
 >>>>
 複製
-=== balt.py, 1584
+=== balt.py, 1597
 Duplicate as
 >>>>
 名前をつけて複製
-=== balt.py, 1588
+=== balt.py, 1601
 Files cannot be duplicated to themselves!
 >>>>
 
@@ -162,6571 +166,6939 @@ Cell Temporary Children
 Cell Visible Distant Children
 >>>>
 
-=== bush.py, 127
+=== bush.py, 123
 Argonian
 >>>>
 
-=== bush.py, 128
+=== bush.py, 124
 Breton
 >>>>
 
-=== bush.py, 129
+=== bush.py, 125
 Dark Elf
 >>>>
 
-=== bush.py, 130
+=== bush.py, 126
 High Elf
 >>>>
 
-=== bush.py, 131
+=== bush.py, 127
 Imperial
 >>>>
 
-=== bush.py, 132
+=== bush.py, 128
 Khajiit
 >>>>
 
-=== bush.py, 133
+=== bush.py, 129
 Nord
 >>>>
 
-=== bush.py, 134
+=== bush.py, 130
 Orc
 >>>>
 
-=== bush.py, 135
+=== bush.py, 131
 Redguard
 >>>>
 
-=== bush.py, 136
+=== bush.py, 132
 Vampire
 >>>>
 
-=== bush.py, 137
+=== bush.py, 133
 Wood Elf
 >>>>
 
-=== bush.py, 439
+=== bush.py, 483
 Blade (1 Handed)
 >>>>
 
-=== bush.py, 440
+=== bush.py, 484
 Blade (2 Handed)
 >>>>
 
-=== bush.py, 441
+=== bush.py, 485
 Blunt (1 Handed)
 >>>>
 
-=== bush.py, 442
+=== bush.py, 486
 Blunt (2 Handed)
 >>>>
 
-=== bush.py, 443
+=== bush.py, 487
 Staff
 >>>>
 
-=== bush.py, 444
+=== bush.py, 488
 Bow
 >>>>
 
-=== bush.py, 448
+=== bush.py, 492
 Absorb Attribute
 >>>>
 
-=== bush.py, 449
+=== bush.py, 493
 Absorb Fatigue
 >>>>
 
-=== bush.py, 450
+=== bush.py, 494
 Absorb Health
 >>>>
 
-=== bush.py, 451
+=== bush.py, 495
 Absorb Skill
 >>>>
 
-=== bush.py, 452
+=== bush.py, 496
 Absorb Magicka
 >>>>
 
-=== bush.py, 453
+=== bush.py, 497
 Bound Armor Extra 01
 >>>>
 
-=== bush.py, 454
+=== bush.py, 498
 Bound Armor Extra 02
 >>>>
 
-=== bush.py, 455
+=== bush.py, 499
 Bound Armor Extra 03
 >>>>
 
-=== bush.py, 456
+=== bush.py, 500
 Bound Armor Extra 04
 >>>>
 
-=== bush.py, 457
+=== bush.py, 501
 Bound Armor Extra 05
 >>>>
 
-=== bush.py, 458
+=== bush.py, 502
 Bound Armor Extra 06
 >>>>
 
-=== bush.py, 459
+=== bush.py, 503
 Bound Armor Extra 07
 >>>>
 
-=== bush.py, 460
+=== bush.py, 504
 Bound Armor Extra 08
 >>>>
 
-=== bush.py, 461
+=== bush.py, 505
 Bound Armor Extra 09
 >>>>
 
-=== bush.py, 462
+=== bush.py, 506
 Bound Armor Extra 10
 >>>>
 
-=== bush.py, 463
+=== bush.py, 507
 Bound Boots
 >>>>
 
-=== bush.py, 464
+=== bush.py, 508
 Bound Cuirass
 >>>>
 
-=== bush.py, 465
+=== bush.py, 509
 Bound Gauntlets
 >>>>
 
-=== bush.py, 466
+=== bush.py, 510
 Bound Greaves
 >>>>
 
-=== bush.py, 467
+=== bush.py, 511
 Bound Helmet
 >>>>
 
-=== bush.py, 468
+=== bush.py, 512
 Bound Shield
 >>>>
 
-=== bush.py, 469
+=== bush.py, 513
 Burden
 >>>>
 
-=== bush.py, 470
+=== bush.py, 514
 Bound Order Weapon 1
 >>>>
 
-=== bush.py, 471
+=== bush.py, 515
 Bound Order Weapon 2
 >>>>
 
-=== bush.py, 472
+=== bush.py, 516
 Bound Order Weapon 3
 >>>>
 
-=== bush.py, 473
+=== bush.py, 517
 Bound Order Weapon 4
 >>>>
 
-=== bush.py, 474
+=== bush.py, 518
 Bound Order Weapon 5
 >>>>
 
-=== bush.py, 475
+=== bush.py, 519
 Bound Order Weapon 6
 >>>>
 
-=== bush.py, 476
+=== bush.py, 520
 Summon Staff of Sheogorath
 >>>>
 
-=== bush.py, 477
+=== bush.py, 521
 Bound Priest Dagger
 >>>>
 
-=== bush.py, 478
+=== bush.py, 522
 Bound Weapon Extra 09
 >>>>
 
-=== bush.py, 479
+=== bush.py, 523
 Bound Weapon Extra 10
 >>>>
 
-=== bush.py, 480
+=== bush.py, 524
 Bound Axe
 >>>>
 
-=== bush.py, 481
+=== bush.py, 525
 Bound Bow
 >>>>
 
-=== bush.py, 482
+=== bush.py, 526
 Bound Dagger
 >>>>
 
-=== bush.py, 483
+=== bush.py, 527
 Bound Mace
 >>>>
 
-=== bush.py, 484
+=== bush.py, 528
 Bound Sword
 >>>>
 
-=== bush.py, 485
+=== bush.py, 529
 Calm
 >>>>
 
-=== bush.py, 486
+=== bush.py, 530
 Chameleon
 >>>>
 
-=== bush.py, 487
+=== bush.py, 531
 Charm
 >>>>
 
-=== bush.py, 488
+=== bush.py, 532
 Command Creature
 >>>>
 
-=== bush.py, 489
+=== bush.py, 533
 Command Humanoid
 >>>>
 
-=== bush.py, 490
+=== bush.py, 534
 Cure Disease
 >>>>
 
-=== bush.py, 491
+=== bush.py, 535
 Cure Paralysis
 >>>>
 
-=== bush.py, 492
+=== bush.py, 536
 Cure Poison
 >>>>
 
-=== bush.py, 493
+=== bush.py, 537
 DO NOT USE - Darkness
 >>>>
 
-=== bush.py, 494
+=== bush.py, 538
 Demoralize
 >>>>
 
-=== bush.py, 495
+=== bush.py, 539
 Damage Attribute
 >>>>
 
-=== bush.py, 496
+=== bush.py, 540
 Damage Fatigue
 >>>>
 
-=== bush.py, 497
+=== bush.py, 541
 Damage Health
 >>>>
 
-=== bush.py, 498
+=== bush.py, 542
 Damage Magicka
 >>>>
 
-=== bush.py, 499
+=== bush.py, 543
 Disintegrate Armor
 >>>>
 
-=== bush.py, 500
+=== bush.py, 544
 Disease Info
 >>>>
 
-=== bush.py, 501
+=== bush.py, 545
 Disintegrate Weapon
 >>>>
 
-=== bush.py, 502
+=== bush.py, 546
 Drain Attribute
 >>>>
 
-=== bush.py, 503
+=== bush.py, 547
 Drain Fatigue
 >>>>
 
-=== bush.py, 504
+=== bush.py, 548
 Drain Health
 >>>>
 
-=== bush.py, 505
+=== bush.py, 549
 Drain Skill
 >>>>
 
-=== bush.py, 506
+=== bush.py, 550
 Drain Magicka
 >>>>
 
-=== bush.py, 507
+=== bush.py, 551
 Dispel
 >>>>
 
-=== bush.py, 508
+=== bush.py, 552
 Detect Life
 >>>>
 
-=== bush.py, 509
+=== bush.py, 553
 Mehrunes Dagon
 >>>>
 
-=== bush.py, 510
+=== bush.py, 554
 Fire Damage
 >>>>
 
-=== bush.py, 511
+=== bush.py, 555
 Fire Shield
 >>>>
 
-=== bush.py, 512
+=== bush.py, 556
 Fortify Attribute
 >>>>
 
-=== bush.py, 513
+=== bush.py, 557
 Fortify Fatigue
 >>>>
 
-=== bush.py, 514
+=== bush.py, 558
 Fortify Health
 >>>>
 
-=== bush.py, 515
+=== bush.py, 559
 Fortify Magicka Multiplier
 >>>>
 
-=== bush.py, 516
+=== bush.py, 560
 Fortify Skill
 >>>>
 
-=== bush.py, 517
+=== bush.py, 561
 Fortify Magicka
 >>>>
 
-=== bush.py, 518
+=== bush.py, 562
 Frost Damage
 >>>>
 
-=== bush.py, 519
+=== bush.py, 563
 Frenzy
 >>>>
 
-=== bush.py, 520
+=== bush.py, 564
 Frost Shield
 >>>>
 
-=== bush.py, 521
+=== bush.py, 565
 Feather
 >>>>
 
-=== bush.py, 522
+=== bush.py, 566
 Invisibility
 >>>>
 
-=== bush.py, 523
+=== bush.py, 567
 Light
 >>>>
 
-=== bush.py, 524
+=== bush.py, 568
 Shock Shield
 >>>>
 
-=== bush.py, 525
+=== bush.py, 569
 DO NOT USE - Lock
 >>>>
 
-=== bush.py, 526
+=== bush.py, 570
 Summon Mythic Dawn Helm
 >>>>
 
-=== bush.py, 527
+=== bush.py, 571
 Summon Mythic Dawn Armor
 >>>>
 
-=== bush.py, 528
+=== bush.py, 572
 Night-Eye
 >>>>
 
-=== bush.py, 530
+=== bush.py, 574
 Paralyze
 >>>>
 
-=== bush.py, 531
+=== bush.py, 575
 Poison Info
 >>>>
 
-=== bush.py, 532
+=== bush.py, 576
 Rally
 >>>>
 
-=== bush.py, 533
+=== bush.py, 577
 Reanimate
 >>>>
 
-=== bush.py, 534
+=== bush.py, 578
 Restore Attribute
 >>>>
 
-=== bush.py, 535
+=== bush.py, 579
 Reflect Damage
 >>>>
 
-=== bush.py, 536
+=== bush.py, 580
 Restore Fatigue
 >>>>
 
-=== bush.py, 537
+=== bush.py, 581
 Restore Health
 >>>>
 
-=== bush.py, 538
+=== bush.py, 582
 Restore Magicka
 >>>>
 
-=== bush.py, 539
+=== bush.py, 583
 Reflect Spell
 >>>>
 
-=== bush.py, 540
+=== bush.py, 584
 Resist Disease
 >>>>
 
-=== bush.py, 541
+=== bush.py, 585
 Resist Fire
 >>>>
 
-=== bush.py, 542
+=== bush.py, 586
 Resist Frost
 >>>>
 
-=== bush.py, 543
+=== bush.py, 587
 Resist Magic
 >>>>
 
-=== bush.py, 544
+=== bush.py, 588
 Resist Normal Weapons
 >>>>
 
-=== bush.py, 545
+=== bush.py, 589
 Resist Paralysis
 >>>>
 
-=== bush.py, 546
+=== bush.py, 590
 Resist Poison
 >>>>
 
-=== bush.py, 547
+=== bush.py, 591
 Resist Shock
 >>>>
 
-=== bush.py, 548
+=== bush.py, 592
 Resist Water Damage
 >>>>
 
-=== bush.py, 549
+=== bush.py, 593
 Spell Absorption
 >>>>
 
-=== bush.py, 550
+=== bush.py, 594
 Script Effect
 >>>>
 
-=== bush.py, 551
+=== bush.py, 595
 Shock Damage
 >>>>
 
-=== bush.py, 552
+=== bush.py, 596
 Shield
 >>>>
 
-=== bush.py, 553
+=== bush.py, 597
 Silence
 >>>>
 
-=== bush.py, 554
+=== bush.py, 598
 Stunted Magicka
 >>>>
 
-=== bush.py, 555
+=== bush.py, 599
 Soul Trap
 >>>>
 
-=== bush.py, 556
+=== bush.py, 600
 Sun Damage
 >>>>
 
-=== bush.py, 557
+=== bush.py, 601
 Telekinesis
 >>>>
 
-=== bush.py, 558
+=== bush.py, 602
 Turn Undead
 >>>>
 
-=== bush.py, 559
+=== bush.py, 603
 Vampirism
 >>>>
 
-=== bush.py, 560
+=== bush.py, 604
 Water Breathing
 >>>>
 
-=== bush.py, 561
+=== bush.py, 605
 Water Walking
 >>>>
 
-=== bush.py, 562
+=== bush.py, 606
 Weakness to Disease
 >>>>
 
-=== bush.py, 563
+=== bush.py, 607
 Weakness to Fire
 >>>>
 
-=== bush.py, 564
+=== bush.py, 608
 Weakness to Frost
 >>>>
 
-=== bush.py, 565
+=== bush.py, 609
 Weakness to Magic
 >>>>
 
-=== bush.py, 566
+=== bush.py, 610
 Weakness to Normal Weapons
 >>>>
 
-=== bush.py, 567
+=== bush.py, 611
 Weakness to Poison
 >>>>
 
-=== bush.py, 568
+=== bush.py, 612
 Weakness to Shock
 >>>>
 
-=== bush.py, 569
+=== bush.py, 613
 Summon Rufio\'s Ghost
 >>>>
 
-=== bush.py, 570
+=== bush.py, 614
 Summon Ancestor Guardian
 >>>>
 
-=== bush.py, 571
+=== bush.py, 615
 Summon Spiderling
 >>>>
 
-=== bush.py, 572
+=== bush.py, 616
 Summon Flesh Atronach
 >>>>
 
-=== bush.py, 573
+=== bush.py, 617
 Summon Bear
 >>>>
 
-=== bush.py, 574
+=== bush.py, 618
 Summon Gluttonous Hunger
 >>>>
 
-=== bush.py, 575
+=== bush.py, 619
 Summon Ravenous Hunger
 >>>>
 
-=== bush.py, 576
+=== bush.py, 620
 Summon Voracious Hunger
 >>>>
 
-=== bush.py, 577
+=== bush.py, 621
 Summon Dark Seducer
 >>>>
 
-=== bush.py, 578
+=== bush.py, 622
 Summon Golden Saint
 >>>>
 
-=== bush.py, 579
+=== bush.py, 623
 Wabba Summon
 >>>>
 
-=== bush.py, 580
+=== bush.py, 624
 Summon Decrepit Shambles
 >>>>
 
-=== bush.py, 581
+=== bush.py, 625
 Summon Shambles
 >>>>
 
-=== bush.py, 582
+=== bush.py, 626
 Summon Replete Shambles
 >>>>
 
-=== bush.py, 583
+=== bush.py, 627
 Summon Hunger
 >>>>
 
-=== bush.py, 584
+=== bush.py, 628
 Summon Mangled Flesh Atronach
 >>>>
 
-=== bush.py, 585
+=== bush.py, 629
 Summon Torn Flesh Atronach
 >>>>
 
-=== bush.py, 586
+=== bush.py, 630
 Summon Stitched Flesh Atronach
 >>>>
 
-=== bush.py, 587
+=== bush.py, 631
 Summon Sewn Flesh Atronach
 >>>>
 
-=== bush.py, 588
+=== bush.py, 632
 Extra Summon 20
 >>>>
 
-=== bush.py, 589
+=== bush.py, 633
 Summon Clannfear
 >>>>
 
-=== bush.py, 590
+=== bush.py, 634
 Summon Daedroth
 >>>>
 
-=== bush.py, 591
+=== bush.py, 635
 Summon Dremora
 >>>>
 
-=== bush.py, 592
+=== bush.py, 636
 Summon Dremora Lord
 >>>>
 
-=== bush.py, 593
+=== bush.py, 637
 Summon Flame Atronach
 >>>>
 
-=== bush.py, 594
+=== bush.py, 638
 Summon Frost Atronach
 >>>>
 
-=== bush.py, 595
+=== bush.py, 639
 Summon Ghost
 >>>>
 
-=== bush.py, 596
+=== bush.py, 640
 Summon Headless Zombie
 >>>>
 
-=== bush.py, 597
+=== bush.py, 641
 Summon Lich
 >>>>
 
-=== bush.py, 598
+=== bush.py, 642
 Summon Scamp
 >>>>
 
-=== bush.py, 599
+=== bush.py, 643
 Summon Skeleton Guardian
 >>>>
 
-=== bush.py, 600
+=== bush.py, 644
 Summon Skeleton Champion
 >>>>
 
-=== bush.py, 601
+=== bush.py, 645
 Summon Skeleton
 >>>>
 
-=== bush.py, 602
+=== bush.py, 646
 Summon Skeleton Hero
 >>>>
 
-=== bush.py, 603
+=== bush.py, 647
 Summon Spider Daedra
 >>>>
 
-=== bush.py, 604
+=== bush.py, 648
 Summon Storm Atronach
 >>>>
 
-=== bush.py, 605
+=== bush.py, 649
 Summon Faded Wraith
 >>>>
 
-=== bush.py, 606
+=== bush.py, 650
 Summon Gloom Wraith
 >>>>
 
-=== bush.py, 607
+=== bush.py, 651
 Summon Xivilai
 >>>>
 
-=== bush.py, 608
+=== bush.py, 652
 Summon Zombie
 >>>>
 
-=== bush.py, 664
+=== bush.py, 708
 Strength
 >>>>
 
-=== bush.py, 665
+=== bush.py, 709
 Intelligence
 >>>>
 
-=== bush.py, 666
+=== bush.py, 710
 Willpower
 >>>>
 
-=== bush.py, 667
+=== bush.py, 711
 Agility
 >>>>
 
-=== bush.py, 668
+=== bush.py, 712
 Speed
 >>>>
 
-=== bush.py, 669
+=== bush.py, 713
 Endurance
 >>>>
 
-=== bush.py, 670
+=== bush.py, 714
 Personality
 >>>>
 
-=== bush.py, 671
+=== bush.py, 715
 Luck
 >>>>
 
-=== bush.py, 672
+=== bush.py, 716
 Health
 >>>>
 
-=== bush.py, 673
+=== bush.py, 717
 Magicka
 >>>>
 
-=== bush.py, 675
+=== bush.py, 719
 Fatigue
 >>>>
 
-=== bush.py, 676
+=== bush.py, 720
 Encumbrance
 >>>>
 
-=== bush.py, 677
+=== bush.py, 721
 Armorer
 >>>>
 
-=== bush.py, 678
+=== bush.py, 722
 Athletics
 >>>>
 
-=== bush.py, 679
+=== bush.py, 723
 Blade
 >>>>
 
-=== bush.py, 680
+=== bush.py, 724
 Block
 >>>>
 
-=== bush.py, 681
+=== bush.py, 725
 Blunt
 >>>>
 
-=== bush.py, 682
+=== bush.py, 726
 Hand To Hand
 >>>>
 
-=== bush.py, 683
+=== bush.py, 727
 Heavy Armor
 >>>>
 
-=== bush.py, 684
+=== bush.py, 728
 Alchemy
 >>>>
 
-=== bush.py, 686
+=== bush.py, 730
 Alteration
 >>>>
 
-=== bush.py, 687
+=== bush.py, 731
 Conjuration
 >>>>
 
-=== bush.py, 688
+=== bush.py, 732
 Destruction
 >>>>
 
-=== bush.py, 689
+=== bush.py, 733
 Illusion
 >>>>
 
-=== bush.py, 690
+=== bush.py, 734
 Mysticism
 >>>>
 
-=== bush.py, 691
+=== bush.py, 735
 Restoration
 >>>>
 
-=== bush.py, 692
+=== bush.py, 736
 Acrobatics
 >>>>
 
-=== bush.py, 693
+=== bush.py, 737
 Light Armor
 >>>>
 
-=== bush.py, 694
+=== bush.py, 738
 Marksman
 >>>>
 
-=== bush.py, 695
+=== bush.py, 739
 Mercantile
 >>>>
 
-=== bush.py, 697
+=== bush.py, 741
 Security
 >>>>
 
-=== bush.py, 698
+=== bush.py, 742
 Sneak
 >>>>
 
-=== bush.py, 699
+=== bush.py, 743
 Speechcraft
 >>>>
 
-=== bush.py, 780
+=== bush.py, 824
 Faction
 >>>>
 
-=== bush.py, 781
+=== bush.py, 825
 Apparatus
 >>>>
 
-=== bush.py, 782
+=== bush.py, 826
 Armor
 >>>>
 
-=== bush.py, 783
+=== bush.py, 827
 Book
 >>>>
 
-=== bush.py, 784
+=== bush.py, 828
 Clothing
 >>>>
 
-=== bush.py, 785
+=== bush.py, 829
 Ingredient
 >>>>
 
-=== bush.py, 787
+=== bush.py, 831
 Misc. Item
 >>>>
 
-=== bush.py, 788
+=== bush.py, 832
 Weapon
 >>>>
 
-=== bush.py, 789
+=== bush.py, 833
 NPC
 >>>>
 
-=== bush.py, 790
+=== bush.py, 834
 Creature
 >>>>
 
-=== bush.py, 791
+=== bush.py, 835
 Key
 >>>>
 
-=== bush.py, 792
+=== bush.py, 836
 Potion
 >>>>
 
-=== bush.py, 793
+=== bush.py, 837
 Cell
 >>>>
 場所
-=== bush.py, 794
+=== bush.py, 838
 Object Ref
 >>>>
 
-=== bush.py, 795
+=== bush.py, 839
 NPC Ref
 >>>>
 
-=== bush.py, 796
+=== bush.py, 840
 Creature Ref
 >>>>
 
-=== bush.py, 797
+=== bush.py, 841
 Dialog Entry
 >>>>
 
-=== bush.py, 798
+=== bush.py, 842
 Quest
 >>>>
 
-=== bush.py, 799
+=== bush.py, 843
 AI Package
 >>>>
 
-=== bush.py, 804
+=== bush.py, 848
 Alchemical Ingredients I
 >>>>
 
-=== bush.py, 805
+=== bush.py, 849
 Alchemical Ingredients II
 >>>>
 
-=== bush.py, 806
+=== bush.py, 850
 Alchemical Ingredients III
 >>>>
 
-=== bush.py, 807
+=== bush.py, 851
 Alchemical Ingredients IV
 >>>>
 
-=== bush.py, 810
+=== bush.py, 854
 Alchemical Effects I
 >>>>
 
-=== bush.py, 811
+=== bush.py, 855
 Alchemical Effects II
 >>>>
 
-=== bush.py, 812
+=== bush.py, 856
 Alchemical Effects III
 >>>>
 
-=== bush.py, 813
+=== bush.py, 857
 Alchemical Effects IV
 >>>>
 
-=== bosh.py, 131
+=== bosh.py, 140
 Unknown File
 >>>>
 
-=== bosh.py, 137
+=== bosh.py, 146
 Unable to edit file %s
 >>>>
 
-=== bosh.py, 380
+=== bosh.py, 389
 %s: Attempted to read before (%d) beginning of file/buffer
 >>>>
 
-=== bosh.py, 383
+=== bosh.py, 392
 %s: Attempted to read past (%d) end (%d) of file/buffer
 >>>>
 
-=== bosh.py, 396
+=== bosh.py, 405
 %s: Expected size == %d, but got: %d
 >>>>
 
-=== bosh.py, 398
+=== bosh.py, 407
 %s: Expected size <= %d, but got: %d
 >>>>
 
-=== bosh.py, 406
+=== bosh.py, 415
 Extraneous subrecord (%s) in %s record
 >>>>
 
-=== bosh.py, 450
+=== bosh.py, 459
 Exceded limit of
 >>>>
 
-=== bosh.py, 486
+=== bosh.py, 495
 Bad header type
 >>>>
 
-=== bosh.py, 499
+=== bosh.py, 508
 Bad Top GRUP type
 >>>>
 
-=== bosh.py, 514
+=== bosh.py, 523
 %s: Expected %s subrecord, but found %s instead
 >>>>
 
-=== bosh.py, 1193
+=== bosh.py, 1202
 Unexpected subrecord
 >>>>
 
-=== bosh.py, 1203
+=== bosh.py, 1212
 Unknown condition function: %d
 >>>>
 
-=== bosh.py, 1518
+=== bosh.py, 1527
 Fids not in long format
 >>>>
 
-=== bosh.py, 1634
+=== bosh.py, 1643
 Data changed
 >>>>
 
-=== bosh.py, 1635
+=== bosh.py, 1644
 Data undefined
 >>>>
 
-=== bosh.py, 1719
+=== bosh.py, 1728
 Mis-sized compressed data. Expected %d, got %d
 >>>>
 
-=== bosh.py, 1793
+=== bosh.py, 1802
 Packing Error: %s %s: Fids in long format
 >>>>
 
-=== bosh.py, 2083
+=== bosh.py, 2094
 (Attribute|Skill)
 >>>>
 
-=== bosh.py, 2747
+=== bosh.py, 2783
+quests
+>>>>
+
+=== bosh.py, 2832
 Unexpected %s record in %s group
 >>>>
 
-=== bosh.py, 4815
+=== bosh.py, 4968
 Unexpected type: %d
 >>>>
 
-=== bosh.py, 5365
+=== bosh.py, 5818
+outputs
+>>>>
+
+=== bosh.py, 6100
 No valid mapping for mod index 0x%02X
 >>>>
 
-=== bosh.py, 6476
+=== bosh.py, 7241
 Invalid top group type
 >>>>
 
-=== bosh.py, 6496
+=== bosh.py, 7261
 Improperly grouped file
 >>>>
 
-=== bosh.py, 6544
+=== bosh.py, 7314
 Insufficient data to write file
 >>>>
 
-=== bosh.py, 7084
+=== bosh.py, 7857
 File header is corrupted
 >>>>
 
-=== bosh.py, 7091
+=== bosh.py, 7864
 File does not exist
 >>>>
 
-=== bosh.py, 7232
+=== bosh.py, 8015
 Reading Header
 >>>>
 
-=== bosh.py, 7271
+=== bosh.py, 8054
 Reading created
 >>>>
 
-=== bosh.py, 7283
+=== bosh.py, 8066
 Reading records
 >>>>
 
-=== bosh.py, 7289
+=== bosh.py, 8072
 Reading fids, worldids
 >>>>
 
-=== bosh.py, 7305
+=== bosh.py, 8088
 Finished reading
 >>>>
 
-=== bosh.py, 7320
+=== bosh.py, 8103
 Writing Header
 >>>>
 
-=== bosh.py, 7345
+=== bosh.py, 8128
 Writing created
 >>>>
 
-=== bosh.py, 7353
+=== bosh.py, 8136
 Writing records
 >>>>
 
-=== bosh.py, 7361
+=== bosh.py, 8144
 Writing fids, worldids
 >>>>
 
-=== bosh.py, 7372
+=== bosh.py, 8155
 Writing complete
 >>>>
 
-=== bosh.py, 7475
+=== bosh.py, 8258
 Missing Master
 >>>>
 
-=== bosh.py, 7478
+=== bosh.py, 8261
 Abomb Counter
 >>>>
 
-=== bosh.py, 7479
+=== bosh.py, 8262
 Integer:\t0x%08X
 >>>>
 
-=== bosh.py, 7480
+=== bosh.py, 8263
 Float:\t%.2f
 >>>>
 
-=== bosh.py, 7482
+=== bosh.py, 8265
 Fbomb Counter
 >>>>
 
-=== bosh.py, 7483
+=== bosh.py, 8266
 Next in-game object: %08X
 >>>>
 
-=== bosh.py, 7486
+=== bosh.py, 8269
 Created Items
 >>>>
 
-=== bosh.py, 7487
+=== bosh.py, 8270
 Records
 >>>>
 
-=== bosh.py, 7488
+=== bosh.py, 8271
 Fids
 >>>>
 
-=== bosh.py, 7555
+=== bosh.py, 8338
 LostChanges
 >>>>
 
-=== bosh.py, 7561
+=== bosh.py, 8344
 Unknown
 >>>>
 
-=== bosh.py, 7566
+=== bosh.py, 8349
 New ObjectRef Bases
 >>>>
 
-=== bosh.py, 7570
+=== bosh.py, 8353
 Count IRef     BaseId
 >>>>
 
-=== bosh.py, 7585
+=== bosh.py, 8368
 Header
 >>>>
-
-=== bosh.py, 7587
+ヘッダー
+=== bosh.py, 8370
 Format version:   %08X
 >>>>
 
-=== bosh.py, 7588
-FOSE version:     %u.%u
+=== bosh.py, 8371
+NVSE version:     %u.%u
 >>>>
 
-=== bosh.py, 7589
-Fallout3 version: %08X
+=== bosh.py, 8372
+FalloutNV version: %08X
 >>>>
 
-=== bosh.py, 7593
+=== bosh.py, 8376
 Plugin opcode=%08X chunkNum=%u
 >>>>
 
-=== bosh.py, 7595
+=== bosh.py, 8378
 Type  Ver   Size
 >>>>
 
-=== bosh.py, 7612
+=== bosh.py, 8395
 Mod :  %02X (%s)
 >>>>
 
-=== bosh.py, 7613
+=== bosh.py, 8396
 ID  :  %u
 >>>>
 
-=== bosh.py, 7614
+=== bosh.py, 8397
 Data:  %s
 >>>>
 
-=== bosh.py, 7619
+=== bosh.py, 8402
 Mod :  %02X (Save File)
 >>>>
 
-=== bosh.py, 7625
+=== bosh.py, 8408
 Type:  Array
 >>>>
 
-=== bosh.py, 7627
+=== bosh.py, 8410
 Type:  Map
 >>>>
 
-=== bosh.py, 7629
+=== bosh.py, 8412
 Type:  StringMap
 >>>>
 
-=== bosh.py, 7631
+=== bosh.py, 8414
 Type:  Unknown
 >>>>
 
-=== bosh.py, 7639
+=== bosh.py, 8422
 %02X (Save File)
 >>>>
 
-=== bosh.py, 7643
+=== bosh.py, 8426
 Size:  %u
 >>>>
 
-=== bosh.py, 7672
+=== bosh.py, 8455
 Pluggy ESPs
 >>>>
 
-=== bosh.py, 7673
+=== bosh.py, 8456
 EID   ID    Name
 >>>>
 
-=== bosh.py, 7686
+=== bosh.py, 8469
 Pluggy String
 >>>>
 
-=== bosh.py, 7689
+=== bosh.py, 8472
 StrID : %u
 >>>>
 
-=== bosh.py, 7690
+=== bosh.py, 8473
 ModID : %02X %s
 >>>>
 
-=== bosh.py, 7691
+=== bosh.py, 8474
 Flags : %u
 >>>>
 
-=== bosh.py, 7692
+=== bosh.py, 8475
 Data  : %s
 >>>>
 
-=== bosh.py, 7695
+=== bosh.py, 8478
 Pluggy Array
 >>>>
 
-=== bosh.py, 7697
+=== bosh.py, 8480
 ArrID : %u
 >>>>
 
-=== bosh.py, 7700
+=== bosh.py, 8483
 Size  : %u
 >>>>
 
-=== bosh.py, 7715
+=== bosh.py, 8498
 Pluggy Name
 >>>>
 
-=== bosh.py, 7722
+=== bosh.py, 8505
 RefID : %08X
 >>>>
 
-=== bosh.py, 7723
+=== bosh.py, 8506
 Name  : %s
 >>>>
 
-=== bosh.py, 7726
+=== bosh.py, 8509
 Pluggy ScreenSize
 >>>>
 
-=== bosh.py, 7730
+=== bosh.py, 8513
 Width  : %u
 >>>>
 
-=== bosh.py, 7731
+=== bosh.py, 8514
 Height : %u
 >>>>
 
-=== bosh.py, 7734
+=== bosh.py, 8517
 Pluggy HudS
 >>>>
 
-=== bosh.py, 7739
+=== bosh.py, 8522
 HudSID : %u
 >>>>
 
-=== bosh.py, 7740
+=== bosh.py, 8523
 ModID  : %02X %s
 >>>>
 
-=== bosh.py, 7741
+=== bosh.py, 8524
 Flags  : %02X
 >>>>
 
-=== bosh.py, 7742
+=== bosh.py, 8525
 RootID : %u
 >>>>
 
-=== bosh.py, 7743
+=== bosh.py, 8526
 Show   : %02X
 >>>>
 
-=== bosh.py, 7744
+=== bosh.py, 8527
 Pos    : %f,%f
 >>>>
 
-=== bosh.py, 7745
+=== bosh.py, 8528
 Depth  : %u
 >>>>
 
-=== bosh.py, 7746
+=== bosh.py, 8529
 Scale  : %f,%f
 >>>>
 
-=== bosh.py, 7747
+=== bosh.py, 8530
 Alpha  : %02X
 >>>>
 
-=== bosh.py, 7748
+=== bosh.py, 8531
 Align  : %02X
 >>>>
 
-=== bosh.py, 7749
+=== bosh.py, 8532
 AutoSc : %02X
 >>>>
 
-=== bosh.py, 7750
+=== bosh.py, 8533
 File   : %s
 >>>>
 
-=== bosh.py, 7753
+=== bosh.py, 8536
 Pluggy HudT
 >>>>
 
-=== bosh.py, 7762
+=== bosh.py, 8545
 HudTID : %u
 >>>>
 
-=== bosh.py, 7774
+=== bosh.py, 8557
 Format : %u
 >>>>
 
-=== bosh.py, 7775
+=== bosh.py, 8558
 FName  : %s
 >>>>
 
-=== bosh.py, 7776
+=== bosh.py, 8559
 FHght  : %u
 >>>>
 
-=== bosh.py, 7777
+=== bosh.py, 8560
 FWdth  : %u
 >>>>
 
-=== bosh.py, 7778
+=== bosh.py, 8561
 FWeigh : %u
 >>>>
 
-=== bosh.py, 7779
+=== bosh.py, 8562
 FItal  : %u
 >>>>
 
-=== bosh.py, 7780
+=== bosh.py, 8563
 FRGB   : %u,%u,%u
 >>>>
 
-=== bosh.py, 7781
+=== bosh.py, 8564
 FText  : %s
 >>>>
 
-=== bosh.py, 7791
+=== bosh.py, 8574
 Scanning created objects
 >>>>
 
-=== bosh.py, 7808
+=== bosh.py, 8591
 Scanning change records
 >>>>
 
-=== bosh.py, 7831
+=== bosh.py, 8614
 full
 >>>>
 
-=== bosh.py, 8022
+=== bosh.py, 8805
 Backing up BSA file. This will take a while
 >>>>
 
-=== bosh.py, 8421
+=== bosh.py, 9215
 Load list is full
 >>>>
 
-=== bosh.py, 8721
+=== bosh.py, 9515
 Can't get snapshot parameters for file outside main directory
 >>>>
 
-=== bosh.py, 8893
+=== bosh.py, 9687
 Expected TES4, but got
 >>>>
 
-=== bosh.py, 8898
+=== bosh.py, 9692
 Struct.error
 >>>>
 
-=== bosh.py, 9331
+=== bosh.py, 10125
 Getting sizes
 >>>>
 
-=== bosh.py, 9496
-288769595
+=== bosh.py, 10290
+245570393
 >>>>
 
-=== bosh.py, 9497
-288771181
->>>>
-
-=== bosh.py, 9498
-288771262
->>>>
-
-=== bosh.py, 9750
+=== bosh.py, 10545
 Balo group header
 >>>>
 
-=== bosh.py, 9919
+=== bosh.py, 10714
 Some mods were unavailable and were skipped:\n*
 >>>>
 
-=== bosh.py, 9923
+=== bosh.py, 10718
 Mod list is full, so some mods were skipped:\n
 >>>>
 
-=== bosh.py, 9936
+=== bosh.py, 10731
 ----> MISSING MASTER
 >>>>
 
-=== bosh.py, 9936
+=== bosh.py, 10731
 * __Missing Master:__
 >>>>
 
-=== bosh.py, 9937
+=== bosh.py, 10732
 ----> Delinquent MASTER
 >>>>
 
-=== bosh.py, 9937
+=== bosh.py, 10732
 * __Delinquent Master:__
 >>>>
 
-=== bosh.py, 9943
+=== bosh.py, 10738
 Missing Masters for
 >>>>
 
-=== bosh.py, 9946
+=== bosh.py, 10741
 Masters for
 >>>>
 
-=== bosh.py, 9952
+=== bosh.py, 10747
 Active Mod Files
 >>>>
 
-=== bosh.py, 9978
+=== bosh.py, 10773
 %s  %s  [Version %s]
 >>>>
 
-=== bosh.py, 10012
+=== bosh.py, 10807
 Circular Masters
 >>>>
 
-=== bosh.py, 10132
-Can't match current Fallout3.esm to known version
+=== bosh.py, 10927
+Can't match current FalloutNV.esm to known version
 >>>>
 
-=== bosh.py, 10135
+=== bosh.py, 10930
 Can't swap: %s already exists
 >>>>
 
-=== bosh.py, 10138
+=== bosh.py, 10933
 Can't swap: %s doesn't exist
 >>>>
 
-=== bosh.py, 10527
+=== bosh.py, 11322
 ONLYONE does not support %s operators
 >>>>
 
-=== bosh.py, 10621
+=== bosh.py, 11454
 <font color=red>WARNING:</font>
 >>>>
 
-=== bosh.py, 10624
+=== bosh.py, 11457
 Check Mods
 >>>>
 
-=== bosh.py, 10625
+=== bosh.py, 11458
 This is a report on your currently active/merged mods
 >>>>
 
-=== bosh.py, 10634
+=== bosh.py, 11468
 Mergeable
 >>>>
 
-=== bosh.py, 10635
+=== bosh.py, 11469
 Following mods are active, but could be merged into the bashed patch
 >>>>
 
-=== bosh.py, 10639
+=== bosh.py, 11473
 NoMerge Tagged Mods
 >>>>
 
-=== bosh.py, 10640
-Following mods are tagged NoMerge and should be deactivate and imported into the bashed patch but are currently active
+=== bosh.py, 11474
+Following mods are tagged NoMerge and should be deactivated and imported into the bashed patch but are currently active
 >>>>
 
-=== bosh.py, 10644
+=== bosh.py, 11478
 Deactivate Tagged Mods
 >>>>
 
-=== bosh.py, 10645
-Following mods are tagged Deactivate and should be deactivate and imported into the bashed patch but are currently active
+=== bosh.py, 11479
+Following mods are tagged Deactivate and should be deactivated and imported into the bashed patch but are currently active
 >>>>
 
-=== bosh.py, 10652
+=== bosh.py, 11483
+MustBeActiveIfImported Tagged Mods
+>>>>
+
+=== bosh.py, 11484
+Following mods to work correctly have to be active as well as imported into the bashed patch but are currently only imported
+>>>>
+
+=== bosh.py, 11491
 Missing/Delinquent Masters
 >>>>
 
-=== bosh.py, 10658
+=== bosh.py, 11497
 MISSING
 >>>>
 
-=== bosh.py, 10660
+=== bosh.py, 11499
 DELINQUENT
 >>>>
 
-=== bosh.py, 10681
+=== bosh.py, 11520
 Only one of these should be active/merged
 >>>>
 
-=== bosh.py, 10689
+=== bosh.py, 11528
 NOTES
 >>>>
 
-=== bosh.py, 10692
+=== bosh.py, 11531
 CONFIGURATION
 >>>>
 
-=== bosh.py, 10702
+=== bosh.py, 11541
 SUGGESTIONS
 >>>>
 
-=== bosh.py, 10709
+=== bosh.py, 11548
 * __%s__ -- %s
 >>>>
 
-=== bosh.py, 10898
+=== bosh.py, 11737
 Sent %s <b>%s</b> on %s</div>
 >>>>
 
-=== bosh.py, 10924
+=== bosh.py, 11763
 ModBase
 >>>>
 
-=== bosh.py, 10972
+=== bosh.py, 11811
 People
 >>>>
 
-=== bosh.py, 11165
+=== bosh.py, 12004
 %s: Pre-Scanning
 >>>>
 
-=== bosh.py, 11177
+=== bosh.py, 12016
 %s: Pre-Scanning...\n%s
 >>>>
 
-=== bosh.py, 11196
+=== bosh.py, 12035
 %s: Scanning
 >>>>
 
-=== bosh.py, 11233
+=== bosh.py, 12072
 %s\nCalculating CRCs...\n
 >>>>
-
-=== bosh.py, 11236
+%s\nCRCを計算中...\n
+=== bosh.py, 12075
 %s\nCalculating CRCs...\n%s
 >>>>
-
-=== bosh.py, 11651
+%s\nCRCを計算中...\n%s
+=== bosh.py, 12490
 \nLoading %s:\nBCF doesn't exist
 >>>>
 
-=== bosh.py, 11666
+=== bosh.py, 12505
 \nLoading %s:\nBCF extraction failed
 >>>>
 
-=== bosh.py, 11679
+=== bosh.py, 12518
 %s\nExtracting files
 >>>>
 
-=== bosh.py, 11691
+=== bosh.py, 12530
 %s: Extraction failed:\n%s
 >>>>
 
-=== bosh.py, 11699
+=== bosh.py, 12538
 \nExtracting files
 >>>>
 
-=== bosh.py, 11719
+=== bosh.py, 12558
 Moving files
 >>>>
 
-=== bosh.py, 11736
+=== bosh.py, 12575
 %s: Missing file:\n%s
 >>>>
 
-=== bosh.py, 11742
+=== bosh.py, 12581
 Copying file...\n%s
 >>>>
 
-=== bosh.py, 11746
+=== bosh.py, 12585
 Moving file...\n%s
 >>>>
 
-=== bosh.py, 11837
+=== bosh.py, 12676
 %s\nMapping files
 >>>>
 
-=== bosh.py, 11842
+=== bosh.py, 12681
 %s\nMapping files...\n%s
 >>>>
 
-=== bosh.py, 11864
+=== bosh.py, 12703
 Error creating BCF.dat:\nError Code: %s
 >>>>
 
-=== bosh.py, 11885
+=== bosh.py, 12724
 %s\nCompressing files
 >>>>
 
-=== bosh.py, 11901
+=== bosh.py, 12740
 \nCompressing files...\n%s
 >>>>
 
-=== bosh.py, 11906
+=== bosh.py, 12745
 %s: Compression failed:\n%s
 >>>>
 
-=== bosh.py, 11916
+=== bosh.py, 12755
 No files to extract for %s
 >>>>
 
-=== bosh.py, 11924
+=== bosh.py, 12763
 Error creating file list for 7z:\nError Code: %s
 >>>>
 
-=== bosh.py, 11956
+=== bosh.py, 12795
 %s\nExtracting files...\n%s
 >>>>
 
-=== bosh.py, 12070
+=== bosh.py, 12915
 %s: Extraction failed\n%s
 >>>>
 
-=== bosh.py, 12087
+=== bosh.py, 12932
 \nMoving files
 >>>>
 
-=== bosh.py, 12131
+=== bosh.py, 12979
 Package Structure
 >>>>
 
-=== bosh.py, 12399
+=== bosh.py, 13247
 Package
 >>>>
 パッケージ
-=== bosh.py, 12399
+=== bosh.py, 13247
 Order
 >>>>
 順序
-=== bosh.py, 12399
+=== bosh.py, 13247
 Modified
 >>>>
 タイムスタンプ
-=== bosh.py, 12399
+=== bosh.py, 13247
 Size
 >>>>
 サイズ
-=== bosh.py, 12399
+=== bosh.py, 13247
 Files
 >>>>
 
-=== bosh.py, 12400
+=== bosh.py, 13248
 Installers
 >>>>
 
-=== bosh.py, 12440
+=== bosh.py, 13292
 Loading Data
 >>>>
 
-=== bosh.py, 12642
+=== bosh.py, 13494
 Scanning Packages
 >>>>
 
-=== bosh.py, 12645
+=== bosh.py, 13497
 Scanning Packages...\n
 >>>>
 
-=== bosh.py, 12794
+=== bosh.py, 13646
 Scanning Converters
 >>>>
 
-=== bosh.py, 12797
+=== bosh.py, 13649
 Scanning Converter...\n
 >>>>
 
-=== bosh.py, 13069
+=== bosh.py, 13921
 Lower
 >>>>
 
-=== bosh.py, 13069
+=== bosh.py, 13921
 Higher
 >>>>
 
-=== bosh.py, 13077
+=== bosh.py, 13929
 No Underrides. Mod is not completely un-installed
 >>>>
 
-=== bosh.py, 13085
+=== bosh.py, 13937
 Bain Packages
 >>>>
 
-=== bosh.py, 13243
+=== bosh.py, 14095
 Type
 >>>>
-
-=== bosh.py, 13243
+形式
+=== bosh.py, 14095
 Actor Eid
 >>>>
 
-=== bosh.py, 13243
+=== bosh.py, 14095
 Actor Mod
 >>>>
 
-=== bosh.py, 13243
+=== bosh.py, 14095
 Actor Object
 >>>>
 
-=== bosh.py, 13243
+=== bosh.py, 14095
 Faction Eid
 >>>>
 
-=== bosh.py, 13243
+=== bosh.py, 14095
 Faction Mod
 >>>>
 
-=== bosh.py, 13243
+=== bosh.py, 14095
 Faction Object
 >>>>
 
-=== bosh.py, 13243
+=== bosh.py, 14095
 Rank
 >>>>
 
-=== bosh.py, 13264
+=== bosh.py, 14116
 Loading
 >>>>
 
-=== bosh.py, 13274
-Loading Fallout3.esm
+=== bosh.py, 14126
+Loading FalloutNV.esm
 >>>>
 
-=== bosh.py, 13283
+=== bosh.py, 14135
 Writing
 >>>>
 
-=== bosh.py, 13285
+=== bosh.py, 14137
 Fid
 >>>>
 
-=== bosh.py, 13285
+=== bosh.py, 14137
 EditorId
 >>>>
 
-=== bosh.py, 13285
+=== bosh.py, 14137
 Offset
 >>>>
 
-=== bosh.py, 13285
+=== bosh.py, 14137
 CalcMin
 >>>>
 
-=== bosh.py, 13285
+=== bosh.py, 14137
 CalcMax
 >>>>
 
-=== bosh.py, 13286
+=== bosh.py, 14138
 Old bOffset
 >>>>
 
-=== bosh.py, 13286
+=== bosh.py, 14138
 Old Offset
 >>>>
 
-=== bosh.py, 13286
+=== bosh.py, 14138
 Old CalcMin
 >>>>
 
-=== bosh.py, 13286
+=== bosh.py, 14138
 Old CalcMax
 >>>>
 
-=== bosh.py, 13298
+=== bosh.py, 14150
 Done
 >>>>
 
-=== bosh.py, 13343
+=== bosh.py, 14195
 Reading
 >>>>
 
-=== bosh.py, 13361
+=== bosh.py, 14213
 Saving
 >>>>
 
-=== bosh.py, 13519
+=== bosh.py, 14371
 Script
 >>>>
 
-=== bosh.py, 13598
+=== bosh.py, 14450
 Mod Name
 >>>>
 
-=== bosh.py, 13598
+=== bosh.py, 14450
 ObjectIndex
 >>>>
 
-=== bosh.py, 13598
+=== bosh.py, 14450
 Editor Id
 >>>>
 
-=== bosh.py, 13676
+=== bosh.py, 14528
 Main Eid
 >>>>
 
-=== bosh.py, 13676
+=== bosh.py, 14528
 Main Mod
 >>>>
 
-=== bosh.py, 13676
+=== bosh.py, 14528
 Main Object
 >>>>
 
-=== bosh.py, 13676
+=== bosh.py, 14528
 Other Eid
 >>>>
 
-=== bosh.py, 13676
+=== bosh.py, 14528
 Other Mod
 >>>>
 
-=== bosh.py, 13676
+=== bosh.py, 14528
 Other Object
 >>>>
 
-=== bosh.py, 13676
+=== bosh.py, 14528
 Disp
 >>>>
 
-=== bosh.py, 13676
+=== bosh.py, 14528
 GroupCombatReaction
 >>>>
 
-=== bosh.py, 13877
+=== bosh.py, 14772
 Name
 >>>>
 名前
-=== bosh.py, 13963
+=== bosh.py, 14772
+Short Name
+>>>>
+
+=== bosh.py, 14866
 Model
 >>>>
 モデル
-=== bosh.py, 13963
+=== bosh.py, 14866
 Icon
 >>>>
 アイコン
-=== bosh.py, 13963
+=== bosh.py, 14866
 Uses
 >>>>
 
-=== bosh.py, 13963
+=== bosh.py, 14866
 Value
 >>>>
 
-=== bosh.py, 13963
+=== bosh.py, 14866
 Weight
 >>>>
 
-=== bosh.py, 13963
+=== bosh.py, 14866
 Effects
 >>>>
 
-=== bosh.py, 14111
+=== bosh.py, 15028
 Clip Rounds
 >>>>
 
-=== bosh.py, 14115
+=== bosh.py, 15028
+Proj/Shot
+>>>>
+
+=== bosh.py, 15032
 AR
 >>>>
 
-=== bosh.py, 14131
+=== bosh.py, 15032
+DT
+>>>>
+
+=== bosh.py, 15052
 Duration
 >>>>
 
-=== bosh.py, 14139
+=== bosh.py, 15060
 Damage
 >>>>
 
-=== bosh.py, 14139
+=== bosh.py, 15060
 Clip Size
 >>>>
 
-=== bosh.py, 14140
+=== bosh.py, 15061
+Animation Multiplier
+>>>>
+
+=== bosh.py, 15061
 Reach
 >>>>
 
-=== bosh.py, 14140
+=== bosh.py, 15061
 Ammo Use
 >>>>
 
-=== bosh.py, 14140
+=== bosh.py, 15061
 Min Spread
 >>>>
 
-=== bosh.py, 14140
+=== bosh.py, 15061
 Spread
 >>>>
 
-=== bosh.py, 14140
+=== bosh.py, 15061
 Sight Fov
 >>>>
 
-=== bosh.py, 14140
+=== bosh.py, 15061
 Base VATS To-Hit Chance
 >>>>
 
-=== bosh.py, 14140
+=== bosh.py, 15061
 Projectile Count
 >>>>
 
-=== bosh.py, 14141
+=== bosh.py, 15062
 Min Range
 >>>>
 
-=== bosh.py, 14141
+=== bosh.py, 15062
 Max Range
 >>>>
 
-=== bosh.py, 14141
+=== bosh.py, 15062
+Animation Attack Multiplier
+>>>>
+
+=== bosh.py, 15062
 Fire Rate
 >>>>
 
-=== bosh.py, 14141
+=== bosh.py, 15062
 Override - Action Point
 >>>>
 
-=== bosh.py, 14141
+=== bosh.py, 15062
 Rumble - Left Motor Strength
 >>>>
 
-=== bosh.py, 14142
+=== bosh.py, 15063
 rRmble - Right Motor Strength
 >>>>
 
-=== bosh.py, 14142
+=== bosh.py, 15063
 Rumble - Duration
 >>>>
 
-=== bosh.py, 14142
+=== bosh.py, 15063
 Override - Damage To Weapon Mult
 >>>>
 
-=== bosh.py, 14142
+=== bosh.py, 15063
 Attack Shots/Sec
 >>>>
 
-=== bosh.py, 14143
+=== bosh.py, 15064
 Reload Time
 >>>>
 
-=== bosh.py, 14143
+=== bosh.py, 15064
 Jam Time
 >>>>
 
-=== bosh.py, 14143
+=== bosh.py, 15064
 Aim Arc
 >>>>
 
-=== bosh.py, 14143
+=== bosh.py, 15064
 Ramble - Wavelangth
 >>>>
 
-=== bosh.py, 14143
+=== bosh.py, 15064
 Limb Dmg Mult
 >>>>
 
-=== bosh.py, 14143
+=== bosh.py, 15064
 Sight Usage
 >>>>
 
-=== bosh.py, 14144
+=== bosh.py, 15065
 Semi-Automatic Fire Delay Min
 >>>>
 
-=== bosh.py, 14144
+=== bosh.py, 15065
 Semi-Automatic Fire Delay Max
 >>>>
 
-=== bosh.py, 14144
+=== bosh.py, 15066
+Strength Req
+>>>>
+
+=== bosh.py, 15066
+Regen Rate
+>>>>
+
+=== bosh.py, 15066
+Kill Impulse
+>>>>
+
+=== bosh.py, 15066
+Impulse Dist
+>>>>
+
+=== bosh.py, 15066
+Skill Req
+>>>>
+
+=== bosh.py, 15067
 Critical Damage
 >>>>
 
-=== bosh.py, 14144
+=== bosh.py, 15067
 Crit % Mult
 >>>>
 
-=== bosh.py, 14474
+=== bosh.py, 15068
+VATS Skill
+>>>>
+
+=== bosh.py, 15068
+VATS Dam. Mult
+>>>>
+
+=== bosh.py, 15068
+VATS AP
+>>>>
+
+=== bosh.py, 15418
 Large Icon Path
 >>>>
 
-=== bosh.py, 14474
+=== bosh.py, 15418
 Small Icon Path
 >>>>
 
-=== bosh.py, 14483
+=== bosh.py, 15427
 Male Large Icon Path
 >>>>
 
-=== bosh.py, 14483
+=== bosh.py, 15427
 Male Small Icon Path
 >>>>
 
-=== bosh.py, 14483
+=== bosh.py, 15427
 Female Large Icon Path
 >>>>
 
-=== bosh.py, 14483
+=== bosh.py, 15427
 Female Small Icon Path
 >>>>
 
-=== bosh.py, 14484
+=== bosh.py, 15428
 Male Model Path
 >>>>
 
-=== bosh.py, 14484
+=== bosh.py, 15428
 Female Model Path
 >>>>
 
-=== bosh.py, 14484
+=== bosh.py, 15428
 Male World Model Path
 >>>>
 
-=== bosh.py, 14484
+=== bosh.py, 15428
 Female World Model Path
 >>>>
 
-=== bosh.py, 14492
+=== bosh.py, 15442
 Icon Path
 >>>>
 
-=== bosh.py, 14514
+=== bosh.py, 15467
 Shell Casing Model
 >>>>
 
-=== bosh.py, 14514
+=== bosh.py, 15467
 Scope Model
 >>>>
 
-=== bosh.py, 14514
+=== bosh.py, 15467
 World Model
 >>>>
 
-=== bosh.py, 14557
+=== bosh.py, 15510
 Export Scripts
 >>>>
 スクリプトのエクスポート
-=== bosh.py, 14564
+=== bosh.py, 15517
 reading scripts in %s
 >>>>
 
-=== bosh.py, 14652
+=== bosh.py, 15605
 Import Scripts
 >>>>
 
-=== bosh.py, 14658
+=== bosh.py, 15611
 reading file %s
 >>>>
 
-=== bosh.py, 14673
+=== bosh.py, 15626
 Imported %d changed scripts from %s:\n
 >>>>
 
-=== bosh.py, 14693
+=== bosh.py, 15646
 exporting script %s
 >>>>
 
-=== bosh.py, 14705
+=== bosh.py, 15658
 Exported %d scripts from %s:\n
 >>>>
 
-=== bosh.py, 14785
+=== bosh.py, 15738
 Cost
 >>>>
 
-=== bosh.py, 14785
+=== bosh.py, 15738
 Level
 >>>>
 
-=== bosh.py, 14785
+=== bosh.py, 15738
 Spell Type
 >>>>
 
-=== bosh.py, 14964
+=== bosh.py, 15917
 Scanning
 >>>>
 
-=== bosh.py, 15031
+=== bosh.py, 15984
 Mod
 >>>>
 
-=== bosh.py, 15031
+=== bosh.py, 15984
 Group
 >>>>
 グループ
-=== bosh.py, 15081
+=== bosh.py, 16034
 Failed to find pcName in PC ACHR record
 >>>>
 
-=== bosh.py, 15446
+=== bosh.py, 16399
 Face dump from save game
 >>>>
 
-=== bosh.py, 15756
+=== bosh.py, 16713
 \n.    Is esm
 >>>>
 
-=== bosh.py, 15759
+=== bosh.py, 16716
 \n.    Is Bashed Patch
 >>>>
 
-=== bosh.py, 15764
+=== bosh.py, 16721
 \n.    Has BSA archive
 >>>>
 
-=== bosh.py, 15776
+=== bosh.py, 16733
 \n.    Unsupported types
 >>>>
 
-=== bosh.py, 15779
+=== bosh.py, 16736
 \n.    Empty mod
 >>>>
 
-=== bosh.py, 15788
+=== bosh.py, 16745
 \n.    New record(s) in block(s)
 >>>>
 
-=== bosh.py, 15837
+=== bosh.py, 16794
 Preparing\n%s
 >>>>
 
-=== bosh.py, 15839
+=== bosh.py, 16796
 Patchers prepared
 >>>>
 
-=== bosh.py, 15843
+=== bosh.py, 16800
 Processing
 >>>>
 
-=== bosh.py, 15874
+=== bosh.py, 16831
 %s\nLoading
 >>>>
 
-=== bosh.py, 15895
+=== bosh.py, 16852
 %s\nMerging
 >>>>
 
-=== bosh.py, 15898
+=== bosh.py, 16855
 %s\nScanning
 >>>>
 
-=== bosh.py, 15902
+=== bosh.py, 16859
 %s\n%s
 >>>>
 
-=== bosh.py, 15906
+=== bosh.py, 16865
 MERGE/SCAN ERROR
 >>>>
 
-=== bosh.py, 15908
+=== bosh.py, 16867
 Load mods scanned
 >>>>
 
-=== bosh.py, 15925
+=== bosh.py, 16884
 Merge unsupported for type
 >>>>
 
-=== bosh.py, 15961
+=== bosh.py, 16920
 Overview
 >>>>
-
-=== bosh.py, 15962
+概要
+=== bosh.py, 16921
 Date/Time
 >>>>
 
-=== bosh.py, 15965
+=== bosh.py, 16924
 Unfiltered Mods
 >>>>
 
-=== bosh.py, 15969
+=== bosh.py, 16928
 Load Error Mods
 >>>>
 
-=== bosh.py, 15973
+=== bosh.py, 16932
 World Orphans
 >>>>
 
-=== bosh.py, 15977
+=== bosh.py, 16936
 Compiled All
 >>>>
 
-=== bosh.py, 15980
+=== bosh.py, 16939
 Active Mods
 >>>>
 
-=== bosh.py, 15988
+=== bosh.py, 16947
 %s  [Version %s]
 >>>>
 
-=== bosh.py, 15994
+=== bosh.py, 16953
 Mod Aliases
 >>>>
 
-=== bosh.py, 16001
+=== bosh.py, 16960
 Completing\n%s
 >>>>
 
-=== bosh.py, 16004
+=== bosh.py, 16963
 Completing\nTrimming records
 >>>>
 
-=== bosh.py, 16007
+=== bosh.py, 16966
 Completing\nConverting fids
 >>>>
 
-=== bosh.py, 16014
+=== bosh.py, 16973
 Updated: %s\n\nRecords Changed: %d
 >>>>
 
-=== bosh.py, 16110
+=== bosh.py, 17069
 +('|'.join(autoKey))+r
 >>>>
 
-=== bosh.py, 16218
+=== bosh.py, 17177
 Tweakers
 >>>>
 
-=== bosh.py, 16246
+=== bosh.py, 17205
 General
 >>>>
-
-=== bosh.py, 16247
+全般
+=== bosh.py, 17206
 Alias Mod Names
 >>>>
 
-=== bosh.py, 16248
+=== bosh.py, 17207
 Specify mod aliases for reading CSV source files
 >>>>
 
-=== bosh.py, 16272
+=== bosh.py, 17231
 Merge Patches
 >>>>
 
-=== bosh.py, 16273
+=== bosh.py, 17232
 Merge patch mods into Bashed Patch
 >>>>
 
-=== bosh.py, 16299
+=== bosh.py, 17258
 Importers
 >>>>
 
-=== bosh.py, 16324
+=== bosh.py, 17283
 Import Cells
 >>>>
 
-=== bosh.py, 16325
+=== bosh.py, 17284
 Import cells (climate, lighting, and water) from source mods
 >>>>
 
-=== bosh.py, 16514
+=== bosh.py, 17473
 Source Mods
 >>>>
 
-=== bosh.py, 16517
+=== bosh.py, 17476
 \n=== Cells/Worlds Patched
 >>>>
 
-=== bosh.py, 16524
+=== bosh.py, 17483
 Import Graphics
 >>>>
 
-=== bosh.py, 16525
+=== bosh.py, 17484
 Import graphics (models, icons, etc.) from source mods
 >>>>
 
-=== bosh.py, 16680
+=== bosh.py, 17645
 \n=== Modified Records
 >>>>
 
-=== bosh.py, 16687
+=== bosh.py, 17652
 Import Actors
 >>>>
 
-=== bosh.py, 16688
+=== bosh.py, 17653
 Import Actor components from source mods
 >>>>
 
-=== bosh.py, 16837
+=== bosh.py, 17802
 Import Actors: Animations
 >>>>
 
-=== bosh.py, 16838
+=== bosh.py, 17803
 Import Actor animations from source mods
 >>>>
 
-=== bosh.py, 16969
+=== bosh.py, 17934
 Import Actors: AIPackages
 >>>>
 
-=== bosh.py, 16970
+=== bosh.py, 17935
 Import Actor AIPackage links from source mods
 >>>>
 
-=== bosh.py, 17151
+=== bosh.py, 18116
 \n=== AI Package Lists Changed: %d
 >>>>
 
-=== bosh.py, 17157
+=== bosh.py, 18122
 Import Actors: Death Items
 >>>>
 
-=== bosh.py, 17158
+=== bosh.py, 18123
 Import Actor death items from source mods
 >>>>
 
-=== bosh.py, 17290
+=== bosh.py, 18255
 Import Factions
 >>>>
 
-=== bosh.py, 17291
+=== bosh.py, 18256
 Import factions from source mods/files
 >>>>
 
-=== bosh.py, 17394
+=== bosh.py, 18359
 Source Mods/Files
 >>>>
 
-=== bosh.py, 17397
+=== bosh.py, 18362
 \n=== Refactioned Actors
 >>>>
 
-=== bosh.py, 17404
+=== bosh.py, 18369
 Import Relations
 >>>>
 
-=== bosh.py, 17405
+=== bosh.py, 18370
 Import relations from source mods/files
 >>>>
 
-=== bosh.py, 17503
+=== bosh.py, 18468
 \n=== Modified Factions: %d
 >>>>
 
-=== bosh.py, 17509
+=== bosh.py, 18474
 Import Scripts on containers, plants, misc, weapons etc. from source mods
 >>>>
 
-=== bosh.py, 17641
+=== bosh.py, 18606
 Import Script Contents
 >>>>
 
-=== bosh.py, 17642
+=== bosh.py, 18607
 Import the actual contents of scripts scripts
 >>>>
 
-=== bosh.py, 17789
+=== bosh.py, 18754
 Import Inventory
 >>>>
 
-=== bosh.py, 17790
+=== bosh.py, 18755
 Merges changes to NPC, creature and container inventories
 >>>>
 
-=== bosh.py, 17912
+=== bosh.py, 18877
 \n=== Inventories Changed: %d
 >>>>
 
-=== bosh.py, 17918
+=== bosh.py, 18883
 Import Names
 >>>>
 
-=== bosh.py, 17919
+=== bosh.py, 18884
 Import names from source mods/files
 >>>>
 
-=== bosh.py, 18011
+=== bosh.py, 18986
 \n=== Renamed Items
 >>>>
 
-=== bosh.py, 18018
+=== bosh.py, 18993
 Import NPC Faces
 >>>>
 
-=== bosh.py, 18019
+=== bosh.py, 18994
 Import NPC face/eyes/hair from source mods. For use with Project Beauty, FaceMe and similar mods
 >>>>
 
-=== bosh.py, 18114
+=== bosh.py, 19089
 \n=== Faces Patched: %d
 >>>>
 
-=== bosh.py, 18119
+=== bosh.py, 19094
 Import Roads
 >>>>
 
-=== bosh.py, 18120
+=== bosh.py, 19095
 Import roads from source mods
 >>>>
 
-=== bosh.py, 18192
+=== bosh.py, 19167
 \n=== Worlds Patched
 >>>>
 
-=== bosh.py, 18199
+=== bosh.py, 19174
 Import Sounds
 >>>>
 
-=== bosh.py, 18200
+=== bosh.py, 19175
 Import sounds (from Magic Effects, Containers, Activators, Lights, Weathers and Doors) from source mods
 >>>>
 
-=== bosh.py, 18361
+=== bosh.py, 19343
 Import Stats
 >>>>
 
-=== bosh.py, 18362
+=== bosh.py, 19344
 Import stats from any pickupable items from source mods/files
 >>>>
 
-=== bosh.py, 18461
+=== bosh.py, 19443
 \n=== Modified Stats
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 alch
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Ammo
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
+Armor Addon
+>>>>
+
+=== bosh.py, 19446
 Ingr
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Misc
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Weapons
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Soulgem
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Sigil Stone
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Lights
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Keys
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Clothes
 >>>>
 
-=== bosh.py, 18464
+=== bosh.py, 19446
 Books
 >>>>
 
-=== bosh.py, 18473
+=== bosh.py, 19455
 Import Spell Stats
 >>>>
 
-=== bosh.py, 18474
+=== bosh.py, 19456
 Import stats from any spells from source mods/files
 >>>>
 
-=== bosh.py, 18576
+=== bosh.py, 19558
 Spells
 >>>>
 
-=== bosh.py, 18584
+=== bosh.py, 19566
 Import Destructable
 >>>>
 
-=== bosh.py, 18585
+=== bosh.py, 19567
 Merges changes to destructable records.\n\nWill have to use if Destruction Environment mod is installed and active
 >>>>
 
-=== bosh.py, 18767
+=== bosh.py, 19711
+Import Weapon Modifications
+>>>>
+
+=== bosh.py, 19712
+Merges changes to weapon modifications
+>>>>
+
+=== bosh.py, 19926
 * Armor Pieces Tweaked: %d
 >>>>
 
-=== bosh.py, 18813
+=== bosh.py, 19972
 * Clothing Pieces Tweaked: %d
 >>>>
 
-=== bosh.py, 18823
+=== bosh.py, 19982
 Bow Reach Fix
 >>>>
 
-=== bosh.py, 18824
+=== bosh.py, 19983
 Fix bows with zero reach. (Zero reach causes CTDs.)
 >>>>
 
-=== bosh.py, 18860
+=== bosh.py, 20019
 * Bows fixed: %d
 >>>>
 
-=== bosh.py, 18870
+=== bosh.py, 20029
 Vanilla Beast Skeleton Tweaker
 >>>>
 
-=== bosh.py, 18871
+=== bosh.py, 20030
 Avoids bug if an NPC is a beast race but has the regular skeleton.nif selected
 >>>>
 
-=== bosh.py, 18908
+=== bosh.py, 20067
 Vanilla Beast Skeleton
 >>>>
 
-=== bosh.py, 18909
+=== bosh.py, 20068
 * %d Skeletons Tweaked
 >>>>
 
-=== bosh.py, 18918
+=== bosh.py, 20077
 Right Hand Rings
 >>>>
 
-=== bosh.py, 18919
+=== bosh.py, 20078
 Fixes rings to unequip consistently by making them prefer the right hand
 >>>>
 
-=== bosh.py, 18956
+=== bosh.py, 20115
 * Rings fixed: %d
 >>>>
 
-=== bosh.py, 18965
+=== bosh.py, 20124
 All Clothing Playable
 >>>>
 
-=== bosh.py, 18966
+=== bosh.py, 20125
 Sets all clothing to be playable
 >>>>
 
-=== bosh.py, 19008
+=== bosh.py, 20167
 Playable Clothes
 >>>>
 
-=== bosh.py, 19009
+=== bosh.py, 20168
 * Clothes set as playable: %d
 >>>>
 
-=== bosh.py, 19018
+=== bosh.py, 20177
 All Armor Playable
 >>>>
 
-=== bosh.py, 19019
+=== bosh.py, 20178
 Sets all armor to be playable
 >>>>
 
-=== bosh.py, 19057
+=== bosh.py, 20216
 Playable Armor
 >>>>
 
-=== bosh.py, 19058
+=== bosh.py, 20217
 * Armor pieces set as playable: %d
 >>>>
 
-=== bosh.py, 19067
+=== bosh.py, 20226
 DarNified Books
 >>>>
 
-=== bosh.py, 19068
+=== bosh.py, 20227
 Books will be reformatted for DarN UI
 >>>>
 
-=== bosh.py, 19148
+=== bosh.py, 20307
 * Books DarNified: %d
 >>>>
 
-=== bosh.py, 19158
+=== bosh.py, 20317
 Nvidia Fog Fix
 >>>>
 
-=== bosh.py, 19159
+=== bosh.py, 20318
 Fix fog related Nvidia black screen problems.)
 >>>>
 
-=== bosh.py, 19206
+=== bosh.py, 20365
 No Light Flicker
 >>>>
 
-=== bosh.py, 19207
+=== bosh.py, 20366
 Remove flickering from lights. For use on low-end machines
 >>>>
 
-=== bosh.py, 19248
+=== bosh.py, 20407
 * Lights unflickered: %d
 >>>>
 
-=== bosh.py, 19258
+=== bosh.py, 20417
 Max Weight Potions
 >>>>
 
-=== bosh.py, 19259
+=== bosh.py, 20418
 Potion weight will be capped
 >>>>
 
-=== bosh.py, 19261
+=== bosh.py, 20420
 0.1
 >>>>
 
-=== bosh.py, 19262
+=== bosh.py, 20421
 0.2
 >>>>
 
-=== bosh.py, 19263
+=== bosh.py, 20422
 0.4
 >>>>
 
-=== bosh.py, 19264
+=== bosh.py, 20423
 0.6
 >>>>
 
-=== bosh.py, 19265
+=== bosh.py, 20424
 Custom
 >>>>
 
-=== bosh.py, 19302
+=== bosh.py, 20461
 Reweigh Potions to Maximum Weight
 >>>>
 
-=== bosh.py, 19303
+=== bosh.py, 20462
 * Potions Reweighed by max weight potions: %d
 >>>>
 
-=== bosh.py, 19313
+=== bosh.py, 20472
 Minimum Weight Potions
 >>>>
 
-=== bosh.py, 19314
+=== bosh.py, 20473
 Potion weight will be floored
 >>>>
 
-=== bosh.py, 19316
+=== bosh.py, 20475
 1
 >>>>
 
-=== bosh.py, 19317
+=== bosh.py, 20476
 2
 >>>>
 
-=== bosh.py, 19318
+=== bosh.py, 20477
 3
 >>>>
 
-=== bosh.py, 19319
+=== bosh.py, 20478
 4
 >>>>
 
-=== bosh.py, 19357
+=== bosh.py, 20516
 Potions Reweighed to Mimimum Weight
 >>>>
 
-=== bosh.py, 19358
+=== bosh.py, 20517
 * Potions Reweighed by Minimum Weight Potions: %d
 >>>>
 
-=== bosh.py, 19368
+=== bosh.py, 20527
 Max Weight Staffs
 >>>>
 
-=== bosh.py, 19369
+=== bosh.py, 20528
 Staff weight will be capped
 >>>>
 
-=== bosh.py, 19375
+=== bosh.py, 20534
 5
 >>>>
 
-=== bosh.py, 19376
+=== bosh.py, 20535
 6
 >>>>
 
-=== bosh.py, 19377
+=== bosh.py, 20536
 7
 >>>>
 
-=== bosh.py, 19378
+=== bosh.py, 20537
 8
 >>>>
 
-=== bosh.py, 19416
+=== bosh.py, 20575
 Reweigh Staffs
 >>>>
 
-=== bosh.py, 19417
+=== bosh.py, 20576
 * Staffs Reweighed: %d
 >>>>
 
-=== bosh.py, 19427
+=== bosh.py, 20586
 All Guns Use Ironsight Animation
 >>>>
 
-=== bosh.py, 19428
+=== bosh.py, 20587
 Remove "Don\'t use 1st person IS animation" flag from all guns
 >>>>
 
-=== bosh.py, 19465
+=== bosh.py, 20624
 Use Ironsight Animation
 >>>>
 
-=== bosh.py, 19466
+=== bosh.py, 20625
 * Guns set to use ironsight: %d
 >>>>
 
-=== bosh.py, 19476
+=== bosh.py, 20635
 Number of uses for pre-enchanted weapons and staffs
 >>>>
 
-=== bosh.py, 19477
+=== bosh.py, 20636
 The charge amount and cast cost will be edited so that all enchanted weapons and staffs have the amount of uses specified. Cost will be rounded up to 1 (unless set to unlimited) so number of uses may not exactly match for all weapons
 >>>>
 
-=== bosh.py, 19481
+=== bosh.py, 20640
 10
 >>>>
 
-=== bosh.py, 19482
+=== bosh.py, 20641
 20
 >>>>
 
-=== bosh.py, 19483
+=== bosh.py, 20642
 30
 >>>>
 
-=== bosh.py, 19484
+=== bosh.py, 20643
 40
 >>>>
 
-=== bosh.py, 19485
+=== bosh.py, 20644
 50
 >>>>
 
-=== bosh.py, 19486
+=== bosh.py, 20645
 80
 >>>>
 
-=== bosh.py, 19487
+=== bosh.py, 20646
 100
 >>>>
 
-=== bosh.py, 19488
+=== bosh.py, 20647
 250
 >>>>
 
-=== bosh.py, 19489
+=== bosh.py, 20648
 500
 >>>>
 
-=== bosh.py, 19490
+=== bosh.py, 20649
 Unlimited
 >>>>
 
-=== bosh.py, 19530
+=== bosh.py, 20689
 Set Enchantment Number of Uses
 >>>>
 
-=== bosh.py, 19531
+=== bosh.py, 20690
 * Enchantments set: %d
 >>>>
 
-=== bosh.py, 19540
+=== bosh.py, 20699
 Tweak Assorted
 >>>>
 
-=== bosh.py, 19541
+=== bosh.py, 20700
 Tweak various records in miscellaneous ways
 >>>>
 
-=== bosh.py, 19618
+=== bosh.py, 20777
 Globals
 >>>>
 
-=== bosh.py, 19619
+=== bosh.py, 20778
 Set globals to various values
 >>>>
 
-=== bosh.py, 19621
+=== bosh.py, 20780
 Timescale
 >>>>
 
-=== bosh.py, 19622
+=== bosh.py, 20781
 Timescale will be set to
 >>>>
 
-=== bosh.py, 19627
+=== bosh.py, 20786
 12
 >>>>
 
-=== bosh.py, 19628
+=== bosh.py, 20787
 18
 >>>>
 
-=== bosh.py, 19629
+=== bosh.py, 20788
 24
 >>>>
 
-=== bosh.py, 19630
+=== bosh.py, 20789
 [30]
 >>>>
 
-=== bosh.py, 19781
+=== bosh.py, 20940
 Tweak Clothes
 >>>>
 
-=== bosh.py, 19782
+=== bosh.py, 20941
 Tweak clothing weight and blocking
 >>>>
 
-=== bosh.py, 19880
+=== bosh.py, 21039
 Tweak Settings
 >>>>
 
-=== bosh.py, 19881
+=== bosh.py, 21040
 Tweak game settings
 >>>>
 
-=== bosh.py, 19891
+=== bosh.py, 21050
 Camera: Chase Distance
 >>>>
 
-=== bosh.py, 19892
+=== bosh.py, 21051
 Distance camera can be moved away from PC using mouse wheel
 >>>>
 
-=== bosh.py, 19894
+=== bosh.py, 21053
 x 1.5
 >>>>
 
-=== bosh.py, 19895
+=== bosh.py, 21054
 x 2
 >>>>
 
-=== bosh.py, 19896
+=== bosh.py, 21055
 x 3
 >>>>
 
-=== bosh.py, 19897
+=== bosh.py, 21056
 x 5
 >>>>
 
-=== bosh.py, 19898
+=== bosh.py, 21057
 x 10
 >>>>
 
-=== bosh.py, 19907
+=== bosh.py, 21066
 Compass: POI Recognition
 >>>>
 
-=== bosh.py, 19908
+=== bosh.py, 21067
 Distance at which POI markers begin to show on compass
 >>>>
 
-=== bosh.py, 19910
+=== bosh.py, 21069
 x 0.05
 >>>>
 
-=== bosh.py, 19911
+=== bosh.py, 21070
 x 0.25
 >>>>
 
-=== bosh.py, 19912
+=== bosh.py, 21071
 x 0.50
 >>>>
 
-=== bosh.py, 19913
+=== bosh.py, 21072
 x 0.75
 >>>>
 
-=== bosh.py, 19914
+=== bosh.py, 21073
 Custom (base 1200)
 >>>>
 
-=== bosh.py, 19916
+=== bosh.py, 21075
 Essential NPC Unconsciousness
 >>>>
 
-=== bosh.py, 19917
+=== bosh.py, 21076
 Time which essential NPCs stay unconscious
 >>>>
 
-=== bosh.py, 19919
+=== bosh.py, 21078
 [10 Seconds]
 >>>>
 
-=== bosh.py, 19920
+=== bosh.py, 21079
 20 Seconds
 >>>>
 
-=== bosh.py, 19921
+=== bosh.py, 21080
 30 Seconds
 >>>>
 
-=== bosh.py, 19922
+=== bosh.py, 21081
 1 Minute
 >>>>
 
-=== bosh.py, 19923
+=== bosh.py, 21082
 3 Minutes
 >>>>
 
-=== bosh.py, 19924
+=== bosh.py, 21083
 5 Minutes
 >>>>
 
-=== bosh.py, 19925
+=== bosh.py, 21084
 Custom (in seconds)
 >>>>
 
-=== bosh.py, 19927
+=== bosh.py, 21086
 Jump Higher
 >>>>
 
-=== bosh.py, 19928
+=== bosh.py, 21087
 Height player can jump to
 >>>>
 
-=== bosh.py, 19930
+=== bosh.py, 21089
 x 1.1
 >>>>
 
-=== bosh.py, 19931
+=== bosh.py, 21090
 x 1.2
 >>>>
 
-=== bosh.py, 19932
+=== bosh.py, 21091
 x 1.4
 >>>>
 
-=== bosh.py, 19933
+=== bosh.py, 21092
 x 1.6
 >>>>
 
-=== bosh.py, 19934
+=== bosh.py, 21093
 x 1.8
 >>>>
 
-=== bosh.py, 19935
+=== bosh.py, 21094
 x 2.0
 >>>>
 
-=== bosh.py, 19936
+=== bosh.py, 21095
 x 3.0
 >>>>
 
-=== bosh.py, 19937
+=== bosh.py, 21096
 Custom (base 64)
 >>>>
 
-=== bosh.py, 19939
+=== bosh.py, 21098
 Camera: PC Death Time
 >>>>
 
-=== bosh.py, 19940
+=== bosh.py, 21099
 Time after player's death before reload menu appears
 >>>>
 
-=== bosh.py, 19942
+=== bosh.py, 21101
 5 Seconds
 >>>>
 
-=== bosh.py, 19943
+=== bosh.py, 21102
 15 Seconds
 >>>>
 
-=== bosh.py, 19946
+=== bosh.py, 21105
 5 Minute
 >>>>
 
-=== bosh.py, 19950
+=== bosh.py, 21109
 Cell Respawn Time
 >>>>
 
-=== bosh.py, 19951
+=== bosh.py, 21110
 Time before unvisited cell respawns. But longer times increase save sizes
 >>>>
 
-=== bosh.py, 19953
+=== bosh.py, 21112
 1 Day
 >>>>
 
-=== bosh.py, 19954
+=== bosh.py, 21113
 [3 Days]
 >>>>
 
-=== bosh.py, 19955
+=== bosh.py, 21114
 5 Days
 >>>>
 
-=== bosh.py, 19956
+=== bosh.py, 21115
 10 Days
 >>>>
 
-=== bosh.py, 19957
+=== bosh.py, 21116
 20 Days
 >>>>
 
-=== bosh.py, 19958
+=== bosh.py, 21117
 1 Month
 >>>>
 
-=== bosh.py, 19959
+=== bosh.py, 21118
 6 Months
 >>>>
 
-=== bosh.py, 19960
+=== bosh.py, 21119
 1 Year
 >>>>
 
-=== bosh.py, 19961
+=== bosh.py, 21120
 Custom (in hours)
 >>>>
 
-=== bosh.py, 19963
+=== bosh.py, 21122
 Cost Multiplier: Repair
 >>>>
 
-=== bosh.py, 19964
+=== bosh.py, 21123
 Cost factor for repairing items
 >>>>
 
-=== bosh.py, 20006
+=== bosh.py, 21165
 AI: Max Active Actors
 >>>>
 
-=== bosh.py, 20007
+=== bosh.py, 21166
 Maximum actors whose AI can be active. Must be higher than Combat: Max Actors
 >>>>
 
-=== bosh.py, 20011
+=== bosh.py, 21170
 MMM Default: 30
 >>>>
 
-=== bosh.py, 20035
+=== bosh.py, 21194
 Gore: Combat Dismember Part Chance
 >>>>
 
-=== bosh.py, 20036
+=== bosh.py, 21195
 The chance that body parts will be dismembered
 >>>>
 
-=== bosh.py, 20045
+=== bosh.py, 21204
 Gore: Combat Explode Part Chance
 >>>>
 
-=== bosh.py, 20046
+=== bosh.py, 21205
 The chance that body parts will be explode
 >>>>
 
-=== bosh.py, 20055
+=== bosh.py, 21214
 Movement Base Speed
 >>>>
 
-=== bosh.py, 20056
+=== bosh.py, 21215
 Base Movement speed
 >>>>
 
-=== bosh.py, 20062
+=== bosh.py, 21221
 Movement Sneak Multiplier
 >>>>
 
-=== bosh.py, 20063
+=== bosh.py, 21222
 Movement speed is multiplied by this when the actor is sneaking
 >>>>
 
-=== bosh.py, 20069
+=== bosh.py, 21228
 Combat: Player Damage Multiplier in VATS
 >>>>
 
-=== bosh.py, 20070
+=== bosh.py, 21229
 Multiplier of damage that player receives in VATS
 >>>>
 
-=== bosh.py, 20072
+=== bosh.py, 21231
 x 0.10
 >>>>
 
-=== bosh.py, 20076
+=== bosh.py, 21235
 x 1.00
 >>>>
 
-=== bosh.py, 20079
+=== bosh.py, 21238
 Combat: Auto Aim Fix
 >>>>
 
-=== bosh.py, 20080
-Removes unpleasant auto aim
+=== bosh.py, 21239
+Increase Auto Aim settings to a level at which Snipers can benefit from them
 >>>>
 
-=== bosh.py, 20082
+=== bosh.py, 21241
 Harder
 >>>>
 
-=== bosh.py, 20110
+=== bosh.py, 21269
 PipBoy Light Keypress-Delay
 >>>>
 
-=== bosh.py, 20111
+=== bosh.py, 21270
 Seconds of delay until the PipBoy Light switches on
 >>>>
 
-=== bosh.py, 20113
+=== bosh.py, 21272
 0.3
 >>>>
 
-=== bosh.py, 20115
+=== bosh.py, 21274
 0.5
 >>>>
 
-=== bosh.py, 20117
+=== bosh.py, 21276
 0.7
 >>>>
 
-=== bosh.py, 20118
+=== bosh.py, 21277
 [0.8]
 >>>>
 
-=== bosh.py, 20119
+=== bosh.py, 21278
 1.0
 >>>>
 
-=== bosh.py, 20122
+=== bosh.py, 21281
 VATS Playback Delay
 >>>>
 
-=== bosh.py, 20123
+=== bosh.py, 21282
 Seconds of delay after the VATS Camera finished playback
 >>>>
 
-=== bosh.py, 20125
+=== bosh.py, 21284
 0.01
 >>>>
 
-=== bosh.py, 20126
+=== bosh.py, 21285
 0.05
 >>>>
 
-=== bosh.py, 20127
+=== bosh.py, 21286
 0.10
 >>>>
 
-=== bosh.py, 20128
+=== bosh.py, 21287
 [0.17]
 >>>>
 
-=== bosh.py, 20129
+=== bosh.py, 21288
 0.25
 >>>>
 
-=== bosh.py, 20132
+=== bosh.py, 21291
 NPC-Death XP Threshold (Followers)
 >>>>
 
-=== bosh.py, 20133
+=== bosh.py, 21292
 Percentage of total damage you have to inflict in order to get XP
 >>>>
 
-=== bosh.py, 20135
+=== bosh.py, 21294
 0%
 >>>>
 
-=== bosh.py, 20136
+=== bosh.py, 21295
 25%
 >>>>
 
-=== bosh.py, 20137
+=== bosh.py, 21296
 [40%]
 >>>>
 
-=== bosh.py, 20138
+=== bosh.py, 21297
 50%
 >>>>
 
-=== bosh.py, 20139
+=== bosh.py, 21298
 75%
 >>>>
 
-=== bosh.py, 20142
+=== bosh.py, 21301
 Hacking: Maximum Number of words
 >>>>
 
-=== bosh.py, 20143
+=== bosh.py, 21302
 The maximum number of words appearing in the terminal hacking mini-game
 >>>>
 
-=== bosh.py, 20149
+=== bosh.py, 21308
 16
 >>>>
 
-=== bosh.py, 20150
+=== bosh.py, 21309
 [20]
 >>>>
 
-=== bosh.py, 20153
+=== bosh.py, 21312
 Shell Camera Distance
 >>>>
 
-=== bosh.py, 20154
+=== bosh.py, 21313
 Maximum distance at which gun arisings (shell case, particle, decal) show from camera
 >>>>
 
-=== bosh.py, 20156
+=== bosh.py, 21315
 10000
 >>>>
 
-=== bosh.py, 20157
+=== bosh.py, 21316
 50000
 >>>>
 
-=== bosh.py, 20158
+=== bosh.py, 21317
 100000
 >>>>
 
-=== bosh.py, 20159
+=== bosh.py, 21318
 200000
 >>>>
 
-=== bosh.py, 20161
+=== bosh.py, 21320
 Shell Litter Time
 >>>>
 
-=== bosh.py, 20162
+=== bosh.py, 21321
 Time before shell cases fade away from cells
 >>>>
 
-=== bosh.py, 20172
+=== bosh.py, 21331
 Shell Litter Count
 >>>>
 
-=== bosh.py, 20173
+=== bosh.py, 21332
 Maximum number of debris (shell case, etc) allowed in cell
 >>>>
 
-=== bosh.py, 20178
+=== bosh.py, 21337
 1000
 >>>>
 
-=== bosh.py, 20179
+=== bosh.py, 21338
 3000
 >>>>
 
-=== bosh.py, 20200
+=== bosh.py, 21341
+Terminal Speed Adjustment
+>>>>
+
+=== bosh.py, 21342
+The display speed at the time of terminal hacking
+>>>>
+
+=== bosh.py, 21345
+x 4
+>>>>
+
+=== bosh.py, 21346
+x 6
+>>>>
+
+=== bosh.py, 21366
 Body Part Codes
 >>>>
 
-=== bosh.py, 20201
+=== bosh.py, 21367
 Sets body part codes used by Armor/Clothes name tweaks. H: Head, A: Armor, etc
 >>>>
 
-=== bosh.py, 20280
+=== bosh.py, 21446
 * %s: %d
 >>>>
 
-=== bosh.py, 20288
+=== bosh.py, 21454
 Ingestibles
 >>>>
 
-=== bosh.py, 20289
+=== bosh.py, 21455
 Label ingestibles to sort by type. C: Chems, F: Food, S: Stimpack, A: Alcohol
 >>>>
 
-=== bosh.py, 20291
+=== bosh.py, 21457
 F Radroach Meat
 >>>>
 
-=== bosh.py, 20292
+=== bosh.py, 21458
 F. Radroach Meat
 >>>>
 
-=== bosh.py, 20293
+=== bosh.py, 21459
 F - Radroach Meat
 >>>>
 
-=== bosh.py, 20294
+=== bosh.py, 21460
 (F) Radroach Meat
 >>>>
 
-=== bosh.py, 20341
+=== bosh.py, 21507
 Notes and Scrolls
 >>>>
 
-=== bosh.py, 20342
+=== bosh.py, 21508
 Mark notes and scrolls to sort separately from books
 >>>>
 
-=== bosh.py, 20344
+=== bosh.py, 21510
 ~Fire Ball
 >>>>
 
-=== bosh.py, 20345
+=== bosh.py, 21511
 ~D Fire Ball
 >>>>
 
-=== bosh.py, 20346
+=== bosh.py, 21512
 ~D. Fire Ball
 >>>>
 
-=== bosh.py, 20347
+=== bosh.py, 21513
 ~D - Fire Ball
 >>>>
 
-=== bosh.py, 20348
+=== bosh.py, 21514
 ~(D) Fire Ball
 >>>>
 
-=== bosh.py, 20350
+=== bosh.py, 21516
 Fire Ball
 >>>>
 
-=== bosh.py, 20351
+=== bosh.py, 21517
 D Fire Ball
 >>>>
 
-=== bosh.py, 20352
+=== bosh.py, 21518
 D. Fire Ball
 >>>>
 
-=== bosh.py, 20353
+=== bosh.py, 21519
 D - Fire Ball
 >>>>
 
-=== bosh.py, 20354
+=== bosh.py, 21520
 (D) Fire Ball
 >>>>
 
-=== bosh.py, 20435
+=== bosh.py, 21601
 Label spells to sort by school and level
 >>>>
 
-=== bosh.py, 20444
+=== bosh.py, 21610
 D2 Fire Ball
 >>>>
 
-=== bosh.py, 20445
+=== bosh.py, 21611
 D2. Fire Ball
 >>>>
 
-=== bosh.py, 20446
+=== bosh.py, 21612
 D2 - Fire Ball
 >>>>
 
-=== bosh.py, 20447
+=== bosh.py, 21613
 (D2) Fire Ball
 >>>>
 
-=== bosh.py, 20512
+=== bosh.py, 21678
 Label ammo and weapons to sort by type and damage
 >>>>
 
-=== bosh.py, 20514
+=== bosh.py, 21680
 S BB Gun
 >>>>
 
-=== bosh.py, 20515
+=== bosh.py, 21681
 S. BB Gun
 >>>>
 
-=== bosh.py, 20516
+=== bosh.py, 21682
 S - BB Gun
 >>>>
 
-=== bosh.py, 20517
+=== bosh.py, 21683
 (S) BB Gun
 >>>>
 
-=== bosh.py, 20519
+=== bosh.py, 21685
 S10 BB Gun
 >>>>
 
-=== bosh.py, 20520
+=== bosh.py, 21686
 S10. BB Gun
 >>>>
 
-=== bosh.py, 20521
+=== bosh.py, 21687
 S10 - BB Gun
 >>>>
 
-=== bosh.py, 20522
+=== bosh.py, 21688
 (S10) BB Gun
 >>>>
 
-=== bosh.py, 20579
+=== bosh.py, 21745
 Lore Friendly Names: Dwarven -> Dwemer
 >>>>
 
-=== bosh.py, 20580
+=== bosh.py, 21746
 Rename any thing that is named X Dwarven or Dwarven X to Dwemer X/X Dwemer to follow lore better
 >>>>
 
-=== bosh.py, 20637
+=== bosh.py, 21803
 Sort Inventory
 >>>>
 
-=== bosh.py, 20638
+=== bosh.py, 21804
 Sort item by category in barter and container screens
 >>>>
 
-=== bosh.py, 20641
-Chem>Ammo>Weapon>Armor>Food>Misc
+=== bosh.py, 21807
+Chem>Ammo>Weapon>Armor>Food>Mag>Book>Misc>Card
 >>>>
 
-=== bosh.py, 20642
-Ammo>Chem>Weapon>Armor>Food>Misc
+=== bosh.py, 21808
+Ammo>Chem>Weapon>Armor>Food>Mag>Book>Misc>Card
 >>>>
 
-=== bosh.py, 20704
+=== bosh.py, 21809
+Weapon>Armor>Chem>Food>Mag>Book>Misc>Card>Ammo
+>>>>
+
+=== bosh.py, 21878
 Tweak Names
 >>>>
 
-=== bosh.py, 20705
+=== bosh.py, 21879
 Tweak object names in various ways such as lore friendlyness or show type/quality
 >>>>
 
-=== bosh.py, 20707
+=== bosh.py, 21881
 Armor/Clothes
 >>>>
 
-=== bosh.py, 20707
+=== bosh.py, 21881
 Rename armor to sort by type
 >>>>
 
-=== bosh.py, 20708
+=== bosh.py, 21882
 A Naughty Nightwear
 >>>>
 
-=== bosh.py, 20709
+=== bosh.py, 21883
 A. Naughty Nightwear
 >>>>
 
-=== bosh.py, 20710
+=== bosh.py, 21884
 A - Naughty Nightwear
 >>>>
 
-=== bosh.py, 20711
+=== bosh.py, 21885
 (A) Naughty Nightwear
 >>>>
 
-=== bosh.py, 20713
+=== bosh.py, 21887
 A01 Naughty Nightwear
 >>>>
 
-=== bosh.py, 20714
+=== bosh.py, 21888
 A01. Naughty Nightwear
 >>>>
 
-=== bosh.py, 20715
+=== bosh.py, 21889
 A01 - Naughty Nightwear
 >>>>
 
-=== bosh.py, 20716
+=== bosh.py, 21890
 (A01) Naughty Nightwear
 >>>>
 
-=== bosh.py, 20763
+=== bosh.py, 21937
 Special
 >>>>
 
-=== bosh.py, 20770
+=== bosh.py, 21944
 Cobl Catalogs
 >>>>
 
-=== bosh.py, 20771
+=== bosh.py, 21945
 Update COBL's catalogs of alchemical ingredients and effects.\n\nWill only run if Cobl Main.esm is loaded
 >>>>
 
-=== bosh.py, 20824
+=== bosh.py, 21998
 Salan's Catalog of %s\r\n\r\n
 >>>>
 
-=== bosh.py, 20872
+=== bosh.py, 22046
 * Ingredients Cataloged: %d
 >>>>
 
-=== bosh.py, 20873
+=== bosh.py, 22047
 * Effects Cataloged: %d
 >>>>
 
-=== bosh.py, 20878
+=== bosh.py, 22052
 Cobl Exhaustion
 >>>>
 
-=== bosh.py, 20879
+=== bosh.py, 22053
 Modify greater powers to use Cobl's Power Exhaustion feature.\n\nWill only run if Cobl Main v1.66 (or higher) is active
 >>>>
 
-=== bosh.py, 20964
+=== bosh.py, 22138
 Power Exhaustion
 >>>>
 
-=== bosh.py, 20976
+=== bosh.py, 22150
 * Powers Tweaked: %d
 >>>>
 
-=== bosh.py, 20985
+=== bosh.py, 22159
 Leveled Lists
 >>>>
 
-=== bosh.py, 20986
+=== bosh.py, 22160
 Merges changes to leveled lists from ACTIVE/MERGED MODS ONLY.\n\nAdvanced users may override Relev/Delev tags for any mod (active or inactive) using the list below
 >>>>
 
-=== bosh.py, 20987
+=== bosh.py, 22161
 Merges changes to leveled lists from all active mods
 >>>>
 
-=== bosh.py, 21112
+=== bosh.py, 22286
 Delevelers/Relevelers
 >>>>
 
-=== bosh.py, 21116
+=== bosh.py, 22290
 Item
 >>>>
 
-=== bosh.py, 21116
+=== bosh.py, 22290
 Spell
 >>>>
 
-=== bosh.py, 21117
+=== bosh.py, 22291
 Merged %s Lists
 >>>>
 
-=== bosh.py, 21158
+=== bosh.py, 22332
 Empty %s Sublists
 >>>>
 
-=== bosh.py, 21161
+=== bosh.py, 22335
 Empty %s Sublists Removed
 >>>>
 
-=== bosh.py, 21170
+=== bosh.py, 22344
 FormID Lists
 >>>>
 
-=== bosh.py, 21171
+=== bosh.py, 22345
 Merges changes to formid lists from ACTIVE/MERGED MODS ONLY.\n\nAdvanced users may override Deflst tags for any mod (active or inactive) using the list below
 >>>>
 
-=== bosh.py, 21172
+=== bosh.py, 22346
 Merges changes to formid lists from all active mods
 >>>>
 
-=== bosh.py, 21293
+=== bosh.py, 22467
 Deflsters
 >>>>
 
-=== bosh.py, 21297
+=== bosh.py, 22471
 FormID
 >>>>
 
-=== bosh.py, 21350
+=== bosh.py, 22524
 Morph Factions
 >>>>
 
-=== bosh.py, 21351
+=== bosh.py, 22525
 Mark factions that player can acquire while morphing.\n\nRequires Cobl 2.18 and Wrye Morph or similar
 >>>>
 
-=== bosh.py, 21382
+=== bosh.py, 22556
 Member
 >>>>
 
-=== bosh.py, 21459
+=== bosh.py, 22633
 \n=== Morphable Factions
 >>>>
 
-=== bosh.py, 21467
+=== bosh.py, 22641
 Modify greater powers to work with Power Exhaustion mod.\n\nWill only run if Power Exhaustion mod is installed and active
 >>>>
 
-=== bosh.py, 21546
+=== bosh.py, 22720
 Race Records
 >>>>
 
-=== bosh.py, 21547
+=== bosh.py, 22721
 Merge race eyes, hair, body, voice from ACTIVE AND/OR MERGED mods. Any non-active, non-merged mods in the following list will be IGNORED
 >>>>
 
-=== bosh.py, 21548
+=== bosh.py, 22722
 Merge race eyes, hair, body, voice from mods
 >>>>
 
-=== bosh.py, 21602
+=== bosh.py, 22776
 WARNING mod %s has both R.AddSpells and R.ChangeSpells tags - only one of those tags should be on a mod at one time
 >>>>
 
-=== bosh.py, 21746
+=== bosh.py, 22920
 Very odd race % found - no female right eye assigned
 >>>>
 
-=== bosh.py, 21751
+=== bosh.py, 22925
 Very odd race % found - no female left eye assigned
 >>>>
 
-=== bosh.py, 21756
+=== bosh.py, 22930
 Very odd race % found - no male right eye assigned
 >>>>
 
-=== bosh.py, 21761
+=== bosh.py, 22935
 Very odd race % found - no male left eye assigned
 >>>>
 
-=== bosh.py, 21925
+=== bosh.py, 23099
 \n=== Merged
 >>>>
 
-=== bosh.py, 21927
+=== bosh.py, 23101
 ~~None~~
 >>>>
 
-=== bosh.py, 21931
+=== bosh.py, 23105
 \n=== Eyes/Hair Sorted
 >>>>
 
-=== bosh.py, 21937
+=== bosh.py, 23111
 \n=== Eye Meshes Filtered
 >>>>
 
-=== bosh.py, 21941
+=== bosh.py, 23115
 In order to prevent 'googly eyes', incompatible eyes have been removed from the following races
 >>>>
 
-=== bosh.py, 21945
+=== bosh.py, 23119
 \n=== Eyes/Hair Assigned for NPCs
 >>>>
 
-=== bosh.py, 21955
+=== bosh.py, 23129
 Title
 >>>>
 
-=== bosh.py, 21956
+=== bosh.py, 23130
 Description
 >>>>
 概要
-=== bosh.py, 22040
+=== bosh.py, 23214
 Redguard FGTS Nuller
 >>>>
 
-=== bosh.py, 22041
+=== bosh.py, 23215
 Nulls FGTS of all Redguard NPCs - for compatibility with Better Redguards
 >>>>
 
-=== bosh.py, 22058
+=== bosh.py, 23232
 Redguard FGTS Patcher
 >>>>
 
-=== bosh.py, 22059
+=== bosh.py, 23233
 * %d Redguard NPCs Tweaked
 >>>>
 
-=== bosh.py, 22068
+=== bosh.py, 23242
 Mayu's Animation Overhaul Skeleton Tweaker
 >>>>
 
-=== bosh.py, 22069
+=== bosh.py, 23243
 Changes all (modded and vanilla) NPCs to use the MAO skeletons
 >>>>
 
-=== bosh.py, 22093
+=== bosh.py, 23267
 MAO Skeleton Setter
 >>>>
 
-=== bosh.py, 22103
+=== bosh.py, 23277
 Use Mur Zuk's Sexy Walk on all female NPCs
 >>>>
 
-=== bosh.py, 22104
+=== bosh.py, 23278
 Changes all female NPCs to use Mur Zuk's Sexy Walk
 >>>>
 
-=== bosh.py, 22120
+=== bosh.py, 23294
 SWalk for Female NPCs
 >>>>
 
-=== bosh.py, 22121
+=== bosh.py, 23295
 * %d NPCs Tweaked
 >>>>
 
-=== bosh.py, 22130
+=== bosh.py, 23304
 Use Mur Zuk's Real Walk on all female NPCs
 >>>>
 
-=== bosh.py, 22131
+=== bosh.py, 23305
 Changes all female NPCs to use Mur Zuk's Real Walk
 >>>>
 
-=== bosh.py, 22147
+=== bosh.py, 23321
 RWalk for Female NPCs
 >>>>
 
-=== bosh.py, 22157
+=== bosh.py, 23331
 No Bloody Creatures
 >>>>
 
-=== bosh.py, 22158
+=== bosh.py, 23332
 Set all creatures to have no blood records
 >>>>
 
-=== bosh.py, 22176
+=== bosh.py, 23350
 * %d Creatures Tweaked
 >>>>
 
-=== bosh.py, 22185
+=== bosh.py, 23359
 As Intended: Imps
 >>>>
 
-=== bosh.py, 22186
+=== bosh.py, 23360
 Set imps to have the unassigned Bethesda Imp Spells as discovered by the UOP team and made into a mod by Tejon
 >>>>
 
-=== bosh.py, 22188
+=== bosh.py, 23362
 All imps
 >>>>
 
-=== bosh.py, 22189
+=== bosh.py, 23363
 Only fullsize imps
 >>>>
 
-=== bosh.py, 22190
+=== bosh.py, 23364
 Only implings
 >>>>
 
-=== bosh.py, 22213
+=== bosh.py, 23387
 * %d Imps Tweaked
 >>>>
 
-=== bosh.py, 22222
+=== bosh.py, 23396
 As Intended: Boars
 >>>>
 
-=== bosh.py, 22223
+=== bosh.py, 23397
 Set boars to have the unassigned Bethesda Boar Spells as discovered by the UOP team and made into a mod by Tejon
 >>>>
 
-=== bosh.py, 22243
+=== bosh.py, 23417
 * %d Boars Tweaked
 >>>>
 
-=== bosh.py, 22249
+=== bosh.py, 23423
 Tweak Actors
 >>>>
 
-=== bosh.py, 22250
+=== bosh.py, 23424
 Tweak NPC and Creatures records in specified ways
 >>>>
 
-=== bosh.py, 22292
+=== bosh.py, 23466
 SEWorld Tests
 >>>>
 
-=== bosh.py, 22293
+=== bosh.py, 23467
 Suspends Cyrodiil quests while in Shivering Isles. I.e. re-instates GetPlayerInSEWorld tests as necessary
 >>>>
 
-=== bosh.py, 22359
+=== bosh.py, 23533
 Quests Patched: %d
 >>>>
 
-=== bosh.py, 22366
+=== bosh.py, 23540
 Contents Checker
 >>>>
 
-=== bosh.py, 22367
+=== bosh.py, 23541
 Checks contents of leveled lists, inventories and containers for correct types
 >>>>
 
-=== bosh.py, 22489
-Install Error\nFailed to find Fallout3.exe in %s.\nNote that the Mopy folder should be in the same folder as Fallout3.exe
->>>>
-
-=== bosh.py, 22511
+=== bosh.py, 23655
 Can't find user directories in windows registry.\n>> See \"If Bash Won't Start\" in bash docs for help
 >>>>
 
-=== bosh.py, 22528
+=== bosh.py, 23679
+Install Error\nFailed to find FalloutNV.exe in %s.\nNote that the Mopy folder should be in the same folder as FalloutNV.exe
+>>>>
+
+=== bosh.py, 23687
 Folder path specified on command line (-p)
 >>>>
 
-=== bosh.py, 22531
-Folder path specified  in bash.ini (sPersonalPath)
+=== bosh.py, 23690
+Folder path specified in bash.ini (%s)
 >>>>
 
-=== bosh.py, 22534
-Folder paths extracted from win32com.shell
->>>>
-
-=== bosh.py, 22541
-Folder path specified on command line (-l)
->>>>
-
-=== bosh.py, 22544
-Folder path specified  in bash.ini (sLocalAppDataPath)
->>>>
-
-=== bosh.py, 22547
+=== bosh.py, 23693
 Folder path extracted from win32com.shell
 >>>>
 
-=== bosh.py, 22559
-Personal folder does not exist\nPersonal folder: %s\nAdditional info:\n%s
+=== bosh.py, 23702
+Personal folder does not exist.\nPersonal folder: %s\nAdditional info:\n%s
 >>>>
 
-=== bosh.py, 22562
-Local app data folder does not exist.\nLocal app data folder: %s\nAdditional info:\n%s
+=== bosh.py, 23711
+Folder path specified on command line (-l)
 >>>>
 
-=== bosh.py, 22828
+=== bosh.py, 23714
+Folder path specified  in bash.ini (%s)
+>>>>
+
+=== bosh.py, 23726
+Local AppData folder does not exist.\nLocal AppData folder: %s\nAdditional info:\n%s
+>>>>
+
+=== bosh.py, 23975
+-option(s)
+>>>>
+
+=== bosh.py, 23975
+tooltip text
+>>>>
+
+=== bosh.py, 23975
+default
+>>>>
+
+=== bosh.py, 23995
 %s Wrye Bash ini file read, Keep Log level: %d, initialized.\r\n
 >>>>
 
-=== bosh.py, 22841
+=== bosh.py, 24019
 Compiled
 >>>>
 
-=== basher.py, 144
+=== bash.py, 44
+SYNTAX
+>>>>
+
+=== bash.py, 48
+For all arguments
+>>>>
+
+=== bash.py, 54
+The -o, -u, -p and -l arguments can be set in the .ini file
+>>>>
+
+=== bash.py, 59
+Fallout directory argument (-o)
+>>>>
+
+=== bash.py, 60
+-o FalloutPath: Specify Fallout directory (containing Fallout3/FalloutNV.exe)
+>>>>
+
+=== bash.py, 61
+Use this argument if Bash is located outside of the Fallout directory
+>>>>
+
+=== bash.py, 62
+Example: -o \"C:\\\\Games\\\\Fallout\\\\\"
+>>>>
+
+=== bash.py, 64
+User directory arguments (-u, -p, and -l)
+>>>>
+
+=== bash.py, 68
+However, the arguments are
+>>>>
+
+=== bash.py, 72
+Example: -u \"C:\\\\Documents and Settings\\\\Wrye\"
+>>>>
+
+=== bash.py, 74
+-p personalPath: Specify the user\'s personal directory
+>>>>
+
+=== bash.py, 75
+If you need to set this then you probably need to set -l too
+>>>>
+
+=== bash.py, 76
+Example: -p \"C:\\\\Documents and Settings\\\\Wrye\\\\My Documents\"
+>>>>
+
+=== bash.py, 78
+-l localAppDataPath: Specify the user\'s local application data directory
+>>>>
+
+=== bash.py, 79
+If you need to set this then you probably need to set -p too
+>>>>
+
+=== bash.py, 80
+Example: -l \"C:\\\\Documents and Settings\\\\Wrye\\\\Local Settings\\\\Application Data\"
+>>>>
+
+=== bash.py, 82
+Quiet/Quit Mode
+>>>>
+
+=== bash.py, 83
+-q Close Bash after creating or restoring backup and do not display any prompts or message dialogs
+>>>>
+
+=== bash.py, 84
+Only used with -b and -r options. Otherwise ignored
+>>>>
+
+=== bash.py, 86
+Backup Bash Settings
+>>>>
+
+=== bash.py, 87
+-b backupFilePath: Backup all Bash settings to an archive file before the app launches
+>>>>
+
+=== bash.py, 88
+Example: -b \"C:\\\\Games\\\\Bash Backups\\\\BashBackupFile.7z\"
+>>>>
+
+=== bash.py, 92
+When the -q flag is used, no dialogs will be displayed and Bash will quit after completing the backup
+>>>>
+
+=== bash.py, 93
+If backupFilePath does not specify a valid directory, the default directory will be used
+>>>>
+
+=== bash.py, 94
+\'[Fallout Mods]\\Bash Mod Data\\Bash Backup\'
+>>>>
+
+=== bash.py, 97
+\'Backup Bash Settings vVER (DD-MM-YYYY hhmm.ss).7z\'
+>>>>
+
+=== bash.py, 99
+Restore Bash Settings
+>>>>
+
+=== bash.py, 100
+-r backupFilePath: Restore all Bash settings from backup file before the app launches
+>>>>
+
+=== bash.py, 101
+Example: -r \"C:\\\\Games\\\\Bash Backups\\\\BashBackupFile.7z\"
+>>>>
+
+=== bash.py, 105
+When the -q flag is used, no dialogs will be displayed and Bash will quit after restoring the settings
+>>>>
+
+=== bash.py, 106
+If backupFilePath is not valid, the user will be prompted for the backup file to restore
+>>>>
+
+=== bash.py, 108
+Debug argument
+>>>>
+
+=== bash.py, 109
+-d Send debug text to the console rather than to a newly created debug window
+>>>>
+
+=== bash.py, 241
+Error Attempting to Restart Wrye Bash!
+>>>>
+
+=== bash.py, 242
+cmd line
+>>>>
+
+=== basher.py, 149
 Author
 >>>>
 作者
-=== basher.py, 146
+=== basher.py, 151
 Date
 >>>>
 日付
-=== basher.py, 147
+=== basher.py, 152
 Day
 >>>>
 日
-=== basher.py, 148
+=== basher.py, 153
 File
 >>>>
 ファイル
-=== basher.py, 150
+=== basher.py, 155
 Installer
 >>>>
 インストーラー
-=== basher.py, 151
+=== basher.py, 156
 Load Order
 >>>>
 ロード順
-=== basher.py, 152
+=== basher.py, 157
 Current LO
 >>>>
 
-=== basher.py, 154
+=== basher.py, 159
 MI
 >>>>
 
-=== basher.py, 155
+=== basher.py, 160
 Play Time
 >>>>
 プレイ時間
-=== basher.py, 156
+=== basher.py, 161
 Player
 >>>>
 プレイヤー
-=== basher.py, 157
+=== basher.py, 162
 Rating
 >>>>
 評価
-=== basher.py, 159
+=== basher.py, 164
 Save Order
 >>>>
 セーブ順
-=== basher.py, 161
+=== basher.py, 166
 Status
 >>>>
 ステータス
-=== basher.py, 162
+=== basher.py, 167
 Subject
 >>>>
 件名
-=== basher.py, 634
+=== basher.py, 643
 ${count} Children deactivated
 >>>>
 ${count} 個のパッチを非活性化しました
-=== basher.py, 634
+=== basher.py, 643
 %s
 >>>>
 
-=== basher.py, 643
+=== basher.py, 652
 ${count} Masters activated
 >>>>
 
-=== basher.py, 921
+=== basher.py, 930
 Unrecognized sort key
 >>>>
 
-=== basher.py, 979
+=== basher.py, 988
 Edit/update the masters list? Note that the update process may automatically rename some files. Be sure to review the changes before saving
 >>>>
 
-=== basher.py, 980
+=== basher.py, 989
 Update Masters
 >>>>
 
-=== basher.py, 1002
+=== basher.py, 1011
 File "%s" does not exist
 >>>>
 
-=== basher.py, 1099
+=== basher.py, 1108
 Tweak is currently applied
 >>>>
 
-=== basher.py, 1104
+=== basher.py, 1113
 Some settings are applied.  Some are overwritten by another tweak from the same installer
 >>>>
 
-=== basher.py, 1109
+=== basher.py, 1118
 Some settings are changed
 >>>>
 
-=== basher.py, 1113
+=== basher.py, 1122
 Tweak is invalid
 >>>>
 
-=== basher.py, 1203
+=== basher.py, 1212
 Auto-ordered files cannot be manually moved
 >>>>
 
-=== basher.py, 1324
+=== basher.py, 1333
 Master file
 >>>>
 
-=== basher.py, 1328
+=== basher.py, 1337
 Technically mergeable but has NoMerge tag
 >>>>
 
-=== basher.py, 1331
+=== basher.py, 1340
 Can be merged into Bashed Patch
 >>>>
 
-=== basher.py, 1335
+=== basher.py, 1344
 One or more masters are missing
 >>>>
 
-=== basher.py, 1336
+=== basher.py, 1345
 Active in load list
 >>>>
 
-=== basher.py, 1337
+=== basher.py, 1346
 Merged into Bashed Patch
 >>>>
 
-=== basher.py, 1338
+=== basher.py, 1347
 Imported into Bashed Patch
 >>>>
 
-=== basher.py, 1339
+=== basher.py, 1348
 Masters have been re-ordered
 >>>>
 
-=== basher.py, 1348
+=== basher.py, 1357
 WARNING: Has same load order as another mod
 >>>>
 
-=== basher.py, 1351
+=== basher.py, 1360
 Mod should be imported and deactivated
 >>>>
 
-=== basher.py, 1354
+=== basher.py, 1363
 WARNING: Exclusion group is overloaded
 >>>>
 
-=== basher.py, 1357
+=== basher.py, 1366
 Has same time as another (unloaded) mod
 >>>>
 
-=== basher.py, 1360
+=== basher.py, 1369
 Group header
 >>>>
 
-=== basher.py, 1363
+=== basher.py, 1372
 File is ghosted
 >>>>
 
-=== basher.py, 1569
+=== basher.py, 1578
 Masters
 >>>>
 マスター
-=== basher.py, 1576
+=== basher.py, 1585
 Bash Tags
 >>>>
-
-=== basher.py, 1657
+Bashタグ
+=== basher.py, 1666
 Incorrect file extension
 >>>>
 
-=== basher.py, 1661
+=== basher.py, 1670
 File %s already exists
 >>>>
-
-=== basher.py, 1683
+ファイル %s は既に存在しています
+=== basher.py, 1692
 Unrecognized date
 >>>>
 
-=== basher.py, 1687
+=== basher.py, 1696
 Bash cannot handle files dates greater than January 19, 2038.)
 >>>>
 
-=== basher.py, 1716
+=== basher.py, 1725
 This mod has an associated archive (%s.bsa) and an associated voice directory (Sound\\Voices\\%s), which will become detached when the mod is renamed.\n\nNote that the BSA archive may also contain a voice directory (Sound\\Voices\\%s), which would remain detached even if the archive name is adjusted
 >>>>
 
-=== basher.py, 1718
+=== basher.py, 1727
 This mod has an associated archive (%s.bsa), which will become detached when the mod is renamed.\n\nNote that this BSA archive may contain a voice directory (Sound\\Voices\\%s), which would remain detached even if the archive file name is adjusted
 >>>>
 
-=== basher.py, 1720
+=== basher.py, 1729
 This mod has an associated voice directory (Sound\\Voice\\%s), which will become detached when the mod is renamed
 >>>>
 
-=== basher.py, 1761
+=== basher.py, 1770
 File corrupted on save!
 >>>>
 
-=== basher.py, 1780
+=== basher.py, 1789
 Automatic
 >>>>
-
-=== basher.py, 1783
+自動
+=== basher.py, 1792
 Copy to Description
 >>>>
-
-=== basher.py, 1945
+概要にコピー
+=== basher.py, 1957
 Tweaks: %d/%d
 >>>>
 
-=== basher.py, 2010
+=== basher.py, 2022
 Mods: %d/%d
 >>>>
 
-=== basher.py, 2261
+=== basher.py, 2273
 %s\nLevel %d, Play Time %s\n%s
 >>>>
 
-=== basher.py, 2280
+=== basher.py, 2292
 Notes
 >>>>
 
-=== basher.py, 2375
+=== basher.py, 2387
 Saves: %d
 >>>>
 
-=== basher.py, 2474
+=== basher.py, 2493
 Matched
 >>>>
-
-=== basher.py, 2475
+一致
+=== basher.py, 2494
 Missing
 >>>>
-
-=== basher.py, 2476
+不足
+=== basher.py, 2495
 Mismatched
 >>>>
-
-=== basher.py, 2477
+不一致
+=== basher.py, 2496
 Conflicts
 >>>>
-
-=== basher.py, 2478
+競合
+=== basher.py, 2497
 Underridden
 >>>>
 
-=== basher.py, 2479
+=== basher.py, 2498
 Dirty
 >>>>
-
-=== basher.py, 2480
+ダーティ
+=== basher.py, 2499
 Skipped
 >>>>
-
-=== basher.py, 2506
+スキップ
+=== basher.py, 2525
 Sub-Packages
 >>>>
 サブパッケージ
-=== basher.py, 2510
+=== basher.py, 2529
 Esp/m Filter
 >>>>
-
-=== basher.py, 2514
+Esp/mフィルタ
+=== basher.py, 2533
 Comments
 >>>>
 コメント
-=== basher.py, 2523
+=== basher.py, 2542
 Do you want to enable Installers If you do, Bash will first need to initialize some data. If you have many mods installed, this can take on the order of five minutes.\n\nIf you prefer to not enable Installers at this time, you can always enable it later from the column header context menu
 >>>>
 
-=== basher.py, 2533
+=== basher.py, 2552
 Refreshing Installers
 >>>>
-
-=== basher.py, 2546
+インストーラーを再読込中
+=== basher.py, 2571
 Refreshing Converters
 >>>>
-
-=== basher.py, 2570
+コンバーターを再読込中
+=== basher.py, 2599
 Packages: %d/%d
 >>>>
-
-=== basher.py, 2643
+パッケージ: %d/%d
+=== basher.py, 2672
 [None]
 >>>>
 
-=== basher.py, 2665
+=== basher.py, 2694
 Overview\n
 >>>>
-
-=== basher.py, 2668
+概要\n
+=== basher.py, 2697
 Project
 >>>>
-
-=== basher.py, 2670
+プロジェクト
+=== basher.py, 2699
 Marker
 >>>>
-
-=== basher.py, 2672
+マーカー
+=== basher.py, 2701
 Archive
 >>>>
-
-=== basher.py, 2674
+アーカイブ
+=== basher.py, 2703
 Unrecognized
 >>>>
-
-=== basher.py, 2677
+認識できない
+=== basher.py, 2706
 Structure: N/A\n
 >>>>
-
-=== basher.py, 2679
+構造: N/A\n
+=== basher.py, 2708
 Structure: Simple\n
 >>>>
-
-=== basher.py, 2682
+構造: シンプル\n
+=== basher.py, 2711
 Structure: Complex/Simple\n
 >>>>
-
-=== basher.py, 2684
+構造: 複合/シンプル\n
+=== basher.py, 2713
 Structure: Complex\n
 >>>>
-
-=== basher.py, 2686
+構造: 複合\n
+=== basher.py, 2715
 Structure: Corrupt/Incomplete\n
 >>>>
-
-=== basher.py, 2688
+構造: 不正/不完全\n
+=== basher.py, 2717
 Structure: Unrecognized\n
 >>>>
-
-=== basher.py, 2693
+構造: 認識できない\n
+=== basher.py, 2722
 Size: %s KB\n
 >>>>
-
-=== basher.py, 2695
+サイズ: %s KB\n
+=== basher.py, 2724
 Size: N/A\n
 >>>>
-
-=== basher.py, 2697
+サイズ: N/A\n
+=== basher.py, 2726
 Non-solid
 >>>>
-
-=== basher.py, 2697
+非ソリッド
+=== basher.py, 2726
 Solid
 >>>>
 
-=== basher.py, 2698
+=== basher.py, 2727
 Size: %s kb (%s)\n
 >>>>
 
-=== basher.py, 2700
+=== basher.py, 2729
 Size: Unrecognized\n
 >>>>
-
-=== basher.py, 2701
+サイズ: 認識できない\n
+=== basher.py, 2730
 Modified: %s\n
 >>>>
-
-=== basher.py, 2703
+更新: %s\n
+=== basher.py, 2732
 Data CRC: %08X\n
 >>>>
-
-=== basher.py, 2705
+データCRC: %08X\n
+=== basher.py, 2734
 Files: %s\n
 >>>>
-
-=== basher.py, 2707
+ファイル: %s\n
+=== basher.py, 2736
 Configured: %s (%s KB)\n
 >>>>
-
-=== basher.py, 2710
+構成: %s (%s KB)\n
+=== basher.py, 2739
 Matched: %s\n
 >>>>
-
-=== basher.py, 2712
+一致: %s\n
+=== basher.py, 2741
 Missing: %s\n
 >>>>
-
-=== basher.py, 2714
+不一致: %s\n
+=== basher.py, 2743
 Conflicts: %s\n
 >>>>
-
-=== basher.py, 2719
+競合: %s\n
+=== basher.py, 2748
 Configured Files
 >>>>
-
-=== basher.py, 2735
+構成ファイル
+=== basher.py, 2764
 Skipped (Extension)
 >>>>
 
-=== basher.py, 2736
+=== basher.py, 2765
 Skipped (Dir)
 >>>>
 
-=== basher.py, 2912
+=== basher.py, 2945
 Automatically update Textures BSA after adding/removing a replacer
 >>>>
 
-=== basher.py, 2914
+=== basher.py, 2947
 Update
 >>>>
 
-=== basher.py, 2915
+=== basher.py, 2948
 Enable replacement textures by updating Textures archive
 >>>>
 
-=== basher.py, 2916
+=== basher.py, 2949
 Restore
 >>>>
 
-=== basher.py, 2917
+=== basher.py, 2950
 Restore Textures archive to its original state
 >>>>
 
-=== basher.py, 2919
+=== basher.py, 2952
 Textures BSA
 >>>>
 
-=== basher.py, 2934
+=== basher.py, 2967
 Reps: %d/%d
 >>>>
 
-=== basher.py, 2953
+=== basher.py, 2987
 BSA editing disabled becase FOMM or BSAPatch is in use
 >>>>
 
-=== basher.py, 2959
-Edit Textures BSA?\n\nThis command directly edits the Fallout - Textures.bsa file. If the file becomes corrupted (very unlikely), you will need to reinstall Fallout3 or restore it from another source
+=== basher.py, 2993
+Edit Textures BSA?\n\nThis command directly edits the Fallout - Textures.bsa file. If the file becomes corrupted (very unlikely), you will need to reinstall FalloutNV or restore it from another source
 >>>>
 
-=== basher.py, 2979
+=== basher.py, 3013
 BSA Hashes reset: %d\nBSA Hashes Invalidated: %d.\nAIText entries: %d
 >>>>
 
-=== basher.py, 2989
+=== basher.py, 3023
 BSA Hashes reset: %d
 >>>>
 
-=== basher.py, 3120
+=== basher.py, 3154
 Screens: %d
 >>>>
 
-=== basher.py, 3450
+=== basher.py, 3484
 BSAs: %d
 >>>>
 
-=== basher.py, 3610
+=== basher.py, 3644
 Search
 >>>>
 
-=== basher.py, 3611
+=== basher.py, 3645
 Clear
 >>>>
 クリア
-=== basher.py, 3636
+=== basher.py, 3670
 PMs: %d/%d
 >>>>
 
-=== basher.py, 3715
+=== basher.py, 3749
 People: %d
 >>>>
 
-=== basher.py, 3792
+=== basher.py, 3826
 Version
 >>>>
 
-=== basher.py, 3794
+=== basher.py, 3828
 Tags
 >>>>
 
-=== basher.py, 3802
+=== basher.py, 3836
 Abstract
 >>>>
 
-=== basher.py, 3809
+=== basher.py, 3843
 ModBase: %d
 >>>>
 
-=== basher.py, 3848
+=== basher.py, 3882
 Replacers
 >>>>
 
-=== basher.py, 3849
+=== basher.py, 3883
 Mods
 >>>>
 
-=== basher.py, 3852
+=== basher.py, 3886
 Saves
 >>>>
 
-=== basher.py, 3853
+=== basher.py, 3887
 INI Edits
 >>>>
 
-=== basher.py, 3854
+=== basher.py, 3888
 Screenshots
 >>>>
 
-=== basher.py, 3857
+=== basher.py, 3891
 PM Archive
 >>>>
 
-=== basher.py, 3860
+=== basher.py, 3894
 PM Archive panel disabled due to Import Error (most likely comtypes)
 >>>>
 
-=== basher.py, 3965
+=== basher.py, 3999
 Default
 >>>>
 
-=== basher.py, 3982
+=== basher.py, 4016
 \n+ %d others
 >>>>
 
-=== basher.py, 3996
+=== basher.py, 4030
 Modified dates have been reset for some mod files
 >>>>
 
-=== basher.py, 4003
+=== basher.py, 4037
 Some mods have been auto-grouped
 >>>>
 
-=== basher.py, 4029
+=== basher.py, 4063
 Missing files have been removed from load list
 >>>>
 
-=== basher.py, 4036
+=== basher.py, 4070
 Load list is overloaded. Some files have been de-activated
 >>>>
 
-=== basher.py, 4045
+=== basher.py, 4079
 The following mod files have corrupted headers
 >>>>
 
-=== basher.py, 4051
+=== basher.py, 4085
 The following save files have corrupted headers
 >>>>
 
-=== basher.py, 4059
+=== basher.py, 4093
 Your FALLOUT.INI should begin with a section header (e.g. "[General]
 >>>>
 
-=== basher.py, 4063
+=== basher.py, 4097
 Bash cannot handle dates greater than January 19, 2038. Accordingly, the dates for the following files have been reset to an earlier date
 >>>>
 
-=== basher.py, 4070
+=== basher.py, 4104
 Turn Lock Times Off?\n\nLock Times a feature which resets load order to a previously memorized state. While this feature is good for maintaining your load order, it will also undo any load order changes that you have made in FOMM
 >>>>
 
-=== basher.py, 4071
+=== basher.py, 4105
 Lock Times
 >>>>
 タイムスタンプを固定
-=== basher.py, 4077
+=== basher.py, 4111
 Lock Times is now %s. To change it in the future, right click on the main list header on the Mods tab and select 'Lock Times'
 >>>>
 
-=== basher.py, 4078
+=== basher.py, 4112
 off
 >>>>
 
-=== basher.py, 4078
+=== basher.py, 4112
 on
 >>>>
 
-=== basher.py, 4083
-Installation appears incomplete. Please re-unzip bash to Fallout3 directory so that ALL files are installed.\n\nCorrect installation will create Fallout 3\\Mopy, Fallout 3\\Data\\Docs and Fallout 3\\Data\\INI Tweaks directories
+=== basher.py, 4117
+Installation appears incomplete. Please re-unzip bash to FalloutNV directory so that ALL files are installed.\n\nCorrect installation will create Fallout New Vegas\\Mopy, Fallout New Vegas\\Data\\Docs and Fallout New Vegas\\Data\\INI Tweaks directories
 >>>>
 
-=== basher.py, 4084
+=== basher.py, 4118
 Incomplete Installation
 >>>>
 
-=== basher.py, 4090
+=== basher.py, 4124
 Mark Mergeable
 >>>>
-マージ対象にする
-=== basher.py, 4156
+マージ可能か確認
+=== basher.py, 4190
 Doc Browser
 >>>>
 
-=== basher.py, 4168
+=== basher.py, 4202
 Set Doc
 >>>>
 
-=== basher.py, 4170
+=== basher.py, 4204
 Forget Doc
 >>>>
 
-=== basher.py, 4172
+=== basher.py, 4206
 Rename Doc
 >>>>
 
-=== basher.py, 4174
+=== basher.py, 4208
 Edit Doc
 >>>>
 
-=== basher.py, 4176
+=== basher.py, 4210
 Open Doc
 >>>>
 
-=== basher.py, 4176
+=== basher.py, 4210
 Open doc in external editor
 >>>>
 
-=== basher.py, 4285
+=== basher.py, 4319
 Select doc for %s
 >>>>
 
-=== basher.py, 4300
+=== basher.py, 4334
 Rename file to
 >>>>
 
-=== basher.py, 4319
+=== basher.py, 4353
 Filename not defined
 >>>>
 
-=== basher.py, 4358
+=== basher.py, 4392
 My Readme Template.txt
 >>>>
 
-=== basher.py, 4359
+=== basher.py, 4393
 Bash Readme Template.txt
 >>>>
 
-=== basher.py, 4438
+=== basher.py, 4472
 Mod Checker
 >>>>
 
-=== basher.py, 4455
+=== basher.py, 4489
 Mod List
 >>>>
 
-=== basher.py, 4456
+=== basher.py, 4490
 Rule Sets
 >>>>
 
-=== basher.py, 4458
+=== basher.py, 4492
 Configuration
 >>>>
 
-=== basher.py, 4459
+=== basher.py, 4493
 Suggestions
 >>>>
 
-=== basher.py, 4460
+=== basher.py, 4494
 Copy Text
 >>>>
 
-=== basher.py, 4555
+=== basher.py, 4603
 Initializing Data
 >>>>
 
-=== basher.py, 4558
+=== basher.py, 4606
 Initializing Version
 >>>>
 
-=== basher.py, 4561
+=== basher.py, 4609
 Initializing Windows
 >>>>
 
-=== basher.py, 4585
+=== basher.py, 4633
 Initializing ModInfos
 >>>>
 
-=== basher.py, 4592
+=== basher.py, 4641
 Initializing SaveInfos
 >>>>
 
-=== basher.py, 4595
+=== basher.py, 4644
 Initializing IniInfos
 >>>>
 
-=== basher.py, 4598
-Initializing BSAInfos
->>>>
-
-=== basher.py, 4607
+=== basher.py, 4656
 Generating Blank Bashed Patch
 >>>>
 
-=== basher.py, 4672
+=== basher.py, 4722
 Race
 >>>>
 
-=== basher.py, 4673
+=== basher.py, 4723
 Gender
 >>>>
 
-=== basher.py, 4674
+=== basher.py, 4724
 Stats
 >>>>
 
-=== basher.py, 4675
+=== basher.py, 4725
 Class
 >>>>
 
-=== basher.py, 4689
+=== basher.py, 4739
 Import
 >>>>
 インポート
-=== basher.py, 4760
+=== basher.py, 4810
 Face imported
 >>>>
 
-=== basher.py, 4798
+=== basher.py, 4848
 Build Patch
 >>>>
-
-=== basher.py, 4801
+パッチを構築
+=== basher.py, 4851
 Deselect All
 >>>>
-
-=== basher.py, 4802
+すべて解除
+=== basher.py, 4852
 Export Patch Configuration
 >>>>
-
-=== basher.py, 4803
+設定をエクスポート
+=== basher.py, 4853
 Import Patch Configuration
 >>>>
-
-=== basher.py, 4888
+設定をインポート
+=== basher.py, 4939
 \nSaving
 >>>>
 
-=== basher.py, 4893
-The patch cannot be written to (Data\\%s).\nIt might be locking by other processes.\nDo you want to retry or cancel?
+=== basher.py, 4944
+Bash encountered an error when saving %s.\n\nThe file is in use by another process such as FNVEdit.\nPlease close the other program that is accessing %s.\n\nTry again?
 >>>>
 
-=== basher.py, 4894
-Couldn't write
+=== basher.py, 4944
+Bash Patch - Save Error
 >>>>
 
-=== basher.py, 4914
+=== basher.py, 4970
 Activate %s?
 >>>>
 
-=== basher.py, 4921
+=== basher.py, 4977
 Masters Activated
 >>>>
 
-=== basher.py, 4928
+=== basher.py, 4984
 File Edit Error
 >>>>
 
-=== basher.py, 4943
+=== basher.py, 5000
 _Configuration.dat
 >>>>
 
-=== basher.py, 4947
+=== basher.py, 5004
 Export Bashed Patch configuration to
 >>>>
 
-=== basher.py, 4963
+=== basher.py, 5020
 Import Bashed Patch configuration from
 >>>>
 
-=== basher.py, 4977
+=== basher.py, 5034
 item %s not in saved configs
 >>>>
 
-=== basher.py, 5192
+=== basher.py, 5249
 Select All
 >>>>
-
-=== basher.py, 5244
-Fallout3 Mod Files
+すべて選択
+=== basher.py, 5301
+FalloutNV Mod Files
 >>>>
 
-=== basher.py, 5246
+=== basher.py, 5303
 Get
 >>>>
 
-=== basher.py, 5322
+=== basher.py, 5379
 Tweaks
 >>>>
 
-=== basher.py, 5457
+=== basher.py, 5514
 Enter the desired custom tweak value.\nDue to an inability to get decimal numbers from the wxPython prompt please enter an extra zero after your choice if it is not meant to be a decimal.\nIf you are trying to enter a decimal multiply it by 10, for example for 0.3 enter 3 instead
 >>>>
 
-=== basher.py, 5458
+=== basher.py, 5515
 Enter the desired custom tweak value
 >>>>
 
-=== basher.py, 5459
+=== basher.py, 5516
 Custom Tweak Value
 >>>>
 
-=== basher.py, 5467
+=== basher.py, 5524
 Mergeable Mods
 >>>>
 
-=== basher.py, 5495
+=== basher.py, 5552
 Race Mods
 >>>>
 
-=== basher.py, 5530
+=== basher.py, 5589
 Override Delev/Relev Tags
 >>>>
 
-=== basher.py, 5533
+=== basher.py, 5592
 Override Deflst Tags
 >>>>
 
-=== basher.py, 5627
+=== basher.py, 5687
 Unhide
 >>>>
 隠されたファイルを戻す
-=== basher.py, 5642
+=== basher.py, 5702
 Unhide files
 >>>>
 隠されたファイル
-=== basher.py, 5656
+=== basher.py, 5716
 You can't unhide files from this directory
 >>>>
 
-=== basher.py, 5661
+=== basher.py, 5721
 File skipped: %s. File is already present
 >>>>
 
-=== basher.py, 5682
+=== basher.py, 5742
 Delete Files
 >>>>
-
-=== basher.py, 5711
+ファイルを削除
+=== basher.py, 5771
 This mod has an associated archive (%s.bsa) and an associated voice directory (Sound\\Voices\\%s), which will not be attached to the duplicate mod.\n\nNote that the BSA archive may also contain a voice directory (Sound\\Voices\\%s), which would remain detached even if a duplicate archive were also created
 >>>>
 
-=== basher.py, 5713
+=== basher.py, 5773
 This mod has an associated archive (%s.bsa), which will not be attached to the duplicate mod.\n\nNote that this BSA archive may contain a voice directory (Sound\\Voices\\%s), which would remain detached even if a duplicate archive were also created
 >>>>
 
-=== basher.py, 5715
+=== basher.py, 5775
 This mod has an associated voice directory (Sound\\Voice\\%s), which will not be attached to the duplicate mod
 >>>>
 
-=== basher.py, 5746
+=== basher.py, 5806
 Hide
 >>>>
 隠す
-=== basher.py, 5750
+=== basher.py, 5810
 Hide Files
 >>>>
 ファイルを隠す
-=== basher.py, 5768
+=== basher.py, 5828
 A file named %s already exists in the hidden files directory. Overwrite it?
 >>>>
-
-=== basher.py, 5781
+隠しファイルディレクトリに%sというファイルが存在します。上書きしますか?
+=== basher.py, 5841
 List Masters
 >>>>
 マスター一覧
-=== basher.py, 5799
+=== basher.py, 5859
 Redate
 >>>>
-
-=== basher.py, 5808
+日付を変更
+=== basher.py, 5868
 Redate selected mods starting at
 >>>>
-
-=== basher.py, 5809
+選択されたMODの日付を変更
+=== basher.py, 5869
 Redate Mods
 >>>>
-
-=== basher.py, 5818
+MODの日付を変更
+=== basher.py, 5878
 Bash cannot handle dates greater than January 19, 2038.)
 >>>>
-
-=== basher.py, 5836
+2038/1/19以降の日付は扱えません
+=== basher.py, 5896
 Sort
 >>>>
-
-=== basher.py, 5841
+ソート
+=== basher.py, 5901
 Reorder selected mods in alphabetical order? The first file will be given the date/time of the current earliest file in the group, with consecutive files following at 1 minute increments.\n\nNote that this operation cannot be undone. Note also that some mods need to be in a specific order to work correctly, and this sort operation may break that order
 >>>>
 
-=== basher.py, 5842
+=== basher.py, 5902
 Sort Mods
 >>>>
-
-=== basher.py, 5869
+MODをソート
+=== basher.py, 5929
 Snapshot
 >>>>
 スナップショット
-=== basher.py, 5881
+=== basher.py, 5941
 Save snapshot as
 >>>>
 スナップショットを保存
-=== basher.py, 5909
+=== basher.py, 5969
 Revert to Snapshot
 >>>>
-スナップショットを復旧
-=== basher.py, 5923
+スナップショットに戻す
+=== basher.py, 5983
 Revert %s to snapshot
 >>>>
 
-=== basher.py, 5928
+=== basher.py, 5988
 Revert %s to snapshot %s dated %s?
 >>>>
 
-=== basher.py, 5938
+=== basher.py, 5998
 Snapshot file is corrupt!
 >>>>
 
-=== basher.py, 5948
+=== basher.py, 6008
 Backup
 >>>>
 バックアップ
-=== basher.py, 5967
+=== basher.py, 6027
 Revert to Backup
 >>>>
-
-=== basher.py, 5973
+バックアップに戻す
+=== basher.py, 6033
 Revert to First Backup
 >>>>
-
-=== basher.py, 5987
+最新のバックアップに戻す
+=== basher.py, 6047
 Revert %s to backup dated %s?
 >>>>
 
-=== basher.py, 5999
+=== basher.py, 6059
 Old file is corrupt!
 >>>>
 
-=== basher.py, 6022
+=== basher.py, 6082
 Add Marker
 >>>>
 マーカーを追加
-
-=== basher.py, 6027
+=== basher.py, 6087
 Enter a title
 >>>>
 タイトルを入力
-
-=== basher.py, 6039
+=== basher.py, 6099
 Anneal All
 >>>>
 全てアニール処理
-=== basher.py, 6044
+=== basher.py, 6104
 Annealing
 >>>>
 アニール処理中
-=== basher.py, 6058
+=== basher.py, 6118
 Auto-Anneal
 >>>>
 自動アニール
-=== basher.py, 6071
+=== basher.py, 6131
 Auto-Anneal/Install Wizards
 >>>>
 自動アニール/インストールウィザード
-=== basher.py, 6084
+=== basher.py, 6144
 Auto-Refresh Projects
 >>>>
 プロジェクトの自動再読込
-=== basher.py, 6096
+=== basher.py, 6156
 Enabled
 >>>>
-
-=== basher.py, 6103
+有効
+=== basher.py, 6163
 Do you want to enable Installers? If you do, Bash will first need to initialize some data. If there are many new mods to process, then this may take on the order of five minutes
 >>>>
-
-=== basher.py, 6119
+Installersを有効にしますか? そうするとBashは最初にいくらかのデータを初期化する必要があります。 処理するMODが多ければ、これには5分程度の時間がかかります。
+=== basher.py, 6179
 BSA Redirection
 >>>>
-
-=== basher.py, 6139
+BSAリダイレクション
+=== basher.py, 6203
 Show Inactive Conflicts
 >>>>
-
-=== basher.py, 6153
+非活性の衝突を表示
+=== basher.py, 6217
 Show Lower Conflicts
 >>>>
-
-=== basher.py, 6167
+優先度が下の衝突を表示
+=== basher.py, 6231
 Avoid at Startup
 >>>>
-
-=== basher.py, 6185
+起動時にBAINを回避
+=== basher.py, 6249
 Refresh Data
 >>>>
 Dataを再読込
-=== basher.py, 6185
+=== basher.py, 6249
 Full Refresh
 >>>>
 すべて再読込
-=== basher.py, 6192
+=== basher.py, 6256
 Refresh ALL data from scratch? This may take five to ten minutes (or more) depending on the number of mods you have installed
 >>>>
 
-=== basher.py, 6203
+=== basher.py, 6267
 Clean Data Directory
 >>>>
-
-=== basher.py, 6216
+Dataディレクトリの掃除
+=== basher.py, 6280
 Show Replacers Tab
 >>>>
-
-=== basher.py, 6224
+Replacersタブを表示
+=== basher.py, 6288
 This option will take effect when Bash is restarted. Note that if any files are present in Data\\Replacers, then the Replacers tab will be shown regardless of this setting
 >>>>
 
-=== basher.py, 6232
+=== basher.py, 6296
 Skip Screenshots
 >>>>
-
-=== basher.py, 6249
+スクリーンショットをスキップ
+=== basher.py, 6313
 Skip Images
 >>>>
-
-=== basher.py, 6266
+画像をスキップ
+=== basher.py, 6330
 Skip Docs
 >>>>
-
-=== basher.py, 6283
+ドキュメントをスキップ
+=== basher.py, 6347
 Skip DistantLOD
 >>>>
-
-=== basher.py, 6300
+DistantLODをスキップ
+=== basher.py, 6364
 Sort by Active
 >>>>
 アクティブな順でソート
-=== basher.py, 6313
+=== basher.py, 6377
 Projects First
 >>>>
 プロジェクトを先頭に
-=== basher.py, 6326
+=== basher.py, 6390
 Sort by Structure
 >>>>
 
-=== basher.py, 6379
+=== basher.py, 6443
 Edit Wizard
 >>>>
 ウィザードを編集
-=== basher.py, 6404
+=== basher.py, 6468
 Wizard
 >>>>
 ウィザード
-=== basher.py, 6406
+=== basher.py, 6470
 Auto Wizard
 >>>>
 自動ウィザード
-=== basher.py, 6452
+=== basher.py, 6516
 Installing
 >>>>
 インストール中
-=== basher.py, 6466
+=== basher.py, 6530
 Anneal
 >>>>
 アニール処理
-=== basher.py, 6499
+=== basher.py, 6563
 Copy (%d)
 >>>>
 コピー (%d)
-=== basher.py, 6501
+=== basher.py, 6565
 Duplicate %s to
 >>>>
 %s を複製
-=== basher.py, 6508
+=== basher.py, 6572
 %s is not a valid name
 >>>>
 %s は有効な名前ではありません
-=== basher.py, 6511
+=== basher.py, 6575
 %s already exists
 >>>>
 %s は既に存在しています
-=== basher.py, 6515
+=== basher.py, 6579
 %s does not have correct extension (%s)
 >>>>
 %s は有効な拡張子を持っていません (%s)
-=== basher.py, 6590
+=== basher.py, 6654
 Enter new name. E.g. VASE.7z
 >>>>
 名前を入力して下さい 例.VASE.7z
-=== basher.py, 6591
+=== basher.py, 6655
 Rename Files
 >>>>
 
-=== basher.py, 6594
+=== basher.py, 6658
 Enter new name. E.g. VASE
 >>>>
 名前を入力して下さい 例.VASE
-=== basher.py, 6600
+=== basher.py, 6664
 Bad extension or file root
 >>>>
 
-=== basher.py, 6649
+=== basher.py, 6713
 Has Extra Directories
 >>>>
 特別なディレクトリを保有
-=== basher.py, 6668
+=== basher.py, 6732
 Install
 >>>>
 インストール
-=== basher.py, 6668
+=== basher.py, 6732
 Install Last
 >>>>
 最後にインストール
-=== basher.py, 6668
+=== basher.py, 6732
 Install Missing
 >>>>
 存在しないファイルのみインストール
-=== basher.py, 6699
+=== basher.py, 6763
 List Packages
 >>>>
 パッケージ一覧
-=== basher.py, 6704
+=== basher.py, 6768
 Only show Installed Packages?\n(Else shows all packages)
 >>>>
 
-=== basher.py, 6705
+=== basher.py, 6769
 Only Show Installed?
 >>>>
 
-=== basher.py, 6711
+=== basher.py, 6775
 BAIN Packages
 >>>>
 BAINパッケージ
-=== basher.py, 6717
+=== basher.py, 6781
 List Structure
 >>>>
 構成リスト
-=== basher.py, 6740
+=== basher.py, 6804
 Move To
 >>>>
 移動
-=== basher.py, 6746
+=== basher.py, 6810
 Move selected archives to what position?\nEnter position number.\nLast: -1; First of Last: -2; Semi-Last: -3
 >>>>
 
-=== basher.py, 6751
+=== basher.py, 6815
 Position must be an integer
 >>>>
 
-=== basher.py, 6776
-Open at Fallout3Nexus
->>>>
-Fallout3Nexusを開く
-=== basher.py, 6782
-Attempt to open this as a mod at Fallout3Nexus? This assumes that the trailing digits in the package's name are actually the id number of the mod at Fallout3Nexus. If this assumption is wrong, you'll just get a random mod page (or error notice) at Fallout3Nexus
+=== basher.py, 6840
+Open at NewVegasNexus
 >>>>
 
-=== basher.py, 6792
+=== basher.py, 6846
+Attempt to open this as a mod at NewVegasNexus? This assumes that the trailing digits in the package's name are actually the id number of the mod at NewVegasNexus. If this assumption is wrong, you'll just get a random mod page (or error notice) at NewVegasNexus
+>>>>
+
+=== basher.py, 6856
 Open Google search for file
 >>>>
 
-=== basher.py, 6798
+=== basher.py, 6862
 Open a search for this on Google?
 >>>>
 
-=== basher.py, 6799
+=== basher.py, 6863
 Open a search
 >>>>
 
-=== basher.py, 6811
+=== basher.py, 6875
 Open at TesAlliance
 >>>>
 
-=== basher.py, 6817
+=== basher.py, 6881
 Attempt to open this as a mod at TesAlliance? This assumes that the trailing digits in the package's name are actually the id number of the mod at TesAlliance. If this assumption is wrong, you'll just get a random mod page (or error notice) at TesAlliance
 >>>>
 
-=== basher.py, 6826
+=== basher.py, 6890
 Refresh
 >>>>
 再読込
-=== basher.py, 6832
+=== basher.py, 6896
 Refreshing Packages
 >>>>
 パッケージの再読込中
-=== basher.py, 6836
+=== basher.py, 6900
 Refreshing Packages...\n
 >>>>
 パッケージの再読込中...\n
-=== basher.py, 6852
+=== basher.py, 6919
 Skip Voices
 >>>>
 Voicesをスキップ
-=== basher.py, 6872
+=== basher.py, 6939
 Uninstall
 >>>>
 アンインストール
-=== basher.py, 6878
+=== basher.py, 6945
 Uninstalling
 >>>>
 アンインストール中
-=== basher.py, 6934
+=== basher.py, 7001
 Unpack to Project
 >>>>
 プロジェクトに展開
-=== basher.py, 6942
+=== basher.py, 7009
 Unpack %s to Project
 >>>>
 %s をプロジェクトに展開
-=== basher.py, 6949
+=== basher.py, 7016
 %s is not a valid project name
 >>>>
 %s は正しいプロジェクトではありません
-=== basher.py, 6952
+=== basher.py, 7019
 %s is a file
 >>>>
 %s はファイルです
-=== basher.py, 6955
+=== basher.py, 7022
 %s already exists. Overwrite it?
 >>>>
 %s に上書きしてもいいですか?
-=== basher.py, 6958
+=== basher.py, 7025
 Unpacking to Project
 >>>>
 プロジェクトに展開中
-=== basher.py, 6986
+=== basher.py, 7053
 Fomod Config
 >>>>
 
-=== basher.py, 7011
+=== basher.py, 7078
 Website
 >>>>
 
-=== basher.py, 7013
+=== basher.py, 7080
 Email
 >>>>
 
-=== basher.py, 7054
+=== basher.py, 7121
 Fomod Info
 >>>>
 Fomod情報
-=== basher.py, 7069
+=== basher.py, 7136
 Sync from Data
 >>>>
 Dataから同期
-=== basher.py, 7084
+=== basher.py, 7151
 Update %s according to data directory?\nFiles to delete: %d\nFiles to update: %d
 >>>>
 
-=== basher.py, 7090
+=== basher.py, 7157
 Updating files
 >>>>
 ファイルを更新
-=== basher.py, 7105
+=== basher.py, 7172
 Sync and Pack
 >>>>
 
-=== basher.py, 7119
+=== basher.py, 7186
 Pack to Archive
 >>>>
 アーカイブに圧縮
-=== basher.py, 7129
+=== basher.py, 7196
 Pack %s to Archive
 >>>>
 
-=== basher.py, 7136
+=== basher.py, 7203
 %s is not a valid archive name
 >>>>
 
-=== basher.py, 7139
+=== basher.py, 7206
 %s is a directory
 >>>>
 %s はディレクトリです
-=== basher.py, 7142
+=== basher.py, 7209
 The %s extension is unsupported. Using %s instead
 >>>>
 
-=== basher.py, 7150
+=== basher.py, 7217
 Use solid compression for %s?
 >>>>
 %s をソリッド書庫にしますか?
-=== basher.py, 7151
+=== basher.py, 7218
 Packing to Archive
 >>>>
 アーカイブに圧縮中
-=== basher.py, 7176
+=== basher.py, 7243
 Package for Release
 >>>>
 リリース用パッケージ
-=== basher.py, 7241
+=== basher.py, 7308
 Apply BCF
 >>>>
 BCFを適用
-=== basher.py, 7249
+=== basher.py, 7316
 Using:\n*
 >>>>
 
-=== basher.py, 7265
+=== basher.py, 7332
 Converting to Archive
 >>>>
 アーカイブに変換
-=== basher.py, 7330
+=== basher.py, 7397
 Create BCF
 >>>>
 BCFを作成
-=== basher.py, 7331
+=== basher.py, 7398
 Create
 >>>>
-
-=== basher.py, 7338
+作成
+=== basher.py, 7405
 Select the BAIN\'ed Archive
 >>>>
 
-=== basher.py, 7346
+=== basher.py, 7413
 %s must be in the Bash Installers directory
 >>>>
 
-=== basher.py, 7348
+=== basher.py, 7415
 -bcf
 >>>>
 
-=== basher.py, 7349
+=== basher.py, 7416
 -BCF
 >>>>
 
-=== basher.py, 7351
+=== basher.py, 7418
 Convert
 >>>>
 変換
-=== basher.py, 7353
+=== basher.py, 7420
 \n\nTo:\n* (%08X) - %s
 >>>>
 
-=== basher.py, 7366
+=== basher.py, 7433
 BCF's only support %s. The %s extension will be discarded
 >>>>
 
-=== basher.py, 7373
+=== basher.py, 7440
 Creating %s
 >>>>
 
-=== basher.py, 7386
+=== basher.py, 7453
 Name: %s
 >>>>
 
-=== basher.py, 7387
+=== basher.py, 7454
 Size: %s KB
 >>>>
 
-=== basher.py, 7388
+=== basher.py, 7455
 Remapped: %s file
 >>>>
 
-=== basher.py, 7388
+=== basher.py, 7455
 s
 >>>>
 
-=== basher.py, 7389
+=== basher.py, 7456
 Requires: %s file
 >>>>
 
-=== basher.py, 7391
+=== basher.py, 7458
 Options
 >>>>
 
-=== basher.py, 7392
+=== basher.py, 7459
 *  Skip Voices   = %s
 >>>>
 
-=== basher.py, 7393
+=== basher.py, 7460
 *  Solid Archive = %s
 >>>>
 
-=== basher.py, 7394
+=== basher.py, 7461
 *  Has Comments  = %s
 >>>>
 
-=== basher.py, 7395
+=== basher.py, 7462
 *  Has Extra Directories = %s
 >>>>
 
-=== basher.py, 7396
+=== basher.py, 7463
 *  Has Esps Unselected   = %s
 >>>>
 
-=== basher.py, 7397
+=== basher.py, 7464
 *  Has Packages Selected = %s
 >>>>
 
-=== basher.py, 7398
+=== basher.py, 7465
 Contains: %s file
 >>>>
 
-=== basher.py, 7403
+=== basher.py, 7470
 BCF Information
 >>>>
 
-=== basher.py, 7452
+=== basher.py, 7519
 Name must be between 1 and 64 characters long
 >>>>
 
-=== basher.py, 7482
+=== basher.py, 7549
 None
 >>>>
 無し
-=== basher.py, 7483
+=== basher.py, 7550
 Save List
 >>>>
 リストをセーブ
-=== basher.py, 7484
+=== basher.py, 7551
 Edit Lists
 >>>>
 リストを編集
-=== basher.py, 7514
+=== basher.py, 7581
 All load list slots are full. Please delete an existing load list before adding another
 >>>>
 
-=== basher.py, 7517
+=== basher.py, 7584
 Save current load list as
 >>>>
 
-=== basher.py, 7520
+=== basher.py, 7587
 Load list name must be between 1 and 64 characters long
 >>>>
 
-=== basher.py, 7527
+=== basher.py, 7594
 Load Lists
 >>>>
 
-=== basher.py, 7536
+=== basher.py, 7603
 Valid Tweaks First
 >>>>
 有効なTweakを上位に
-=== basher.py, 7548
+=== basher.py, 7615
 List Errors
 >>>>
 エラー一覧
-=== basher.py, 7567
+=== basher.py, 7634
 INI Tweak Errors
 >>>>
 INI Tweak エラー
-=== basher.py, 7573
+=== basher.py, 7640
 Apply
 >>>>
 適用する
-=== basher.py, 7588
+=== basher.py, 7655
 Apply an ini tweak to FALLOUT.INI?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!
 >>>>
 
-=== basher.py, 7589
+=== basher.py, 7656
 INI Tweaks
 >>>>
 
-=== basher.py, 7628
+=== basher.py, 7695
 Selection
 >>>>
 選択状態
-=== basher.py, 7641
+=== basher.py, 7708
 Auto-Ghost
 >>>>
 
-=== basher.py, 7655
+=== basher.py, 7722
 Auto Group
 >>>>
 
-=== basher.py, 7668
+=== basher.py, 7735
 Debug Mode
 >>>>
 デバッグモード
-=== basher.py, 7673
+=== basher.py, 7740
 Debug Printing: Off
 >>>>
 
-=== basher.py, 7675
+=== basher.py, 7742
 Debug Printing: On
 >>>>
 
-=== basher.py, 7682
+=== basher.py, 7749
 Full Balo
 >>>>
 
-=== basher.py, 7688
+=== basher.py, 7755
 Activate Full Balo?\n\nFull Balo segregates mods by groups, and then autosorts mods within those groups by alphabetical order. Full Balo is still in development and may have some rough edges
 >>>>
 
-=== basher.py, 7689
+=== basher.py, 7756
 Balo Groups
 >>>>
 
-=== basher.py, 7704
+=== basher.py, 7771
 Dump Translator
 >>>>
-翻訳カタログを出力
-=== basher.py, 7708
+翻訳ファイルを出力
+=== basher.py, 7775
 Generate Bash program translator file?\n\nThis function is for translating Bash itself (NOT mods) into non-English languages. For more info, see Internationalization section of Bash readme
 >>>>
-
-=== basher.py, 7738
+Bashプログラム翻訳ファイルを出力しますか?\n\nこの機能は、(MODではなく)Bash自身を英語以外の言語に翻訳するためのものです。 詳しい情報に関しては、Bash readmeのInternationalization部を読んでください。
+=== basher.py, 7805
 %d translation keys written to Mopy\\Data\\%s
 >>>>
-
-=== basher.py, 7746
+%d項目の翻訳辞書をMopy\\Data\\%sに書き出しました
+=== basher.py, 7813
 List Mods
 >>>>
 Mod一覧
-=== basher.py, 7778
+=== basher.py, 7845
 masterlist.txt
 >>>>
 
-=== basher.py, 7817
-FO3Edit Expert
->>>>
-FO3Edit上級者
-=== basher.py, 7830
-Update Archive Invalidator
+=== basher.py, 7884
+FNVEdit Expert
 >>>>
 
-=== basher.py, 7834
+=== basher.py, 7896
+BOSS Disable Lock Times
+>>>>
+BOSS起動時にLock Timesを無効
+=== basher.py, 7908
+Always Update BOSS Masterlist prior to running BOSS
+>>>>
+BOSS実行時にMasterlistを常に更新
+=== basher.py, 7921
+Update Archive Invalidator
+>>>>
+Archive Invalidatorを更新
+=== basher.py, 7925
 Update ArchiveInvalidation.txt? This updates the file that forces the game engine to recognize replaced textures. Note that this feature is experimental and most probably somewhat incomplete. You may prefer to use another program to do AI.txt file updating
 >>>>
 
-=== basher.py, 7835
+=== basher.py, 7926
 ArchiveInvalidation.txt
 >>>>
 
-=== basher.py, 7846
+=== basher.py, 7937
 NPC Levels
 >>>>
 
-=== basher.py, 7851
+=== basher.py, 7942
 This command will export the level info for NPCs whose level is offset with respect to the PC. The exported file can be edited with most spreadsheet programs and then reimported.\n\nSee the Bash help file for more info
 >>>>
 
-=== basher.py, 7852
+=== basher.py, 7943
 Export NPC Levels
 >>>>
 NPCレベルのエクスポート
-=== basher.py, 7856
+=== basher.py, 7947
 _NPC_Levels.csv
 >>>>
 
-=== basher.py, 7859
+=== basher.py, 7950
 Export NPC levels to
 >>>>
 
-=== basher.py, 7881
+=== basher.py, 7972
 This command will import NPC level info from a previously exported file.\n\nSee the Bash help file for more info
 >>>>
 
-=== basher.py, 7882
+=== basher.py, 7973
 Import NPC Levels
 >>>>
 
-=== basher.py, 7906
+=== basher.py, 7997
 Add Master
 >>>>
 マスターを追加
-=== basher.py, 7911
+=== basher.py, 8002
 WARNING! For advanced modders only! Adds specified master to list of masters, thus ceding ownership of new content of this mod to the new master. Useful for splitting mods into esm/esp pairs
 >>>>
 
-=== basher.py, 7916
-Fallout3 Masters
+=== basher.py, 8007
+FalloutNV Masters
 >>>>
 
-=== basher.py, 7917
+=== basher.py, 8008
 Add master
 >>>>
 マスターを追加
-=== basher.py, 7922
-File must be selected from Fallout3 Data Files directory
+=== basher.py, 8013
+File must be selected from FalloutNV Data Files directory
 >>>>
 
-=== basher.py, 7924
+=== basher.py, 8015
 %s is already a master!
 >>>>
 
-=== basher.py, 7957
+=== basher.py, 8048
 Move Up
 >>>>
 
-=== basher.py, 7958
+=== basher.py, 8049
 Move Down
 >>>>
 
-=== basher.py, 7969
+=== basher.py, 8060
 Offsets
 >>>>
 
-=== basher.py, 7996
+=== basher.py, 8087
 Group name must be letters, spaces, underscores only!
 >>>>
 
-=== basher.py, 7999
+=== basher.py, 8090
 group %s already exists
 >>>>
 
-=== basher.py, 8002
+=== basher.py, 8093
 Group names must be less than forty characters
 >>>>
 
-=== basher.py, 8055
+=== basher.py, 8146
 Add Balo Group
 >>>>
 
-=== basher.py, 8060
+=== basher.py, 8151
 Name of new group (spaces and letters only)
 >>>>
 
-=== basher.py, 8084
+=== basher.py, 8175
 Rename Balo Group
 >>>>
 
-=== basher.py, 8089
+=== basher.py, 8180
 Rename %s to (spaces, letters and underscores only)
 >>>>
 
-=== basher.py, 8202
+=== basher.py, 8293
 Allow Ghosting
 >>>>
 
-=== basher.py, 8221
+=== basher.py, 8312
 Disallow Ghosting
 >>>>
 
-=== basher.py, 8240
+=== basher.py, 8331
 Invert Ghosting
 >>>>
 
-=== basher.py, 8262
+=== basher.py, 8353
 Don't Ghost
 >>>>
 ゴースト化しない
-=== basher.py, 8293
+=== basher.py, 8384
 Apply Nvidia fog fix. This modify fog values in interior cells to avoid the Nvidia black screen bug
 >>>>
 
-=== basher.py, 8303
+=== basher.py, 8394
 Scanning %s
 >>>>
 
-=== basher.py, 8311
+=== basher.py, 8402
 Cells Fixed:\n
 >>>>
 
-=== basher.py, 8314
+=== basher.py, 8405
 No changes required
 >>>>
 
-=== basher.py, 8324
+=== basher.py, 8415
 New Mod
 >>>>
-
-=== basher.py, 8353
+新規Mod
+=== basher.py, 8444
 Relations
 >>>>
 
-=== basher.py, 8360
+=== basher.py, 8451
 _Relations.csv
 >>>>
 
-=== basher.py, 8364
+=== basher.py, 8455
 Export faction relations to
 >>>>
 
-=== basher.py, 8368
+=== basher.py, 8459
 Export Relations
 >>>>
 リレーションのエクスポート
-=== basher.py, 8375
+=== basher.py, 8466
 Reading %s
 >>>>
 
-=== basher.py, 8377
+=== basher.py, 8468
 Exporting to %s
 >>>>
 
-=== basher.py, 8388
+=== basher.py, 8479
 Factions
 >>>>
 
-=== basher.py, 8395
+=== basher.py, 8486
 _Factions.csv
 >>>>
 
-=== basher.py, 8399
+=== basher.py, 8490
 Export factions to
 >>>>
 
-=== basher.py, 8403
+=== basher.py, 8494
 Export Factions
 >>>>
 ファクションのエクスポート
-=== basher.py, 8423
+=== basher.py, 8514
 Mark Levelers
 >>>>
 
-=== basher.py, 8428
+=== basher.py, 8519
 Obsolete. Mods are now automatically tagged when possible
 >>>>
 
-=== basher.py, 8460
+=== basher.py, 8551
 Mergeable\n*
 >>>>
 
-=== basher.py, 8464
+=== basher.py, 8555
 Not Mergeable\n*
 >>>>
 
-=== basher.py, 8475
+=== basher.py, 8566
 Copy to Esm
 >>>>
 Esmにコピー
-=== basher.py, 8475
+=== basher.py, 8566
 Copy to Esp
 >>>>
 Espにコピー
-=== basher.py, 8493
+=== basher.py, 8584
 Replace existing %s?
 >>>>
 
-=== basher.py, 8514
+=== basher.py, 8605
 Face
 >>>>
 
-=== basher.py, 8521
-Fallout3 Files
+=== basher.py, 8612
+FalloutNV Files
 >>>>
 
-=== basher.py, 8543
+=== basher.py, 8634
 Imported face to: %s
 >>>>
 
-=== basher.py, 8550
+=== basher.py, 8641
 Esmify Masters
 >>>>
 マスターをEsm化
-=== basher.py, 8562
+=== basher.py, 8653
 Espify Masters
 >>>>
 マスターをEsp化
-=== basher.py, 8570
+=== basher.py, 8661
 WARNING! For advanced modders only! Flips esp/esm bit of esp masters to convert them to/from esm state. Useful for building/analyzing esp mastered mods
 >>>>
 
-=== basher.py, 8593
+=== basher.py, 8684
 Esmify Self
 >>>>
 自身をEsm化
-=== basher.py, 8593
+=== basher.py, 8684
 Espify Self
 >>>>
 自身をEsp化
-=== basher.py, 8603
+=== basher.py, 8694
 WARNING! For advanced modders only!\n\nThis command flips an internal bit in the mod, converting an esp to an esm and vice versa. Note that it is this bit and NOT the file extension that determines the esp/esm state of the mod
 >>>>
 
-=== basher.py, 8604
+=== basher.py, 8695
 Flip to Esm
 >>>>
 
-=== basher.py, 8751
+=== basher.py, 8842
 Edit Groups
 >>>>
-
-=== basher.py, 8752
+グループの編集
+=== basher.py, 8843
 Groups
 >>>>
-
-=== basher.py, 8753
+グループ
+=== basher.py, 8844
 Add group
 >>>>
-
-=== basher.py, 8780
+グループを追加
+=== basher.py, 8871
 Export groups to
 >>>>
-
-=== basher.py, 8788
+グループをエクスポート
+=== basher.py, 8879
 Exported %d mod/groups
 >>>>
 
-=== basher.py, 8789
+=== basher.py, 8880
 Export Groups
 >>>>
 
-=== basher.py, 8802
+=== basher.py, 8893
 Import groups from a text file. Any mods that are moved into new auto-sorted groups will be immediately reordered
 >>>>
 
-=== basher.py, 8804
+=== basher.py, 8895
 Import Groups
 >>>>
 
-=== basher.py, 8808
+=== basher.py, 8899
 Import names from
 >>>>
 
-=== basher.py, 8814
+=== basher.py, 8905
 Source file must be a csv file
 >>>>
 
-=== basher.py, 8823
+=== basher.py, 8914
 Imported %d mod/groups (%d changed)
 >>>>
 
-=== basher.py, 8831
+=== basher.py, 8922
 Editor Ids
 >>>>
 
-=== basher.py, 8838
+=== basher.py, 8929
 _Eids.csv
 >>>>
 
-=== basher.py, 8842
+=== basher.py, 8933
 Export eids to
 >>>>
 
-=== basher.py, 8846
+=== basher.py, 8937
 Export Editor Ids
 >>>>
 
-=== basher.py, 8871
+=== basher.py, 8962
 Import editor ids from a text file. This will replace existing ids and is not reversible!
 >>>>
 
-=== basher.py, 8873
+=== basher.py, 8964
 Import Editor Ids
 >>>>
 
-=== basher.py, 8895
+=== basher.py, 8986
 Applying to %s
 >>>>
 
-=== basher.py, 8908
+=== basher.py, 8999
 Objects Changed
 >>>>
 
-=== basher.py, 8917
+=== basher.py, 9008
 Decompile All
 >>>>
 すべてデコンパイル
-=== basher.py, 8923
+=== basher.py, 9014
 This command will remove the effects of a 'compile all' by removing all scripts whose texts appear to be identical to the version that they override
 >>>>
 
-=== basher.py, 8929
+=== basher.py, 9020
 Skipping %s
 >>>>
 
-=== basher.py, 8963
+=== basher.py, 9054
 Scripts removed: %d.\nScripts remaining: %d
 >>>>
 
-=== basher.py, 8965
+=== basher.py, 9056
 Only %d scripts were identical. This is probably intentional, so no changes have been made
 >>>>
 
-=== basher.py, 8974
+=== basher.py, 9065
 Form IDs
 >>>>
 
-=== basher.py, 8979
+=== basher.py, 9070
 For advanced modders only! Systematically replaces one set of Form Ids with another in npcs, creatures, containers and leveled lists according to a Replacers.csv file
 >>>>
 
-=== basher.py, 8981
+=== basher.py, 9072
 Import Form IDs
 >>>>
 
-=== basher.py, 8987
+=== basher.py, 9078
 Form ID mapper file
 >>>>
 
-=== basher.py, 9018
+=== basher.py, 9109
 Names
 >>>>
 
-=== basher.py, 9025
+=== basher.py, 9116
 _Names.csv
 >>>>
 
-=== basher.py, 9029
+=== basher.py, 9120
 Export names to
 >>>>
 
-=== basher.py, 9034
+=== basher.py, 9125
 Export Names
 >>>>
-名前のエキスポート
-=== basher.py, 9059
+名前のエクスポート
+=== basher.py, 9150
 Import record names from a text file. This will replace existing names and is not reversible!
 >>>>
 
-=== basher.py, 9075
+=== basher.py, 9166
 Source file must be mod (.esp or .esm) or csv file
 >>>>
 
-=== basher.py, 9103
+=== basher.py, 9194
 Objects Renamed
 >>>>
 
-=== basher.py, 9111
+=== basher.py, 9202
 Rebuild Patch
 >>>>
 パッチの再構築
-=== basher.py, 9122
+=== basher.py, 9213
 That which does not exist cannot be patched.\nLoad some mods and try again
 >>>>
 
-=== basher.py, 9122
+=== basher.py, 9213
 Existential Error
 >>>>
 
-=== basher.py, 9131
+=== basher.py, 9222
 The following mods are tagged 'Deactivate'. These should be deactivated before building the patch, and then imported into the patch during build.\n*%s
 >>>>
 
-=== basher.py, 9132
+=== basher.py, 9223
 The following mods are tagged 'Filter'. These should be deactivated before building the patch, and then merged into the patch during build.\n*%s
 >>>>
 
-=== basher.py, 9133
+=== basher.py, 9224
 The following mods are mergeable. While it is not important to Wrye Bash functionality or the end contents of the bashed patch, it is suggest that they be deactivated and merged into the patch; this (helps) avoid the  Oblivion maximum esp/m limit.\n*%s
 >>>>
 
-=== basher.py, 9134
+=== basher.py, 9225
 The following mods are tagged 'NoMerge'. These should be deactivated before building the patch and imported according to tag(s), and preferences.\n*%s
 >>>>
 
-=== basher.py, 9137
+=== basher.py, 9228
 Deactivate Suggested Mods?
 >>>>
 
-=== basher.py, 9161
+=== basher.py, 9252
 MISSING MASTER
 >>>>
 
-=== basher.py, 9163
+=== basher.py, 9254
 DELINQUENT MASTER
 >>>>
 
-=== basher.py, 9171
+=== basher.py, 9262
 WARNING!\nThe following mod(s) have master file error(s):\n%sPlease adjust your load order to rectify those probem(s) before continuing. However you can still proceed if you want to. Proceed?
 >>>>
 
-=== basher.py, 9171
+=== basher.py, 9262
 Missing or Delinquent Master Errors
 >>>>
 
-=== basher.py, 9185
+=== basher.py, 9276
 Edit Ratings
 >>>>
-
-=== basher.py, 9186
+評価を編集
+=== basher.py, 9277
 Ratings
 >>>>
-
-=== basher.py, 9187
+評価
+=== basher.py, 9278
 Add rating
 >>>>
-
-=== basher.py, 9197
+評価を追加
+=== basher.py, 9288
 Version 0.8
 >>>>
 
-=== basher.py, 9203
+=== basher.py, 9294
 WARNING! For advanced modders only! This feature allows you to edit newer official mods in the TES Construction Set by resetting the internal file version number back to 0.8. While this will make the mod editable, it may also break the mod in some way
 >>>>
 
-=== basher.py, 9204
+=== basher.py, 9295
 Set File Version
 >>>>
 
-=== basher.py, 9218
+=== basher.py, 9309
 Details
 >>>>
-概要
-=== basher.py, 9230
+詳細
+=== basher.py, 9321
 Sorting records
 >>>>
-
-=== basher.py, 9234
+レコードをソート
+=== basher.py, 9325
 (Details not provided for this record type.)\n\n
 >>>>
 
-=== basher.py, 9254
+=== basher.py, 9345
 Remove World Orphans
 >>>>
-はぐれWorldレコードを削除
-=== basher.py, 9259
+親のないWorldを削除
+=== basher.py, 9350
 In some circumstances, editing a mod will leave orphaned cell records in the world group. This command will remove such orphans
 >>>>
 
-=== basher.py, 9278
+=== basher.py, 9369
 Saving %s
 >>>>
 
-=== basher.py, 9285
+=== basher.py, 9376
 Orphan cell blocks removed: %d
 >>>>
-
-=== basher.py, 9294
+親のないcellブロックを削除しました: %d
+=== basher.py, 9385
 Readme
 >>>>
 れどめ
-=== basher.py, 9313
+=== basher.py, 9404
 Scripts
 >>>>
 
-=== basher.py, 9321
+=== basher.py, 9412
 Skip prefix (leave blank to not skip any), non-case sensitive)
 >>>>
 
-=== basher.py, 9322
+=== basher.py, 9413
 Skip Prefix?
 >>>>
 
-=== basher.py, 9324
+=== basher.py, 9415
 Remove prefix from file names f.e. enter cob to save script cobDenockInit\nas DenockInit.ext rather than as cobDenockInit.ext  (leave blank to not cut any prefix, non-case sensitive)
 >>>>
 
-=== basher.py, 9325
+=== basher.py, 9416
 Remove Prefix from file names?
 >>>>
 
-=== basher.py, 9330
+=== basher.py, 9421
 Choose directory to import scripts from
 >>>>
 
-=== basher.py, 9354
+=== basher.py, 9445
 Import script from a text file. This will replace existing scripts and is not reversible!
 >>>>
 
-=== basher.py, 9363
+=== basher.py, 9454
 Source folder must be selected
 >>>>
 
-=== basher.py, 9365
+=== basher.py, 9456
 Import scripts that don't exist in the esp as new scripts?\n(If not they will just be skipped)
 >>>>
 
-=== basher.py, 9373
+=== basher.py, 9464
 No changed scripts to import
 >>>>
 
-=== basher.py, 9389
+=== basher.py, 9480
 _Stats.csv
 >>>>
 
-=== basher.py, 9393
+=== basher.py, 9484
 Export stats to
 >>>>
 
-=== basher.py, 9398
+=== basher.py, 9489
 Export Stats
 >>>>
-アイテム性能のエキスポート
-=== basher.py, 9423
+アイテム性能のエクスポート
+=== basher.py, 9514
 Import item stats from a text file. This will replace existing stats and is not reversible!
 >>>>
 
-=== basher.py, 9432
+=== basher.py, 9523
 Import stats from
 >>>>
 
-=== basher.py, 9439
+=== basher.py, 9530
 Source file must be a Stats.csv file
 >>>>
 
-=== basher.py, 9459
+=== basher.py, 9550
 No relevant stats to import
 >>>>
 
-=== basher.py, 9471
+=== basher.py, 9562
 Item Data
 >>>>
 
-=== basher.py, 9478
+=== basher.py, 9569
 _ItemData.csv
 >>>>
 
-=== basher.py, 9482
+=== basher.py, 9573
 Export item data to
 >>>>
 
-=== basher.py, 9487
+=== basher.py, 9578
 Export Item Data
 >>>>
 
-=== basher.py, 9512
+=== basher.py, 9603
 Import pretty much complete item data from a text file. This will replace existing data and is not reversible!
 >>>>
 
-=== basher.py, 9514
+=== basher.py, 9605
 Import Item Data
 >>>>
 
-=== basher.py, 9521
+=== basher.py, 9612
 Import item data from
 >>>>
 
-=== basher.py, 9528
+=== basher.py, 9619
 Source file must be a ItemData.csv file
 >>>>
 
-=== basher.py, 9548
+=== basher.py, 9639
 No relevant data to import
 >>>>
 
-=== basher.py, 9560
+=== basher.py, 9651
 Prices
 >>>>
 
-=== basher.py, 9567
+=== basher.py, 9658
 _prices.csv
 >>>>
 
-=== basher.py, 9571
+=== basher.py, 9662
 Export prices to
 >>>>
 
-=== basher.py, 9576
+=== basher.py, 9667
 Export Prices
 >>>>
-値段のエキスポート
-=== basher.py, 9596
+値段のエクスポート
+=== basher.py, 9687
 Undelete Refs
 >>>>
-削除レコードの復旧
-=== basher.py, 9601
+削除された参照の取消
+=== basher.py, 9692
 Changes deleted refs to ignored. This is a very advanced feature and should only be used by modders who know exactly what they're doing
 >>>>
-
-=== basher.py, 9660
+削除された参照を無効にします。これは非常に高度な機能であり、これによって何が行われるかよく理解しているModderのみ使用して下さい。
+=== basher.py, 9751
 About %s
 >>>>
 
-=== basher.py, 9668
+=== basher.py, 9759
 Enter profile name
 >>>>
 
-=== basher.py, 9710
+=== basher.py, 9801
 Active profile cannot be removed
 >>>>
 
-=== basher.py, 9716
+=== basher.py, 9807
 Delete profile %s and the %d save files it contains?
 >>>>
 
-=== basher.py, 9717
+=== basher.py, 9808
 Delete Profile
 >>>>
 
-=== basher.py, 9721
-Sanity check failed: No "Fallout3\\Saves" in %s
+=== basher.py, 9812
+Sanity check failed: No "FalloutNV\\Saves" in %s
 >>>>
 
-=== basher.py, 9740
+=== basher.py, 9831
 Edit Profiles
 >>>>
 プロファイルを編集
-=== basher.py, 9759
+=== basher.py, 9850
 Save Profiles
 >>>>
 
-=== basher.py, 9809
+=== basher.py, 9900
 Load Masters
 >>>>
 
-=== basher.py, 9828
+=== basher.py, 9919
 Import Face
 >>>>
 
-=== basher.py, 9873
+=== basher.py, 9964
 No player (PC) faces found in %s
 >>>>
 
-=== basher.py, 9885
+=== basher.py, 9976
 Diff Masters
 >>>>
 
-=== basher.py, 9896
+=== basher.py, 9987
 Active Masters
 >>>>
 
-=== basher.py, 9905
+=== basher.py, 9996
 Masters are the same
 >>>>
 
-=== basher.py, 9910
+=== basher.py, 10001
 Removed Masters (%s):\n*
 >>>>
 
-=== basher.py, 9914
+=== basher.py, 10005
 Added Masters (%s):\n*
 >>>>
 
-=== basher.py, 9958
+=== basher.py, 10049
 Armor\nFlags
 >>>>
 
-=== basher.py, 9963
+=== basher.py, 10054
 Clothing\nFlags
 >>>>
 
-=== basher.py, 9985
+=== basher.py, 10076
 Name is too long
 >>>>
 
-=== basher.py, 9988
+=== basher.py, 10079
 Name is already used
 >>>>
 
-=== basher.py, 9998
+=== basher.py, 10089
 No changes made
 >>>>
 
-=== basher.py, 10010
+=== basher.py, 10101
 Names modified: %d
 >>>>
 
-=== basher.py, 10015
+=== basher.py, 10106
 Rename Enchanted
 >>>>
 
-=== basher.py, 10015
+=== basher.py, 10106
 Rename Spells
 >>>>
 
-=== basher.py, 10015
+=== basher.py, 10106
 Rename Potions
 >>>>
 
-=== basher.py, 10047
+=== basher.py, 10138
 No items to edit
 >>>>
 
-=== basher.py, 10061
+=== basher.py, 10152
 Loading Masters
 >>>>
 
-=== basher.py, 10102
+=== basher.py, 10193
 Delete Spells
 >>>>
 
-=== basher.py, 10110
+=== basher.py, 10201
 Player Spells
 >>>>
 
-=== basher.py, 10120
+=== basher.py, 10211
 Set Number of Uses for Weapon Enchantments
 >>>>
 
-=== basher.py, 10127
+=== basher.py, 10218
 Enter the number of uses you desire per recharge for all custom made enchantements.\n(Enter 0 for unlimited uses)
 >>>>
 
-=== basher.py, 10177
+=== basher.py, 10268
 You can't move saves to the current profile!
 >>>>
 
-=== basher.py, 10185
+=== basher.py, 10276
 A file named %s already exists in %s. Overwrite it?
 >>>>
 
-=== basher.py, 10187
+=== basher.py, 10278
 Move File
 >>>>
 
-=== basher.py, 10198
+=== basher.py, 10289
 %d files copied to %s
 >>>>
 
-=== basher.py, 10198
+=== basher.py, 10289
 Copy File
 >>>>
 
-=== basher.py, 10205
+=== basher.py, 10296
 Repair Abomb
 >>>>
 
-=== basher.py, 10221
+=== basher.py, 10312
 Abomb counter is too low to reset
 >>>>
 
-=== basher.py, 10223
+=== basher.py, 10314
 Reset Abomb counter? (Current progress: %.0f%%.)\n\nNote: Abomb animation slowing won't occur until progress is near 100%%
 >>>>
 
-=== basher.py, 10227
+=== basher.py, 10318
 Abomb counter reset
 >>>>
 
-=== basher.py, 10234
+=== basher.py, 10325
 Repair Factions
 >>>>
 
-=== basher.py, 10240
+=== basher.py, 10331
 This will (mostly) repair faction membership errors due to Wrye Bash v 105 bug and/or faction changes in underlying mods.\n\nWARNING! This repair is NOT perfect! Do not use it unless you have to!
 >>>>
 
-=== basher.py, 10241
+=== basher.py, 10332
 Update NPC Levels
 >>>>
 
-=== basher.py, 10243
+=== basher.py, 10334
 Restore dropped factions too? WARNING: This may involve clicking through a LOT of yes/no dialogs
 >>>>
 
-=== basher.py, 10281
+=== basher.py, 10372
 NPC Factions Restored/UnNulled
 >>>>
 
-=== basher.py, 10284
+=== basher.py, 10375
 Updating
 >>>>
 
-=== basher.py, 10341
+=== basher.py, 10432
 Restore %s to %s faction?
 >>>>
 
-=== basher.py, 10370
+=== basher.py, 10461
 Repair Hair
 >>>>
 
-=== basher.py, 10379
+=== basher.py, 10470
 Hair repaired
 >>>>
 
-=== basher.py, 10381
+=== basher.py, 10472
 No repair necessary
 >>>>
 
-=== basher.py, 10388
+=== basher.py, 10479
 Reweigh Potions
 >>>>
 
-=== basher.py, 10395
+=== basher.py, 10486
 Set weight of all player potions to
 >>>>
 
-=== basher.py, 10401
+=== basher.py, 10492
 Invalid weight: %f
 >>>>
 
-=== basher.py, 10423
+=== basher.py, 10514
 Potions reweighed: %d
 >>>>
 
-=== basher.py, 10426
+=== basher.py, 10517
 No potions to reweigh!
 >>>>
 
-=== basher.py, 10435
+=== basher.py, 10526
 Statistics
 >>>>
 
-=== basher.py, 10447
+=== basher.py, 10538
 Calculating statistics
 >>>>
 
-=== basher.py, 10460
-fose Statistics
+=== basher.py, 10551
+nvse Statistics
 >>>>
 
-=== basher.py, 10474
-fose
+=== basher.py, 10565
+nvse
 >>>>
 
-=== basher.py, 10492
+=== basher.py, 10583
 Remove Bloat
 >>>>
 
-=== basher.py, 10500
+=== basher.py, 10591
 Scanning for Bloat
 >>>>
 
-=== basher.py, 10510
+=== basher.py, 10601
 No bloating found
 >>>>
 
-=== basher.py, 10518
+=== basher.py, 10609
 Null Ref Objects: %s\n
 >>>>
 
-=== basher.py, 10519
+=== basher.py, 10610
 Remove savegame bloating?\n%s\nWARNING: This is a risky procedure that may corrupt your savegame! Use only if necessary!
 >>>>
 
-=== basher.py, 10520
+=== basher.py, 10611
 Remove bloating?
 >>>>
 
-=== basher.py, 10523
+=== basher.py, 10614
 Removing Bloat
 >>>>
 
-=== basher.py, 10529
+=== basher.py, 10620
 Uncreated Objects: %d\nUncreated Refs: %d\nUnNulled Refs: %d
 >>>>
 
-=== basher.py, 10547
+=== basher.py, 10638
 This will relevel the NPCs in the selected save game(s) according to the npc levels in the currently active mods. This supercedes the older "Import NPC Levels" command
 >>>>
 
-=== basher.py, 10577
+=== basher.py, 10668
 NPCs Releveled
 >>>>
 
-=== basher.py, 10618
+=== basher.py, 10709
 \n\nSome mods had load errors and were skipped:\n*
 >>>>
 
-=== basher.py, 10630
+=== basher.py, 10721
 Next Shot
 >>>>
 
-=== basher.py, 10638
+=== basher.py, 10729
 Screenshot base name, optionally with next screenshot number.\nE.g. ScreenShot or ScreenShot_101 or Subdir\\ScreenShot_201
 >>>>
 
-=== basher.py, 10665
+=== basher.py, 10756
 Convert to %s
 >>>>
 %sに変換
-
-=== basher.py, 10672
+=== basher.py, 10763
 Converting to %s
 >>>>
 %sに変換中
-
-=== basher.py, 10701
+=== basher.py, 10792
 Enter new name. E.g. Screenshot 123.bmp
 >>>>
 
-=== basher.py, 10730
+=== basher.py, 10821
 Import Archives
 >>>>
 アーカイブをインポート
-=== basher.py, 10736
+=== basher.py, 10827
 Import message archive(s)
 >>>>
 メッセージアーカイブをインポート
-=== basher.py, 10753
+=== basher.py, 10844
 Delete Messages
 >>>>
 メッセージを削除
-=== basher.py, 10769
+=== basher.py, 10860
 Add New Person
 >>>>
 新しい人物を追加
-=== basher.py, 10772
+=== basher.py, 10863
 Add new person
 >>>>
 新しい人物を追加
-=== basher.py, 10775
+=== basher.py, 10866
 already exists
 >>>>
 既に存在している
-=== basher.py, 10786
+=== basher.py, 10877
 Export
 >>>>
 エクスポート
-=== basher.py, 10788
+=== basher.py, 10879
 Export People
 >>>>
 
-=== basher.py, 10793
+=== basher.py, 10884
 Export people to text file
 >>>>
 
-=== basher.py, 10798
+=== basher.py, 10889
 Records exported: %d
 >>>>
 
-=== basher.py, 10807
+=== basher.py, 10898
 Import People
 >>>>
 
-=== basher.py, 10812
+=== basher.py, 10903
 Import people from text file
 >>>>
 
-=== basher.py, 10817
+=== basher.py, 10908
 People imported: %d
 >>>>
 
-=== basher.py, 10851
+=== basher.py, 10942
 Change to
 >>>>
 
-=== basher.py, 10861
+=== basher.py, 10952
 Change master name to
 >>>>
 
-=== basher.py, 10884
+=== basher.py, 10975
 Disable
 >>>>
 
-=== basher.py, 11037
+=== basher.py, 11129
 Executing BOSS
 >>>>
 
-=== basher.py, 11039
+=== basher.py, 11132
 Processing... deghosting mods
 >>>>
 
-=== basher.py, 11050
+=== basher.py, 11158
 Processing... launching BOSS
 >>>>
 
-=== basher.py, 11079
-FOSE Disabled
+=== basher.py, 11167
+Used Path: %s
 >>>>
 
-=== basher.py, 11079
-FOSE Enabled
+=== basher.py, 11168
+Used Arguments
 >>>>
 
-=== basher.py, 11116
+=== basher.py, 11201
+NVSE Disabled
+>>>>
+
+=== basher.py, 11201
+NVSE Enabled
+>>>>
+
+=== basher.py, 11238
 Auto-Quit Disabled
 >>>>
 
-=== basher.py, 11116
+=== basher.py, 11238
 Auto-Quit Enabled
 >>>>
 
-=== basher.py, 11136
+=== basher.py, 11258
 Help File
 >>>>
 
-=== basher.py, 11183
+=== basher.py, 11305
 Launch BashMon
 >>>>
 
-=== basher.py, 11276
-Launch Fallout3
+=== basher.py, 11401
+Launch FalloutNV
 >>>>
 
-=== basher.py, 11277
-Launch Fallout3 + FOSE
+=== basher.py, 11402
+Launch FalloutNV + NVSE
 >>>>
 
-=== basher.py, 11283
+=== basher.py, 11408
 Launch GECK
 >>>>
 
-=== basher.py, 11284
-Launch GECK + FOSE
+=== basher.py, 11409
+Launch GECK + NVSE
 >>>>
 
-=== basher.py, 11290
+=== basher.py, 11415
 Launch FOMM
 >>>>
 
-=== basher.py, 11329
+=== basher.py, 11420
+Launch NVMM
+>>>>
+
+=== basher.py, 11459
 Launch BSA Commander
 >>>>
 
-=== basher.py, 11348
-Launch FO3Edit
+=== basher.py, 11473
+Launch FNVMasterRestore
 >>>>
 
-=== basher.py, 11363
-Launch BOSS
+=== basher.py, 11478
+Launch FNVEdit
 >>>>
 
-=== basher.py, 11369
-Launch AutoCad
->>>>
-
-=== basher.py, 11374
-Launch Blender
->>>>
-
-=== basher.py, 11379
-Launch Dogwaffle
->>>>
-
-=== basher.py, 11384
-Launch Gmax
->>>>
-
-=== basher.py, 11389
-Launch Maya
->>>>
-
-=== basher.py, 11394
-Launch 3dsMax
->>>>
-
-=== basher.py, 11399
-Launch Milkshape 3D
->>>>
-
-=== basher.py, 11404
-Launch Wings 3D
->>>>
-
-=== basher.py, 11410
-Launch Nifskope
->>>>
-
-=== basher.py, 11416
-Launch AniFX
->>>>
-
-=== basher.py, 11421
-Launch Art Of Illusion
->>>>
-
-=== basher.py, 11426
-Launch Artweaver
->>>>
-
-=== basher.py, 11431
-Launch DDSConverter
->>>>
-
-=== basher.py, 11436
-Launch Genetica
->>>>
-
-=== basher.py, 11441
-Launch Genetica Viewer
->>>>
-
-=== basher.py, 11446
-Launch GIMP
->>>>
-
-=== basher.py, 11451
-Launch GIMP Shop
->>>>
-
-=== basher.py, 11456
-Launch IcoFX
->>>>
-
-=== basher.py, 11461
-Launch Inkscape
->>>>
-
-=== basher.py, 11466
-Launch IrfanView
->>>>
-
-=== basher.py, 11471
-Launch Paint.NET
->>>>
-
-=== basher.py, 11476
-Launch Photoshop
->>>>
-
-=== basher.py, 11481
-Launch Pixel Studio Pro
->>>>
-
-=== basher.py, 11486
-Launch TwistedBrush
->>>>
-
-=== basher.py, 11492
-Launch Audacity
+=== basher.py, 11483
+Launch FNVMasterUpdate
 >>>>
 
 === basher.py, 11497
+Launch BOSS
+>>>>
+
+=== basher.py, 11503
+Launch AutoCad
+>>>>
+
+=== basher.py, 11508
+Launch Blender
+>>>>
+
+=== basher.py, 11513
+Launch Dogwaffle
+>>>>
+
+=== basher.py, 11518
+Launch Gmax
+>>>>
+
+=== basher.py, 11523
+Launch Maya
+>>>>
+
+=== basher.py, 11528
+Launch 3dsMax
+>>>>
+
+=== basher.py, 11533
+Launch Milkshape 3D
+>>>>
+
+=== basher.py, 11538
+Launch Mudbox
+>>>>
+
+=== basher.py, 11543
+Launch Sculptris
+>>>>
+
+=== basher.py, 11548
+Launch Softimage Mod Tool
+>>>>
+
+=== basher.py, 11553
+Launch SpeedTree
+>>>>
+
+=== basher.py, 11558
+Launch Tree\[d\]
+>>>>
+
+=== basher.py, 11563
+Launch Wings 3D
+>>>>
+
+=== basher.py, 11569
+Launch Nifskope
+>>>>
+
+=== basher.py, 11575
+Launch AniFX
+>>>>
+
+=== basher.py, 11580
+Launch Art Of Illusion
+>>>>
+
+=== basher.py, 11585
+Launch Artweaver
+>>>>
+
+=== basher.py, 11590
+Launch CrazyBump
+>>>>
+
+=== basher.py, 11595
+Launch DDSConverter
+>>>>
+
+=== basher.py, 11600
+Launch DeepPaint
+>>>>
+
+=== basher.py, 11605
+Launch FastStone Image Viewer
+>>>>
+
+=== basher.py, 11610
+Launch Genetica
+>>>>
+
+=== basher.py, 11615
+Launch Genetica Viewer
+>>>>
+
+=== basher.py, 11620
+Launch GIMP
+>>>>
+
+=== basher.py, 11625
+Launch GIMP Shop
+>>>>
+
+=== basher.py, 11630
+Launch IcoFX
+>>>>
+
+=== basher.py, 11635
+Launch Inkscape
+>>>>
+
+=== basher.py, 11640
+Launch IrfanView
+>>>>
+
+=== basher.py, 11645
+Launch MaPZone
+>>>>
+
+=== basher.py, 11650
+Launch MyPaint
+>>>>
+
+=== basher.py, 11655
+Launch Nvidia Melody
+>>>>
+
+=== basher.py, 11660
+Launch Paint.NET
+>>>>
+
+=== basher.py, 11665
+Launch PaintShop Photo Pro
+>>>>
+
+=== basher.py, 11670
+Launch Photoshop
+>>>>
+
+=== basher.py, 11675
+Launch PhotoScape
+>>>>
+
+=== basher.py, 11680
+Launch PhotoSEAM
+>>>>
+
+=== basher.py, 11685
+Launch Photobie
+>>>>
+
+=== basher.py, 11690
+Launch PhotoFiltre
+>>>>
+
+=== basher.py, 11695
+Launch Pixel Studio Pro
+>>>>
+
+=== basher.py, 11700
+Launch Pixia
+>>>>
+
+=== basher.py, 11705
+Launch TextureMaker
+>>>>
+
+=== basher.py, 11710
+Launch TwistedBrush
+>>>>
+
+=== basher.py, 11715
+Launch Windows Texture Viewer
+>>>>
+
+=== basher.py, 11720
+Launch xNormal
+>>>>
+
+=== basher.py, 11725
+Launch XnView
+>>>>
+
+=== basher.py, 11731
+Launch Audacity
+>>>>
+
+=== basher.py, 11736
 Launch ABC Amber Audio Converter
 >>>>
 
-=== basher.py, 11502
+=== basher.py, 11741
+Launch Switch
+>>>>
+
+=== basher.py, 11746
 Launch Fraps
 >>>>
 
-=== basher.py, 11512
+=== basher.py, 11751
+Interactive Map of Cyrodiil and Shivering Isles
+>>>>
+
+=== basher.py, 11756
 Launch LogitechKeyboard
 >>>>
 
-=== basher.py, 11517
+=== basher.py, 11761
 Launch MediaMonkey
 >>>>
 
-=== basher.py, 11522
+=== basher.py, 11766
 Launch Notepad++
 >>>>
 
-=== basher.py, 11527
+=== basher.py, 11771
 Launch Steam
 >>>>
 
-=== basher.py, 11532
+=== basher.py, 11776
+Launch EVGA Precision
+>>>>
+
+=== basher.py, 11781
 Launch WinMerge
 >>>>
 
-=== basher.py, 11537
+=== basher.py, 11786
+Launch FreeMind
+>>>>
+
+=== basher.py, 11791
+Launch Freeplane
+>>>>
+
+=== basher.py, 11796
 Launch FileZilla
 >>>>
 
-=== basher.py, 11542
+=== basher.py, 11801
 Launch Egg Translator
 >>>>
 
-=== basher.py, 11547
+=== basher.py, 11806
 Launch RAD Video Tools
 >>>>
 
-=== basher.py, 11773
+=== basher.py, 11811
+Launch WinSnap
+>>>>
+
+=== basher.py, 12037
 Sort by
 >>>>
 ソート順
-=== basher.py, 11858
+=== basher.py, 12122
 Conversions
 >>>>
 変換
-=== basher.py, 11892
+=== basher.py, 12156
 Load
 >>>>
 ロード
-=== basher.py, 12032
+=== basher.py, 12298
 Profile
 >>>>
 プロファイル
-=== basher.py, 12057
+=== basher.py, 12323
 Copy To
 >>>>
 
