@@ -37,7 +37,7 @@ Warning
 === balt.py, 341
 Don't show this in the future
 >>>>
-
+今後、これを表示しない
 === balt.py, 435
 Error
 >>>>
@@ -2377,7 +2377,7 @@ Load Error Mods
 === bosh.py, 15973
 World Orphans
 >>>>
-
+親のないWorld
 === bosh.py, 15977
 Compiled All
 >>>>
@@ -4841,7 +4841,7 @@ File skipped: %s. File is already present
 === basher.py, 5682
 Delete Files
 >>>>
-
+ファイルを削除
 === basher.py, 5711
 This mod has an associated archive (%s.bsa) and an associated voice directory (Sound\\Voices\\%s), which will not be attached to the duplicate mod.\n\nNote that the BSA archive may also contain a voice directory (Sound\\Voices\\%s), which would remain detached even if a duplicate archive were also created
 >>>>
@@ -4865,7 +4865,7 @@ Hide Files
 === basher.py, 5768
 A file named %s already exists in the hidden files directory. Overwrite it?
 >>>>
-
+隠しファイルディレクトリに%sというファイルが存在します。上書きしますか?
 === basher.py, 5781
 List Masters
 >>>>
@@ -4873,23 +4873,23 @@ List Masters
 === basher.py, 5799
 Redate
 >>>>
-
+日付を変更
 === basher.py, 5808
 Redate selected mods starting at
 >>>>
-
+選択されたMODの日付を変更
 === basher.py, 5809
 Redate Mods
 >>>>
-
+MODの日付を変更
 === basher.py, 5818
 Bash cannot handle dates greater than January 19, 2038.)
 >>>>
-
+2038/1/19以降の日付は扱えません
 === basher.py, 5836
 Sort
 >>>>
-
+ソート
 === basher.py, 5841
 Reorder selected mods in alphabetical order? The first file will be given the date/time of the current earliest file in the group, with consecutive files following at 1 minute increments.\n\nNote that this operation cannot be undone. Note also that some mods need to be in a specific order to work correctly, and this sort operation may break that order
 >>>>
@@ -4897,7 +4897,7 @@ Reorder selected mods in alphabetical order? The first file will be given the da
 === basher.py, 5842
 Sort Mods
 >>>>
-
+MODをソート
 === basher.py, 5869
 Snapshot
 >>>>
@@ -4975,11 +4975,11 @@ Auto-Refresh Projects
 === basher.py, 6096
 Enabled
 >>>>
-
+有効
 === basher.py, 6103
 Do you want to enable Installers? If you do, Bash will first need to initialize some data. If there are many new mods to process, then this may take on the order of five minutes
 >>>>
-
+Installersを有効にしますか? そうするとBashは最初にいくらかのデータを初期化する必要があります。 処理するMODが多ければ、これには5分程度の時間がかかります。
 === basher.py, 6119
 BSA Redirection
 >>>>
@@ -4987,15 +4987,15 @@ BSA Redirection
 === basher.py, 6139
 Show Inactive Conflicts
 >>>>
-
+非活性の衝突を表示
 === basher.py, 6153
 Show Lower Conflicts
 >>>>
-
+優先度が下の衝突を表示
 === basher.py, 6167
 Avoid at Startup
 >>>>
-
+起動時にBAINを避ける
 === basher.py, 6185
 Refresh Data
 >>>>
@@ -5015,7 +5015,7 @@ Clean Data Directory
 === basher.py, 6216
 Show Replacers Tab
 >>>>
-
+Replacersタブを表示
 === basher.py, 6224
 This option will take effect when Bash is restarted. Note that if any files are present in Data\\Replacers, then the Replacers tab will be shown regardless of this setting
 >>>>
@@ -5023,19 +5023,19 @@ This option will take effect when Bash is restarted. Note that if any files are 
 === basher.py, 6232
 Skip Screenshots
 >>>>
-
+スクリーンショットをスキップ
 === basher.py, 6249
 Skip Images
 >>>>
-
+画像をスキップ
 === basher.py, 6266
 Skip Docs
 >>>>
-
+ドキュメントをスキップ
 === basher.py, 6283
 Skip DistantLOD
 >>>>
-
+DistantLODをスキップ
 === basher.py, 6300
 Sort by Active
 >>>>
@@ -5495,15 +5495,15 @@ Balo Groups
 === basher.py, 7704
 Dump Translator
 >>>>
-翻訳カタログを出力
+翻訳ファイルを出力
 === basher.py, 7708
 Generate Bash program translator file?\n\nThis function is for translating Bash itself (NOT mods) into non-English languages. For more info, see Internationalization section of Bash readme
 >>>>
-
+Bashプログラム翻訳ファイルを出力しますか?\n\nこの機能は、(MODではなく)Bash自身を英語以外の言語に翻訳するためのものです。 詳しい情報に関しては、Bash readmeのInternationalization部を読んでください。
 === basher.py, 7738
 %d translation keys written to Mopy\\Data\\%s
 >>>>
-
+%d項目の翻訳辞書をMopy\\Data\\%sに書き出しました
 === basher.py, 7746
 List Mods
 >>>>
@@ -5983,7 +5983,7 @@ Details
 === basher.py, 9230
 Sorting records
 >>>>
-
+レコードをソート
 === basher.py, 9234
 (Details not provided for this record type.)\n\n
 >>>>
@@ -5991,7 +5991,7 @@ Sorting records
 === basher.py, 9254
 Remove World Orphans
 >>>>
-はぐれWorldレコードを削除
+親のないWorldを削除
 === basher.py, 9259
 In some circumstances, editing a mod will leave orphaned cell records in the world group. This command will remove such orphans
 >>>>
@@ -5999,11 +5999,11 @@ In some circumstances, editing a mod will leave orphaned cell records in the wor
 === basher.py, 9278
 Saving %s
 >>>>
-
+セーブ中 %s
 === basher.py, 9285
 Orphan cell blocks removed: %d
 >>>>
-
+親のないcellブロックを削除しました: %d
 === basher.py, 9294
 Readme
 >>>>
