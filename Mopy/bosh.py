@@ -9988,6 +9988,9 @@ class FileInfos(DataDict):
             if name in newNames: continue #--Must be a ghost duplicate. Ignore it.
             oldInfo = self.data.get(name)
             isAdded = name not in oldNames
+            if oldInfo is None and isAdded == False:
+                deprint(oldInfo,name,isAdded,oldNames,self.data)
+                isAdded = True
             isUpdated = not isAdded and not fileInfo.sameAs(oldInfo)
             if isAdded or isUpdated:
                 errorMessage = fileInfo.getHeaderError()
