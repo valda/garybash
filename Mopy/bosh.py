@@ -10784,6 +10784,7 @@ class ConfigHelpers:
         """Initialialize."""
         #--Boss Master List or if that doesn't exist use the taglist
         #version notes:
+        # 1.8   = 3
         # 1.7   = 2
         #>1.6.2 = 393218+
         # 1.6.1 = 393217
@@ -10791,15 +10792,25 @@ class ConfigHelpers:
         #<1.6   = 0
         if dirs['app'].join('BOSS//BOSS.exe').exists():
             self.bossVersion = 2
-            self.bossMasterPath = dirs['app'].join('BOSS//masterlist.txt')
-            self.bossUserPath = dirs['app'].join('BOSS//userlist.txt')
+            try:
+                import win32api
+                info = win32api.GetFileVersionInfo(dirs['app'].join('BOSS','BOSS.exe').s, '\\')
+                ms = info['FileVersionMS']
+                ls = info['FileVersionLS']
+                version = (win32api.HIWORD(ms), win32api.LOWORD(ms), win32api.HIWORD(ls), win32api.LOWORD(ls))
+                if version >= (1,8,0,0):
+                    self.bossVersion = 3
+            except:
+                pass
+            self.bossMasterPath = dirs['app'].join('BOSS','masterlist.txt')
+            self.bossUserPath = dirs['app'].join('BOSS','userlist.txt')
         else:
             try:
                 import win32api
                 self.bossVersion = win32api.GetFileVersionInfo(dirs['mods'].join('BOSS.exe').s, '\\')[u'FileVersionLS']
             except: #any version prior to 1.6.1 will fail and hence set to None and then try to set based on masterlist path.
                 self.bossVersion = None
-            self.bossMasterPath = dirs['mods'].join('BOSS//masterlist.txt')
+            self.bossMasterPath = dirs['mods'].join('BOSS','masterlist.txt')
             if self.bossVersion == None:
                 if not self.bossMasterPath.exists():
                     self.bossMasterPath = dirs['mods'].join('masterlist.txt')
@@ -10809,7 +10820,7 @@ class ConfigHelpers:
                         self.bossMasterPath = dirs['patches'].join('taglist.txt')
                 else: self.bossVersion = 1
             elif self.bossVersion in [393217,393218]: self.bossVersion = 1
-            self.bossUserPath = dirs['mods'].join('BOSS//userlist.txt')
+            self.bossUserPath = dirs['mods'].join('BOSS','userlist.txt')
         self.bossMasterTime = 0
         self.bossUserTime = 0
         self.bossMasterTags = {}
@@ -10826,7 +10837,7 @@ class ConfigHelpers:
         reComment = re.compile(r'^\\.*')
         reMod = re.compile(r'(^[_[(\w!].*?\.es[pm]$)',re.I)
         reBashTags = re.compile(r'(APPEND:\s|REPLACE:\s)?(%\s+{{BASH:|TAG\s+{{BASH:)([^}]+)(}})(.*remove \[)?([^\]]+)?(\])?')
-        reDirty = re.compile(r'IF\s*\(\s*(.*?)\s*\|\s*[\"\'](.*?)[\'\"]\s*\)\s*DIRTY:\s*(.*)\s*$')
+        reDirty = re.compile(r'.*?IF\s*\(\s*([a-fA-F0-9]*)\s*\|\s*[\"\'](.*?)[\'\"]\s*\).*?DIRTY:\s*(.*?)\s*$')
         if path.exists():
             if path.mtime != mtime:
                 tags.clear()
@@ -10850,14 +10861,17 @@ class ConfigHelpers:
                         tags[GPath(mod)] = tuple(modTags)
                     elif maDirty:
                         # BOSS 1.7+ dirty mod listing
-                        crc = long(maDirty.group(1),16)
-                        ##mod = LString(maDirty.group(2))
-                        action = maDirty.group(3)
-                        if 'tes4edit' in action.lower():
-                            cleanIt = True
-                        else:
-                            cleanIt = False
-                        self.bossDirtyMods[crc] = (cleanIt, action)
+                        try:
+                            crc = long(maDirty.group(1),16)
+                            ##mod = LString(maDirty.group(2))
+                            action = maDirty.group(3)
+                            if 'tes4edit' in action.lower() or 'fo3edit' in action.lower():
+                                cleanIt = True
+                            else:
+                                cleanIt = False
+                            self.bossDirtyMods[crc] = (cleanIt, action)
+                        except:
+                            deprint("An error occured parsing BOSS's masterlist for dirty crc's:\n", traceback=True)
                 ins.close()
                 self.bossMasterTime = path.mtime
         if userpath.exists():
@@ -10936,6 +10950,8 @@ class ConfigHelpers:
         shouldDeactivateA = [x for x in active if 'Deactivate' in modInfos[x].getBashTags()]
         shouldDeactivateB = [x for x in active if 'NoMerge' in modInfos[x].getBashTags()]
         shouldActivateA = [x for x in imported if 'MustBeActiveIfImported' in modInfos[x].getBashTags() and x not in active]
+        #--Mods with invalid TES4 version
+        invalidVersion = [(x,str(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in (0.8,1.0)]
         if True:
             #--Look for dirty edits
             shouldClean = {}
@@ -10952,6 +10968,8 @@ class ConfigHelpers:
                         ret = ModCleaner.scan_Many(scan,ModCleaner.ITM|ModCleaner.UDR,progress)
                         for i,mod in enumerate(scan):
                             udrs,itms,fog = ret[i]
+                            #if mod.name == GPath('Unofficial Oblivion Patch.esp'): itms.discard((GPath('Oblivion.esm'),0x00AA3C))
+                            if mod.header.author in ('BASHED PATCH','BASHED LISTS'): itms = set()
                             if udrs or itms:
                                 cleanMsg = []
                                 if udrs:
@@ -10995,6 +11013,11 @@ class ConfigHelpers:
             log.setHeader(_("=== Mods with special cleaning instructions"))
             log(_("Following mods have special instructions for cleaning with FO3Edit"))
             for mod in sorted(shouldCleanMaybe):
+                log('* __'+mod[0].s+':__  '+mod[1])
+        if invalidVersion:
+            log.setHeader(_("=== Mods with non standard TES4 versions"))
+            log(_("Following mods have a TES4 version that isn't recognized as one of the standard versions (0.8 and 1.0).  It is untested what effect this can have on the game, but presumably Oblivion will refuse to load anything above 1.0"))
+            for mod in sorted(invalidVersion):
                 log('* __'+mod[0].s+':__  '+mod[1])
         #--Missing/Delinquent Masters
         if showModList:
