@@ -7904,6 +7904,10 @@ class Mods_BOSSDisableLockTimes(Link):
 class Mods_BOSSShowUpdate(Link):
     """Toggle Lock Times disabling when launching BOSS through Bash."""
     def AppendToMenu(self,menu,window,data):
+        if bosh.configHelpers.bossVersion >= 3:
+            # BOSS 1.8+ don't supply this option, as it's on by default,
+            # and configurable through the BOSS ini
+            return
         Link.AppendToMenu(self,menu,window,data)
         menuItem = wx.MenuItem(menu,self.id,_('Always Update BOSS Masterlist prior to running BOSS.'),help="If selected will update tell BOSS to update the masterlist before sorting the mods.",kind=wx.ITEM_CHECK)
         menu.AppendItem(menuItem)
@@ -11133,7 +11137,8 @@ class App_BOSS(App_Button):
                     for fileName in bosh.modInfos:
                         bosh.modInfos[fileName].setGhost(False)
                 if version >= 1:
-                    if settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85):
+                    if version <= 2 and (settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85)):
+                        # Disable for BOSS 1.8+ (specified in the BOSS.ini now)
                         exeArgs += ('-u',) # Update - BOSS version 1.6+
                     if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
                         exeArgs += ('-r 2',) # Revert level 2 - BOSS version 1.6+
@@ -11480,11 +11485,12 @@ def InitStatusBar():
     configHelpers = bosh.ConfigHelpers()
     configHelpers.refresh()
     version = configHelpers.bossVersion
-    if version > 2: version = 1
+    if version in (2,3): version = 2
+    elif version > 3: version = 1
     elif version < 0: version = 0
     BashStatusBar.buttons.append( #BOSS --
         App_BOSS(
-            (bosh.dirs['app'].join('Data\\BOSS-F.bat'),bosh.dirs['app'].join('Data\\BOSS.exe'),bosh.dirs['app'].join('BOSS\\BOSS.exe'))[version],
+            (bosh.dirs['app'].join('Data','BOSS-F.bat'),bosh.dirs['app'].join('Data','BOSS.exe'),bosh.dirs['app'].join('BOSS','BOSS.exe'))[version],
             Image(r'images/Boss'+bosh.inisettings['IconSize']+'.png'),
             _("Launch BOSS")))
     if bosh.inisettings['ShowModelingToolLaunchers']:
