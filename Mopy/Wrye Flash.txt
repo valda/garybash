@@ -14,6 +14,9 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 28 [07/08/2011]
+* Preliminary support for BOSS 1.8 (from WryeBash 293).
+
 === 27 [06/11/2011]
 * Support for BOSS 1.7 (from WryeBash 292).
 
