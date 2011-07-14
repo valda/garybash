@@ -14,6 +14,9 @@
 Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
 
 == Versions ===================================================================
+=== 14 [07/15/2011]
+* Advanced ini options for compatibility with mTES4 Manager: __sInstallersData__ and __sBashModData__ to specify where **Installers.dat**, **Converters.dat**, etc are stored by Wrye Flash.
+
 === 13 [07/08/2011]
 * Preliminary support for BOSS 1.8 (from WryeBash 293).
 * Fixed an author name of skeleton esp bundled in "Mopy/Extras/Bashed Patch, 0.esp".
