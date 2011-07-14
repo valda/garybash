@@ -12774,7 +12774,7 @@ class InstallersData(bolt.TankData, DataDict):
     def __init__(self):
         """Initialize."""
         self.dir = dirs['installers']
-        self.bashDir = self.dir.join('Bash')
+        self.bashDir = dirs['bainData']
         #--Tank Stuff
         bolt.TankData.__init__(self,settings)
         self.tankKey = 'bash.installers'
@@ -23041,6 +23041,78 @@ except ImportError:
             path = reEnv.sub(subEnv,path)
             return GPath(path)
 
+def testPermissions(path,permissions='rwcd'):
+    '''Test file permissions for a path:
+        r = read permission
+        w = write permission
+        c = file creation permission
+        d = file deletion permission'''
+    return True # Temporarily disabled, for testing purposes
+    path = GPath(path)
+    permissions = permissions.lower()
+    def getTemp(path):  # Get a temp file name
+        if path.isdir():
+            temp = path.join('temp.tmp')
+        else:
+            temp = path.temp
+        while temp.exists():
+            temp = temp.temp
+        return temp
+    def getSmallest(path):  # Get the smallest file in the directory,
+        if path.isfile(): return path
+        smallsize = -1
+        ret = None
+        for file in path.list():
+            file = path.join(file)
+            if not file.isfile(): continue
+            size = file.size
+            if size < smallsize and smallsize >= 0:
+                smallsize = size
+                ret = file
+        return ret
+    #--Test read permissions
+    try:
+        if 'r' in permissions and path.exists():
+            file = getSmallest(path)
+            if file:
+                with path.open('rb') as file:
+                    pass
+        #--Test write permissions
+        if 'w' in permissions and path.exists():
+            file = getSmallest(path)
+            if file:
+                with file.open('ab') as file:
+                    pass
+        #--Test file creation permission (only for directories)
+        if 'c' in permissions:
+            if path.isdir() or not path.exists():
+                if not path.exists():
+                    path.makedirs()
+                    removeAtEnd = True
+                else:
+                    removeAtEnd = False
+                temp = getTemp(path)
+                with temp.open('wb') as file:
+                    pass
+                temp.remove()
+                if removeAtEnd:
+                    path.removedirs()
+        #--Test file deletion permission
+        if 'd' in permissions and path.exists():
+            file = getSmallest(path)
+            if file:
+                temp = getTemp(file)
+                file.copyTo(temp)
+                file.remove()
+                temp.moveTo(file)
+    except Exception, e:
+        if getattr(e,'errno',0) == 13: # Access denied
+            return False
+        elif getattr(e,'winerror',0) == 183: # Cannot create file if already exists
+            return False
+        else: raise
+    return True
+
 def getFalloutPath(bashIni, path):
     if path: path = GPath(path)
     elif bashIni and bashIni.has_option('General', 'sFallout3Path') and not bashIni.get('General', 'sFallout3Path') == '.':
@@ -23109,6 +23181,22 @@ def getFalloutModsPath(bashIni):
     if not path.isabs(): path = dirs['app'].join(path)
     return path
 
+def getBainDataPath(bashIni):
+    if bashIni and bashIni.has_option('General','sInstallersData'):
+        path = GPath(bashIni.get('General','sInstallersData').strip())
+        if not path.isabs(): path = dirs['app'].join(path)
+    else:
+        path = dirs['installers'].join('Bash')
+    return path
+
+def getBashModDataPath(bashIni):
+    if bashIni and bashIni.has_option('General','sBashModData'):
+        path = GPath(bashIni.get('General','sBashModData').strip())
+        if not path.isabs(): path = dirs['app'].join(path)
+    else:
+        path = getFalloutModsPath(bashIni).join('Bash Mod Data')
+    return path
+
 def getLegacyPath(newPath, oldPath):
     return (oldPath,newPath)[newPath.isdir() or not oldPath.isdir()]
 
@@ -23145,17 +23233,37 @@ def initDirs(bashIni, personal, localAppData, falloutPath):
 
     #--Mod Data, Installers
     falloutMods = getFalloutModsPath(bashIni)
-    dirs['modsBash'] = falloutMods.join('Bash Mod Data')
+    dirs['modsBash'] = getBashModDataPath(bashIni)
     dirs['modsBash'] = getLegacyPath(dirs['modsBash'],dirs['app'].join('Data','Bash'))
 
     dirs['installers'] = falloutMods.join('Bash Installers')
     dirs['installers'] = getLegacyPath(dirs['installers'],dirs['app'].join('Installers'))
 
+    dirs['bainData'] = getBainDataPath(bashIni)
+
     dirs['converters'] = dirs['installers'].join('Bain Converters')
     dirs['dupeBCFs'] = dirs['converters'].join('--Duplicates')
+    dirs['corruptBCFs'] = dirs['converters'].join('--Corrupt')
+
+    #--Test correct permissions for the directories
+    badPermissions = []
+    for dir in dirs:
+        if not testPermissions(dirs[dir]):
+            badPermissions.append(dirs[dir])
+    if not testPermissions(falloutMods):
+        badPermissions.append(falloutMods)
+    if len(badPermissions) > 0:
+        # Do not have all the required permissions for all directories
+        # TODO: make this gracefully degrade.  IE, if only the BAIN paths are
+        # bad, just disable BAIN.  If only the saves path is bad, just disable
+        # saves related stuff.
+        msg = balt.fill(_('Wrye Bash cannot access the following paths:'))
+        msg += '\n\n'+ '\n'.join([' * '+dir.s for dir in badPermissions]) + '\n\n'
+        msg += balt.fill(_('See: "Wrye Bash.html, Installation - Windows Vista/7" for information on how to solve this problem.'))
+        raise PermissionError(msg)
 
     # create bash user folders, keep these in order
-    for key in ('modsBash','installers','converters','dupeBCFs'):
+    for key in ('modsBash','installers','converters','dupeBCFs','corruptBCFs','bainData'):
         dirs[key].makedirs()
 
 def initDefaultTools():
