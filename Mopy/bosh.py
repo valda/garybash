@@ -18318,11 +18318,11 @@ class ImportInventory(ImportPatcher):
             for fid,entries in mod_id_entries[modName].iteritems():
                 masterEntries = id_entries.get(fid)
                 if masterEntries is None: continue
-                masterItems = set(x.item for x in masterEntries)
-                modItems = set(x.item for x in entries)
+                masterItems = set((x.item,x.owner,x.condition) for x in masterEntries)
+                modItems = set((x.item,x.owner,x.condition) for x in entries)
                 removeItems = masterItems - modItems
                 addItems = modItems - masterItems
-                addEntries = [x for x in entries if x.item in addItems]
+                addEntries = [x for x in entries if (x.item,x.owner,x.condition) in addItems]
                 deltas = self.id_deltas.get(fid)
                 if deltas is None: deltas = self.id_deltas[fid] = []
                 deltas.append((removeItems,addEntries))
@@ -18347,18 +18347,18 @@ class ImportInventory(ImportPatcher):
                 changed = False
                 deltas = id_deltas.get(record.fid)
                 if not deltas: continue
-                removable = set(x.item for x in record.items)
+                removable = set((x.item,x.owner,x.condition) for x in record.items)
                 for removeItems,addEntries in reversed(deltas):
                     if removeItems:
                         #--Skip if some items to be removed have already been removed
                         if not removeItems.issubset(removable): continue
-                        record.items = [x for x in record.items if x.item not in removeItems]
+                        record.items = [x for x in record.items if (x.item,x.owner,x.condition) not in removeItems]
                         removable -= removeItems
                         changed = True
                     if addEntries:
-                        current = set(x.item for x in record.items)
+                        current = set((x.item,x.owner,x.condition) for x in record.items)
                         for entry in addEntries:
-                            if entry.item not in current:
+                            if (entry.item,entry.owner,entry.condition) not in current:
                                 record.items.append(entry)
                                 changed = True
                 if changed:
