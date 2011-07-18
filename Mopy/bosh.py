@@ -11569,7 +11569,7 @@ class ConfigHelpers:
         shouldDeactivateB = [x for x in active if 'NoMerge' in modInfos[x].getBashTags()]
         shouldActivateA = [x for x in imported if 'MustBeActiveIfImported' in modInfos[x].getBashTags() and x not in active]
         #--Mods with invalid TES4 version
-        invalidVersion = [(x,str(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in (0.8,1.0)]
+        invalidVersion = [(x,str(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in (1.32,1.33,1.34)]
         if True:
             #--Look for dirty edits
             shouldClean = {}
@@ -11634,7 +11634,7 @@ class ConfigHelpers:
                 log('* __'+mod[0].s+':__  '+mod[1])
         if invalidVersion:
             log.setHeader(_("=== Mods with non standard TES4 versions"))
-            log(_("Following mods have a TES4 version that isn't recognized as one of the standard versions (0.8 and 1.0).  It is untested what effect this can have on the game, but presumably Oblivion will refuse to load anything above 1.0"))
+            log(_("Following mods have a TES4 version that isn't recognized as one of the standard versions (1.32, 1.33 and 1.34).  It is untested what effect this can have on the game, but presumably Fallout New Vegas will refuse to load anything above 1.34"))
             for mod in sorted(invalidVersion):
                 log('* __'+mod[0].s+':__  '+mod[1])
         #--Missing/Delinquent Masters
