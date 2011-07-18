@@ -82,6 +82,17 @@ from bolt import _, LString, GPath, Flags, DataDict, SubProgress, cstrip, deprin
 from cint import *
 startupinfo = bolt.startupinfo
 
+#--Unicode
+#if bolt.bUseUnicode:
+if False:
+    exe7z = '7zUnicode.exe'
+    unicodeConvert = lambda text: unicode(text,'UTF-8')
+    stringBuffer = StringIO.StringIO
+else:
+    exe7z = '7z.exe'
+    unicodeConvert = lambda text: text
+    stringBuffer = cStringIO.StringIO
+
 # Singletons, Constants -------------------------------------------------------
 #--Constants
 #..Bit-and this with the fid to get the objectindex.
@@ -9576,6 +9587,36 @@ class ModInfo(FileInfo):
         self.header.flags1 = flags1
         self.setmtime()
 
+    def updateCrc(self):
+        """Force update of stored crc"""
+        path = self.getPath()
+        size = path.size
+        mtime = path.getmtime()
+        crc = path.crc
+        if crc != modInfos.table.getItem(self.name,'crc'):
+            modInfos.table.setItem(self.name,'crc',crc)
+            modInfos.table.setItem(self.name,'ignoreDirty',False)
+        modInfos.table.setItem(self.name,'crc_mtime',mtime)
+        modInfos.table.setItem(self.name,'crc_size',size)
+        return crc
+
+    def cachedCrc(self):
+        """Stores a cached crc, for quicker execution."""
+        path = self.getPath()
+        size = path.size
+        mtime = path.getmtime()
+        if (mtime != modInfos.table.getItem(self.name,'crc_mtime') or
+            size != modInfos.table.getItem(self.name,'crc_size')):
+            crc = path.crc
+            if crc != modInfos.table.getItem(self.name,'crc'):
+                modInfos.table.setItem(self.name,'crc',crc)
+                modInfos.table.setItem(self.name,'ignoreDirty',False)
+            modInfos.table.setItem(self.name,'crc_mtime',mtime)
+            modInfos.table.setItem(self.name,'crc_size',size)
+        else:
+            crc = modInfos.table.getItem(self.name,'crc')
+        return crc
+
     def hasTimeConflict(self):
         """True if has an mtime conflict with another mod."""
         return modInfos.hasTimeConflict(self.name)
@@ -9676,6 +9717,13 @@ class ModInfo(FileInfo):
             bashTags = maBashKeys.group(1).split(',')
             bashTags = [str.strip() for str in bashTags]
             return set(bashTags)
+
+    def getDirtyMessage(self):
+        """Returns a dirty message from BOSS."""
+        if modInfos.table.getItem(self.name,'ignoreDirty',False):
+            return (False,'')
+        crc = self.cachedCrc()
+        return configHelpers.getDirtyMessage(crc)
 
     #--Header Editing ---------------------------------------------------------
     def getHeader(self):
