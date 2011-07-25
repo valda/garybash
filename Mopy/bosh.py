@@ -123,6 +123,21 @@ readExts = set(('.rar',))
 readExts.update(set(writeExts))
 noSolidExts = set(('.zip',))
 settings  = None
+installersWindow = None
+
+allTags = sorted(('Body-F', 'Body-M', 'Body-Size-M', 'Body-Size-F', 'C.Climate', 'C.Light', 'C.Music', 'C.Name', 'C.RecordFlags',
+                  'C.Owner', 'C.Water','Deactivate', 'Delev', 'Eyes', 'Factions', 'Relations', 'Filter', 'Graphics', 'Hair',
+                  'IIM', 'Invent', 'Names', 'NoMerge', 'NpcFaces', 'R.Relations', 'Relev', 'Scripts', 'ScriptContents', 'Sound',
+                  'Stats', 'Voice-F', 'Voice-M', 'R.Teeth', 'R.Mouth', 'R.Ears', 'R.Head', 'R.Attributes-F',
+                  'R.Attributes-M', 'R.Skills', 'R.Description', 'Roads', 'Actors.Anims',
+                  'Actors.AIData', 'Actors.DeathItem', 'Actors.AIPackages', 'Actors.AIPackagesForceAdd', 'Actors.Stats',
+                  'Actors.ACBS', 'NPC.Class', 'Actors.CombatStyle', 'Creatures.Blood',
+                  'NPC.Race','Actors.Skeleton', 'NpcFacesForceFullImport', 'MustBeActiveIfImported',
+                  'Deflst', 'Destructible', 'WeaponMods'))
+
+allTagsSet = set(allTags)
+oldTags = sorted(('Merge',))
+oldTagsSet = set(oldTags)
 
 undefinedPath = GPath(r'C:\not\a\valid\path.exe')
 undefinedPaths = set([GPath(r'C:\Path\exe.exe'),undefinedPath])
@@ -320,7 +335,7 @@ reCsvExt  = re.compile(r'\.csv$',re.I)
 reINIExt  = re.compile(r'\.ini$',re.I)
 reQuoted  = re.compile(r'^"(.*)"$')
 reGroupHeader = re.compile(r'^(\+\+|==)')
-reNewVegasNexus = re.compile(r'-(\d{4,6})(-bain)?(-\d{0,6}-\d{0,6})?\.(7z|zip|rar)$',re.I)
+reNewVegasNexus = re.compile(r'(.*?)(?:-(\d{4,6})(?:\.tessource)?(?:-bain)?(?:-\d{0,6})?(?:-\d{0,6})?(?:-\d{0,6})?(?:\w)?)?\.(7z|zip|rar|7z.001)$',re.I)
 reTESA = re.compile(r'-(\d{1,6})(\.tessource)?(-bain)?\.(7z|zip|rar)$',re.I)
 reSplitOnNonAlphaNumeric = re.compile(r'\W+')
 

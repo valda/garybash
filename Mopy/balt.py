@@ -25,10 +25,12 @@
 import bolt
 import bosh
 from bolt import _, GPath, deprint, delist
-from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError, CancelError
+from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError, CancelError, SkipError
 
 #--Python
-import cStringIO, cPickle
+import cPickle
+import cStringIO
+import StringIO
 import string
 import struct
 import sys
@@ -36,6 +38,11 @@ import textwrap
 import time
 import wx
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
+
+if bolt.bUseUnicode:
+    stringBuffer = StringIO.StringIO
+else:
+    stringBuffer = cStringIO.StringIO
 
 # Basics ---------------------------------------------------------------------
 class IdList:
@@ -70,11 +77,7 @@ defVal = wx.DefaultValidator
 defPos = wx.DefaultPosition
 defSize = wx.DefaultSize
 
-wxListAligns = {
-    'LEFT':   wx.LIST_FORMAT_LEFT,
-    'RIGHT':  wx.LIST_FORMAT_RIGHT,
-    'CENTER': wx.LIST_FORMAT_CENTRE,
-    }
+wxListAligns = [wx.LIST_FORMAT_LEFT, wx.LIST_FORMAT_RIGHT, wx.LIST_FORMAT_CENTRE]
 
 # Settings --------------------------------------------------------------------
 _settings = {} #--Using applications should override this.
@@ -110,21 +113,30 @@ class Image:
     """Wrapper for images, allowing access in various formats/classes.
 
     Allows image to be specified before wx.App is initialized."""
-    def __init__(self,file,type=wx.BITMAP_TYPE_ANY ):
+    def __init__(self,file,type=wx.BITMAP_TYPE_ANY,iconSize=16):
         self.file = GPath(file)
         self.type = type
         self.bitmap = None
         self.icon = None
-        if not GPath(self.file).exists():
+        self.iconSize = iconSize
+        if not GPath(self.file.s.split(';')[0]).exists():
             raise ArgumentError(_("Missing resource file: %s.") % (self.file,))
 
     def GetBitmap(self):
         if not self.bitmap:
+            if self.type == wx.BITMAP_TYPE_ICO:
+                self.GetIcon()
+                self.bitmap = wx.EmptyBitmap(self.iconSize,self.iconSize)
+                self.bitmap.CopyFromIcon(self.icon)
+            else:
             self.bitmap = wx.Bitmap(self.file.s,self.type)
         return self.bitmap
 
     def GetIcon(self):
         if not self.icon:
+            if self.type == wx.BITMAP_TYPE_ICO:
+                self.icon = wx.Icon(self.file.s,wx.BITMAP_TYPE_ICO,self.iconSize,self.iconSize)
+            else:
             self.icon = wx.EmptyIcon()
             self.icon.CopyFromBitmap(self.GetBitmap())
         return self.icon
@@ -199,6 +211,9 @@ def setCheckListItems(gList,names,values):
             if index >= gList.GetCount():
                 gList.Append(name)
             else:
+                if index == -1:
+                    deprint(_("index = -1, name = %s, value = %s") % (name, value))
+                    continue
                 gList.SetString(index,name)
             gList.Check(index,value)
         for index in range(gList.GetCount(),len(names),-1):
@@ -211,9 +226,48 @@ def bell(arg=None):
     return arg
 
 def tooltip(text,wrap=50):
-    """Returns tolltip with wrapped copy of text."""
+    """Returns tooltip with wrapped copy of text."""
     text = textwrap.fill(text,wrap)
     return wx.ToolTip(text)
+
+class textCtrl(wx.TextCtrl):
+    """wx.TextCtrl with automatic tooltip if text goes past the width of the control."""
+    def __init__(self, parent, id=defId, name='', size=defSize, style=0, autotooltip=True):
+        wx.TextCtrl.__init__(self,parent,id,name,size=size,style=style)
+        if autotooltip:
+            self.Bind(wx.EVT_TEXT, self.OnTextChange)
+            self.Bind(wx.EVT_SIZE, self.OnSizeChange)
+
+    def UpdateToolTip(self, text):
+        if self.GetClientSize()[0] < self.GetTextExtent(text)[0]:
+            self.SetToolTip(tooltip(text))
+        else:
+            self.SetToolTip(tooltip(''))
+
+    def OnTextChange(self,event):
+        self.UpdateToolTip(event.GetString())
+        event.Skip()
+    def OnSizeChange(self, event):
+        self.UpdateToolTip(self.GetValue())
+        event.Skip()
+
+class comboBox(wx.ComboBox):
+    """wx.ComboBox with automatic tooltipi if text is wider than width of control."""
+    def __init__(self, *args, **kwdargs):
+        autotooltip = kwdargs.get('autotooltip',True)
+        if 'autotooltip' in kwdargs:
+            del kwdargs['autotooltip']
+        wx.ComboBox.__init__(self, *args, **kwdargs)
+        if autotooltip:
+            self.Bind(wx.EVT_SIZE, self.OnChange)
+            self.Bind(wx.EVT_TEXT, self.OnChange)
+
+    def OnChange(self, event):
+        if self.GetClientSize()[0] < self.GetTextExtent(self.GetValue())[0]+30:
+            self.SetToolTip(tooltip(self.GetValue()))
+        else:
+            self.SetToolTip(tooltip(''))
+        event.Skip()
 
 def bitmapButton(parent,bitmap,pos=defPos,size=defSize,style=wx.BU_AUTODRAW,val=defVal,
         name='button',id=defId,onClick=None,tip=None,onRClick=None):
@@ -357,9 +411,37 @@ def askContinue(parent,message,continueKey,title=_('Warning')):
     if gCheckBox.GetValue():
         _settings[continueKey] = 1
     return result in (wx.ID_OK,wx.ID_YES)
-
+def askContinueShortTerm(parent,message,title=_('Warning')):
+    """Shows a modal continue query  Returns True to continue.
+    Also provides checkbox "Don't show this in for rest of operation."."""
+    #--Generate/show dialog
+    dialog = wx.Dialog(parent,defId,title,size=(350,200),style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+    icon = wx.StaticBitmap(dialog,defId,
+        wx.ArtProvider_GetBitmap(wx.ART_WARNING,wx.ART_MESSAGE_BOX, (32,32)))
+    gCheckBox = checkBox(dialog,_("Don't show this for rest of operation."))
+    #--Layout
+    sizer = vSizer(
+        (hSizer(
+            (icon,0,wx.ALL,6),
+            (staticText(dialog,message,style=wx.ST_NO_AUTORESIZE),1,wx.EXPAND|wx.LEFT,6),
+            ),1,wx.EXPAND|wx.ALL,6),
+        (gCheckBox,0,wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM,6),
+        (hSizer( #--Save/Cancel
+            spacer,
+            button(dialog,id=wx.ID_OK),
+            (button(dialog,id=wx.ID_CANCEL),0,wx.LEFT,4),
+            ),0,wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM,6),
+        )
+    dialog.SetSizer(sizer)
+    #--Get continue key setting and return
+    result = dialog.ShowModal()
+    if result in (wx.ID_OK,wx.ID_YES):
+        if gCheckBox.GetValue():
+            return 2
+        return True
+    return False
 #------------------------------------------------------------------------------
-def askOpen(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.OPEN):
+def askOpen(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.OPEN,mustExist=False):
     """Show as file dialog and return selected path(s)."""
     defaultDir,defaultFile = [GPath(x).s for x in (defaultDir,defaultFile)]
     dialog = wx.FileDialog(parent,title,defaultDir,defaultFile,wildcard, style )
@@ -367,8 +449,15 @@ def askOpen(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.OP
         result = False
     elif style & wx.MULTIPLE:
         result = map(GPath,dialog.GetPaths())
+        if mustExist:
+            for path in result:
+                if not path.exists():
+                    result = False
+                    break
     else:
         result = GPath(dialog.GetPath())
+        if mustExist and not result.exists():
+            result = False
     dialog.Destroy()
     return result
 
@@ -552,7 +641,7 @@ def showWryeLog(parent,logText,title='',style=0,asDialog=True,icons=None):
         if not isinstance(logText,bolt.Path):
             logPath = _settings.get('balt.WryeLog.temp', bolt.Path.getcwd().join('WryeLogTemp.html'))
             cssDir = _settings.get('balt.WryeLog.cssDir', GPath(''))
-            ins = cStringIO.StringIO(logText+'\n{{CSS:wtxt_sand_small.css}}')
+            ins = stringBuffer(logText+'\n{{CSS:wtxt_sand_small.css}}')
             out = logPath.open('w')
             bolt.WryeText.genHtml(ins,out,cssDir)
             out.close()
@@ -578,7 +667,7 @@ def showWryeLog(parent,logText,title='',style=0,asDialog=True,icons=None):
     if not isinstance(logText,bolt.Path):
         logPath = _settings.get('balt.WryeLog.temp', bolt.Path.getcwd().join('WryeLogTemp.html'))
         cssDir = _settings.get('balt.WryeLog.cssDir', GPath(''))
-        ins = cStringIO.StringIO(logText+'\n{{CSS:wtxt_sand_small.css}}')
+        ins = stringBuffer(logText+'\n{{CSS:wtxt_sand_small.css}}')
         out = logPath.open('w')
         bolt.WryeText.genHtml(ins,out,cssDir)
         out.close()
@@ -591,6 +680,8 @@ def showWryeLog(parent,logText,title='',style=0,asDialog=True,icons=None):
     gForwardButton = bitmapButton(window,bitmap,onClick=lambda evt: textCtrl.GoForward())
     gOkButton = button(window,id=wx.ID_OK,onClick=lambda event: window.Close())
     gOkButton.SetDefault()
+    if not asDialog:
+        window.SetBackgroundColour(gOkButton.GetBackgroundColour())
     #--Layout
     window.SetSizer(
         vSizer(
@@ -612,6 +703,14 @@ def showWryeLog(parent,logText,title='',style=0,asDialog=True,icons=None):
             window.Destroy()
     else:
         window.Show()
+
+def playSound(parent,sound):
+    if not sound: return
+    sound = wx.Sound(sound)
+    if sound.IsOk():
+        sound.Play(wx.SOUND_ASYNC)
+    else:
+        showError(parent,_("Invalid sound file %s.") % sound)
 
 # Other Windows ---------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -927,13 +1026,25 @@ class Picture(wx.Window):
         self.Refresh()
 
 #------------------------------------------------------------------------------
+class BusyCursor(object):
+    """Wrapper around wx.BeginBusyCursor and wx.EndBusyCursor, to be used with
+       Pythons 'with' semantics."""
+    def __enter__(self):
+        wx.BeginBusyCursor()
+    def __exit__(self,type,value,traceback):
+        wx.EndBusyCursor()
+
+#------------------------------------------------------------------------------
 class Progress(bolt.Progress):
     """Progress as progress dialog."""
     def __init__(self,title=_('Progress'),message=' '*60,parent=None,
-        style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE, abort=False):
-        if abort: style |= wx.PD_CAN_ABORT
+        style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE, abort=False, onAbort=None):
+        if abort:
+            style |= wx.PD_CAN_ABORT
+            self.fnAbort = onAbort
         if sys.version[:3] != '2.4': style |= wx.PD_SMOOTH
-        self.dialog = wx.ProgressDialog(title,message,100,parent,style)
+        self.dialog = wx.ProgressDialog(title,bolt.Unicode(message),100,parent,style)
+        self.dialog.SetFocus()
         bolt.Progress.__init__(self)
         self.message = message
         self.isDestroyed = False
@@ -949,19 +1060,28 @@ class Progress(bolt.Progress):
 
     def setCancel(self, enabled=True):
         cancel = self.dialog.FindWindowById(wx.ID_CANCEL)
-        if cancel:
             cancel.Enable(enabled)
+
+    def onAbort(self):
+        if self.fnAbort:
+            return self.fnAbort()
+        return True
 
     def doProgress(self,state,message):
         if not self.dialog:
             raise StateError(_('Dialog already destroyed.'))
         elif (state == 0 or state == 1 or (message != self.prevMessage) or
             (state - self.prevState) > 0.05 or (time.time() - self.prevTime) > 0.5):
+            self.dialog.SetFocus()
             if message != self.prevMessage:
-                if not self.dialog.Update(int(state*100),message)[0]:
+                ret = self.dialog.Update(int(state*100),bolt.Unicode(message))
+                if not ret[0]:
+                    if self.onAbort():
                     raise CancelError
             else:
-                if not self.dialog.Update(int(state*100))[0]:
+                ret = self.dialog.Update(int(state*100))
+                if not ret[0]:
+                    if self.onAbort():
                     raise CancelError
             self.prevMessage = message
             self.prevState = state
@@ -985,7 +1105,7 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
     OnDropIndexes callback: fnDropIndexes
     dndAllow callback:      fnDndAllow
     """
-    class DropFileOrList(wx.PyDropTarget):
+    class DropFileOrList(wx.DropTarget):
         
         def __init__(self, window, dndFiles, dndList):
             wx.PyDropTarget.__init__(self)
@@ -1009,6 +1129,10 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
                     data = cPickle.loads(self.dataList.GetData())
                     self.window._OnDropList(x, y, data)
 
+        def OnDragOver(self, x, y, dragResult):
+            self.window.OnDragging(x,y,dragResult)
+            return wx.DropTarget.OnDragOver(self,x,y,dragResult)
+
     def __init__(self, parent, id, pos=defPos, size=defSize, style=0,
                  dndFiles=False, dndList=False, dndOnlyMoveContinuousGroup=True,
                  fnDropFiles=None, fnDropIndexes=None, fnDndAllow=None):
@@ -1023,6 +1147,29 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
         self.fnDropIndexes = fnDropIndexes
         self.fnDndAllow = fnDndAllow
         self.doDnD = True
+
+    def OnDragging(self,x,y,dragResult):
+        # We're dragging, see if we need to scroll the list
+        index, flags = self.HitTest((x, y))
+        if index == wx.NOT_FOUND:   # Didn't drop it on an item
+            if self.GetItemCount() > 0:
+                if y <= self.GetItemRect(0).y:
+                    # Mouse is above the first item
+                    self.ScrollLines(-1)
+                elif y >= self.GetItemRect(self.GetItemCount() - 1).y:
+                    # Mouse is after the last item
+                    self.ScrollLines(1)
+        else:
+            # Screen position if item hovering over
+            pos = index - self.GetScrollPos(wx.VERTICAL)
+            if pos == 0:
+                # Over the first item, see if it's over the top half
+                rect = self.GetItemRect(index)
+                if y < rect.y + rect.height/2:
+                    self.ScrollLines(-1)
+            elif pos == self.GetCountPerPage():
+                # On last item/one that's not fully visible
+                self.ScrollLines(1)
 
     def SetDnD(self, allow): self.doDnD = allow
     
@@ -1058,7 +1205,8 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
 
     def OnDropFiles(self, x, y, filenames):
         if self.fnDropFiles:
-            self.fnDropFiles(x, y, filenames)
+            wx.CallLater(10,self.fnDropFiles,x,y,filenames)
+            #self.fnDropFiles(x, y, filenames)
             return
         # To be implemented by sub-classes
         raise AbstractError
@@ -1068,44 +1216,59 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
         stop = indexes[-1]
 
         index, flags = self.HitTest((x, y))        
+        deprint('index:',index)
+        deprint('flags:',flags)
         if index == wx.NOT_FOUND:   # Didn't drop it on an item
+            deprint('index: wx.NOT_FOUND')
             if self.GetItemCount() > 0:
                 if y <= self.GetItemRect(0).y:
                     # Dropped it before the first item
+                    deprint('NOT_FOUND: before first item')
                     index = 0
                 elif y >= self.GetItemRect(self.GetItemCount() - 1).y:
                     # Dropped it after the last item
+                    deprint('NOT_FOUND: after the last item')
                     index = self.GetItemCount()
                 else:
                     # Dropped it on the edge of the list, but not above or below
+                    deprint('NOT_FOUND: ack!')
                     return
             else:
+                deprint('NOT_FOUND: empty list?')
                 # Empty list
                 index = 0
         else:
             # Dropped on top of an item
             target = index
             if target >= start and target <= stop:
+                deprint('target is on itself')
                 # Trying to drop it back on itself
                 return
             elif target < start:
+                deprint('dragging upward')
                 # Trying to drop it furthur up in the list
                 pass
             elif target > stop:
                 # Trying to drop it further down the list
                 index -= 1 + (stop-start)
+                deprint('dragging downward.  new index:', index)
 
             # If dropping on the top half of the item, insert above it,
             # otherwise insert below it
             rect = self.GetItemRect(target)
             if y > rect.y + rect.height/2:
+                deprint('dragged past the bottom half of the target')
                 index += 1
 
         # Do the moving
+        deprint('sending items:', indexes)
+        deprint('to index:', index)
         self.OnDropIndexes(indexes, index)
 
     def OnDropIndexes(self, indexes, newPos):
-        if self.fnDropIndexes: self.fnDropIndexes(indexes, newPos)
+        if self.fnDropIndexes:
+            wx.CallLater(10,self.fnDropIndexes,indexes,newPos)
+            #self.fnDropIndexes(indexes, newPos)
 
     def dndAllow(self):
         if self.doDnD:
@@ -1144,7 +1307,7 @@ class Tank(wx.Panel):
         #--ListCtrl
         self.gList = gList = ListCtrl(self, -1, style=style,
                                       dndFiles=dndFiles, dndList=dndList,
-                                      fnDndAllow=self.dndAllow, fnDropIndexes=self.OnDropIndexes)
+                                      fnDndAllow=self.dndAllow, fnDropIndexes=self.OnDropIndexes, fnDropFiles=self.OnDropFiles)
         if self.icons:
             gList.SetImageList(icons.GetImageList(),wx.IMAGE_LIST_SMALL)
         #--State info
@@ -1160,7 +1323,7 @@ class Tank(wx.Panel):
         self.Bind(wx.EVT_SIZE,self.OnSize)
         #--Events: Items
         gList.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
-        gList.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.DoItemMenu)
+        gList.Bind(wx.EVT_CONTEXT_MENU, self.DoItemMenu)
         gList.Bind(wx.EVT_LIST_ITEM_SELECTED,self.OnItemSelected)
         gList.Bind(wx.EVT_LEFT_DCLICK, self.OnDClick)
         #--Events: Columns
@@ -1180,15 +1343,14 @@ class Tank(wx.Panel):
     #--Drag and Drop-----------------------------------------------------------
     def dndAllow(self):
         # Only allow drag an drop when sorting by the columns specified in dndColumns
-        curColumn = self.data.defaultParam('colSort',self.data.tankColumns[0])
-        if curColumn not in self.dndColumns: return False
+        if self.sort not in self.dndColumns: return False
         return True
 
     def OnDropIndexes(self, indexes, newPos):
         # See if the column is reverse sorted first
         data = self.data
-        column = data.defaultParam('colSort',data.tankColumns[0])
-        reverse = data.defaultParam('colReverse',{}).get(column,False)
+        column = self.sort
+        reverse = self.colReverse.get(column,False)
         if reverse:
             newPos = self.gList.GetItemCount() - newPos - 1 - (indexes[-1]-indexes[0])
             if newPos < 0: newPos = 0
@@ -1197,6 +1359,9 @@ class Tank(wx.Panel):
         self.data.moveArchives(self.GetSelected(), newPos)
         self.data.refresh(what='N')
         self.RefreshUI()
+
+    def OnDropFiles(self, x, y, filenames):
+        raise AbstractError
 
     #--Item/Id/Index Translation ----------------------------------------------
     def GetItem(self,index):
@@ -1227,27 +1392,49 @@ class Tank(wx.Panel):
             del self.itemId_item[itemId]
 
     #--Updating/Sorting/Refresh -----------------------------------------------
+    def PopulateColumns(self):
+        """Alias for UpdateColumns, for List_Columns"""
+        self.UpdateColumns()
+
     def UpdateColumns(self):
         """Create/name columns in ListCtrl."""
-        data = self.data
-        columns = data.getParam('columns',data.tankColumns[:])
-        col_name = data.getParam('colNames',{})
-        col_width = data.getParam('colWidths',{})
-        col_align = data.getParam('colAligns',{})
-        for index,column in enumerate(columns):
-            name  = col_name.get(column,_(column))
-            width = col_width.get(column,30)
-            align = wxListAligns[col_align.get(column,'LEFT')]
-            self.gList.InsertColumn(index,name,align)
-            self.gList.SetColumnWidth(index, width)
+        cols = self.cols
+        numCols = len(cols)
+        for colDex in range(numCols):
+            colKey = cols[colDex]
+            colName = self.colNames.get(colKey,colKey)
+            colWidth = self.colWidths.get(colKey,30)
+            colAlign = wxListAligns[self.colAligns.get(colKey,0)]
+            if colDex >= self.gList.GetColumnCount():
+                # Make a new column
+                self.gList.InsertColumn(colDex,colName,colAlign)
+                self.gList.SetColumnWidth(colDex,colWidth)
+            else:
+                # Update an existing column
+                column = self.gList.GetColumn(colDex)
+                if column.GetText() == colName:
+                    # Don't change it, just make sure the width is correct
+                    self.gList.SetColumnWidth(colDex,colWidth)
+                elif column.GetText() not in self.cols:
+                    # Column that doesn't exist anymore
+                    self.gList.DeleteColumn(colDex)
+                    colDex -= 1
+                else:
+                    # New column
+                    self.gList.InsertColumn(colDex,colName,colAlign)
+                    self.gList.SetColumnWidth(colDex,colWidth)
+        while self.gList.GetColumnCount() > numCols:
+            self.gList.DeleteColumn(numCols)
+        self.gList.SetColumnWidth(numCols, wx.LIST_AUTOSIZE_USEHEADER)
 
     def UpdateItem(self,index,item=None,selected=tuple()):
         """Populate Item for specified item."""
         if index < 0: return
         data,gList = self.data,self.gList
         item = item or self.GetItem(index)
-        for iColumn,column in enumerate(data.getColumns(item)):
-            gList.SetStringItem(index,iColumn,column)
+        for iColumn,column in enumerate(self.cols):
+            colDex = self.GetColumnDex(column)
+            gList.SetStringItem(index,iColumn,data.getColumns(item)[colDex])
         gItem = gList.GetItem(index)
         iconKey,textKey,backKey = data.getGuiKeys(item)
         if iconKey and self.icons: gItem.SetImage(self.icons[iconKey])
@@ -1258,6 +1445,9 @@ class Tank(wx.Panel):
 ##        gItem.SetState((0,wx.LIST_STATE_SELECTED)[item in selected])
         gItem.SetData(self.GetId(item))
         gList.SetItem(gItem)
+
+    def GetColumnDex(self,column):
+        raise AbstractError
 
     def UpdateItems(self,selected='SAME'):
         """Update all items."""
@@ -1302,21 +1492,26 @@ class Tank(wx.Panel):
         if self.sortDirty:
             self.sortDirty = False
             (column, reverse) = (None,'CURRENT')
-        curColumn = data.defaultParam('colSort',data.tankColumns[0])
+        curColumn = self.sort
         column = column or curColumn
-        curReverse = data.defaultParam('colReverse',{}).get(column,False)
+        curReverse = self.colReverse.get(column,False)
         if reverse == 'INVERT' and column == curColumn:
             reverse = not curReverse
         elif reverse in ('INVERT','CURRENT'):
             reverse = curReverse
-        data.updateParam('colReverse')[column] = reverse
-        data.setParam('colSort',column)
+        self.SetColumnReverse(column, reverse)
+        self.SetSort(column)
         #--Sort
         items = self.data.getSorted(column,reverse)
         sortDict = dict((self.item_itemId[y],x) for x,y in enumerate(items))
         self.gList.SortItems(lambda x,y: cmp(sortDict[x],sortDict[y]))
         #--Done
         self.mouseTexts.clear()
+
+    def SetColumnReverse(colummn, reverse):
+        pass
+    def SetSort(self,sort):
+        pass
 
     def RefreshData(self):
         """Refreshes underlying data."""
@@ -1404,9 +1599,17 @@ class Tank(wx.Panel):
 
     def OnColumnResize(self,event):
         """Column resized. Save column size info."""
-        iColumn = event.GetColumn()
-        column = self.data.getParam('columns')[iColumn]
-        self.data.updateParam('colWidths')[column] = self.gList.GetColumnWidth(iColumn)
+        colDex = event.GetColumn()
+        colName = self.cols[colDex]
+        width = self.gList.GetColumnWidth(colDex)
+        if width < 5:
+            width = 5
+            self.gList.SetColumnWidth(colDex, 5)
+            event.Veto()
+            self.gList.resizeLastColumn(0)
+        else:
+            event.Skip()
+        self.colWidths[colName] = width
 
     def OnLeftDown(self,event):
         """Left mouse button was pressed."""
@@ -1419,18 +1622,13 @@ class Tank(wx.Panel):
 
     def OnColumnClick(self, event):
         """Column header was left clicked on. Sort on that column."""
-        columns = self.data.getParam('columns')
-        self.SortItems(columns[event.GetColumn()],'INVERT')
+        self.SortItems(self.cols[event.GetColumn()],'INVERT')
 
     def DoColumnMenu(self,event,iColumn=None):
         """Show column menu."""
         if not self.mainMenu: return
         if iColumn is None: iColumn = event.GetColumn()
-        menu = wx.Menu()
-        for item in self.mainMenu:
-            item.AppendToMenu(menu,self,iColumn)
-        self.PopupMenu(menu)
-        menu.Destroy()
+        self.mainMenu.PopupMenu(self,Link.Frame,iColumn)
 
     def DoItemMenu(self,event):
         """Show item menu."""
@@ -1439,11 +1637,7 @@ class Tank(wx.Panel):
             self.DoColumnMenu(event,0)
             return
         if not self.itemMenu: return
-        menu = wx.Menu()
-        for item in self.itemMenu:
-            item.AppendToMenu(menu,self,selected)
-        self.PopupMenu(menu)
-        menu.Destroy()
+        self.itemMenu.PopupMenu(self,Link.Frame,selected)
 
     #--Standard data commands -------------------------------------------------
     def DeleteSelected(self):
@@ -1487,9 +1681,21 @@ class Links(list):
         else:
             return None
 
+    #--Popup a menu from the links
+    def PopupMenu(self,parent,eventWindow=None,*args):
+        eventWindow = eventWindow or parent
+        menu = wx.Menu()
+        for link in self:
+            link.AppendToMenu(menu,parent,*args)
+        eventWindow.PopupMenu(menu)
+        menu.Destroy()
+
 #------------------------------------------------------------------------------
 class Link:
     """Link is a command to be encapsulated in a graphic element (menu item, button, etc.)"""
+    Frame = None    # Frame to update the statusbar of
+    Popup = None    # Current popup menu
+
     def __init__(self):
         self.id = None
 
@@ -1497,6 +1703,7 @@ class Link:
         """Append self to menu as menu item."""
         if isinstance(window,Tank):
             self.gTank = window
+            self.window = window
             self.selected = window.GetSelected()
             self.data = window.data
             self.title = window.data.title
@@ -1505,11 +1712,29 @@ class Link:
             self.data = data
         #--Generate self.id if necessary (i.e. usually)
         if not self.id: self.id = wx.NewId()
-        wx.EVT_MENU(window,self.id,self.Execute)
+        Link.Popup = menu
+        wx.EVT_MENU(Link.Frame,self.id,self.Execute)
+        wx.EVT_MENU_HIGHLIGHT_ALL(Link.Frame,Link.ShowHelp)
+        wx.EVT_MENU_OPEN(Link.Frame,Link.OnMenuOpen)
 
     def Execute(self, event):
         """Event: link execution."""
         raise AbstractError
+
+    @staticmethod
+    def OnMenuOpen(event):
+        """Hover over a submenu, clear the status bar text"""
+        Link.Frame.GetStatusBar().SetText('')
+
+    @staticmethod
+    def ShowHelp(event):
+        """Hover over an item, set the statusbar text"""
+        if Link.Popup:
+            item = Link.Popup.FindItemById(event.GetId())
+            if item:
+                Link.Frame.GetStatusBar().SetText(item.GetHelp())
+            else:
+                Link.Frame.GetStatusBar().SetText('')
 
 #------------------------------------------------------------------------------
 class SeparatorLink(Link):
@@ -1546,7 +1771,7 @@ class Tanks_Open(Link):
     """Opens data directory in explorer."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Open...'))
+        menuItem = wx.MenuItem(menu,self.id,_('Open...'),_("Open '%s'") % self.data.dir.tail)
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
@@ -1574,7 +1799,11 @@ class Tank_Open(Link):
     """Open selected file(s)."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Open...'))
+        if len(data) == 1:
+            help = _("Open '%s'") % data[0]
+        else:
+            help = _("Open selected files.")
+        menuItem = wx.MenuItem(menu,self.id,_('Open...'),help)
         menu.AppendItem(menuItem)
         menuItem.Enable(bool(self.selected))
 
