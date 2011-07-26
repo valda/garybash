@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -217,12 +219,12 @@ def main():
                         action='store_const',
                         const=1,
                         dest='backup_images',
-                        help='Include changed images from mopy\images in the backup. Include any image(s) from backup file in restore.')
+                        help='Include changed images from mopy/bash/images in the backup. Include any image(s) from backup file in restore.')
     backupGroup.add_option('-I', '--include-all-images',
                         action='store_const',
                         const=2,
                         dest='backup_images',
-                        help='Include all images from mopy\images in the backup/restore (if present in backup file).')
+                        help='Include all images from mopy/bash/images in the backup/restore (if present in backup file).')
     parser.add_option('-d', '--debug',
                         action='store_true',
                         default=False,
@@ -271,7 +273,7 @@ def main():
     if len(extra) > 0:
         parser.print_help()
         return
-
+    
     bolt.deprintOn = opts.debug
     
     if opts.Psyco:
@@ -289,18 +291,20 @@ def main():
     try:
         bolt.CBash = opts.mode
         import bosh
-        import basher
-        import barb
-        import balt
         bosh.initBosh(opts.personalPath,opts.localAppDataPath,opts.falloutPath)
-        bosh.exe7z = bosh.dirs['mopy'].join(bosh.exe7z).s
+        bosh.exe7z = bosh.dirs['compiled'].join(bosh.exe7z).s
 
         # if HTML file generation was requested, just do it and quit
         if opts.genHtml is not None:
+            print "generating HTML file from: '%s'" % opts.genHtml
             import belt
             bolt.WryeText.genHtml(opts.genHtml)
+            print "done"
             return
 
+        import basher
+        import barb
+        import balt
     except bolt.PermissionError, e:
         if opts.debug:
             if hasattr(sys,'frozen'):

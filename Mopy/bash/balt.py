@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bolt.
 #
@@ -129,7 +131,7 @@ class Image:
                 self.bitmap = wx.EmptyBitmap(self.iconSize,self.iconSize)
                 self.bitmap.CopyFromIcon(self.icon)
             else:
-            self.bitmap = wx.Bitmap(self.file.s,self.type)
+                self.bitmap = wx.Bitmap(self.file.s,self.type)
         return self.bitmap
 
     def GetIcon(self):
@@ -137,8 +139,8 @@ class Image:
             if self.type == wx.BITMAP_TYPE_ICO:
                 self.icon = wx.Icon(self.file.s,wx.BITMAP_TYPE_ICO,self.iconSize,self.iconSize)
             else:
-            self.icon = wx.EmptyIcon()
-            self.icon.CopyFromBitmap(self.GetBitmap())
+                self.icon = wx.EmptyIcon()
+                self.icon.CopyFromBitmap(self.GetBitmap())
         return self.icon
 
 #------------------------------------------------------------------------------
@@ -480,7 +482,7 @@ def askText(parent,message,title='',default=''):
         value = dialog.GetValue()
         dialog.Destroy()
         return value
-        
+
 #------------------------------------------------------------------------------
 def askNumber(parent,message,prompt='',title='',value=0,min=0,max=10000):
     """Shows a text entry dialog and returns result or None if canceled."""
@@ -550,7 +552,7 @@ def showLogClose(evt=None):
         _settings['balt.LogMessage.pos'] = window.GetPositionTuple()
         _settings['balt.LogMessage.size'] = window.GetSizeTuple()
     window.Destroy()
-    
+
 def showQuestionLogCloseYes(Event,window):
     """Handle log message closing."""
     if window:
@@ -559,7 +561,7 @@ def showQuestionLogCloseYes(Event,window):
             _settings['balt.LogMessage.size'] = window.GetSizeTuple()
         window.Destroy()
     bosh.question = True
-    
+
 def showQuestionLogCloseNo(Event,window):
     """Handle log message closing."""
     if window:
@@ -648,7 +650,7 @@ def showWryeLog(parent,logText,title='',style=0,asDialog=True,icons=None):
             logText = logPath
         os.startfile(logText.s)
         return
-        
+
     #--Sizing
     pos = _settings.get('balt.WryeLog.pos',defPos)
     size = _settings.get('balt.WryeLog.size',(400,400))
@@ -972,58 +974,51 @@ class ListEditor(wx.Dialog):
 #------------------------------------------------------------------------------
 class Picture(wx.Window):
     """Picture panel."""
-    def __init__(self, parent,width,height,scaling=1,style=0):
+    def __init__(self, parent,width,height,scaling=1,style=0,background=wx.MEDIUM_GREY_BRUSH):
         """Initialize."""
         wx.Window.__init__(self, parent, defId,size=(width,height),style=style)
-        self.scaling=scaling
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.bitmap = None
-        self.scaled = None
-        self.oldSize = (0,0)
-        self.SetSizeHints(width,height,width,height)
+        if background is not None:
+            self.background = background
+        else:
+            self.background = wx.Brush(self.GetBackgroundColour())
+        #self.SetSizeHints(width,height,width,height)
         #--Events
         self.Bind(wx.EVT_PAINT,self.OnPaint)
         self.Bind(wx.EVT_SIZE, self.OnSize)
+        self.OnSize()
 
     def SetBitmap(self,bitmap):
         """Set bitmap."""
         self.bitmap = bitmap
-        self.Rescale()
+        self.OnSize()
+
+    def OnSize(self,event=None):
+        x, y = self.GetSize()
+        if x <= 0 or y <= 0: return
+        self.buffer = wx.EmptyBitmap(x,y)
+        dc = wx.MemoryDC()
+        dc.SelectObject(self.buffer)
+        # Draw
+        dc.SetBackground(self.background)
+        dc.Clear()
+        if self.bitmap:
+            old_x,old_y = self.bitmap.GetSize()
+            scale = min(float(x)/old_x, float(y)/old_y)
+            new_x = old_x * scale
+            new_y = old_y * scale
+            pos_x = max(0,x-new_x)/2
+            pos_y = max(0,y-new_y)/2
+            image = self.bitmap.ConvertToImage()
+            image.Rescale(new_x, new_y, wx.IMAGE_QUALITY_HIGH)
+            dc.DrawBitmap(wx.BitmapFromImage(image), pos_x, pos_y)
+        del dc
         self.Refresh()
+        self.Update()
 
-    def Rescale(self):
-        """Updates scaled version of bitmap."""
-        picWidth,picHeight = self.oldSize = self.GetSizeTuple()
-        bitmap = self.scaled = self.bitmap
-        if not bitmap: return
-        imgWidth,imgHeight = bitmap.GetWidth(),bitmap.GetHeight()
-        if self.scaling == 2 or (self.scaling == 1 and (imgWidth > picWidth or imgHeight > picHeight)):
-            image = bitmap.ConvertToImage()
-            factor = min(1.0*picWidth/imgWidth,1.0*picHeight/imgHeight)
-            newWidth,newHeight = int(factor*imgWidth),int(factor*imgHeight)
-            self.scaled = image.Scale(newWidth,newHeight).ConvertToBitmap()
-            #self.scaled = image.Scale(newWidth,newHeight,wx.IMAGE_QUALITY_HIGH ).ConvertToBitmap()
-
-    def OnPaint(self, event=None):
-        """Draw bitmap or clear drawing area."""
-        dc = wx.PaintDC(self)
-        dc.SetBackground(wx.MEDIUM_GREY_BRUSH)
-        if self.scaled:
-            if self.GetSizeTuple() != self.oldSize:
-                self.Rescale()
-            panelWidth,panelHeight = self.GetSizeTuple()
-            xPos = max(0,(panelWidth - self.scaled.GetWidth())/2)
-            yPos = max(0,(panelHeight - self.scaled.GetHeight())/2)
-            dc.Clear()
-            dc.DrawBitmap(self.scaled,xPos,yPos,False)
-        else:
-            dc.Clear()
-        #dc.SetPen(wx.Pen("BLACK", 1))
-        #dc.SetBrush(wx.TRANSPARENT_BRUSH)
-        #(width,height) = self.GetSize()
-        #dc.DrawRectangle(0,0,width,height)
-
-    def OnSize(self,event):
-        self.Refresh()
+    def OnPaint(self, event):
+        dc = wx.BufferedPaintDC(self, self.buffer)
 
 #------------------------------------------------------------------------------
 class BusyCursor(object):
@@ -1060,7 +1055,7 @@ class Progress(bolt.Progress):
 
     def setCancel(self, enabled=True):
         cancel = self.dialog.FindWindowById(wx.ID_CANCEL)
-            cancel.Enable(enabled)
+        cancel.Enable(enabled)
 
     def onAbort(self):
         if self.fnAbort:
@@ -1077,12 +1072,12 @@ class Progress(bolt.Progress):
                 ret = self.dialog.Update(int(state*100),bolt.Unicode(message))
                 if not ret[0]:
                     if self.onAbort():
-                    raise CancelError
+                        raise CancelError
             else:
                 ret = self.dialog.Update(int(state*100))
                 if not ret[0]:
                     if self.onAbort():
-                    raise CancelError
+                        raise CancelError
             self.prevMessage = message
             self.prevState = state
             self.prevTime = time.time()
@@ -1106,7 +1101,7 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
     dndAllow callback:      fnDndAllow
     """
     class DropFileOrList(wx.DropTarget):
-        
+
         def __init__(self, window, dndFiles, dndList):
             wx.PyDropTarget.__init__(self)
             self.window = window
@@ -1172,10 +1167,10 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
                 self.ScrollLines(1)
 
     def SetDnD(self, allow): self.doDnD = allow
-    
+
     def OnBeginDrag(self, event):
         if not self.dndAllow(): return
-        
+
         indexes = []
         start = stop = -1
         for index in range(self.GetItemCount()):
@@ -1215,7 +1210,7 @@ class ListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
         start = indexes[0]
         stop = indexes[-1]
 
-        index, flags = self.HitTest((x, y))        
+        index, flags = self.HitTest((x, y))
         deprint('index:',index)
         deprint('flags:',flags)
         if index == wx.NOT_FOUND:   # Didn't drop it on an item
@@ -1354,7 +1349,7 @@ class Tank(wx.Panel):
         if reverse:
             newPos = self.gList.GetItemCount() - newPos - 1 - (indexes[-1]-indexes[0])
             if newPos < 0: newPos = 0
-        
+
         # Move the given indexes to the new position
         self.data.moveArchives(self.GetSelected(), newPos)
         self.data.refresh(what='N')

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -28,6 +30,7 @@ Note: bashmon is based on Breeze582000's brzMonitor (which it replaces).
 # Imports ----------------------------------------------------------------------
 #--Standard
 import cStringIO
+import StringIO
 import string
 import struct
 import sys
@@ -41,14 +44,18 @@ from bosh import PCFaces
 from bolt import _, GPath, intArg
 
 #--Debugging/Info
-bosh.deprintOn = True
+bolt.deprintOn = True
+if bolt.bUseUnicode:
+    stringBuffer = StringIO.StringIO
+else:
+    stringBuffer = cStringIO.StringIO
 
 # Utils -----------------------------------------------------------------------
 class Data:
     """Some setup and data. Mostly various paths."""
     def __init__(self):
         #--Init bosh stuff
-        bosh.initDirs()
+        bosh.initBosh()
         bosh.initSettings(readOnly=True)
         bosh.falloutIni = bosh.FalloutIni()
         bosh.falloutIni.mtime = 0
