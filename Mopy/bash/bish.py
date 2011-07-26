@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -19,7 +21,7 @@
 #
 # =============================================================================
 
-"""This module provides a command line interface for working with FalloutNV files 
+"""This module provides a command line interface for working with FalloutNV files
 and environment. Functions are defined here and added to the callables
 singleton. Callables.main() is then used to parse command line arguments.
 
@@ -45,8 +47,10 @@ import re
 import string
 import struct
 import cStringIO
+import StringIO
 import sys
 import types
+from subprocess import *
 from operator import attrgetter,itemgetter
 
 #--Local
@@ -57,6 +61,10 @@ from bolt import _, GPath, mainfunc
 
 indent = 0
 longest = 0
+if bolt.bUseUnicode:
+    stringBuffer = StringIO.StringIO
+else:
+    stringBuffer = cStringIO.StringIO
 
 # Basics ----------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -72,7 +80,7 @@ def init(initLevel):
         2: modInfos
         3: saveInfos"""
     #--Settings
-    bosh.initDirs()
+    bosh.initBosh()
     bosh.initSettings(readOnly=True)
     bosh.falloutIni = bosh.FalloutIni()
     #--MwIniFile (initLevel >= 1)
@@ -366,7 +374,7 @@ def bookExport(fileName=None):
             if maHeader:
                 if eid and buffer: imported[eid] = bosh.winNewLines(buffer.getvalue())
                 eid = maHeader.group(1)
-                buffer = cStringIO.StringIO()
+                buffer = stringBuffer()
                 addTags = True
                 wasBlank = True
                 firstLine = True
@@ -546,7 +554,7 @@ def csFunctions(fileName="CS Functions.txt"):
     print 'Read',fileName
     #--Page writer
     def groupLink(group):
-        group = re.sub('OBSE','[[:Category:FalloutNV_Script_Extender|OBSE]]',group)
+        group = re.sub('NVSE','[[:Category:FalloutNV_Script_Extender|NVSE]]',group)
         group = re.sub('Pluggy','[[:Category:Pluggy|]]',group)
         group = re.sub('TSFC','[[:Category:TSFC|]]',group)
         return group
@@ -586,11 +594,11 @@ def csFunctions(fileName="CS Functions.txt"):
         print 'Wrote', fileName
     #--Dump pages
     dumpPage('CS All.txt',records,None,
-        "[[Category:Scripting]]\nThis page lists all scripting functions including OBSE and OBSE plugin functions.")
-    dumpPage('CS CS.txt',records,'CS',
-        "[[Category:Scripting]]\nThis page lists all native CS scripting functions. For a more comprehensive list (including OBSE and OBSE plugin functions), see [[List of Functions]].")
-    dumpPage('CS OBSE.txt',records,'OBSE',
-        "[[Category:Scripting]][[Category:FalloutNV Script Extender]]\nThis page lists all functions for [[:Category:FalloutNV_Script_Extender|]]. For a more comprehensive list (including native CS and OBSE plugin functions), see [[List of Functions]].")
+        "[[Category:Scripting]]\nThis page lists all scripting functions including NVSE and NVSE plugin functions.")
+    dumpPage('CS GECK.txt',records,'GECK',
+        "[[Category:Scripting]]\nThis page lists all native GECK scripting functions. For a more comprehensive list (including NVSE and NVSE plugin functions), see [[List of Functions]].")
+    dumpPage('CS NVSE.txt',records,'NVSE',
+        "[[Category:Scripting]][[Category:New Vegas Script Extender]]\nThis page lists all functions for [[:Category:FalloutNV_Script_Extender|]]. For a more comprehensive list (including native CS and OBSE plugin functions), see [[List of Functions]].")
     dumpPage('CS Pluggy.txt',records,'Pluggy',
         "[[Category:Scripting]][[Category:Pluggy]]\nThis page lists all functions for [[:Category:Pluggy|]]. For a more comprehesive list of functions (including native CS and other OBSE related functions), see [[List of Functions]].")
     dumpPage('CS TSFC.txt',records,'TSFC',
@@ -613,7 +621,7 @@ def getIds(fileName=None):
             if len(decomp) != sizeCheck:
                 raise ModError(self.inName,
                     _('Mis-sized compressed data. Expected %d, got %d.') % (size,len(decomp)))
-            reader = bosh.ModReader(fileName,cStringIO.StringIO(decomp))
+            reader = bosh.ModReader(fileName,stringBuffer(decomp))
             return (reader,sizeCheck)
     init(2)
     modInfo = bosh.modInfos[GPath(fileName)]
@@ -651,24 +659,28 @@ def getIds(fileName=None):
 #------------------------------------------------------------------------------
 @mainfunc
 def gmstIds(fileName=None):
-    """Updates map of GMST eids to fids in Data\FalloutNV_ids.pkl, based either
+    """Updates map of GMST eids to fids in bash\db\FalloutNV_ids.pkl, based either
     on a list of new eids or the gmsts in the specified mod file. Updated pkl file
     is dropped in Mopy directory."""
     #--Data base
     import cPickle
-    fids = cPickle.load(GPath(r'Data\FalloutNV_ids.pkl').open('r'))['GMST']
+    fids = cPickle.load(GPath(r'bash\db\FalloutNV_ids.pkl').open('r'))['GMST']
     maxId = max(fids.values())
     maxId = max(maxId,0xf12345)
     maxOld = maxId
     print 'maxId',hex(maxId)
     #--Eid list? - if the GMST has a 00000000 eid when looking at it in the cs with nothing 
 	# but oblivion.esm loaded you need to add the gmst to this list, rebuild the pickle and overwrite the old one.
-    for eid in ['fPlayerDeathReloadTime','iMapMarkerVisibleDistance','fVanityModeWheelMax','fChase3rdPersonZUnitsPerSecond','fAutoAimMaxDegreesMiss','iHoursToRespawnCell','fEssentialDeathTime','fJumpHeightMin','fPlayerPipBoyLightTimer','iAINumberActorsComplexScene','iHackingMaxWords','fGunShellLifetime','fGunShellCameraDistance','fGunDecalCameraDistance','iDebrisMaxCount','iHackingDumpRate','iHackingInputRate','iHackingOutputRate','iHackingFlashOffDuration','iHackingFlashOnDuration','iComputersDisplayRateMenus','iComputersDisplayRateNotes','iInventoryAskQuantityAt']:
+    for eid in ['fPlayerDeathReloadTime','iMapMarkerVisibleDistance','fVanityModeWheelMax','fChase3rdPersonZUnitsPerSecond',
+                'fAutoAimMaxDegreesMiss','iHoursToRespawnCell','fEssentialDeathTime','fJumpHeightMin','fPlayerPipBoyLightTimer',
+                'iAINumberActorsComplexScene','iHackingMaxWords','fGunShellLifetime','fGunShellCameraDistance','fGunDecalCameraDistance',
+                'iDebrisMaxCount','iHackingDumpRate','iHackingInputRate','iHackingOutputRate','iHackingFlashOffDuration',
+                'iHackingFlashOnDuration','iComputersDisplayRateMenus','iComputersDisplayRateNotes','iInventoryAskQuantityAt']:
         if eid not in fids:
             maxId += 1
             fids[eid] = maxId
             print '%08X  %08X %s' % (0,maxId,eid)
-			#--Source file
+            #--Source file
     if fileName:
         init(3)
         sorter = lambda a: a.eid
@@ -688,6 +700,54 @@ def gmstIds(fileName=None):
         cPickle.dump(outData,GPath(r'FalloutNV_ids.pkl').open('w'))
         print "%d news gmst ids written to FalloutNV_ids.pkl" % ((maxId - maxOld),)
 
+#------------------------------------------------------------------------------
+@mainfunc
+def createTagList(inPath='masterlist.txt',outPath='taglist.txt'):
+    tags, bossDirtyMods = {}, {}
+    reFcomSwitch = re.compile('^[<>]')
+    reComment = re.compile(r'^\\.*')
+    reMod = re.compile(r'(^[_[(\w!].*?\.es[pm]$)',re.I)
+    reBashTags = re.compile(r'(%\s+{{BASH:|TAG\s+{{BASH:)([^}]+)(}})(.*remove \[)?([^\]]+)?(\])?')
+    reDirty = re.compile(r'.*?IF\s*\(\s*([a-fA-F0-9]*)\s*\|\s*[\"\'](.*?)[\'\"]\s*\).*?DIRTY:\s*(.*?)\s*$')
+    ins = GPath(inPath).open('r')
+    mod = None
+    for line in ins:
+        line = reFcomSwitch.sub('',line)
+        line = reComment.sub('',line)
+        maMod = reMod.match(line)
+        maBashTags = reBashTags.match(line)
+        maDirty = reDirty.match(line)
+        if maMod:
+            mod = maMod.group(1)
+        elif maBashTags and mod:
+            if maBashTags.group(4):
+                modTags = ''.join(maBashTags.groups())
+            else:
+                modTags = ''.join(maBashTags.groups()[0:3])
+            tags[mod] = modTags
+        elif maDirty:
+            dirty = ''.join(maDirty.groups())
+            if mod in tags:
+                tags[mod] += '\n' + dirty
+            else:
+                tags[mod] = dirty
+        elif "http://cs.elderscrolls.com/constwiki/index.php/TES4Edit_Cleaning_Guide" in line:
+            if mod in tags:
+                tags[mod] += '\n' + line[:-1]
+            else:
+                tags[mod] = line[:-1]
+        elif line.startswith(r"? Masterlist Information: $Revision: "):
+            revision = int(line[37:42])
+    ins.close()
+    tagList = '\ Taglist for Wrye Bash; derived from BOSS Masterlist revision %i.\n' % (revision) + '\% A Bashed Patch suggestion for the mod above.\n\n'
+    for mod in sorted(tags,key=str.lower):
+        tagList += mod + '\n'
+        tagList += tags[mod] + '\n'
+        if mod in bossDirtyMods:
+            tagList += bossDirtyMods[mod] + '\n'
+    out = GPath(outPath).open('w')
+    out.write(tagList[:-1])
+    out.close()
 #------------------------------------------------------------------------------
 @mainfunc
 def modCheck(fileName=None):
@@ -881,7 +941,7 @@ def parseRecords(fileName='FalloutNV.esm'):
     print modFile.fileInfo.name.s,'saved.'
     modFile.fileInfo.getHeader()
     modFile.fileInfo.setType('esp')
-    
+
 # Temp ------------------------------------------------------------------------
 """Very temporary functions."""
 #--Temp
@@ -1025,8 +1085,7 @@ def temp1(fileName):
     #saveFile.weather = ''
     #saveFile.safeSave()
 
-
-# Zip Stuff --------------------------------------------------------------------
+# Zip/Installer Stuff --------------------------------------------------------------------
 class Archive:
     """Installer Archive. Represents a 7z or zip archive in a certain format.
     Can install/uninstall."""
@@ -1041,7 +1100,10 @@ class Archive:
         files = {}
         reList = re.compile('(Path|Size|CRC|Attributes) = (.+)')
         path = size = crc = isDir = 0
-        out = os.popen('7z.exe l "'+self.path.s+'"','rt')
+
+        command = '"%s" l "%s"' % (bosh.exe7z, self.path.s)
+        command = Encode(command,'mbcs')
+        out = Popen(command, stdout=PIPE).stdout
         for line in out:
             print line,
             maList = reList.match(line)
@@ -1065,7 +1127,9 @@ class Archive:
 
     def extract(self):
         """Extracts specified files from archive."""
-        out = os.popen('7z.exe x "'+self.path.s+'" -y -oDumpster @listfile.txt -scsWIN','r')
+        command = '"%s" x "%s" -y -oDumpster @listfile.txt -scsWIN' % (exe7z,self.path.s)
+        command = Encode(command,'mbcs')
+        out = Popen(command, stdout=PIPE).stdout
         reExtracting = re.compile('Extracting\s+(.+)')
         for line in out:
             maExtracting = reExtracting.match(line)
@@ -1078,6 +1142,31 @@ def test(file):
     x = Archive(file)
     x.refresh()
 
+@mainfunc
+def create_sample_project(read_file=None,dest_path=None):
+    """create a sample project for BAIN testing from a text file list of paths - ie as exported by 'list structure'"""
+    if not read_file:
+        print "read file must be specified"
+        return
+    if not dest_path:
+        dest_path = GPath(os.getcwd()).join("Test BAIN Project")
+    try:
+        ins = GPath(read_file).open("r")
+    except:
+        read_file = GPath(os.getcwd()).join(read_file)
+        ins = GPath(read_file).open("r")
+    for path in ins:
+        if path[0] in [";","#"]: continue #comment lines
+        dest_file = dest_path.join(path[:-1])
+        try:
+            file = dest_file.open("w")
+        except:
+            dest_dir = dest_path.shead()
+            os.makedirs(dest_dir.s)
+            file = dest_file.open("w")
+        file.write("test file")
+        file.close()
+    ins.close()
 
 # Main -------------------------------------------------------------------------
 if __name__ == '__main__':

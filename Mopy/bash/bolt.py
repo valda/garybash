@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bolt.
 #
@@ -20,6 +22,8 @@
 # =============================================================================
 
 # Imports ----------------------------------------------------------------------
+#-- Use the 'with' statement for Python 2.5
+from __future__ import with_statement
 #--Standard
 import cPickle
 import copy
@@ -31,11 +35,14 @@ import struct
 import sys
 import time
 import subprocess
+import collections
 from subprocess import Popen, PIPE
-from types import *
+close_fds = True
+import types
 from binascii import crc32
 import ConfigParser
 #-- To make commands executed with Popen hidden
+startupinfo = None
 if os.name == 'nt':
     startupinfo = subprocess.STARTUPINFO()
     try: startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -43,9 +50,72 @@ if os.name == 'nt':
         import _subprocess
         startupinfo.dwFlags |= _subprocess.STARTF_USESHOWWINDOW
 
+
+# Unicode Strings -------------------------------------------------------------
+# See Python's "aliases.py" for a list of possible encodings
+UnicodeEncodings = (
+    # Encodings we'll try for conversion to unicode
+    'UTF8',     # Standard encoding
+    'U16',      # Some files use UTF-16 though
+    'cp1252',   # Western Europe
+    'cp500',    # Western Europe
+    'cp932',    # Japanese SJIS-win 
+    'mbcs',     # Multi-byte character set (depends on the Windows locale)
+    )
+NumEncodings = len(UnicodeEncodings)
+
+def Unicode(name,tryFirstEncoding=False):
+    if not bUseUnicode: return name #don't change if not unicode mode.
+    if isinstance(name,unicode): return name
+    if isinstance(name,str):
+        if tryFirstEncoding:
+            try:
+                return unicode(name,tryFirstEncoding)
+            except UnicodeDecodeError: 
+                deprint("Unable to decode '%s' in %s." % (name, tryFirstEncoding))
+                pass
+        for i in range(NumEncodings):
+            try:
+                return unicode(name,UnicodeEncodings[i])
+            except UnicodeDecodeError:
+                if i == NumEncodings - 1:
+                    raise
+    return name
+
+def Encode(name,tryFirstEncoding=False):
+    if not bUseUnicode: return name #don't change if not unicode mode.
+    if isinstance(name,str): return name
+    if isinstance(name,unicode):
+        if tryFirstEncoding:
+            try:
+                return name.encode(tryFirstEncoding)
+            except UnicodeEncodeError: 
+                deprint("Unable to encode '%s' in %s." % (name, tryFirstEncoding))
+                pass
+        for i in range(NumEncodings):
+            try:
+                return name.encode(UnicodeEncodings[i])
+            except UnicodeEncodeError:
+                if i == NumEncodings - 1:
+                    raise
+    return name
+
 # Localization ----------------------------------------------------------------
+#used instead of bosh.inisettings['EnableUnicode'] to avoid circular imports
+#has to be set by bolt before any Path's are instantiated
+#ini gets read twice, but that's a minor hit at startup
+bUseUnicode = False
+if os.path.exists('bash.ini'):
+    bashIni = ConfigParser.ConfigParser()
+    bashIni.read('bash.ini')
+    for section in bashIni.sections():
+        options = bashIni.items(section)
+        for key,value in options:
+            if key == 'benableunicode':
+                bUseUnicode = bashIni.getboolean(section,key)
+                break
+
 reTrans = re.compile(r'^([ :=\.]*)(.+?)([ :=\.]*$)')
-hunky = 0
 def compileTranslator(txtPath,pklPath):
     """Compiles specified txtFile into pklFile."""
     reSource = re.compile(r'^=== ')
@@ -87,7 +157,8 @@ if locale.getlocale() == (None,None):
     locale.setlocale(locale.LC_ALL,'')
 language = locale.getlocale()[0].split('_',1)[0]
 if language.lower() == 'german': language = 'de' #--Hack for German speakers who aren't 'DE'.
-languagePkl, languageTxt = (os.path.join('data',language+ext) for ext in ('.pkl','.txt'))
+# TODO: use bosh.dirs['l10n'] once we solve the circular import
+languagePkl, languageTxt = (os.path.join('bash','l10n',language+ext) for ext in ('.pkl','.txt'))
 #--Recompile pkl file?
 if os.path.exists(languageTxt) and (
     not os.path.exists(languagePkl) or (
@@ -102,15 +173,552 @@ if os.path.exists(languagePkl):
     _translator = cPickle.load(pklFile)
     pklFile.close()
     def _(text,encode=True):
+        text = Encode(text,'mbcs')
         if encode: text = reEscQuote.sub("'",text.encode('string_escape'))
         head,core,tail = reTrans.match(text).groups()
         if core and core in _translator:
             text = head+_translator[core]+tail
         if encode: text = text.decode('string_escape')
+        if bUseUnicode: text = unicode(text,'mbcs')
         return text
 else:
     def _(text,encode=True): return text
 
+CBash = 0
+images_list = {
+    292 : {
+        '3dsmax16.png' : 1176,
+        '3dsmax24.png' : 2152,
+        '3dsmax32.png' : 3225,
+        '3dsmaxblack16.png' : 1085,
+        '3dsmaxblack24.png' : 1925,
+        '3dsmaxblack32.png' : 2669,
+        'abcamberaudioconverter16.png' : 1271,
+        'abcamberaudioconverter24.png' : 2468,
+        'abcamberaudioconverter32.png' : 3888,
+        'andreamosaic16.png' : 807,
+        'andreamosaic24.png' : 1111,
+        'andreamosaic32.png' : 1191,
+        'anifx16.png' : 1204,
+        'anifx24.png' : 2192,
+        'anifx32.png' : 3292,
+        'artofillusion16.png' : 1086,
+        'artofillusion24.png' : 1975,
+        'artofillusion32.png' : 2869,
+        'artweaver05_16.png' : 1159,
+        'artweaver05_24.png' : 2097,
+        'artweaver05_32.png' : 3178,
+        'artweaver16.png' : 1193,
+        'artweaver24.png' : 2286,
+        'artweaver32.png' : 3565,
+        'audacity16.png' : 1175,
+        'audacity24.png' : 2269,
+        'audacity32.png' : 3319,
+        'autocad16.png' : 1083,
+        'autocad24.png' : 1906,
+        'autocad32.png' : 2539,
+        'bashmon16.png' : 1212,
+        'bashmon24.png' : 2311,
+        'bashmon32.png' : 3025,
+        'bash_16.png' : 1198,
+        'bash_16_blue.png' : 1198,
+        'bash_24.png' : 1230,
+        'bash_24_2.png' : 1230,
+        'bash_24_blue.png' : 1230,
+        'bash_32.ico' : 2238,
+        'bash_32.png' : 1338,
+        'bash_32_2.png' : 1338,
+        'bash_32_blue.png' : 1338,
+        'blender16.png' : 3504,
+        'blender24.png' : 1967,
+        'blender32.png' : 2668,
+        'boss16.png' : 362,
+        'boss24.png' : 679,
+        'boss32.png' : 579,
+        'brick16.png' : 452,
+        'brick24.png' : 2248,
+        'brick32.png' : 2092,
+        'bricksntiles16.png' : 1258,
+        'bricksntiles24.png' : 2441,
+        'bricksntiles32.png' : 3410,
+        'brick_edit16.png' : 775,
+        'brick_edit24.png' : 4562,
+        'brick_edit32.png' : 5880,
+        'brick_error16.png' : 798,
+        'brick_error24.png' : 4599,
+        'brick_error32.png' : 5383,
+        'brick_go16.png' : 790,
+        'brick_go24.png' : 4534,
+        'brick_go32.png' : 5857,
+        'bsacommander16.png' : 685,
+        'bsacommander24.png' : 2276,
+        'bsacommander32.png' : 2864,
+        'calculator16.png' : 952,
+        'calculator24.png' : 1646,
+        'calculator32.png' : 2328,
+        'cancel.png' : 36780,
+        'check.png' : 689,
+        'checkbox_blue_imp.png' : 162,
+        'checkbox_blue_inc.png' : 875,
+        'checkbox_blue_off.png' : 115,
+        'checkbox_blue_on.png' : 180,
+        'checkbox_blue_on_24.png' : 405,
+        'checkbox_blue_on_32.png' : 254,
+        'checkbox_green_imp.png' : 156,
+        'checkbox_green_inc.png' : 875,
+        'checkbox_green_inc_wiz.png' : 420,
+        'checkbox_green_off.png' : 116,
+        'checkbox_green_off_24.png' : 2887,
+        'checkbox_green_off_32.png' : 2883,
+        'checkbox_green_off_wiz.png' : 393,
+        'checkbox_green_on.png' : 174,
+        'checkbox_green_on_24.png' : 403,
+        'checkbox_green_on_32.png' : 248,
+        'checkbox_grey_inc.png' : 159,
+        'checkbox_grey_off.png' : 125,
+        'checkbox_grey_on.png' : 173,
+        'checkbox_orange_imp.png' : 156,
+        'checkbox_orange_inc.png' : 875,
+        'checkbox_orange_inc_wiz.png' : 421,
+        'checkbox_orange_off.png' : 116,
+        'checkbox_orange_off_wiz.png' : 392,
+        'checkbox_orange_on.png' : 181,
+        'checkbox_purple_imp.png' : 168,
+        'checkbox_purple_inc.png' : 875,
+        'checkbox_purple_off.png' : 136,
+        'checkbox_purple_on.png' : 194,
+        'checkbox_red_imp.png' : 155,
+        'checkbox_red_inc.png' : 875,
+        'checkbox_red_inc_wiz.png' : 418,
+        'checkbox_red_off.png' : 115,
+        'checkbox_red_off_24.png' : 2889,
+        'checkbox_red_off_32.png' : 2883,
+        'checkbox_red_off_wiz.png' : 395,
+        'checkbox_red_on.png' : 174,
+        'checkbox_red_x.png' : 875,
+        'checkbox_red_x_24.png' : 3037,
+        'checkbox_red_x_32.png' : 2989,
+        'checkbox_white_inc.png' : 159,
+        'checkbox_white_inc_wiz.png' : 416,
+        'checkbox_white_off.png' : 125,
+        'checkbox_white_off_wiz.png' : 400,
+        'checkbox_white_on.png' : 174,
+        'checkbox_yellow_imp.png' : 161,
+        'checkbox_yellow_inc.png' : 173,
+        'checkbox_yellow_inc_wiz.png' : 421,
+        'checkbox_yellow_off.png' : 114,
+        'checkbox_yellow_off_wiz.png' : 393,
+        'checkbox_yellow_on.png' : 184,
+        'crazybump16.png' : 1031,
+        'crazybump24.png' : 1768,
+        'crazybump32.png' : 2483,
+        'custom1016.png' : 349,
+        'custom1024.png' : 782,
+        'custom1032.png' : 723,
+        'custom1116.png' : 299,
+        'custom1124.png' : 679,
+        'custom1132.png' : 610,
+        'custom116.png' : 289,
+        'custom1216.png' : 359,
+        'custom1224.png' : 768,
+        'custom1232.png' : 717,
+        'custom124.png' : 625,
+        'custom1316.png' : 362,
+        'custom132.png' : 576,
+        'custom1324.png' : 778,
+        'custom1332.png' : 710,
+        'custom1416.png' : 334,
+        'custom1424.png' : 741,
+        'custom1432.png' : 683,
+        'custom1516.png' : 357,
+        'custom1524.png' : 771,
+        'custom1532.png' : 726,
+        'custom1616.png' : 372,
+        'custom1624.png' : 790,
+        'custom1632.png' : 751,
+        'custom1716.png' : 334,
+        'custom1724.png' : 726,
+        'custom1732.png' : 665,
+        'custom1816.png' : 365,
+        'custom1824.png' : 783,
+        'custom1832.png' : 736,
+        'custom216.png' : 364,
+        'custom224.png' : 679,
+        'custom232.png' : 668,
+        'custom316.png' : 390,
+        'custom324.png' : 700,
+        'custom332.png' : 678,
+        'custom416.png' : 344,
+        'custom424.png' : 675,
+        'custom432.png' : 629,
+        'custom516.png' : 387,
+        'custom524.png' : 699,
+        'custom532.png' : 675,
+        'custom616.png' : 392,
+        'custom624.png' : 725,
+        'custom632.png' : 703,
+        'custom716.png' : 332,
+        'custom724.png' : 662,
+        'custom732.png' : 619,
+        'custom816.png' : 402,
+        'custom824.png' : 717,
+        'custom832.png' : 690,
+        'custom916.png' : 406,
+        'custom924.png' : 732,
+        'custom932.png' : 709,
+        'database_connect16.png' : 763,
+        'database_connect24.png' : 4548,
+        'database_connect32.png' : 5079,
+        'ddsconverter16.png' : 1123,
+        'ddsconverter24.png' : 2134,
+        'ddsconverter32.png' : 2809,
+        'debug16.png' : 1133,
+        'debug24.png' : 2167,
+        'debug32.png' : 3142,
+        'deeppaint16.png' : 1039,
+        'deeppaint24.png' : 1664,
+        'deeppaint32.png' : 2300,
+        'diamond_green_inc.png' : 208,
+        'diamond_green_inc_wiz.png' : 457,
+        'diamond_green_off.png' : 189,
+        'diamond_green_off_wiz.png' : 431,
+        'diamond_grey_inc.png' : 189,
+        'diamond_grey_off.png' : 189,
+        'diamond_orange_inc.png' : 217,
+        'diamond_orange_inc_wiz.png' : 455,
+        'diamond_orange_off.png' : 195,
+        'diamond_orange_off_wiz.png' : 430,
+        'diamond_red_inc.png' : 210,
+        'diamond_red_inc_wiz.png' : 451,
+        'diamond_red_off.png' : 191,
+        'diamond_red_off_wiz.png' : 430,
+        'diamond_white_inc.png' : 190,
+        'diamond_white_off.png' : 190,
+        'diamond_white_off_wiz.png' : 429,
+        'diamond_yellow_inc.png' : 209,
+        'diamond_yellow_inc_wiz.png' : 451,
+        'diamond_yellow_off.png' : 189,
+        'diamond_yellow_off_wiz.png' : 428,
+        'docbrowser16.png' : 1010,
+        'docbrowser24.png' : 1979,
+        'docbrowser32.png' : 2845,
+        'doc_on.png' : 149,
+        'dogwaffle16.png' : 921,
+        'dogwaffle24.png' : 1515,
+        'dogwaffle32.png' : 2123,
+        'dos.png' : 362,
+        'eggtranslator16.png' : 1101,
+        'eggtranslator24.png' : 2059,
+        'eggtranslator32.png' : 3267,
+        'error.jpg' : 45270,
+        'evgaprecision16.png' : 1185,
+        'evgaprecision24.png' : 2123,
+        'evgaprecision32.png' : 3267,
+        'exclamation.png' : 701,
+        'faststoneimageviewer16.png' : 1116,
+        'faststoneimageviewer24.png' : 2125,
+        'faststoneimageviewer32.png' : 3202,
+        'filezilla16.png' : 853,
+        'filezilla24.png' : 1448,
+        'filezilla32.png' : 1601,
+        'finish.png' : 42978,
+        'fraps16.png' : 1153,
+        'fraps24.png' : 2075,
+        'fraps32.png' : 2857,
+        'freemind16.png' : 1215,
+        'freemind24.png' : 2223,
+        'freemind32.png' : 3279,
+        'freemind8.1custom_16.png' : 1244,
+        'freemind8.1custom_24.png' : 2359,
+        'freemind8.1custom_32.png' : 3605,
+        'freeplane16.png' : 1165,
+        'freeplane24.png' : 2139,
+        'freeplane32.png' : 3176,
+        'genetica16.png' : 1254,
+        'genetica24.png' : 2424,
+        'genetica32.png' : 3697,
+        'geneticaviewer16.png' : 1230,
+        'geneticaviewer24.png' : 2237,
+        'geneticaviewer32.png' : 3073,
+        'geniuxphotoefx16.png' : 1259,
+        'geniuxphotoefx24.png' : 2405,
+        'geniuxphotoefx32.png' : 3674,
+        'gimp16.png' : 997,
+        'gimp24.png' : 1740,
+        'gimp32.png' : 2489,
+        'gimpshop16.png' : 1135,
+        'gimpshop24.png' : 2435,
+        'gimpshop32.png' : 2895,
+        'gmax16.png' : 913,
+        'gmax24.png' : 1639,
+        'gmax32.png' : 2419,
+        'group_gear16.png' : 824,
+        'group_gear24.png' : 4698,
+        'group_gear32.png' : 6136,
+        'help16.png' : 3730,
+        'help24.png' : 4660,
+        'help32.png' : 5518,
+        'icofx16.png' : 1227,
+        'icofx24.png' : 2266,
+        'icofx32.png' : 3285,
+        'ini-all natural.png' : 121810,
+        'ini-oblivion.png' : 126961,
+        'inkscape16.png' : 1125,
+        'inkscape24.png' : 1976,
+        'inkscape32.png' : 2906,
+        "insanity'sreadmegenerator16.png" : 1187,
+        "insanity'sreadmegenerator24.png" : 2227,
+        "insanity'sreadmegenerator32.png" : 3436,
+        "insanity'srng16.png" : 1164,
+        "insanity'srng24.png" : 2223,
+        "insanity'srng32.png" : 3343,
+        'interactivemapofcyrodiil16.png' : 960,
+        'interactivemapofcyrodiil24.png' : 1840,
+        'interactivemapofcyrodiil32.png' : 2860,
+        'irfanview16.png' : 1124,
+        'irfanview24.png' : 2016,
+        'irfanview32.png' : 2828,
+        'isobl16.png' : 1056,
+        'isobl24.png' : 2088,
+        'isobl32.png' : 3314,
+        'itemizer16.png' : 972,
+        'itemizer24.png' : 1733,
+        'itemizer32.png' : 2472,
+        'k-3d16.png' : 1183,
+        'k-3d24.png' : 2130,
+        'k-3d32.png' : 3173,
+        'list16.png' : 1153,
+        'list24.png' : 2061,
+        'list32.png' : 2902,
+        'logitechkeyboard16.png' : 622,
+        'logitechkeyboard24.png' : 1625,
+        'logitechkeyboard32.png' : 2154,
+        'mapzone16.png' : 1021,
+        'mapzone24.png' : 1767,
+        'mapzone32.png' : 2576,
+        'maya16.png' : 960,
+        'maya24.png' : 1755,
+        'maya32.png' : 2748,
+        'mcowavi32.png' : 3921,
+        'mcowbash16.png' : 1092,
+        'mediamonkey16.png' : 1127,
+        'mediamonkey24.png' : 2076,
+        'mediamonkey32.png' : 2975,
+        'meshlab16.png' : 1079,
+        'meshlab24.png' : 1860,
+        'meshlab32.png' : 2573,
+        'milkshape3d16.png' : 988,
+        'milkshape3d24.png' : 1694,
+        'milkshape3d32.png' : 2422,
+        'modchecker16.png' : 1120,
+        'modchecker24.png' : 1763,
+        'modchecker32.png' : 3161,
+        'modlistgenerator16.png' : 1203,
+        'modlistgenerator24.png' : 2265,
+        'modlistgenerator32.png' : 3321,
+        'mtes4manager16.png' : 1182,
+        'mtes4manager24.png' : 2479,
+        'mtes4manager32.png' : 3246,
+        'mudbox16.png' : 1066,
+        'mudbox24.png' : 1997,
+        'mudbox32.png' : 2869,
+        'mypaint16.png' : 1081,
+        'mypaint24.png' : 1986,
+        'mypaint32.png' : 2787,
+        'nifskope16.png' : 1233,
+        'nifskope24.png' : 2331,
+        'nifskope32.png' : 3583,
+        'niftools16.png' : 974,
+        'niftools24.png' : 1968,
+        'niftools32.png' : 2503,
+        'notepad++16.png' : 1203,
+        'notepad++24.png' : 2234,
+        'notepad++32.png' : 3490,
+        'nvidia16.png' : 988,
+        'nvidia24.png' : 1823,
+        'nvidia32.png' : 2814,
+        'nvidiamelody16.png' : 865,
+        'nvidiamelody24.png' : 1481,
+        'nvidiamelody32.png' : 2187,
+        'oblivion16.png' : 3542,
+        'oblivion24.png' : 1528,
+        'oblivion32.png' : 3090,
+        'oblivionbookcreator16.png' : 945,
+        'oblivionbookcreator24.png' : 1676,
+        'oblivionbookcreator32.png' : 2405,
+        'oblivionfaceexchangerlite16.png' : 910,
+        'oblivionfaceexchangerlite24.png' : 1550,
+        'oblivionfaceexchangerlite32.png' : 2208,
+        'obmm16.png' : 1093,
+        'obmm24.png' : 2101,
+        'obmm32.png' : 3176,
+        'obse16.png' : 281,
+        'openoffice16.png' : 1090,
+        'openoffice24.png' : 1945,
+        'openoffice32.png' : 2735,
+        'page_find16.png' : 879,
+        'page_find24.png' : 4768,
+        'page_find32.png' : 5269,
+        'paint.net16.png' : 1134,
+        'paint.net24.png' : 2072,
+        'paint.net32.png' : 2984,
+        'paintshopprox316.png' : 3588,
+        'paintshopprox324.png' : 4575,
+        'paintshopprox332.png' : 5241,
+        'pes16.png' : 955,
+        'pes24.png' : 1834,
+        'pes32.png' : 2735,
+        'photobie16.png' : 1060,
+        'photobie24.png' : 1826,
+        'photobie32.png' : 2544,
+        'photofiltre16.png' : 1006,
+        'photofiltre24.png' : 1777,
+        'photofiltre32.png' : 2616,
+        'photoscape16.png' : 983,
+        'photoscape24.png' : 1722,
+        'photoscape32.png' : 2224,
+        'photoseam16.png' : 1271,
+        'photoseam24.png' : 2441,
+        'photoseam32.png' : 3775,
+        'photoshop16.png' : 1275,
+        'photoshop24.png' : 2490,
+        'photoshop32.png' : 3929,
+        'pixelformer16.png' : 1045,
+        'pixelformer24.png' : 1088,
+        'pixelformer32.png' : 1121,
+        'pixelstudiopro16.png' : 1088,
+        'pixelstudiopro24.png' : 1886,
+        'pixelstudiopro32.png' : 2371,
+        'pixia16.png' : 1236,
+        'pixia24.png' : 2332,
+        'pixia32.png' : 3547,
+        'pythonlogo16.png' : 1145,
+        'pythonlogo24.png' : 1963,
+        'pythonlogo32.png' : 2625,
+        'questionmarksquare16.png' : 363,
+        'radvideotools16.png' : 1182,
+        'radvideotools24.png' : 2117,
+        'radvideotools32.png' : 3072,
+        'randomnpc16.png' : 928,
+        'randomnpc24.png' : 1751,
+        'randomnpc32.png' : 2434,
+        'red_x.png' : 178,
+        'save_off.png' : 908,
+        'save_on.png' : 177,
+        'sculptris16.png' : 1229,
+        'sculptris24.png' : 2352,
+        'sculptris32.png' : 3646,
+        'selectmany.jpg' : 110594,
+        'selectone.jpg' : 85738,
+        'skype16.png' : 1164,
+        'skype24.png' : 2129,
+        'skype32.png' : 2897,
+        'softimagemodtool16.png' : 927,
+        'softimagemodtool24.png' : 1626,
+        'softimagemodtool32.png' : 2413,
+        'sourceforge16.png' : 680,
+        'speedtree16.png' : 993,
+        'speedtree24.png' : 1970,
+        'speedtree32.png' : 2806,
+        'steam16.png' : 537,
+        'steam24.png' : 836,
+        'steam32.png' : 1004,
+        'switch16.png' : 1041,
+        'switch24.png' : 1800,
+        'switch32.png' : 2538,
+        'table_error16.png' : 687,
+        'table_error24.png' : 4714,
+        'table_error32.png' : 4978,
+        'tabula16.png' : 1019,
+        'tabula24.png' : 1899,
+        'tabula32.png' : 3041,
+        'tes4edit16.png' : 1156,
+        'tes4edit24.png' : 2000,
+        'tes4edit32.png' : 2547,
+        'tes4files16.png' : 849,
+        'tes4files24.png' : 2262,
+        'tes4files32.png' : 3789,
+        'tes4gecko16.png' : 1197,
+        'tes4gecko24.png' : 2230,
+        'tes4gecko32.png' : 2803,
+        'tes4lodgen16.png' : 1227,
+        'tes4lodgen24.png' : 2467,
+        'tes4lodgen32.png' : 3721,
+        'tes4trans16.png' : 1095,
+        'tes4trans24.png' : 1923,
+        'tes4trans32.png' : 2503,
+        'tes4view16.png' : 1131,
+        'tes4view24.png' : 2071,
+        'tes4view32.png' : 2778,
+        'tes4wizbain16.png' : 1182,
+        'tes4wizbain24.png' : 2161,
+        'tes4wizbain32.png' : 3324,
+        'tesa16.png' : 1175,
+        'tesa24.png' : 2173,
+        'tesa32.png' : 3083,
+        'tescs16.png' : 1078,
+        'tescs24.png' : 1894,
+        'tescs32.png' : 2505,
+        'tesnexus16.png' : 272,
+        'texturemaker16.png' : 1158,
+        'texturemaker24.png' : 2137,
+        'texturemaker32.png' : 3277,
+        'Thumbs.db' : 349868,
+        'treed16.png' : 807,
+        'treed24.png' : 1738,
+        'treed32.png' : 2121,
+        'truespace16.png' : 1244,
+        'truespace24.png' : 2328,
+        'truespace32.png' : 3541,
+        'twistedbrush16.png' : 1089,
+        'twistedbrush24.png' : 2112,
+        'twistedbrush32.png' : 3159,
+        'unofficialelderscrollspages16.png' : 1216,
+        'unofficialelderscrollspages24.png' : 2277,
+        'unofficialelderscrollspages32.png' : 3685,
+        'versions.png' : 42287,
+        'winamp16.png' : 1098,
+        'winamp24.png' : 2043,
+        'winamp32.png' : 2787,
+        'wings3d16.png' : 1015,
+        'wings3d24.png' : 1779,
+        'wings3d32.png' : 2324,
+        'winmerge16.png' : 1136,
+        'winmerge24.png' : 2085,
+        'winmerge32.png' : 2981,
+        'winsnap16.png' : 1268,
+        'winsnap24.png' : 2474,
+        'winsnap32.png' : 3706,
+        'wizard.png' : 442,
+        'wizardscripthighlighter.jpg' : 175127,
+        'wryebash_01.png' : 128009,
+        'wryebash_02.png' : 13209,
+        'wryebash_03.png' : 130445,
+        'wryebash_04.png' : 91759,
+        'wryebash_05.png' : 237791,
+        'wryebash_06.png' : 452714,
+        'wryebash_07.png' : 32293,
+        'wryebash_08.png' : 20960,
+        'wryebash_docbrowser.png' : 37078,
+        'wryebash_peopletab.png' : 83310,
+        'wryemonkey16.jpg' : 721,
+        'wryemonkey16.png' : 1011,
+        'wryemonkey24.png' : 1982,
+        'wryemonkey32.png' : 3222,
+        'wrye_monkey_87.jpg' : 2682,
+        'wtv16.png' : 990,
+        'wtv24.png' : 1902,
+        'wtv32.png' : 2937,
+        'x.png' : 655,
+        'xnormal16.png' : 806,
+        'xnormal24.png' : 1355,
+        'xnormal32.png' : 1827,
+        'xnview16.png' : 1101,
+        'xnview24.png' : 2145,
+        'xnview32.png' : 2926,
+        'zoom_on.png' : 237
+        },
+    }
 # Errors ----------------------------------------------------------------------
 class BoltError(Exception):
     """Generic error with a string message."""
@@ -146,8 +754,20 @@ class UncodedError(BoltError):
 #------------------------------------------------------------------------------
 class CancelError(BoltError):
     """User pressed 'Cancel' on the progress meter."""
-    def __init__(self,message=_('Action aboted by user.')):
+    def __init__(self,message=_('Action aborted by user.')):
         BoltError.__init__(self, message)
+
+class SkipError(BoltError):
+    """User pressed 'Skip' on the progress meter."""
+    def __init__(self,message=_('Action skipped by user.')):
+        BoltError.__init__(self,message)
+
+#------------------------------------------------------------------------------
+class PermissionError(BoltError):
+    """Wrye Bash doesn't have permission to access the specified file/directory."""
+    def __init__(self,message=None):
+        message = message or _('Access is denied.')
+        BoltError.__init__(self,message)
 
 # LowStrings ------------------------------------------------------------------
 class LString(object):
@@ -209,6 +829,10 @@ class Path(object):
     #--Class Vars/Methods -------------------------------------------
     norm_path = {} #--Dictionary of paths
     mtimeResets = [] #--Used by getmtime
+    ascii = '[\x00-\x7F]'
+    japanese_hankana = '[\xA1-\xDF]'
+    japanese_zenkaku ='[\x81-\x9F\xE0-\xFC][\x40-\x7E\x80-\xFC]'
+    reChar = re.compile('('+ascii+'|'+japanese_hankana+'|'+japanese_zenkaku+')', re.M)
 
     @staticmethod
     def get(name):
@@ -244,61 +868,73 @@ class Path(object):
     @staticmethod
     def mbSplit(path):
         """Split path to consider multibyte character boundary."""
-        ascii = '[\x00-\x7F]'
-        japanese_hankana = '[\xA1-\xDF]'
-        japanese_zenkaku ='[\x81-\x9F\xE0-\xFC][\x40-\x7E\x80-\xFC]'
-        reChar = re.compile('('+ascii+'|'+japanese_hankana+'|'+japanese_zenkaku+')', re.M)
         # Should also add Chinese fantizi and zhengtizi, Korean Hangul, etc.
-        match = reChar.split(path)
-        result = ['']
+        match = Path.reChar.split(path)
+        result = []
+        curResult = ''
+        resultAppend = result.append
         for c in match:
             if c == '\\':
-                result.append('')
+                resultAppend(curResult)
+                curResult = ''
             else:
-                result[-1] += c
+                curResult += c
+        resultAppend(curResult)
         return result
 
     #--Instance stuff --------------------------------------------------
     #--Slots: _s is normalized path. All other slots are just pre-calced
     #  variations of it.
-    __slots__ = ('_s','_cs','_csroot','_sroot','_shead','_stail','_ext','_cext','_sbody','_csbody')##,'cachedCRC','cachedatime','cachedctime','cachedsize')
+    __slots__ = ('_s','_cs','_csroot','_sroot','_shead','_stail','_ext','_cext','_sbody','_csbody')
 
     def __init__(self, name):
         """Initialize."""
-        if isinstance(name,Path):
-            self.__setstate__(name._s)
-        elif isinstance(name,unicode):
-            self.__setstate__(name)
+        if bUseUnicode:
+            if isinstance(name,Path):
+                self.__setstate__(unicode(name._s,'UTF8'))
+            elif isinstance(name,unicode):
+                self.__setstate__(name)
+            else:
+                self.__setstate__(Unicode(name))
+                ##try:
+                ##    self.__setstate__(unicode(str(name),'UTF8'))
+                ##except UnicodeDecodeError:
+                ##    try:
+                ##        # A fair number of file names require UTF16 instead...
+                ##        self.__setstate__(unicode(str(name),'U16'))
+                ##    except UnicodeDecodeError:
+                ##        try:
+                ##            self.__setstate__(unicode(str(name),'cp1252'))
+                ##        except UnicodeDecodeError:
+                ##            # and one really really odd one (in SOVVM mesh bundle) requires cp500 (well at least that works unlike UTF8,16,32,32BE (the others I tried first))!
+                ##            self.__setstate__(unicode(str(name),'cp500'))
         else:
-            self.__setstate__(str(name))
+            if isinstance(name,Path):
+                self.__setstate__(name._s)
+            elif isinstance(name,unicode):
+                self.__setstate__(name)
+            else:
+                self.__setstate__(str(name))
 
     def __getstate__(self):
         """Used by pickler. _cs is redundant,so don't include."""
-##        if getattr(self,'cachedCRC',None):
-##            return (self._s, self.cachedCRC, self.cachedatime, self.cachedctime, self.cachedsize)
-##        else:
         return self._s
 
     def __setstate__(self,norm):
         """Used by unpickler. Reconstruct _cs."""
-##        if isinstance(norm, tuple):
-##            self._s = norm[0]
-##            self.cachedCRC = norm[1]
-##            self.cachedatime = norm[2]
-##            self.cachedctime = norm[3]
-##            self.cachedsize = norm[4]
-##        else:
         self._s = norm
         self._cs = os.path.normcase(self._s)
         self._sroot,self._ext = os.path.splitext(self._s)
-        #self._shead,self._stail = os.path.split(self._s)
-        pathParts = Path.mbSplit(self._s)
-        if len(pathParts) == 1:
-            self._shead = ''
-            self._stail = pathParts[0]
+        if bUseUnicode:
+            self._shead,self._stail = os.path.split(self._s)
         else:
-            self._shead = '\\'.join(pathParts[0:-1])
-            self._stail = pathParts[-1]
+            pathParts = Path.mbSplit(self._s)
+            if len(pathParts) == 1:
+                self._shead = ''
+                self._stail = pathParts[0]
+            else:
+                self._shead = '\\'.join(pathParts[0:-1])
+                self._stail = pathParts[-1]
         self._cext = os.path.normcase(self._ext)
         self._csroot = os.path.normcase(self._sroot)
         self._sbody = os.path.basename(os.path.splitext(self._s)[0])
@@ -310,6 +946,8 @@ class Path(object):
     def __repr__(self):
         return "bolt.Path("+repr(self._s)+")"
 
+    def __str__(self):
+        return self._s
     #--Properties--------------------------------------------------------
     #--String/unicode versions.
     @property
@@ -358,6 +996,7 @@ class Path(object):
     def tail(self):
         "For alpha\beta.gamma, returns beta.gamma."
         return GPath(self._stail)
+    @property
     def body(self):
         "For alpha\beta.gamma, returns beta."
         return GPath(self._sbody)
@@ -399,10 +1038,20 @@ class Path(object):
             except ValueError:
                 return 0
         else:
-            return os.path.getsize(self._s)
+            try:
+                return os.path.getsize(self._s)
+            except WindowsError, werr:
+                    if werr.winerror != 123: raise
+                    deprint(_("Unable to determine size of %s - probably a unicode error") % self._s)
+                    return 0
     @property
     def atime(self):
-        return os.path.getatime(self._s)
+        try:
+            return os.path.getatime(self._s)
+        except WindowsError, werr:
+            if werr.winerror != 123: raise
+            deprint(_("Unable to determine atime of %s - probably a unicode error") % self._s)
+            return 1309853942.895 #timestamp of oblivion.exe (also known as any random time may work).
     @property
     def ctime(self):
         return os.path.getctime(self._s)
@@ -417,12 +1066,20 @@ class Path(object):
             cExtend = c.extend
             join = os.path.join
             getM = os.path.getmtime
-            [cExtend([getM(join(root,dir)) for dir in dirs] + [getM(join(root,file)) for file in files]) for root,dirs,files in os.walk(self._s)]
+            try:
+                [cExtend([getM(join(root,dir)) for dir in dirs] + [getM(join(root,file)) for file in files]) for root,dirs,files in os.walk(self._s)]
+            except: #slower but won't fail (fatally) on funky unicode files when Bash in ANSI Mode.
+                [cExtend([GPath(join(root,dir)).mtime for dir in dirs] + [GPath(join(root,file)).mtime for file in files]) for root,dirs,files in os.walk(self._s)]
             try:
                 return max(c)
             except ValueError:
                 return 0
-        mtime = int(os.path.getmtime(self._s))
+        try:        
+            mtime = int(os.path.getmtime(self._s))
+        except WindowsError, werr:
+                if werr.winerror != 123: raise
+                deprint(_("Unable to determine modified time of %s - probably a unicode error") % self._s)
+                mtime = 1146007898.0 #0blivion.exe's time... random basically.
         #--Y2038 bug? (os.path.getmtime() can't handle years over unix epoch)
         if mtime <= 0:
             import random
@@ -433,15 +1090,17 @@ class Path(object):
             Path.mtimeResets.append(self)
         return mtime
     def setmtime(self,mtime):
-        os.utime(self._s,(self.atime,int(mtime)))
+        try:
+            os.utime(self._s,(self.atime,int(mtime)))
+        except WindowsError, werr:
+            if werr.winerror != 123: raise
+            deprint(_("Unable to set modified time of %s - probably a unicode error") % self._s)
     mtime = property(getmtime,setmtime,doc="Time file was last modified.")
 
     #--crc
     @property
     def crc(self):
         """Calculates and returns crc value for self."""
-##        if getattr(self,'cachedCRC',None) and (self.cachedatime == self.atime and self.cachedsize == self.size and self.cachedctime == self.ctime):
-##            return self.cachedCRC
         size = self.size
         crc = 0L
         ins = self.open('rb')
@@ -449,12 +1108,24 @@ class Path(object):
         while ins.tell() < size:
             crc = crc32(insRead(512),crc)
         ins.close()
-        if crc < 0: crc = 4294967296L + crc
-##        self.cachedCRC = crc
-##        self.cachedatime = self.atime
-##        self.cachedsize = self.size
-##        self.cachedctime = self.ctime
-        return crc
+        return crc & 0xffffffff
+
+    #--crc with progress bar
+    def crcProgress(self, progress):
+        """Calculates and returns crc value for self, updating progress as it goes."""
+        size = self.size
+        progress.setFull(max(size,1))
+        crc = 0L
+        try:
+            with self.open('rb') as ins:
+                insRead = ins.read
+                while ins.tell() < size:
+                    crc = crc32(insRead(2097152),crc) # 2MB at a time, probably ok
+                    progress(ins.tell())
+        except IOError, ierr:
+           # if werr.winerror != 123: raise
+            deprint(_("Unable to get crc of %s - probably a unicode error") % self._s)
+        return crc & 0xFFFFFFFF
 
     #--Path stuff -------------------------------------------------------
     #--New Paths, subpaths
@@ -476,6 +1147,39 @@ class Path(object):
         else:
             return ((GPath(x),[GPath(u) for u in y],[GPath(u) for u in z])
                 for x,y,z in os.walk(self._s,topdown,onerror))
+    def split(self):
+        """Splits the path into each of it's sub parts.  IE: C:\Program Files\Bethesda Softworks
+           would return ['C:','Program Files','Bethesda Softworks']"""
+        dirs = []
+        drive, path = os.path.splitdrive(self.s)
+        path = path.strip(os.path.sep)
+        l,r = os.path.split(path)
+        while l != '':
+            dirs.append(r)
+            l,r = os.path.split(l)
+        dirs.append(r)
+        if drive != '':
+            dirs.append(drive)
+        dirs.reverse()
+        return dirs
+    def relpath(self,path):
+        try:
+            return GPath(os.path.relpath(self._s,Path.getNorm(path)))
+        except:
+            # Python 2.5 doesn't have os.path.relpath, so we'll have to implement our own
+            path = GPath(path)
+            if path.isfile(): path = path.head
+            splitSelf = self.split()
+            splitOther = path.split()
+            relPath = []
+            while len(splitSelf) > 0 and len(splitOther) > 0 and splitSelf[0] == splitOther[0]:
+                splitSelf.pop(0)
+                splitOther.pop(0)
+            while len(splitOther) > 0:
+                splitOther.pop(0)
+                relPath.append('..')
+            relPath.extend(splitSelf)
+            return GPath(os.path.join(*relPath))
 
     #--File system info
     #--THESE REALLY OUGHT TO BE PROPERTIES.
@@ -504,13 +1208,20 @@ class Path(object):
         if self.isdir() and safety and safety.lower() in self._cs:
             # Clear ReadOnly flag if set
             cmd = r'attrib -R "%s\*" /S /D' % (self._s)
+            cmd = Encode(cmd,'mbcs')
             ins, err = Popen(cmd, stdout=PIPE, startupinfo=startupinfo).communicate()
             shutil.rmtree(self._s)
 
     #--start, move, copy, touch, untemp
-    def start(self):
+    def start(self, exeArgs=None):
         """Starts file as if it had been doubleclicked in file explorer."""
-        os.startfile(self._s)
+        if self._cext == '.exe':
+            if not exeArgs:
+                subprocess.Popen([self.s], close_fds=close_fds)
+            else:
+                subprocess.Popen(exeArgs, executable=self.s, close_fds=close_fds)
+        else:
+            os.startfile(self._s)
     def copyTo(self,destName):
         destName = GPath(destName)
         if self.isdir():
@@ -539,20 +1250,39 @@ class Path(object):
             self.untemp()
     def untemp(self,doBackup=False):
         """Replaces file with temp version, optionally making backup of file first."""
-        if self.exists():
-            if doBackup:
-                self.backup.remove()
-                shutil.move(self._s, self.backup._s)
-            else:
-                os.remove(self._s)
-        shutil.move(self.temp._s, self._s)
+        if self.temp.exists():
+            if self.exists():
+                if doBackup:
+                    self.backup.remove()
+                    shutil.move(self._s, self.backup._s)
+                else:
+                    os.remove(self._s)
+            shutil.move(self.temp._s, self._s)
 
     #--Hash/Compare
     def __hash__(self):
         return hash(self._cs)
     def __cmp__(self, other):
-        if isinstance(other,Path): return cmp(self._cs, other._cs)
-        else: return cmp(self._cs, Path.getCase(other))
+        if isinstance(other,Path):
+            try:
+                return cmp(self._cs, other._cs)
+            except UnicodeDecodeError:
+                try:
+                    return cmp(Encode(self._cs), Encode(other._cs))
+                except UnicodeError:
+                    deprint("Wrye Bash Unicode mode is currently %s" % (['off.','on.'][bUseUnicode]))
+                    deprint("unrecovered Unicode error when dealing with %s - presuming non equal." % (self._cs))
+                    return False
+        else:
+            try:
+                return cmp(self._cs, Path.getCase(other))
+            except UnicodeDecodeError:
+                try:
+                    return cmp(Encode(self._cs), Encode(Path.getCase(other)))
+                except UnicodeError:
+                    deprint("Wrye Bash Unicode mode is currently %s." % (['off','on'][bUseUnicode]))
+                    deprint("unrecovered Unicode error when dealing with %s - presuming non equal.'" % (self._cs))
+                    return False
 
 # Util Constants --------------------------------------------------------------
 #--Unix new lines
@@ -705,7 +1435,7 @@ class Flags(object):
 
 #------------------------------------------------------------------------------
 class DataDict:
-    """Mixin class that handles dictionary emulation, assuming that dictionary is is 'data' attribute."""
+    """Mixin class that handles dictionary emulation, assuming that dictionary is its 'data' attribute."""
 
     def __contains__(self,key):
         return key in self.data
@@ -741,6 +1471,222 @@ class DataDict:
         return self.data.iterkeys()
     def itervalues(self):
         return self.data.itervalues()
+
+#------------------------------------------------------------------------------
+try:
+    from collections import MutableSet
+except:
+    # Python 2.5 compatability
+    class MutableSet:
+        def __le__(self,other):
+            if not isinstance(other, MutableSet):
+                return NotImplemented
+            if len(self) > len(other):
+                return False
+            for elem in self:
+                if elem not in other:
+                    return False
+            return True
+        def __lt__(self,other):
+            if not isinstance(other, MutableSet):
+                return NotImplemented
+            return len(self) < len(other) and self <= other
+        def __gt__(self,other): return other < self
+        def __ge__(self,other): return other <= self
+
+        def __eq__(self,other):
+            if not isintance(other, MutableSet):
+                return NotImplemented
+            return len(self) == len(other) and self <= other
+        def __ne__(self,other): return not (self == other)
+
+        @classmethod
+        def _from_iterable(cls, it):
+            return cls(it)
+
+        def __and__(self,other):
+            return self._from_iterable(elem for elem in other if elem in self)
+
+        def isdisjoint(self,other):
+            for elem in other:
+                if elem in self:
+                    return False
+            return True
+
+        def __or__(self,other):
+            chain = (e for s in (self,other) for e in s)
+            return self._from_iterable(chain)
+        def __sub__(self,other):
+            return self._from_iterable(elem for elem in self if elem not in other)
+        def __xor__(self,other):
+            return (self - other) | (other - self)
+
+        def add(self, value): raise NotImplementedError
+        def discard(self, value): raise NotImplementedError
+
+        def remove(self, elem):
+            if elem not in self:
+                raise KeyError(elem)
+            self.discard(elem)
+
+        def pop(self):
+            it = iter(self)
+            try:
+                value = next(it)
+            except StopIteration:
+                raise KeyError
+            self.discard(value)
+            return value
+
+        def clear(self):
+            try:
+                while True:
+                    self.pop()
+            except KeyError:
+                pass
+
+        def __ior__(self, it):
+            for value in it:
+                self.add(value)
+            return self
+
+        def __iand__(self, it):
+            for value in (self - it):
+                self.discard(value)
+            return self
+
+        def __ixor(self, it):
+            if it is self:
+                self.clear()
+            else:
+                for value in it:
+                    if value in self:
+                        self.discard(value)
+                    else:
+                        self.add(value)
+            return self
+
+        def __isub__(self, it):
+            if it is self:
+                self.clear()
+            else:
+                for value in it:
+                    self.discard(value)
+            return self
+
+#------------------------------------------------------------------------------
+class OrderedSet(list, MutableSet):
+    """A set like object, that remembers the order items were added to it.
+       Since it has order, a few list functions were added as well:
+        - index(value)
+        - __getitem__(index)
+        - __call__ -> to enable 'enumerate'
+       If an item is dicarded, then later readded, it will be added
+       to the end of the set.
+    """
+    def update(self, *args, **kwdargs):
+        if kwdargs: raise TypeError("update() takes no keyword arguments")
+        for s in args:
+            for e in s:
+                self.add(e)
+
+    def add(self, elem):
+        if elem not in self:
+            self.append(elem)
+    def discard(self, elem): self.pop(self.index(elem),None)
+    def __or__(self,other):
+        left = OrderedSet(self)
+        left.update(other)
+        return left
+    def __repr__(self): return 'OrderedSet%s' % str(list(self))[1:-1]
+    def __str__(self): return '{%s}' % str(list(self))[1:-1]
+
+#------------------------------------------------------------------------------
+class MemorySet(object):
+    """Specialization of the OrderedSet, where it remembers the order of items
+       event if they're removed.  Also, combining and comparing to other MemorySet's
+       takes this into account:
+        a|b -> returns union of a and b, but keeps the ordering of b where possible.
+               if an item in a was also in b, but deleted, it will be added to the
+               deleted location.
+        a&b -> same as a|b, but only items 'not-deleted' in both a and b are marked
+               as 'not-deleted'
+        a^b -> same as a|b, but only items 'not-deleted' in a but not b, or b but not
+               a are marked as 'not-deleted'
+        a-b -> same as a|b, but any 'not-deleted' items in b are marked as deleted
+    """
+    def __init__(self, *args, **kwdargs):
+        self.items = OrderedSet(*args, **kwdargs)
+        self.mask = [True for i in range(len(self.items))]
+
+    def add(self,elem):
+        if elem in self.items: self.mask[self.items.index(elem)] = True
+        else:
+            self.items.add(elem)
+            self.mask.append(True)
+    def discard(self,elem):
+        if elem in self.items: self.mask[self.items.index(elem)] = False
+    discarded = property(lambda self: OrderedSet([x for i,x in enumerate(self.items) if not self.mask[i]]))
+
+    def __len__(self): return sum(self.mask)
+    def __iter__(self):
+        for i,elem in enumerate(self.items):
+            if self.mask[i]: yield self.items[i]
+    def __str__(self): return '{%s}' % (','.join(map(repr,self._items())))
+    def __repr__(self): return 'MemorySet([%s])' % (','.join(map(repr,self._items())))
+    def forget(self, elem):
+        # Permanently remove an item from the list.  Don't remember its order
+        if elem in self.items:
+            idex = self.items.index(elem)
+            self.items.discard(elem)
+            del self.mask[idex]
+
+    def _items(self): return OrderedSet([x for x in self])
+
+    def __or__(self,other):
+        """Return items in self or in other"""
+        discards = (self.discarded-other._items())|(other.discarded-self._items())
+        right = list(other.items)
+        left = list(self.items)
+
+        for idex,elem in enumerate(left):
+            # elem is already in the other one, skip
+            if elem in right: continue
+
+            # Figure out best place to put it
+            if idex == 0:
+                # put it in front
+                right.insert(0,elem)
+            elif idex == len(left)-1:
+                # put in in back
+                right.append(elem)
+            else:
+                # Find out what item it comes after
+                afterIdex = idex-1
+                while afterIdex > 0 and left[afterIdex] not in right:
+                    afterIdex -= 1
+                insertIdex = right.index(left[afterIdex])+1
+                right.insert(insertIdex,elem)
+        ret = MemorySet(right)
+        ret.mask = [x not in discards for x in right]
+        return ret
+    def __and__(self,other):
+        items = self.items & other.items
+        discards = self.discarded | other.discarded
+        ret = MemorySet(items)
+        ret.mask = [x not in discards for x in items]
+        return ret
+    def __sub__(self,other):
+        discards = self.discarded | other._items()
+        ret = MemorySet(self.items)
+        ret.mask = [x not in discards for x in self.items]
+        return ret
+    def __xor__(self,other):
+        items = (self|other).items
+        discards = items - (self._items()^other._items())
+        ret = MemorySet(items)
+        ret.mask = [x not in discards for x in items]
+        return ret
 
 #------------------------------------------------------------------------------
 class MainFunctions:
@@ -843,14 +1789,32 @@ class PickleDict:
                 ins = None
                 try:
                     ins = path.open('rb')
-                    try: 
+                    try:
                         header = cPickle.load(ins)
                     except ValueError:
                         os.remove(path)
                         continue # file corrupt - try next file
-                    if header == 'VDATA':
+                    if header == 'VDATA2':
                         self.vdata.update(cPickle.load(ins))
                         self.data.update(cPickle.load(ins))
+                    elif header == 'VDATA':
+                        # translate data types to new hierarchy
+                        class _Translator:
+                            def __init__(self, fileToWrap):
+                                self._file = fileToWrap
+                            def read(self, numBytes):
+                                return self._translate(self._file.read(numBytes))
+                            def readline(self):
+                                return self._translate(self._file.readline())
+                            def _translate(self, s):
+                                return re.sub('^(bolt|bosh)$', r'bash.\1', s)
+                        translator = _Translator(ins)
+                        try:
+                            self.vdata.update(cPickle.load(translator))
+                            self.data.update(cPickle.load(translator))
+                        except:
+                            deprint("unable to unpickle data", traceback=True)
+                            raise
                     else:
                         self.data.update(header)
                     ins.close()
@@ -865,7 +1829,7 @@ class PickleDict:
         if self.readOnly: return False
         #--Pickle it
         out = self.path.temp.open('wb')
-        for data in ('VDATA',self.vdata,self.data):
+        for data in ('VDATA2',self.vdata,self.data):
             cPickle.dump(data,out,-1)
         out.close()
         self.path.untemp(True)
@@ -894,14 +1858,16 @@ class Settings(DataDict):
         else:
             self.vdata = {}
             self.data = {}
+        self.defaults = {}
         self.changed = []
         self.deleted = []
 
     def loadDefaults(self,defaults):
         """Add default settings to dictionary. Will not replace values that are already set."""
+        self.defaults = defaults
         for key in defaults.keys():
             if key not in self.data:
-                self.data[key] = defaults[key]
+                self.data[key] = copy.deepcopy(defaults[key])
 
     def setDefault(self,key,default):
         """Sets a single value to a default value if it has not yet been set."""
@@ -915,7 +1881,10 @@ class Settings(DataDict):
         for key in self.deleted:
             dictFile.data.pop(key,None)
         for key in self.changed:
-            dictFile.data[key] = self.data[key]
+            if self.data[key] == self.defaults.get(key,None):
+                dictFile.data.pop(key,None)
+            else:
+                dictFile.data[key] = self.data[key]
         dictFile.save()
 
     def setChanged(self,key):
@@ -993,6 +1962,53 @@ class StructFile(file):
             strLen =  0x80 | strLen & 0x7f | (strLen & 0xff80) << 1
             self.pack('H',strLen)
         self.write(str)
+
+#------------------------------------------------------------------------------
+class BinaryFile(StructFile):
+    """File reader/writer easier to read specific number of bytes."""
+    def __init__(self,*args,**kwdargs):
+        # Ensure we're reading/writing in binary mode
+        if len(args) < 2:
+            mode = kwdargs.get('mode',None)
+            if mode =='r': mode = 'rb'
+            elif mode == 'w': mode = 'wb'
+            elif mode == 'rb' or mode == 'wb':
+                pass
+            else: mode = 'rb'
+            kwdargs['mode'] = mode
+        else:
+            new_args = list(args)
+            if args[1] == 'r': new_args[1] == 'rb'
+            elif args[1] == 'w': new_args[1] == 'wb'
+            elif args[1] == 'rb' or args[1] == 'wb':
+                pass
+            else: new_args[1] = 'rb'
+            args = tuple(new_args)
+        types.FileType.__init__(self,*args,**kwdargs)
+
+    def readPascalString(self): return self.read(self.readByte())
+    def readCString(self):
+        pos = self.tell()
+        while self.readByte() != 0:
+            pass
+        end = self.tell()
+        self.seek(pos)
+        return self.read(end-pos+1)
+    # readNetString defined in StructFile
+    def readByte(self): return struct.unpack('B',self.read(1))[0]
+    def readBytes(self, numBytes): return list(struct.unpack('b'*numBytes,self.read(numBytes)))
+    def readInt16(self): return struct.unpack('h',self.read(2))[0]
+    def readInt32(self): return struct.unpack('i',self.read(4))[0]
+    def readInt64(self): return struct.unpack('q',self.read(8))[0]
+
+    def writeString(self, text):
+        self.writeByte(len(text))
+        self.write(text)
+    def writeByte(self, byte): self.write(struct.pack('B',byte))
+    def writeBytes(self, bytes): self.write(struct.pack('b'*len(bytes),*bytes))
+    def writeInt16(self, int16): self.write(struct.pack('h',int16))
+    def writeInt32(self, int32): self.write(struct.pack('i',int32))
+    def writeInt64(self, int64): self.write(struct.pack('q',int64))
 
 #------------------------------------------------------------------------------
 class TableColumn:
@@ -1243,10 +2259,20 @@ deprintOn = False
 def deprint(*args,**keyargs):
     """Prints message along with file and line location."""
     if not deprintOn and not keyargs.get('on'): return
+
     import inspect
     stack = inspect.stack()
     file,line,function = stack[1][1:4]
-    print '%s %4d %s: %s' % (GPath(file).tail.s,line,function,' '.join(map(str,args)))
+    msg = '%s %4d %s: %s' % (GPath(file).tail.s,line,function,' '.join(map(str,args)))
+
+    if keyargs.get('traceback',False):
+        import traceback, cStringIO
+        o = cStringIO.StringIO()
+        o.write(msg+'\n')
+        traceback.print_exc(file=o)
+        msg = o.getvalue()
+        o.close()
+    print msg
 
 def delist(header,items,on=False):
     """Prints list as header plus items."""
@@ -1353,7 +2379,7 @@ class Log:
         self.doFooter = doFooter
         if writeNow: self()
 
-    def __call__(self,message=None):
+    def __call__(self,message=None,appendNewline=True):
         """Callable. Writes message, and if necessary, header and footer."""
         if self.header != self.prevHeader:
             if self.prevHeader and self.doFooter:
@@ -1361,7 +2387,7 @@ class Log:
             if self.header:
                 self.writeHeader(self.header)
             self.prevHeader = self.header
-        if message: self.writeMessage(message)
+        if message: self.writeMessage(message,appendNewline)
 
     #--Abstract/null writing functions...
     def writeHeader(self,header):
@@ -1370,7 +2396,7 @@ class Log:
     def writeFooter(self):
         """Write mess. Abstract/null version."""
         pass
-    def writeMessage(self,message):
+    def writeMessage(self,message,appendNewline):
         """Write message to log. Abstract/null version."""
         pass
 
@@ -1387,8 +2413,9 @@ class LogFile(Log):
     def writeFooter(self):
         self.out.write('\n')
 
-    def writeMessage(self,message):
-        self.out.write(message+'\n')
+    def writeMessage(self,message,appendNewline):
+        self.out.write(message)
+        if appendNewline: self.out.write('\n')
 
 #------------------------------------------------------------------------------
 class Progress:
@@ -1458,6 +2485,7 @@ class ProgressFile(Progress):
         self.out.write('%0.2f %s\n' % (progress,message))
 
 # WryeText --------------------------------------------------------------------
+codebox = None
 class WryeText:
     """This class provides a function for converting wtxt text files to html
     files.
@@ -1492,6 +2520,8 @@ class WryeText:
     Links:
      [[file]] produces <a href=file>file</a>
      [[file|text]] produces <a href=file>text</a>
+     [[!file]] produces <a href=file target="_blank">file</a>
+     [[!file|text]] produces <a href=file target="_blank">text</a>
 
     Contents
     {{CONTENTS=NN}} Where NN is the desired depth of contents (1 for single level,
@@ -1499,37 +2529,43 @@ class WryeText:
     """
 
     # Data ------------------------------------------------------------------------
-    htmlHead = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-    <HTML>
-    <HEAD>
-    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
-    <TITLE>%s</TITLE>
-    <STYLE>%s</STYLE>
-    </HEAD>
-    <BODY>
+    htmlHead = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>%s</title>
+    <style type="text/css">%s</style>
+    </head>
+    <body>
     """
     defaultCss = """
-    H1 { margin-top: 0in; margin-bottom: 0in; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0.02in 0in; background: #c6c63c; font-family: "Arial", serif; font-size: 12pt; page-break-before: auto; page-break-after: auto }
-    H2 { margin-top: 0in; margin-bottom: 0in; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0.02in 0in; background: #e6e64c; font-family: "Arial", serif; font-size: 10pt; page-break-before: auto; page-break-after: auto }
-    H3 { margin-top: 0in; margin-bottom: 0in; font-family: "Arial", serif; font-size: 10pt; font-style: normal; page-break-before: auto; page-break-after: auto }
-    H4 { margin-top: 0in; margin-bottom: 0in; font-family: "Arial", serif; font-style: italic; page-break-before: auto; page-break-after: auto }
-    P { margin-top: 0.01in; margin-bottom: 0.01in; font-family: "Arial", serif; font-size: 10pt; page-break-before: auto; page-break-after: auto }
-    P.empty {}
-    P.list-1 { margin-left: 0.15in; text-indent: -0.15in }
-    P.list-2 { margin-left: 0.3in; text-indent: -0.15in }
-    P.list-3 { margin-left: 0.45in; text-indent: -0.15in }
-    P.list-4 { margin-left: 0.6in; text-indent: -0.15in }
-    P.list-5 { margin-left: 0.75in; text-indent: -0.15in }
-    P.list-6 { margin-left: 1.00in; text-indent: -0.15in }
-    PRE { border: 1px solid; background: #FDF5E6; padding: 0.5em; margin-top: 0in; margin-bottom: 0in; margin-left: 0.25in}
-    CODE { background-color: #FDF5E6;}
-    BODY { background-color: #ffffcc; }
+    h1 { margin-top: 0in; margin-bottom: 0in; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0.02in 0in; background: #c6c63c; font-family: "Arial", serif; font-size: 12pt; page-break-before: auto; page-break-after: auto }
+    h2 { margin-top: 0in; margin-bottom: 0in; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0.02in 0in; background: #e6e64c; font-family: "Arial", serif; font-size: 10pt; page-break-before: auto; page-break-after: auto }
+    h3 { margin-top: 0in; margin-bottom: 0in; font-family: "Arial", serif; font-size: 10pt; font-style: normal; page-break-before: auto; page-break-after: auto }
+    h4 { margin-top: 0in; margin-bottom: 0in; font-family: "Arial", serif; font-style: italic; page-break-before: auto; page-break-after: auto }
+    a:link { text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    p { margin-top: 0.01in; margin-bottom: 0.01in; font-family: "Arial", serif; font-size: 10pt; page-break-before: auto; page-break-after: auto }
+    p.empty {}
+    p.list-1 { margin-left: 0.15in; text-indent: -0.15in }
+    p.list-2 { margin-left: 0.3in; text-indent: -0.15in }
+    p.list-3 { margin-left: 0.45in; text-indent: -0.15in }
+    p.list-4 { margin-left: 0.6in; text-indent: -0.15in }
+    p.list-5 { margin-left: 0.75in; text-indent: -0.15in }
+    p.list-6 { margin-left: 1.00in; text-indent: -0.15in }
+    .code-n { background-color: #FDF5E6; font-family: "Lucide Console", monospace; font-size: 10pt; white-space: pre; }
+    pre { border: 1px solid; overflow: auto; width: 750px; word-wrap: break-word; background: #FDF5E6; padding: 0.5em; margin-top: 0in; margin-bottom: 0in; margin-left: 0.25in}
+    code { background-color: #FDF5E6; font-family: "Lucida Console", monospace; font-size: 10pt; }
+    td.code { background-color: #FDF5E6; font-family: "Lucida Console", monospace; font-size: 10pt; border: 1px solid #000000; padding:5px; width:50%;}
+    body { background-color: #ffffcc; }
     """
 
     # Conversion ------------------------------------------------------------------
     @staticmethod
     def genHtml(ins,out=None,*cssDirs):
         """Reads a wtxt input stream and writes an html output stream."""
+        import string, urllib
         # Path or Stream? -----------------------------------------------
         if isinstance(ins,(Path,str,unicode)):
             srcPath = GPath(ins)
@@ -1543,50 +2579,87 @@ class WryeText:
         # Setup ---------------------------------------------------------
         #--Headers
         reHead = re.compile(r'(=+) *(.+)')
-        headFormat = "<h%d><a name='%s'>%s</a></h%d>\n"
+        headFormat = "<h%d><a id='%s'>%s</a></h%d>\n"
         headFormatNA = "<h%d>%s</h%d>\n"
         #--List
-        reList = re.compile(r'( *)([-x!?\.\+\*o]) (.*)')
+        reList = re.compile(r'( *)([-x!?\.\+\*o])(.*)')
+        #--Code
+        reCode = re.compile(r'\[code\](.*?)\[/code\]',re.I)
+        reCodeStart = re.compile(r'(.*?)\[code\](.*?)$',re.I)
+        reCodeEnd = re.compile(r'(.*?)\[/code\](.*?)$',re.I)
+        reCodeBoxStart = re.compile(r'\s*\[codebox\](.*?)',re.I)
+        reCodeBoxEnd = re.compile(r'(.*?)\[/codebox\]\s*',re.I)
+        reCodeBox = re.compile(r'\s*\[codebox\](.*?)\[/codebox\]\s*',re.I)
+        codeLines = None
+        codeboxLines = None
+        def subCode(match):
+            try:
+                return ' '.join(codebox([match.group(1)],False,False))
+            except:
+                return match(1)
         #--Misc. text
         reHr = re.compile('^------+$')
         reEmpty = re.compile(r'\s+$')
         reMDash = re.compile(r' -- ')
-        rePreBegin = re.compile('<pre>',re.I)
+        rePreBegin = re.compile('<pre',re.I)
         rePreEnd = re.compile('</pre>',re.I)
+        anchorlist = [] #to make sure that each anchor is unique.
         def subAnchor(match):
             text = match.group(1)
-            anchor = reWd.sub('',text)
-            return "<a name='%s'>%s</a>" % (anchor,text)
+            anchor = urllib.quote(Encode(reWd.sub('',text)))
+            count = 0
+            if re.match(r'\d', anchor):
+                anchor = '_' + anchor
+            while anchor in anchorlist and count < 10:
+                count += 1
+                if count == 1:
+                    anchor = anchor + str(count)
+                else:
+                    anchor = anchor[:-1] + str(count)
+            anchorlist.append(anchor)
+            return "<a id='%s'>%s</a>" % (anchor,text)
         #--Bold, Italic, BoldItalic
         reBold = re.compile(r'__')
         reItalic = re.compile(r'~~')
         reBoldItalic = re.compile(r'\*\*')
-        states = {'bold':False,'italic':False,'boldItalic':False}
+        states = {'bold':False,'italic':False,'boldItalic':False,'code':0}
         def subBold(match):
             state = states['bold'] = not states['bold']
-            return ('</B>','<B>')[state]
+            return ('</b>','<b>')[state]
         def subItalic(match):
             state = states['italic'] = not states['italic']
-            return ('</I>','<I>')[state]
+            return ('</i>','<i>')[state]
         def subBoldItalic(match):
             state = states['boldItalic'] = not states['boldItalic']
-            return ('</I></B>','<B><I>')[state]
+            return ('</b></i>','<i><b>')[state]
         #--Preformatting
         #--Links
         reLink = re.compile(r'\[\[(.*?)\]\]')
         reHttp = re.compile(r' (http://[_~a-zA-Z0-9\./%-]+)')
         reWww = re.compile(r' (www\.[_~a-zA-Z0-9\./%-]+)')
-        reWd = re.compile(r'(<[^>]+>|\[[^\]]+\]|\W+)')
-        rePar = re.compile(r'^([a-zA-Z]|\*\*|~~|__)')
+        #reWd = re.compile(r'(<[^>]+>|\[[^\]]+\]|\W+)')     # \[[^\]]+\] doesn't match.
+        reWd = re.compile(r'(<[^>]+>|\[\[[^\]]+\]\]|\s+|[%s]+)' % re.escape(string.punctuation.replace('_',''))) 
+        rePar = re.compile(r'^(\s*[a-zA-Z(;]|\*\*|~~|__|\s*<i|\s*<a)')
         reFullLink = re.compile(r'(:|#|\.[a-zA-Z0-9]{2,4}$)')
+        reColor = re.compile(r'\[\s*color\s*=[\s\"\']*(.+?)[\s\"\']*\](.*?)\[\s*/\s*color\s*\]',re.I)
+        reBGColor = re.compile(r'\[\s*bg\s*=[\s\"\']*(.+?)[\s\"\']*\](.*?)\[\s*/\s*bg\s*\]',re.I)
+        def subColor(match):
+            return '<span style="color:%s;">%s</span>' % (match.group(1),match.group(2))
+        def subBGColor(match):
+            return '<span style="background-color:%s;">%s</span>' % (match.group(1),match.group(2))
         def subLink(match):
             address = text = match.group(1).strip()
             if '|' in text:
                 (address,text) = [chunk.strip() for chunk in text.split('|',1)]
-                if address == '#': address += reWd.sub('',text)
+                if address == '#': address += urllib.quote(Encode(reWd.sub('',text)))
+            if address.startswith('!'):
+                newWindow = ' target="_blank"'
+                address = address[1:]
+            else:
+                newWindow = ''
             if not reFullLink.search(address):
                 address = address+'.html'
-            return '<a href="%s">%s</a>' % (address,text)
+            return '<a href="%s"%s>%s</a>' % (address,newWindow,text)
         #--Tags
         reAnchorTag = re.compile('{{A:(.+?)}}')
         reContentsTag = re.compile(r'\s*{{CONTENTS=?(\d+)}}\s*$')
@@ -1602,11 +2675,60 @@ class WryeText:
         contents = []
         addContents = 0
         inPre = False
-        isInParagraph = False
         anchorHeaders = True
         #--Read source file --------------------------------------------------
         for line in ins:
-            isInParagraph,wasInParagraph = False,isInParagraph
+            #--Codebox -----------------------------------
+            if codebox:
+                if codeboxLines is not None:
+                    maCodeBoxEnd = reCodeBoxEnd.match(line)
+                    if maCodeBoxEnd:
+                        codeboxLines.append(maCodeBoxEnd.group(1))
+                        outLines.append('<pre style="width:850px;">')
+                        try:
+                            codeboxLines = codebox(codeboxLines)
+                        except:
+                            pass
+                        outLines.extend(codeboxLines)
+                        outLines.append('</pre>')
+                        codeboxLines = None
+                        continue
+                    else:
+                        codeboxLines.append(line)
+                        continue
+                maCodeBox = reCodeBox.match(line)
+                if maCodeBox:
+                    outLines.append('<pre style="width:850px;">')
+                    try:
+                        outLines.extend(codebox([maCodeBox.group(1)]))
+                    except:
+                        outLines.append(maCodeBox.group(1))
+                    outLines.append('</pre>\n')
+                    continue
+                maCodeBoxStart = reCodeBoxStart.match(line)
+                if maCodeBoxStart:
+                    codeboxLines = [maCodeBoxStart.group(1)]
+                    continue
+            #--Code --------------------------------------
+                if codeLines is not None:
+                    maCodeEnd = reCodeEnd.match(line)
+                    if maCodeEnd:
+                        codeLines.append(maCodeEnd.group(1))
+                        try:
+                            codeLines = codebox(codeLines,False)
+                        except:
+                            pass
+                        outLines.extend(codeLines)
+                        codeLines = None
+                        line = maCodeEnd.group(2)
+                    else:
+                        codeLines.append(line)
+                        continue
+                line = reCode.sub(subCode,line)
+                maCodeStart = reCodeStart.match(line)
+                if maCodeStart:
+                    line = maCodeStart.group(1)
+                    codeLines = [maCodeStart.group(2)]
             #--Preformatted? -----------------------------
             maPreBegin = rePreBegin.search(line)
             maPreEnd = rePreEnd.search(line)
@@ -1614,6 +2736,9 @@ class WryeText:
                 inPre = maPreBegin or (inPre and not maPreEnd)
                 outLines.append(line)
                 continue
+            #--Font/Background Color
+            line = reColor.sub(subColor,line)
+            line = reBGColor.sub(subBGColor,line)
             #--Re Matches -------------------------------
             maContents = reContentsTag.match(line)
             maAnchorHeaders = reAnchorHeadersTag.match(line)
@@ -1622,7 +2747,7 @@ class WryeText:
             maList  = reList.match(line)
             maPar   = rePar.match(line)
             maEmpty = reEmpty.match(line)
-            #--Contents ----------------------------------
+            #--Contents
             if maContents:
                 if maContents.group(1):
                     addContents = int(maContents.group(1))
@@ -1641,15 +2766,28 @@ class WryeText:
             elif maHead:
                 lead,text = maHead.group(1,2)
                 text = re.sub(' *=*#?$','',text.strip())
-                anchor = reWd.sub('',text)
+                anchor = urllib.quote(Encode(reWd.sub('',text)))
                 level = len(lead)
                 if anchorHeaders:
+                    if re.match(r'\d', anchor):
+                        anchor = '_' + anchor
+                    count = 0
+                    while anchor in anchorlist and count < 10:
+                        count += 1
+                        if count == 1:
+                            anchor = anchor + str(count)
+                        else:
+                            anchor = anchor[:-1] + str(count)
+                    anchorlist.append(anchor)
                     line = (headFormatNA,headFormat)[anchorHeaders] % (level,anchor,text,level)
                     if addContents: contents.append((level,anchor,text))
                 else:
                     line = headFormatNA % (level,text,level)
                 #--Title?
                 if not title and level <= 2: title = text
+            #--Paragraph
+            elif maPar and not states['code']:
+                line = '<p>'+line+'</p>\n'
             #--List item
             elif maList:
                 spaces = maList.group(1)
@@ -1658,15 +2796,11 @@ class WryeText:
                 if bullet == '.': bullet = '&nbsp;'
                 elif bullet == '*': bullet = '&bull;'
                 level = len(spaces)/2 + 1
-                line = spaces+'<p class=list-'+`level`+'>'+bullet+'&nbsp; '
-                line = line + text + '\n'
-            #--Paragraph
-            elif maPar:
-                if not wasInParagraph: line = '<p>'+line
-                isInParagraph = True
+                line = spaces+'<p class="list-'+`level`+'">'+bullet+'&nbsp; '
+                line = line + text + '</p>\n'
             #--Empty line
             elif maEmpty:
-                line = spaces+'<p class=empty>&nbsp;</p>\n'
+                line = spaces+'<p class="empty">&nbsp;</p>\n'
             #--Misc. Text changes --------------------
             line = reHr.sub('<hr>',line)
             line = reMDash.sub(' &#150; ',line)
@@ -1698,7 +2832,12 @@ class WryeText:
             if '<' in css:
                 raise "Non css tag in "+cssPath.s
         #--Write Output ------------------------------------------------------
-        out.write(WryeText.htmlHead % (title,css))
+        def toutf8(line):
+            if not (bUseUnicode or isinstance(line, unicode)):
+                return line.decode('mbcs').encode('UTF8')
+            else:
+                return Encode(line,'UTF8')
+        out.write(WryeText.htmlHead % (toutf8(title),css))
         didContents = False
         for line in outLines:
             if reContentsTag.match(line):
@@ -1707,10 +2846,10 @@ class WryeText:
                     for (level,name,text) in contents:
                         level = level - baseLevel + 1
                         if level <= addContents:
-                            out.write('<p class=list-%d>&bull;&nbsp; <a href="#%s">%s</a></p>\n' % (level,name,text))
+                            out.write('<p class="list-%d">&bull;&nbsp; <a href="#%s">%s</a></p>\n' % (level,name,toutf8(text)))
                     didContents = True
             else:
-                out.write(line)
+                out.write(toutf8(line))
         out.write('</body>\n</html>\n')
         #--Close files?
         if srcPath:
@@ -1723,6 +2862,8 @@ if __name__ == '__main__' and len(sys.argv) > 1:
     @mainfunc
     def genHtml(*args,**keywords):
         """Wtxt to html. Just pass through to WryeText.genHtml."""
+        if not len(args):
+            args = ["Wrye Bash.txt"]
         WryeText.genHtml(*args,**keywords)
 
     #--Command Handler --------------------------------------------------------
