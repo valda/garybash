@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -20,8 +22,11 @@
 # =============================================================================
 
 """This module defines provides objects and functions for working with FalloutNV
-files and environment. It does not provide interface functions which instead
+files and environment. It does not provide interface functions which are instead
 provided by separate modules: bish for CLI and bash/basher for GUI."""
+
+# Use the 'with' statement for python 2.5
+from __future__ import with_statement
 
 # Localization ----------------------------------------------------------------
 #--Not totally clear on this, but it seems to safest to put locale first...
@@ -56,6 +61,7 @@ def unformatDate(str,format):
 #--Python
 import cPickle
 import cStringIO
+import StringIO #cStringIO doesn't support unicode very well
 import ConfigParser
 import copy
 import datetime
@@ -71,20 +77,20 @@ from types import *
 from operator import attrgetter,itemgetter
 import subprocess
 from subprocess import Popen, PIPE
+import codecs
 from xml.etree import ElementTree
 
 #--Local
 import balt
 import bolt
 import bush
-from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError
-from bolt import _, LString, GPath, Flags, DataDict, SubProgress, cstrip, deprint, delist
+from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError, PermissionError
+from bolt import _, LString, Unicode, Encode, GPath, Flags, DataDict, SubProgress, cstrip, deprint, delist
 from cint import *
 startupinfo = bolt.startupinfo
 
 #--Unicode
-#if bolt.bUseUnicode:
-if False:
+if bolt.bUseUnicode:
     exe7z = '7zUnicode.exe'
     unicodeConvert = lambda text: unicode(text,'UTF-8')
     stringBuffer = StringIO.StringIO
@@ -106,11 +112,18 @@ falloutPrefsIni = None
 modInfos  = None  #--ModInfos singleton
 saveInfos = None #--SaveInfos singleton
 iniInfos = None #--INIInfos singleton
-BSAInfos = None #--BSAInfos singleton
+bsaInfos = None #--BSAInfos singleton
 screensData = None #--ScreensData singleton
 bsaData = None #--bsaData singleton
 messages = None #--Message archive singleton
 configHelpers = None #--Config Helper files (Boss Master List, etc.)
+links = None
+
+def listArchiveContents(fileName):
+    command = r'"%s" l -slt "%s"' % (exe7z, fileName)
+    command = Encode(command,'mbcs')
+    ins, err = Popen(command, stdout=PIPE, startupinfo=startupinfo).communicate()
+    return ins
 
 #--Settings
 dirs = {} #--app, user, mods, saves, userApp
@@ -119,10 +132,10 @@ inisettings = {}
 inisettings['AutoItemCheck'] = False
 defaultExt = '.7z'
 writeExts = dict({'.7z':'7z','.zip':'zip'})
-readExts = set(('.rar',))
+readExts = set(('.rar','.7z.001','.001'))
 readExts.update(set(writeExts))
 noSolidExts = set(('.zip',))
-settings  = None
+settings = None
 installersWindow = None
 
 allTags = sorted(('Body-F', 'Body-M', 'Body-Size-M', 'Body-Size-F', 'C.Climate', 'C.Light', 'C.Music', 'C.Name', 'C.RecordFlags',
@@ -138,6 +151,8 @@ allTags = sorted(('Body-F', 'Body-M', 'Body-Size-M', 'Body-Size-F', 'C.Climate',
 allTagsSet = set(allTags)
 oldTags = sorted(('Merge',))
 oldTagsSet = set(oldTags)
+
+reFallout = re.compile('^(Fallout3|FalloutNV)(|_1.1|_1.2|_1.3|_1.4).esm$')
 
 undefinedPath = GPath(r'C:\not\a\valid\path.exe')
 undefinedPaths = set([GPath(r'C:\Path\exe.exe'),undefinedPath])
@@ -189,7 +204,7 @@ class Path(str):
     compatibility with old pickle files."""
     def __init__(self, path):
         """Initialize."""
-        raise "Path necromancy!"
+        raise RuntimeError("Path necromancy!")
 
     def __getstate__(self):
         """Used by pickler. State is determined by underlying string, so return psempty tuple."""
@@ -336,11 +351,31 @@ reINIExt  = re.compile(r'\.ini$',re.I)
 reQuoted  = re.compile(r'^"(.*)"$')
 reGroupHeader = re.compile(r'^(\+\+|==)')
 reNewVegasNexus = re.compile(r'(.*?)(?:-(\d{4,6})(?:\.tessource)?(?:-bain)?(?:-\d{0,6})?(?:-\d{0,6})?(?:-\d{0,6})?(?:\w)?)?\.(7z|zip|rar|7z.001)$',re.I)
-reTESA = re.compile(r'-(\d{1,6})(\.tessource)?(-bain)?\.(7z|zip|rar)$',re.I)
+reTESA = re.compile(r'(.*?)(?:-(\d{1,6})(?:\.tessource)?(?:-bain)?)?\.(7z|zip|rar)$',re.I)
 reSplitOnNonAlphaNumeric = re.compile(r'\W+')
 
 
 # Util Functions --------------------------------------------------------------
+# Type coercion
+def _coerce(value, newtype, base=None,AllowNone=False):
+    try:
+        if newtype is float:
+            pack,unpack = struct.pack,struct.unpack
+            return round(unpack('f',pack('f',float(value)))[0], 6) #--Force standard precision
+        if newtype is bool:
+            if isinstance(value,basestring):
+                retValue = value.strip().lower()
+                if AllowNone and retValue == 'none': return None
+                return not retValue in ('','none','false','no','0','0.0')
+            return bool(newtype)
+        if base: retValue = newtype(value, base)
+        else: retValue = newtype(value)
+        if AllowNone and isinstance(retValue,basestring) and retValue.lower() == 'none':
+            return None
+        return retValue
+    except (ValueError,TypeError):
+        if newtype is int: return 0
+        return None
 # .Net strings
 def netString(x):
     """Encode a string into a .net string."""
@@ -482,7 +517,7 @@ class ModReader:
         if endPos == -1:
             return (filePos == self.size)
         elif filePos > endPos:
-            raise ModError(self.inName, _('Exceded limit of: ')+recType)
+            raise ModError(self.inName, _('Exceeded limit of: ')+recType)
         else:
             return (filePos == endPos)
 
@@ -632,7 +667,7 @@ class ModWriter:
         else:
             outWrite(structPack('=4sHI','XXXX',4,lenData))
             outWrite(structPack('=4sH',type,0))
-        outWrite(data)
+        outWrite(Encode(data,'mbcs'))
         outWrite('\x00')
 
     def packRef(self,type,fid):
@@ -1559,7 +1594,7 @@ class MelSet:
 
     def getReport(self):
         """Returns a report of structure."""
-        buff = cStringIO.StringIO()
+        buff = stringBuffer()
         for element in self.elements:
             element.report(None,buff,'')
         return buff.getvalue()
@@ -1825,11 +1860,10 @@ class MreRecord(object):
         """Return size of self.data, after, if necessary, packing it."""
         if not self.changed: return self.size
         if self.longFids: raise StateError(
-            _('Packing Error: %s %s: Fids in long format.') % self.recType,self.fid)
+            _('Packing Error: %s %s: Fids in long format.') % (self.recType,self.fid))
         #--Pack data and return size.
         out = ModWriter(cStringIO.StringIO())
         self.dumpData(out)
-        data = out.getvalue()
         self.data = out.getvalue()
         out.close()
         if self.flags1.compressed:
@@ -1856,11 +1890,11 @@ class MreRecord(object):
         if not self.data and not self.flags1.deleted and self.size > 0:
             raise StateError(_('Data undefined: ')+self.recType+' '+hex(self.fid))
         out.write(struct.pack('=4s5I',self.recType,self.size,int(self.flags1),self.fid,self.flags2,self.flags3))
-        if self.size > 0: out.write(self.data)
+        if self.size > 0: out.write(Encode(self.data,'mbcs'))
 
     def getReader(self):
         """Returns a ModReader wrapped around (decompressed) self.data."""
-        return ModReader(self.inName,cStringIO.StringIO(self.getDecompressed()))
+        return ModReader(self.inName,stringBuffer(self.getDecompressed()))
 
     #--Accessing subrecords ---------------------------------------------------
     def getSubString(self,subType):
@@ -2041,7 +2075,7 @@ class MreLeveledList(MelRecord):
                 newItemsAdd(entry.listId)
         if newItems:
             self.items |= newItems
-            self.entries.sort(key=attrgetter('level'))
+            self.entries.sort(key=attrgetter('listId','level','count','owner','condition'))
         #--Is merged list different from other? (And thus written to patch.)
         if (self.chanceNone != other.chanceNone or
             self.script != other.script or
@@ -2052,7 +2086,9 @@ class MreLeveledList(MelRecord):
             ):
             self.mergeOverLast = True
         else:
-            for selfEntry,otherEntry in zip(self.entries,other.entries):
+            otherlist = other.entries
+            otherlist.sort(key=attrgetter('listId','level','count','owner','condition'))
+            for selfEntry,otherEntry in zip(self.entries,otherlist):
                 if (selfEntry.listId != otherEntry.listId or
                     selfEntry.level != otherEntry.level or
                     selfEntry.count != otherEntry.count or
@@ -2067,15 +2103,14 @@ class MreLeveledList(MelRecord):
         else:
             self.mergeSources = [otherMod]
         #--Done
-        self.setChanged()
-
+        self.setChanged(self.mergeOverLast)
 #------------------------------------------------------------------------------
 class MreHasEffects:
     """Mixin class for magic items."""
     def getEffects(self):
         """Returns a summary of effects. Useful for alchemical catalog."""
         effects = []
-        avEffects = bush.actorValueEffects
+        avEffects = bush.genericAVEffects
         effectsAppend = effects.append
         for effect in self.effects:
             mgef, actorValue = effect.name, effect.actorValue
@@ -2083,9 +2118,9 @@ class MreHasEffects:
                 actorValue = 0
             effectsAppend((mgef,actorValue))
         return effects
-        
+
     def getSpellSchool(self,mgef_school=bush.mgef_school):
-        """Returns the school based on the highest cost spell efect."""
+        """Returns the school based on the highest cost spell effect."""
         spellSchool = [0,0]
         for effect in self.effects:
             school = mgef_school[effect.name]
@@ -2096,16 +2131,16 @@ class MreHasEffects:
                 effectValue *=  (effect.area/10)
             if effect.duration:
                 effectValue *=  effect.duration
-            if spellSchool[0] < effectValue: 
-                spellSchool = [effectValue,school]        
+            if spellSchool[0] < effectValue:
+                spellSchool = [effectValue,school]
         return spellSchool[1]
 
     def getEffectsSummary(self,mgef_school=None,mgef_name=None):
         """Return a text description of magic effects."""
         mgef_school = mgef_school or bush.mgef_school
         mgef_name = mgef_name or bush.mgef_name
-        buff = cStringIO.StringIO()
-        avEffects = bush.actorValueEffects
+        buff = stringBuffer()
+        avEffects = bush.genericAVEffects
         aValues = bush.actorValues
         buffWrite = buff.write
         if self.effects:
@@ -2118,7 +2153,7 @@ class MreHasEffects:
                 effectName = mgef_name[effect.name]
                 if effect.name in avEffects:
                     effectName = re.sub(_('(Attribute|Skill)'),aValues[effect.actorValue],effectName)
-            buffWrite('o+*'[effect.recipient]+' '+effectName)
+            buffWrite('o+*'[effect.recipient]+' '+Unicode(effectName,'mbcs'))
             if effect.magnitude: buffWrite(' '+`effect.magnitude`+'m')
             if effect.area: buffWrite(' '+`effect.area`+'a')
             if effect.duration > 1: buffWrite(' '+`effect.duration`+'d')
@@ -2134,7 +2169,7 @@ class MreAchr(MelRecord): # Placed NPC
         MelString('EDID','eid'),
         MelFid('NAME','base'),
         MelXpci('XPCI'),
-        MelBase('XLOD','xlod_p'), ### Float?
+        MelOptStruct('XLOD','3f',('lod1',None),('lod2',None),('lod3',None)), ####Distant LOD Data, unknown
         MelOptStruct('XESP','IB3s',(FID,'parent'),(_flags,'parentFlags'),('unused1',null3)),
         MelFid('XMRC','merchantContainer'),
         MelFid('XHRS','horse'),
@@ -2152,6 +2187,7 @@ class MreAcre(MelRecord): # Placed Creature
         MelString('EDID','eid'),
         MelFid('NAME','base'),
         MelOwnership(),
+        MelOptStruct('XLOD','3f',('lod1',None),('lod2',None),('lod3',None)), ####Distant LOD Data, unknown
         MelOptStruct('XESP','IB3s',(FID,'parent'),(_flags,'parentFlags'),('unused1',null3)),
         MelBase('XRGD','xrgd_p'), ###Ragdoll Data, ByteArray
         MelOptStruct('XSCL','f',('scale',1.0)),
@@ -2202,13 +2238,6 @@ class MreAlch(MelRecord,MreHasEffects):
         #--10:chems,11:stimpack,12:food,13:alcohol
         MelStruct('ETYP','I','etype'),
         MelStruct('DATA','f','weight'),
-        # 0007C10D..BloatflyMeat..ALCH.ENIT..20..
-        # \x04\x00\x00\x00 value i
-        # \x03 flags B
-        # \xcd\xcd\xcd unused1 3s
-        # \x00\x00\x00\x00 withdrawalEffect fid
-        # \x00\x00\x00\x00 addictionChance f
-        # \x8d\xd4\x02\x00 soundConsume fid
         MelStruct('ENIT','iB3sIfI','value',(_flags,'flags',0L),('unused1',null3),
                   (FID,'withdrawalEffect',None),'addictionChance',(FID,'soundConsume',None)),
         MelEffects(),
@@ -2461,7 +2490,6 @@ class MreClas(MelRecord):
         ( 0,'Playable'),
         ( 1,'Guard'),
         ))
-    #--AI Service flags
     aiService = Flags(0L,Flags.getNames(
         (0,'weapons'),
         (1,'armor'),
@@ -2494,11 +2522,11 @@ class MreClas(MelRecord):
     class MelClasData(MelStruct):
         """Handle older trucated DATA for CLAS subrecords."""
     #     def loadData(self,record,ins,type,size,readId):
-    #         if size == 28:
+    #         if size == 52:
     #             MelStruct.loadData(self,record,ins,type,size,readId)
     #             return
-    #         #--Else 22 byte record (skips trainSkill, trainLevel...
-    #         unpacked = ins.unpack('4I2IbB2s',size,readId)
+    #         #--Else 42 byte record (skips trainSkill, trainLevel,unused1...
+    #         unpacked = ins.unpack('2iI7i2I',size,readId)
     #         unpacked += self.defaults[len(unpacked):]
     #         setter = record.__setattr__
     #         for attr,value,action in zip(self.attrs,unpacked,self.actions):
@@ -2739,7 +2767,7 @@ class MreCsty(MelRecord):
                 #-- This one is present once: VidCaptureNoAttacks and it isn't actually used.
                 unpacked = ins.unpack('2B2s8f2B2s3fB3s2f5B3s2f2B2s',size,readId)
             else:
-                raise "Unexpected size encountered for CSTD subrecord: %s" % size
+                raise ModError(ins.inName,_('Unexpected size encountered for CSTD subrecord: ')+str(size))
             unpacked += self.defaults[len(unpacked):]
             setter = record.__setattr__
             for attr,value,action in zip(self.attrs,unpacked,self.actions):
@@ -3106,12 +3134,26 @@ class MreGmst(MelRecord):
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-    def getFalloutNVFid(self):
+    def getGMSTFid(self):
         """Returns FalloutNV.esm fid in long format for specified eid."""
         myClass = self.__class__
         if not myClass.falloutIds:
-            myClass.falloutIds = cPickle.load(GPath(r'Data\FalloutNV_ids.pkl').open())['GMST']
-        return (GPath('FalloutNV.esm'), myClass.falloutIds[self.eid])
+            try:
+                myClass.falloutIds = cPickle.load(dirs['db'].join('FalloutNV_ids.pkl').open())['GMST']
+            except:
+                old = bolt.deprintOn
+                bolt.deprintOn = True
+                print
+                print 'Error loading FalloutNV_ids.pkl:'
+                deprint(' ',traceback=True)
+                bolt.deprintOn = old
+                print
+                print 'Manually testing if file exists:', dirs['db'].join('FalloutNV_ids.pkl').exists()
+                print 'Current working directory:', os.getcwd()
+                print "dirs['db']:", dirs['db']
+                print
+                raise
+        return (modInfos.masterName, myClass.falloutIds[self.eid])
 
 #------------------------------------------------------------------------------
 class MreGras(MelRecord):
@@ -3272,7 +3314,7 @@ class MreIngr(MelRecord,MreHasEffects):
 
 #------------------------------------------------------------------------------
 class MreKeym(MelRecord):
-    """KEYM (key) record."""
+    """MISC (miscellaneous item) record."""
     classType = 'KEYM'
     melSet = MelSet(
         MelString('EDID','eid'),
@@ -3292,6 +3334,28 @@ class MreKeym(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+## Commented out for performance reasons. Slows down loading quite a bit.
+## If Bash ever wants to be able to add masters to a mod, this minimal definition is required
+## It has to be able to convert the formIDs found in BTXT, ATXT, and VTEX to not break the mod
+##class MreLand(MelRecord):
+##    """Land structure. Part of exterior cells."""
+##    ####Could probably be loaded via MelStructA,
+##    ####but little point since it is too complex to manipulate
+##    classType = 'LAND'
+##    melSet = MelSet(
+##        MelBase('DATA','data_p'),
+##        MelBase('VNML','normals_p'),
+##        MelBase('VHGT','heights_p'),
+##        MelBase('VCLR','vertexColors_p'),
+##        MelStructs('BTXT','IBBh','baseTextures', (FID,'texture'), 'quadrant', 'unused1', 'layer'),
+##        MelGroups('alphaLayers',
+##            MelStruct('ATXT','IBBh',(FID,'texture'), 'quadrant', 'unused1', 'layer'),
+##            MelStructA('VTXT','H2Bf', 'opacities', 'position', 'unused1', 'opacity'),
+##        ),
+##        MelFidList('VTEX','vertexTextures'),
+##    )
+##    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+#------------------------------------------------------------------------------
 class MreLigh(MelRecord):
     """Light source record."""
     classType = 'LIGH'
@@ -3308,7 +3372,7 @@ class MreLigh(MelRecord):
                 #--Else 24 byte record (skips value and weight...
                 unpacked = ins.unpack('iI3BsIff',size,readId)
             else:
-                raise "Unexpected size encountered for LIGH:DATA subrecord: %s" % size
+                raise ModError(ins.inName,_('Unexpected size encountered for LIGH:DATA subrecord: ')+str(size))
             unpacked += self.defaults[len(unpacked):]
             setter = record.__setattr__
             for attr,value,action in zip(self.attrs,unpacked,self.actions):
@@ -3388,7 +3452,7 @@ class MreLvli(MreLeveledList):
 
 #------------------------------------------------------------------------------
 class MreLvsp(MreLeveledList):
-    """LVSP record. Leveled list for spell."""
+    """LVSP record. Leveled list for items."""
     classType = 'LVSP'
     __slots__ = MreLeveledList.__slots__
 
@@ -3427,6 +3491,7 @@ class MreMgef(MelRecord):
         (25,'sprayType'),
         (26,'boltType'),
         (27,'noHitEffect'),))
+
     #--Mel NPC DATA
     class MelMgefData(MelStruct):
         """Handle older trucated DATA for DARK subrecord."""
@@ -3438,7 +3503,7 @@ class MreMgef(MelRecord):
                 #--Else is data for DARK record, read it all.
                 unpacked = ins.unpack('IfIiiH2sIfI',size,readId)
             else:
-                raise "Unexpected size encountered for MGEF:DATA subrecord: %s" % size
+                raise ModError(ins.inName,_('Unexpected size encountered for MGEF:DATA subrecord: ')+str(size))
             unpacked += self.defaults[len(unpacked):]
             setter = record.__setattr__
             for attr,value,action in zip(self.attrs,unpacked,self.actions):
@@ -3535,7 +3600,7 @@ class MreNpc(MreActor):
         (13,'unarmed'),))
     #--Mel NPC DATA
     class MelNpcData(MelStruct):
-        """Convert npc stats into health, attributes."""
+        """Convert npc stats into skills, health, attributes."""
         def loadData(self,record,ins,type,size,readId):
             if size == 11:
                 unpacked = list(ins.unpack('=I7B',size,readId))
@@ -3834,7 +3899,42 @@ class MrePack(MelRecord):
         )
     melSet.elements[-1].setMelSet(melSet)
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
-
+#------------------------------------------------------------------------------
+## See the comments on MreLand. Commented out for same reasons.
+##class MrePgrd(MelRecord):
+##    """Path grid structure. Part of cells."""
+##    ####Could probably be loaded via MelStructA,
+##    ####but little point since it is too complex to manipulate
+##    classType = 'PGRD'
+##    class MelPgrl(MelStructs):
+##        """Handler for pathgrid pgrl record."""
+##        def loadData(self,record,ins,type,size,readId):
+##            """Reads data from ins into record attribute."""
+##            if(size % 4 != 0):
+##                raise "Unexpected size encountered for pathgrid PGRL subrecord: %s" % size
+##            format = 'I' * (size % 4)
+##            attrs = self.attrs
+##            target = self.getDefault()
+##            record.__getattribute__(self.attr).append(target)
+##            target.__slots__ = self.attrs
+##            unpacked = ins.unpack(format,size,readId)
+##            setter = target.__setattr__
+##            map(setter,attrs,(unpacked[0], unpacked[1:]))
+##
+##        def dumpData(self,record,out):
+##            """Dumps data from record to outstream."""
+##            for target in record.__getattribute__(self.attr):
+##                out.packSub(self.subType,'I' + 'I'*(len(target.points)), target.reference, target.points)
+##
+##    melSet = MelSet(
+##        MelBase('DATA','data_p'),
+##        MelBase('PGRP','points_p'),
+##        MelBase('PGAG','pgag_p'),
+##        MelBase('PGRR','pgrr_p'),
+##        MelBase('PGRI','pgri_p'),
+##        MelPgrl('PGRL','','pgrl',(FID,'reference'),'points'),
+##    )
+##    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 #------------------------------------------------------------------------------
 class MreQust(MelRecord):
     """Quest record."""
@@ -4110,6 +4210,7 @@ class MreRace(MelRecord):
 class MreRefr(MelRecord):
     classType = 'REFR'
     _flags = Flags(0L,Flags.getNames('visible', 'canTravelTo'))
+    _parentFlags = Flags(0L,Flags.getNames('oppositeParent'))
     _actFlags = Flags(0L,Flags.getNames('useDefault', 'activate','open','openByDefault'))
     _lockFlags = Flags(0L,Flags.getNames(None, None, 'leveledLock'))
     class MelRefrXloc(MelOptStruct):
@@ -4122,7 +4223,7 @@ class MreRefr(MelRecord):
                 #--Else is skipping unused2
                 unpacked = ins.unpack('B3sIB3s',size,readId)
             else:
-                raise "Unexpected size encountered for REFR:XLOC subrecord: %s" % size
+                raise ModError(ins.inName,_('Unexpected size encountered for REFR:XLOC subrecord: ')+str(size))
             unpacked = unpacked[:-2] + self.defaults[len(unpacked)-2:-2] + unpacked[-2:]
             setter = record.__setattr__
             for attr,value,action in zip(self.attrs,unpacked,self.actions):
@@ -4171,11 +4272,11 @@ class MreRefr(MelRecord):
     melSet = MelSet(
         MelString('EDID','eid'),
         MelFid('NAME','base'),
-        MelOptStruct('XTEL','l6f',(FID,'destinationFid'),'destinationPosX','destinationPosY',
+        MelOptStruct('XTEL','I6f',(FID,'destinationFid'),'destinationPosX','destinationPosY',
             'destinationPosZ','destinationRotX','destinationRotY','destinationRotZ'),
         MelRefrXloc('XLOC','B3sI4sB3s','lockLevel',('unused1',null3),(FID,'lockKey'),('unused2',null4),(_lockFlags,'lockFlags'),('unused3',null3)),
         MelOwnership(),
-        MelOptStruct('XESP','IB3s',(FID,'parent'),(_flags,'parentFlags'),('unused4',null3)),
+        MelOptStruct('XESP','IB3s',(FID,'parent'),(_parentFlags,'parentFlags'),('unused4',null3)),
         MelFid('XTRG','targetId'),
         MelBase('XSED','seed_p'),
         ####SpeedTree Seed, if it's a single byte then it's an offset into the list of seed values in the TREE record
@@ -4198,7 +4299,7 @@ class MreRefr(MelRecord):
 
 #------------------------------------------------------------------------------
 class MreRegn(MelRecord):
-    """Road structure. Part of large worldspaces."""
+    """Region record."""
     classType = 'REGN'
     _flags = Flags(0L,Flags.getNames(
         ( 2,'objects'),
@@ -4288,8 +4389,6 @@ class MreRegn(MelRecord):
                 'maxHeight', 'sink', 'sinkVar', 'sizeVar', 'angleVarX',
                 'angleVarY',  'angleVarZ', ('unused2',null2), ('unk2',null4)),
             MelRegnString('RDMP', 'mapName'),
-            #MelRegnStructA('RDGS', 'I4s', 'grasses', (FID,'grass'), ('unk1',null4)),
-            #MelRegnOptStruct('RDMD', 'I', ('musicType',None)),
             MelFid('RDMO','music'),
             MelFid('RDSI','incidentalMediaSet'),
             MelFids('RDSB','battleMediaSets'),
@@ -4414,30 +4513,11 @@ class MreSoun(MelRecord):
                   'corner1X','corner1Y','corner1Z'),
         MelString('FNAM','soundFile'),
         MelStruct('RNAM','B','_rnam'),
-        # SNDD (0007E719 CSpecialHeavyMetal)
-        # \x1b              minDistance / 5
-        # \x0f              maxDistance / 10
-        # \x00              freqAdjustment
-        # \x00              unused1
-        # \x00\x00\x00\x00  flags
-        # =\x02             staticAttentuation
-        # \x00              stopTime
-        # \x00              startTime
-        # d\x00             point0
-        # 2\x00             point1
-        # \x14\x00          point2
-        # \x05\x00          point3
-        # \x00\x00          point4
-        # \x00\x00          reverb
-        # \xdf\x00\x00\x00  priority
-        # \x00\x00\x00\x00\x00\x00\x00\x00  unknown
         MelOptStruct('SNDD','=2BbsIh2B6HI8s',('minDistance',None), ('maxDistance',None), ('freqAdjustment',None), ('unused1',null1),
             (_flags,'flags',None),('staticAtten',None),('stopTime',None),('startTime',None),
             ('point0',0),('point1',0),('point2',0),('point3',0),('point4',0),('reverb',0),('priority',0),'unknown'),
         MelSounSndx('SNDX','=2BbsIh2B',('minDistance',None), ('maxDistance',None), ('freqAdjustment',None), ('unused1',null1),
             (_flags,'flags',None),('staticAtten',None),('stopTime',None),('startTime',None),),
-        # ANAM (000C80B5 DRSRotundaSecretLoadOpen)
-        # d\x002\x00\x14\x00\x05\x00\x00\x00
         MelBase('ANAM','_anam'), #--Should be a struct. Maybe later.
         MelBase('GNAM','_gnam'), #--Should be a struct. Maybe later.
         MelBase('HNAM','_hnam'), #--Should be a struct. Maybe later.
@@ -4564,7 +4644,7 @@ class MreWatr(MelRecord):
             elif size == 184:
                 unpacked = ins.unpack('10f3Bs3Bs3BsI32f',size,readId)
             else:
-                raise "Unexpected size encountered for WATR subrecord: %s" % size
+                raise ModError(ins.inName,_('Unexpected size encountered for WATR subrecord: ')+str(size))
             unpacked = unpacked[:-1]
             unpacked += self.defaults[len(unpacked):]
             setter = record.__setattr__
@@ -4856,1250 +4936,1249 @@ class MreWthr(MelRecord):
             'sunGlare','sunDamage','rainFadeIn','rainFadeOut','boltFadeIn',
             'boltFadeOut','boltFrequency','weatherType','boltRed','boltBlue','boltGreen'),
         MelStructs('SNAM','2I','sounds',(FID,'sound'),'type'),
-
-
         )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreTxst(MelRecord):
-    """Texture set record."""
-    classType = 'TXST'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('TX00','baseImage'),
-        MelString('TX01','normalMap'),
-        MelString('TX02','environmentMapMask'),
-        MelString('TX03','growMap'),
-        MelString('TX04','parallaxMap'),
-        MelString('TX05','environmentMap'),
-        MelOptStruct('DODT','7fBB2s3Bs','minWidth','maxWidth','minHeight','maxHeight','depth','shininess',
-                     'parallaxScale','parallaxPasses','decalFlags',('unused1',null2),'red','green','blue',('unused2',null1)),
-        MelStruct('DNAM','H','flags'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# Temporarily comment out for patching.
+# #------------------------------------------------------------------------------
+# class MreTxst(MelRecord):
+#     """Texture set record."""
+#     classType = 'TXST'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('TX00','baseImage'),
+#         MelString('TX01','normalMap'),
+#         MelString('TX02','environmentMapMask'),
+#         MelString('TX03','growMap'),
+#         MelString('TX04','parallaxMap'),
+#         MelString('TX05','environmentMap'),
+#         MelOptStruct('DODT','7fBB2s3Bs','minWidth','maxWidth','minHeight','maxHeight','depth','shininess',
+#                      'parallaxScale','parallaxPasses','decalFlags',('unused1',null2),'red','green','blue',('unused2',null1)),
+#         MelStruct('DNAM','H','flags'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreMicn(MelRecord):
-    """Menu icon record."""
-    classType = 'MICN'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreMicn(MelRecord):
+#     """Menu icon record."""
+#     classType = 'MICN'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreFlst(MelRecord):
-    """FormID list record."""
-    classType = 'FLST'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelFids('LNAM','fids'),
-        )
-    __slots__ = (MelRecord.__slots__ + melSet.getSlotsUsed() +
-        ['mergeOverLast','mergeSources','items','deflsts'])
+# #------------------------------------------------------------------------------
+# class MreFlst(MelRecord):
+#     """FormID list record."""
+#     classType = 'FLST'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelFids('LNAM','fids'),
+#         )
+#     __slots__ = (MelRecord.__slots__ + melSet.getSlotsUsed() +
+#         ['mergeOverLast','mergeSources','items','deflsts'])
 
-    def __init__(self,header,ins=None,unpack=False):
-        """Initialize."""
-        MelRecord.__init__(self,header,ins,unpack)
-        self.mergeOverLast = False #--Merge overrides last mod merged
-        self.mergeSources = None #--Set to list by other functions
-        self.items  = None #--Set of items included in list
-        self.deflsts = None #--Set of items deleted by list (Deflst mods)
+#     def __init__(self,header,ins=None,unpack=False):
+#         """Initialize."""
+#         MelRecord.__init__(self,header,ins,unpack)
+#         self.mergeOverLast = False #--Merge overrides last mod merged
+#         self.mergeSources = None #--Set to list by other functions
+#         self.items  = None #--Set of items included in list
+#         self.deflsts = None #--Set of items deleted by list (Deflst mods)
 
-    def mergeFilter(self,modSet):
-        """Filter out items that don't come from specified modSet."""
-        if not self.longFids: raise StateError(_("Fids not in long format"))
-        self.fids = [fid for fid in self.fids if fid in modSet]
+#     def mergeFilter(self,modSet):
+#         """Filter out items that don't come from specified modSet."""
+#         if not self.longFids: raise StateError(_("Fids not in long format"))
+#         self.fids = [fid for fid in self.fids if fid in modSet]
 
-    def mergeWith(self,other,otherMod):
-        """Merges newLevl settings and entries with self.
-        Requires that: self.items, other.deflsts be defined."""
-        if not self.longFids: raise StateError(_("Fids not in long format"))
-        if not other.longFids: raise StateError(_("Fids not in long format"))
-        #--Remove items based on other.removes
-        if other.deflsts:
-            removeItems = self.items & other.deflsts
-            #self.entries = [entry for entry in self.entries if entry.listId not in removeItems]
-            self.fids = [fid for fid in self.fids if fid not in removeItems]
-            self.items = (self.items | other.deflsts)
-        hasOldItems = bool(self.items)
-        #--Add new items from other
-        newItems = set()
-        fidsAppend = self.fids.append
-        newItemsAdd = newItems.add
-        for fid in other.fids:
-            if fid not in self.items:
-                fidsAppend(fid)
-                newItemsAdd(fid)
-        if newItems:
-            self.items |= newItems
-            #self.fids.sort(key=attrgetter('level'))
-            self.fids.sort
-        #--Is merged list different from other? (And thus written to patch.)
-        if len(self.fids) != len(other.fids):
-            self.mergeOverLast = True
-        else:
-            for selfEntry,otherEntry in zip(self.fids,other.fids):
-                if selfEntry != otherEntry:
-                    self.mergeOverLast = True
-                    break
-            else:
-                self.mergeOverLast = False
-        if self.mergeOverLast:
-            self.mergeSources.append(otherMod)
-        else:
-            self.mergeSources = [otherMod]
-        #--Done
-        self.setChanged()
+#     def mergeWith(self,other,otherMod):
+#         """Merges newLevl settings and entries with self.
+#         Requires that: self.items, other.deflsts be defined."""
+#         if not self.longFids: raise StateError(_("Fids not in long format"))
+#         if not other.longFids: raise StateError(_("Fids not in long format"))
+#         #--Remove items based on other.removes
+#         if other.deflsts:
+#             removeItems = self.items & other.deflsts
+#             #self.entries = [entry for entry in self.entries if entry.listId not in removeItems]
+#             self.fids = [fid for fid in self.fids if fid not in removeItems]
+#             self.items = (self.items | other.deflsts)
+#         hasOldItems = bool(self.items)
+#         #--Add new items from other
+#         newItems = set()
+#         fidsAppend = self.fids.append
+#         newItemsAdd = newItems.add
+#         for fid in other.fids:
+#             if fid not in self.items:
+#                 fidsAppend(fid)
+#                 newItemsAdd(fid)
+#         if newItems:
+#             self.items |= newItems
+#             #self.fids.sort(key=attrgetter('level'))
+#             self.fids.sort
+#         #--Is merged list different from other? (And thus written to patch.)
+#         if len(self.fids) != len(other.fids):
+#             self.mergeOverLast = True
+#         else:
+#             for selfEntry,otherEntry in zip(self.fids,other.fids):
+#                 if selfEntry != otherEntry:
+#                     self.mergeOverLast = True
+#                     break
+#             else:
+#                 self.mergeOverLast = False
+#         if self.mergeOverLast:
+#             self.mergeSources.append(otherMod)
+#         else:
+#             self.mergeSources = [otherMod]
+#         #--Done
+#         self.setChanged()
 
-#------------------------------------------------------------------------------
-class MrePerk(MelRecord):
-    """Perk record."""
-    classType = 'PERK'
-    class MelPerkData(MelStruct):
-        """Handle older trucated DATA for PERK subrecord."""
-        def loadData(self,record,ins,type,size,readId):
-            if size == 5:
-                MelStruct.loadData(self,record,ins,type,size,readId)
-                return
-            elif size == 4:
-                unpacked = ins.unpack('BBBB',size,readId)
-            else:
-                raise "Unexpected size encountered for DATA subrecord: %s" % size
-            unpacked += self.defaults[len(unpacked):]
-            setter = record.__setattr__
-            for attr,value,action in zip(self.attrs,unpacked,self.actions):
-                if callable(action): value = action(value)
-                setter(attr,value)
-            if self._debug: print unpacked, record.flagsA.getTrueAttrs()
-    class MelPerkEffectData(MelBase):
-        def hasFids(self,formElements):
-            formElements.add(self)
-        def loadData(self,record,ins,type,size,readId):
-            target = MelObject()
-            record.__setattr__(self.attr,target)
-            if record.type == 0:
-                format,attrs = ('II',('quest','queststage'))
-            elif record.type == 1:
-                format,attrs = ('I',('ability',))
-            elif record.type == 2:
-                format,attrs = ('HB',('entrypoint','function'))
-            else:
-                raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
-            unpacked = ins.unpack(format,size,readId)
-            setter = target.__setattr__
-            for attr,value in zip(attrs,unpacked):
-                setter(attr,value)
-            if self._debug: print unpacked
-        def dumpData(self,record,out):
-            target = record.__getattribute__(self.attr)
-            if not target: return
-            if record.type == 0:
-                format,attrs = ('II',('quest','queststage'))
-            elif record.type == 1:
-                format,attrs = ('I',('ability',))
-            elif record.type == 2:
-                format,attrs = ('HB',('entrypoint','function'))
-            else:
-                raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
-            values = []
-            valuesAppend = values.append
-            getter = target.__getattribute__
-            for attr in attrs:
-                value = getter(attr)
-                valuesAppend(value)
-            try:
-                out.packSub(self.subType,format,*values)
-            except struct.error:
-                print self.subType,format,values
-                raise
-        def mapFids(self,record,function,save=False):
-            target = record.__getattribute__(self.attr)
-            if not target: return
-            if record.type == 0:
-                result = function(target.quest)
-                if save: target.quest = result
-            elif record.type == 1:
-                result = function(target.ability)
-                if save: target.ability = result
-    class MelPerkEffects(MelGroups):
-        def __init__(self,attr,*elements):
-            MelGroups.__init__(self,attr,*elements)
-        def setMelSet(self,melSet):
-            self.melSet = melSet
-            self.attrLoaders = {}
-            for element in melSet.elements:
-                attr = element.__dict__.get('attr',None)
-                if attr: self.attrLoaders[attr] = element
-        def loadData(self,record,ins,type,size,readId):
-            if type == 'DATA' or type == 'CTDA':
-                effects = record.__getattribute__(self.attr)
-                if not effects:
-                    if type == 'DATA':
-                        element = self.attrLoaders['_data']
-                    elif type == 'CTDA':
-                        element = self.attrLoaders['conditions']
-                    element.loadData(record,ins,type,size,readId)
-                    return
-            MelGroups.loadData(self,record,ins,type,size,readId)
-    class MelPerkEffectParams(MelGroups):
-        def loadData(self,record,ins,type,size,readId):
-            if type in ('EPFD','EPFT','EPF2','EPF3','SCHR'):
-                target = self.getDefault()
-                record.__getattribute__(self.attr).append(target)
-            else:
-                target = record.__getattribute__(self.attr)[-1]
-            element = self.loaders[type]
-            slots = ['recordType']
-            slots.extend(element.getSlotsUsed())
-            target.__slots__ = slots
-            target.recordType = type
-            element.loadData(target,ins,type,size,readId)
-        def dumpData(self,record,out):
-            for target in record.__getattribute__(self.attr):
-                element = self.loaders[target.recordType]
-                if not element:
-                    raise ModError(ins.inName,_('Unexpected type: %d') % target.recordType)
-                element.dumpData(target,out)
+# #------------------------------------------------------------------------------
+# class MrePerk(MelRecord):
+#     """Perk record."""
+#     classType = 'PERK'
+#     class MelPerkData(MelStruct):
+#         """Handle older trucated DATA for PERK subrecord."""
+#         def loadData(self,record,ins,type,size,readId):
+#             if size == 5:
+#                 MelStruct.loadData(self,record,ins,type,size,readId)
+#                 return
+#             elif size == 4:
+#                 unpacked = ins.unpack('BBBB',size,readId)
+#             else:
+#                 raise "Unexpected size encountered for DATA subrecord: %s" % size
+#             unpacked += self.defaults[len(unpacked):]
+#             setter = record.__setattr__
+#             for attr,value,action in zip(self.attrs,unpacked,self.actions):
+#                 if callable(action): value = action(value)
+#                 setter(attr,value)
+#             if self._debug: print unpacked, record.flagsA.getTrueAttrs()
+#     class MelPerkEffectData(MelBase):
+#         def hasFids(self,formElements):
+#             formElements.add(self)
+#         def loadData(self,record,ins,type,size,readId):
+#             target = MelObject()
+#             record.__setattr__(self.attr,target)
+#             if record.type == 0:
+#                 format,attrs = ('II',('quest','queststage'))
+#             elif record.type == 1:
+#                 format,attrs = ('I',('ability',))
+#             elif record.type == 2:
+#                 format,attrs = ('HB',('entrypoint','function'))
+#             else:
+#                 raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+#             unpacked = ins.unpack(format,size,readId)
+#             setter = target.__setattr__
+#             for attr,value in zip(attrs,unpacked):
+#                 setter(attr,value)
+#             if self._debug: print unpacked
+#         def dumpData(self,record,out):
+#             target = record.__getattribute__(self.attr)
+#             if not target: return
+#             if record.type == 0:
+#                 format,attrs = ('II',('quest','queststage'))
+#             elif record.type == 1:
+#                 format,attrs = ('I',('ability',))
+#             elif record.type == 2:
+#                 format,attrs = ('HB',('entrypoint','function'))
+#             else:
+#                 raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+#             values = []
+#             valuesAppend = values.append
+#             getter = target.__getattribute__
+#             for attr in attrs:
+#                 value = getter(attr)
+#                 valuesAppend(value)
+#             try:
+#                 out.packSub(self.subType,format,*values)
+#             except struct.error:
+#                 print self.subType,format,values
+#                 raise
+#         def mapFids(self,record,function,save=False):
+#             target = record.__getattribute__(self.attr)
+#             if not target: return
+#             if record.type == 0:
+#                 result = function(target.quest)
+#                 if save: target.quest = result
+#             elif record.type == 1:
+#                 result = function(target.ability)
+#                 if save: target.ability = result
+#     class MelPerkEffects(MelGroups):
+#         def __init__(self,attr,*elements):
+#             MelGroups.__init__(self,attr,*elements)
+#         def setMelSet(self,melSet):
+#             self.melSet = melSet
+#             self.attrLoaders = {}
+#             for element in melSet.elements:
+#                 attr = element.__dict__.get('attr',None)
+#                 if attr: self.attrLoaders[attr] = element
+#         def loadData(self,record,ins,type,size,readId):
+#             if type == 'DATA' or type == 'CTDA':
+#                 effects = record.__getattribute__(self.attr)
+#                 if not effects:
+#                     if type == 'DATA':
+#                         element = self.attrLoaders['_data']
+#                     elif type == 'CTDA':
+#                         element = self.attrLoaders['conditions']
+#                     element.loadData(record,ins,type,size,readId)
+#                     return
+#             MelGroups.loadData(self,record,ins,type,size,readId)
+#     class MelPerkEffectParams(MelGroups):
+#         def loadData(self,record,ins,type,size,readId):
+#             if type in ('EPFD','EPFT','EPF2','EPF3','SCHR'):
+#                 target = self.getDefault()
+#                 record.__getattribute__(self.attr).append(target)
+#             else:
+#                 target = record.__getattribute__(self.attr)[-1]
+#             element = self.loaders[type]
+#             slots = ['recordType']
+#             slots.extend(element.getSlotsUsed())
+#             target.__slots__ = slots
+#             target.recordType = type
+#             element.loadData(target,ins,type,size,readId)
+#         def dumpData(self,record,out):
+#             for target in record.__getattribute__(self.attr):
+#                 element = self.loaders[target.recordType]
+#                 if not element:
+#                     raise ModError(ins.inName,_('Unexpected type: %d') % target.recordType)
+#                 element.dumpData(target,out)
 
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelString('DESC','description'),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        MelConditions(),
-        MelGroup('_data',
-            MelPerkData('DATA', 'BBBBB', ('trait',0), ('minLevel',0), ('ranks',0), ('playable',0), ('hidden',0)),
-            ),
-        MelPerkEffects('effects',
-            MelStruct('PRKE', 'BBB', 'type', 'rank', 'priority'),
-            MelPerkEffectData('DATA','effectData'),
-            MelGroups('effectConditions',
-                MelStruct('PRKC', 'B', 'runOn'),
-                MelConditions(),
-            ),
-            MelPerkEffectParams('effectParams',
-                MelBase('EPFD', 'floats'), # [Float] or [Float,Float], todo rewrite specific class
-                MelStruct('EPFT','B','_epft'),
-                MelString('EPF2','buttonLabel'),
-                MelStruct('EPF3','H','scriptFlag'),
-                MelGroup('embeddedScript',
-                    MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
-                    MelBase('SCDA','compiled_p'),
-                    MelString('SCTX','scriptText'),
-                    MelScrxen('SCRV/SCRO','references'),
-                ),
-            ),
-            MelBase('PRKF','footer'),
-            ),
-        )
-    melSet.elements[-1].setMelSet(melSet)
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelString('DESC','description'),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         MelConditions(),
+#         MelGroup('_data',
+#             MelPerkData('DATA', 'BBBBB', ('trait',0), ('minLevel',0), ('ranks',0), ('playable',0), ('hidden',0)),
+#             ),
+#         MelPerkEffects('effects',
+#             MelStruct('PRKE', 'BBB', 'type', 'rank', 'priority'),
+#             MelPerkEffectData('DATA','effectData'),
+#             MelGroups('effectConditions',
+#                 MelStruct('PRKC', 'B', 'runOn'),
+#                 MelConditions(),
+#             ),
+#             MelPerkEffectParams('effectParams',
+#                 MelBase('EPFD', 'floats'), # [Float] or [Float,Float], todo rewrite specific class
+#                 MelStruct('EPFT','B','_epft'),
+#                 MelString('EPF2','buttonLabel'),
+#                 MelStruct('EPF3','H','scriptFlag'),
+#                 MelGroup('embeddedScript',
+#                     MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
+#                     MelBase('SCDA','compiled_p'),
+#                     MelString('SCTX','scriptText'),
+#                     MelScrxen('SCRV/SCRO','references'),
+#                 ),
+#             ),
+#             MelBase('PRKF','footer'),
+#             ),
+#         )
+#     melSet.elements[-1].setMelSet(melSet)
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreExpl(MelRecord):
-    """Explosion record."""
-    classType = 'EXPL'
-    _flags = Flags(0,Flags.getNames('unknown1',
-                                    'alwaysUsesWorldOrientation',
-                                    'knockDownAlways',
-                                    'knockDownByFormular',
-                                    'IgnoreLosCheck',
-                                    'pushExplosionSourceRefOnly',
-                                    'ignoreImageSpaceSwap'))
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelFid('EITM','objectEffect'),
-        MelFid('MNAM','imageSpaceModifier'),
-        MelStruct('DATA','fffIIHfIIfffI','force','damage','radius',(FID,'light',None),
-                  (FID,'sound1',None),(_flags,'flags'),'isRadius',(FID,'impactDataset',None),
-                  (FID,'sound2',None),'radiationLevel','radiationTime','radiationRadius','soundLevel'),
-        MelFid('INAM','placedImpactObject'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreExpl(MelRecord):
+#     """Explosion record."""
+#     classType = 'EXPL'
+#     _flags = Flags(0,Flags.getNames('unknown1',
+#                                     'alwaysUsesWorldOrientation',
+#                                     'knockDownAlways',
+#                                     'knockDownByFormular',
+#                                     'IgnoreLosCheck',
+#                                     'pushExplosionSourceRefOnly',
+#                                     'ignoreImageSpaceSwap'))
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelFid('EITM','objectEffect'),
+#         MelFid('MNAM','imageSpaceModifier'),
+#         MelStruct('DATA','fffIIHfIIfffI','force','damage','radius',(FID,'light',None),
+#                   (FID,'sound1',None),(_flags,'flags'),'isRadius',(FID,'impactDataset',None),
+#                   (FID,'sound2',None),'radiationLevel','radiationTime','radiationRadius','soundLevel'),
+#         MelFid('INAM','placedImpactObject'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreIpct(MelRecord):
-    """Impact record."""
-    classType = 'IPCT'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelModel(),
-        MelStruct('DATA','fIffII','effectDuration','effectOrientation','angleThreshold','placementRadius',
-                  'soundLevel','flags'),
-        MelOptStruct('DODT','7fBB2s3Bs','minWidth','maxWidth','minHeight','maxHeight','depth','shininess',
-                     'parallaxScale','parallaxPasses','decalFlags',('unused1',null2),'red','green','blue',('unused2',null1)),
-        MelFid('DNAM','textureSet'),
-        MelFid('SNAM','sound1'),
-        MelFid('NAM1','sound2'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreIpct(MelRecord):
+#     """Impact record."""
+#     classType = 'IPCT'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelModel(),
+#         MelStruct('DATA','fIffII','effectDuration','effectOrientation','angleThreshold','placementRadius',
+#                   'soundLevel','flags'),
+#         MelOptStruct('DODT','7fBB2s3Bs','minWidth','maxWidth','minHeight','maxHeight','depth','shininess',
+#                      'parallaxScale','parallaxPasses','decalFlags',('unused1',null2),'red','green','blue',('unused2',null1)),
+#         MelFid('DNAM','textureSet'),
+#         MelFid('SNAM','sound1'),
+#         MelFid('NAM1','sound2'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreIpds(MelRecord):
-    """Impact Dataset record."""
-    classType = 'IPDS'
-    class MelIpdsData(MelStruct):
-        """Handle older trucated DATA for IPDS subrecord."""
-        def loadData(self,record,ins,type,size,readId):
-            if size == 48:
-                MelStruct.loadData(self,record,ins,type,size,readId)
-                return
-            elif size == 40:
-                unpacked = ins.unpack('10I',size,readId)
-            elif size == 36:
-                unpacked = ins.unpack('9I',size,readId)
-            else:
-                raise "Unexpected size encountered for IPDS:DATA subrecord: %s" % size
-            unpacked += self.defaults[len(unpacked):]
-            setter = record.__setattr__
-            for attr,value,action in zip(self.attrs,unpacked,self.actions):
-                if callable(action): value = action(value)
-                setter(attr,value)
-            if self._debug: print unpacked
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelIpdsData('DATA','12I',(FID,'stone',0),(FID,'dirt',0),(FID,'grass',0),(FID,'metal',0),
-                    (FID,'wood',0),(FID,'organic',0),(FID,'cloth',0),(FID,'water',0),
-                    (FID,'hollowMetal',0),(FID,'organicBug',0),(FID,'organicGlow',0)),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreIpds(MelRecord):
+#     """Impact Dataset record."""
+#     classType = 'IPDS'
+#     class MelIpdsData(MelStruct):
+#         """Handle older trucated DATA for IPDS subrecord."""
+#         def loadData(self,record,ins,type,size,readId):
+#             if size == 48:
+#                 MelStruct.loadData(self,record,ins,type,size,readId)
+#                 return
+#             elif size == 40:
+#                 unpacked = ins.unpack('10I',size,readId)
+#             elif size == 36:
+#                 unpacked = ins.unpack('9I',size,readId)
+#             else:
+#                 raise "Unexpected size encountered for IPDS:DATA subrecord: %s" % size
+#             unpacked += self.defaults[len(unpacked):]
+#             setter = record.__setattr__
+#             for attr,value,action in zip(self.attrs,unpacked,self.actions):
+#                 if callable(action): value = action(value)
+#                 setter(attr,value)
+#             if self._debug: print unpacked
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelIpdsData('DATA','12I',(FID,'stone',0),(FID,'dirt',0),(FID,'grass',0),(FID,'metal',0),
+#                     (FID,'wood',0),(FID,'organic',0),(FID,'cloth',0),(FID,'water',0),
+#                     (FID,'hollowMetal',0),(FID,'organicBug',0),(FID,'organicGlow',0)),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreProj(MelRecord):
-    """Projectile record."""
-    classType = 'PROJ'
-    _flags = Flags(0,Flags.getNames('hitscan',
-                                    'explosive',
-                                    'altTriger',
-                                    'muzzleFlash',
-                                    'unknown4',
-                                    'canbeDisable',
-                                    'canbePickedUp',
-                                    'superSonic',
-                                    'pinsLimbs',
-                                    'passThroughSmallTransparent'))
-    class MelProjData(MelStruct):
-        """Handle older trucated DATA for PROJ subrecord."""
-        def loadData(self,record,ins,type,size,readId):
-            if size == 84:
-                MelStruct.loadData(self,record,ins,type,size,readId)
-                return
-            elif size == 68:
-                unpacked = ins.unpack('HHfffIIfffIIfffIII',size,readId)
-            else:
-                raise "Unexpected size encountered for PROJ:DATA subrecord: %s" % size
-            unpacked += self.defaults[len(unpacked):]
-            setter = record.__setattr__
-            for attr,value,action in zip(self.attrs,unpacked,self.actions):
-                if callable(action): value = action(value)
-                setter(attr,value)
-            if self._debug: print unpacked
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelDestructable(),
-        MelProjData('DATA','HHfffIIfffIIfffIII ffff',(_flags,'flags'),'type',
-                  ('gravity',0.00000),('speed',10000.00000),('range',10000.00000),
-                  (FID,'light',0),(FID,'muzzleFlash',0),('tracerChance',0.00000),
-                  ('explosionAltTrigerProximity',0.00000),('explosionAltTrigerTimer',0.00000),
-                  (FID,'explosion',0),(FID,'sound',0),('muzzleFlashDuration',0.00000),
-                  ('fadeDuration',0.00000),('impactForce',0.00000),
-                  (FID,'soundCountDown',0),(FID,'soundDisable',0),(FID,'defaultWeaponSource',0),
-                  ('rotationX',0.00000),('rotationY',0.00000),('rotationZ',0.00000),
-                  ('bouncyMult',0.00000)),
-        MelString('NAM1','muzzleFlashPath'),
-        MelBase('NAM2','_nam2'), #--Should be a struct. Maybe later.
-        MelStruct('VNAM','I','soundLevel'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreProj(MelRecord):
+#     """Projectile record."""
+#     classType = 'PROJ'
+#     _flags = Flags(0,Flags.getNames('hitscan',
+#                                     'explosive',
+#                                     'altTriger',
+#                                     'muzzleFlash',
+#                                     'unknown4',
+#                                     'canbeDisable',
+#                                     'canbePickedUp',
+#                                     'superSonic',
+#                                     'pinsLimbs',
+#                                     'passThroughSmallTransparent'))
+#     class MelProjData(MelStruct):
+#         """Handle older trucated DATA for PROJ subrecord."""
+#         def loadData(self,record,ins,type,size,readId):
+#             if size == 84:
+#                 MelStruct.loadData(self,record,ins,type,size,readId)
+#                 return
+#             elif size == 68:
+#                 unpacked = ins.unpack('HHfffIIfffIIfffIII',size,readId)
+#             else:
+#                 raise "Unexpected size encountered for PROJ:DATA subrecord: %s" % size
+#             unpacked += self.defaults[len(unpacked):]
+#             setter = record.__setattr__
+#             for attr,value,action in zip(self.attrs,unpacked,self.actions):
+#                 if callable(action): value = action(value)
+#                 setter(attr,value)
+#             if self._debug: print unpacked
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelDestructable(),
+#         MelProjData('DATA','HHfffIIfffIIfffIII ffff',(_flags,'flags'),'type',
+#                   ('gravity',0.00000),('speed',10000.00000),('range',10000.00000),
+#                   (FID,'light',0),(FID,'muzzleFlash',0),('tracerChance',0.00000),
+#                   ('explosionAltTrigerProximity',0.00000),('explosionAltTrigerTimer',0.00000),
+#                   (FID,'explosion',0),(FID,'sound',0),('muzzleFlashDuration',0.00000),
+#                   ('fadeDuration',0.00000),('impactForce',0.00000),
+#                   (FID,'soundCountDown',0),(FID,'soundDisable',0),(FID,'defaultWeaponSource',0),
+#                   ('rotationX',0.00000),('rotationY',0.00000),('rotationZ',0.00000),
+#                   ('bouncyMult',0.00000)),
+#         MelString('NAM1','muzzleFlashPath'),
+#         MelBase('NAM2','_nam2'), #--Should be a struct. Maybe later.
+#         MelStruct('VNAM','I','soundLevel'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreDebr(MelRecord):
-    """Debris record."""
-    classType = 'DEBR'
-    class MelDebrData(MelStruct):
-        def __init__(self):
-            """Initialize."""
-            MelStruct.__init__(self,'DATA','IsI',('percentage',0),('modPath',null1),('flags',0))
-        def loadData(self,record,ins,type,size,readId):
-            """Reads data from ins into record attribute."""
-            data = ins.read(size,readId)
-            (record.percentage,) = struct.unpack('B',data[0:1])
-            record.modPath = data[1:-2]
-            if data[-2] != null1:
-                raise ModError(ins.inName,_('Unexpected subrecord: ')+readId)
-            (record.flags,) = struct.unpack('B',data[-1])
-        def dumpData(self,record,out):
-            """Dumps data from record to outstream."""
-            data = ''
-            data += struct.pack('B',record.percentage)
-            data += record.modPath
-            data += null1
-            data += struct.pack('B',record.flags)
-            out.packSub('DATA',data)
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelGroups('models',
-            MelDebrData(),
-            MelBase('MODT','modt_p'),
-        ),
-    )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreDebr(MelRecord):
+#     """Debris record."""
+#     classType = 'DEBR'
+#     class MelDebrData(MelStruct):
+#         def __init__(self):
+#             """Initialize."""
+#             MelStruct.__init__(self,'DATA','IsI',('percentage',0),('modPath',null1),('flags',0))
+#         def loadData(self,record,ins,type,size,readId):
+#             """Reads data from ins into record attribute."""
+#             data = ins.read(size,readId)
+#             (record.percentage,) = struct.unpack('B',data[0:1])
+#             record.modPath = data[1:-2]
+#             if data[-2] != null1:
+#                 raise ModError(ins.inName,_('Unexpected subrecord: ')+readId)
+#             (record.flags,) = struct.unpack('B',data[-1])
+#         def dumpData(self,record,out):
+#             """Dumps data from record to outstream."""
+#             data = ''
+#             data += struct.pack('B',record.percentage)
+#             data += record.modPath
+#             data += null1
+#             data += struct.pack('B',record.flags)
+#             out.packSub('DATA',data)
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelGroups('models',
+#             MelDebrData(),
+#             MelBase('MODT','modt_p'),
+#         ),
+#     )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreImad(MelRecord):
-    """Image space modifier record."""
-    classType = 'IMAD'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelBase('DNAM','dnam_p'),
-        MelBase('BNAM','bnam_p'),
-        MelBase('VNAM','vnam_p'),
-        MelBase('TNAM','tnam_p'),
-        MelBase('NAM3','nam3_p'),
-        MelBase('RNAM','rnam_p'),
-        MelBase('SNAM','snam_p'),
-        MelBase('UNAM','unam_p'),
-        MelBase('NAM1','nam1_p'),
-        MelBase('NAM2','nam2_p'),
-        MelBase('WNAM','wnam_p'),
-        MelBase('XNAM','xnam_p'),
-        MelBase('YNAM','ynam_p'),
-        MelBase('NAM4','nam4_p'),
-        MelBase('aIAD','_aiad_p'),
-        MelBase('\x00IAD','_00iad_p'),
-        MelBase('@IAD','_atiad_p'),
-        MelBase('bIAD','_biad_p'),
-        MelBase('\x01IAD','_01iad_p'),
-        MelBase('AIAD','aiad_p'),
-        MelBase('cIAD','_ciad_p'),
-        MelBase('\x02IAD','_02iad_p'),
-        MelBase('BIAD','biad_p'),
-        MelBase('\x03IAD','_03iad_p'),
-        MelBase('dIAD','_diad_p'),
-        MelBase('CIAD','ciad_p'),
-        MelBase('\x04IAD','_04iad_p'),
-        MelBase('eIAD','_eiad_p'),
-        MelBase('DIAD','diad_p'),
-        MelBase('\x05IAD','_05iad_p'),
-        MelBase('fIAD','_fiad_p'),
-        MelBase('EIAD','eiad_p'),
-        MelBase('\x06IAD','_06iad_p'),
-        MelBase('gIAD','_giad_p'),
-        MelBase('FIAD','fiad_p'),
-        MelBase('\x07IAD','_07iad_p'),
-        MelBase('hIAD','_hiad_p'),
-        MelBase('GIAD','giad_p'),
-        MelBase('\x08IAD','_08iad_p'),
-        MelBase('iIAD','_iiad_p'),
-        MelBase('HIAD','hiad_p'),
-        MelBase('\x09IAD','_09iad_p'),
-        MelBase('jIAD','_jiad_p'),
-        MelBase('IIAD','iiad_p'),
-        MelBase('\x0aIAD','_0aiad_p'),
-        MelBase('kIAD','_kiad_p'),
-        MelBase('JIAD','jiad_p'),
-        MelBase('\x0bIAD','_0biad_p'),
-        MelBase('lIAD','_liad_p'),
-        MelBase('KIAD','kiad_p'),
-        MelBase('\x0cIAD','_0ciad_p'),
-        MelBase('mIAD','_miad_p'),
-        MelBase('LIAD','liad_p'),
-        MelBase('\x0dIAD','_0diad_p'),
-        MelBase('nIAD','_niad_p'),
-        MelBase('MIAD','miad_p'),
-        MelBase('\x0eIAD','_0eiad_p'),
-        MelBase('oIAD','_oiad_p'),
-        MelBase('NIAD','niad_p'),
-        MelBase('\x0fIAD','_0fiad_p'),
-        MelBase('pIAD','_piad_p'),
-        MelBase('OIAD','oiad_p'),
-        MelBase('\x10IAD','_10iad_p'),
-        MelBase('qIAD','_qiad_p'),
-        MelBase('PIAD','piad_p'),
-        MelBase('\x11IAD','_11iad_p'),
-        MelBase('rIAD','_riad_p'),
-        MelBase('QIAD','qiad_p'),
-        MelBase('\x12IAD','_12iad_p'),
-        MelBase('sIAD','_siad_p'),
-        MelBase('RIAD','riad_p'),
-        MelBase('\x13IAD','_13iad_p'),
-        MelBase('tIAD','_tiad_p'),
-        MelBase('SIAD','siad_p'),
-        MelBase('\x14IAD','_14iad_p'),
-        MelBase('uIAD','_uiad_p'),
-        MelBase('TIAD','tiad_p'),
-        MelFid('RDSD','soundIntro'),
-        MelFid('RDSI','soundOutro'),
-    )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreImad(MelRecord):
+#     """Image space modifier record."""
+#     classType = 'IMAD'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelBase('DNAM','dnam_p'),
+#         MelBase('BNAM','bnam_p'),
+#         MelBase('VNAM','vnam_p'),
+#         MelBase('TNAM','tnam_p'),
+#         MelBase('NAM3','nam3_p'),
+#         MelBase('RNAM','rnam_p'),
+#         MelBase('SNAM','snam_p'),
+#         MelBase('UNAM','unam_p'),
+#         MelBase('NAM1','nam1_p'),
+#         MelBase('NAM2','nam2_p'),
+#         MelBase('WNAM','wnam_p'),
+#         MelBase('XNAM','xnam_p'),
+#         MelBase('YNAM','ynam_p'),
+#         MelBase('NAM4','nam4_p'),
+#         MelBase('aIAD','_aiad_p'),
+#         MelBase('\x00IAD','_00iad_p'),
+#         MelBase('@IAD','_atiad_p'),
+#         MelBase('bIAD','_biad_p'),
+#         MelBase('\x01IAD','_01iad_p'),
+#         MelBase('AIAD','aiad_p'),
+#         MelBase('cIAD','_ciad_p'),
+#         MelBase('\x02IAD','_02iad_p'),
+#         MelBase('BIAD','biad_p'),
+#         MelBase('\x03IAD','_03iad_p'),
+#         MelBase('dIAD','_diad_p'),
+#         MelBase('CIAD','ciad_p'),
+#         MelBase('\x04IAD','_04iad_p'),
+#         MelBase('eIAD','_eiad_p'),
+#         MelBase('DIAD','diad_p'),
+#         MelBase('\x05IAD','_05iad_p'),
+#         MelBase('fIAD','_fiad_p'),
+#         MelBase('EIAD','eiad_p'),
+#         MelBase('\x06IAD','_06iad_p'),
+#         MelBase('gIAD','_giad_p'),
+#         MelBase('FIAD','fiad_p'),
+#         MelBase('\x07IAD','_07iad_p'),
+#         MelBase('hIAD','_hiad_p'),
+#         MelBase('GIAD','giad_p'),
+#         MelBase('\x08IAD','_08iad_p'),
+#         MelBase('iIAD','_iiad_p'),
+#         MelBase('HIAD','hiad_p'),
+#         MelBase('\x09IAD','_09iad_p'),
+#         MelBase('jIAD','_jiad_p'),
+#         MelBase('IIAD','iiad_p'),
+#         MelBase('\x0aIAD','_0aiad_p'),
+#         MelBase('kIAD','_kiad_p'),
+#         MelBase('JIAD','jiad_p'),
+#         MelBase('\x0bIAD','_0biad_p'),
+#         MelBase('lIAD','_liad_p'),
+#         MelBase('KIAD','kiad_p'),
+#         MelBase('\x0cIAD','_0ciad_p'),
+#         MelBase('mIAD','_miad_p'),
+#         MelBase('LIAD','liad_p'),
+#         MelBase('\x0dIAD','_0diad_p'),
+#         MelBase('nIAD','_niad_p'),
+#         MelBase('MIAD','miad_p'),
+#         MelBase('\x0eIAD','_0eiad_p'),
+#         MelBase('oIAD','_oiad_p'),
+#         MelBase('NIAD','niad_p'),
+#         MelBase('\x0fIAD','_0fiad_p'),
+#         MelBase('pIAD','_piad_p'),
+#         MelBase('OIAD','oiad_p'),
+#         MelBase('\x10IAD','_10iad_p'),
+#         MelBase('qIAD','_qiad_p'),
+#         MelBase('PIAD','piad_p'),
+#         MelBase('\x11IAD','_11iad_p'),
+#         MelBase('rIAD','_riad_p'),
+#         MelBase('QIAD','qiad_p'),
+#         MelBase('\x12IAD','_12iad_p'),
+#         MelBase('sIAD','_siad_p'),
+#         MelBase('RIAD','riad_p'),
+#         MelBase('\x13IAD','_13iad_p'),
+#         MelBase('tIAD','_tiad_p'),
+#         MelBase('SIAD','siad_p'),
+#         MelBase('\x14IAD','_14iad_p'),
+#         MelBase('uIAD','_uiad_p'),
+#         MelBase('TIAD','tiad_p'),
+#         MelFid('RDSD','soundIntro'),
+#         MelFid('RDSI','soundOutro'),
+#     )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreMstt(MelRecord):
-    """Moveable static record."""
-    classType = 'MSTT'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelDestructable(),
-        MelBase('DATA','data_p'),
-        MelFid('SNAM','sound'),
-    )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreMstt(MelRecord):
+#     """Moveable static record."""
+#     classType = 'MSTT'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelDestructable(),
+#         MelBase('DATA','data_p'),
+#         MelFid('SNAM','sound'),
+#     )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreNote(MelRecord):
-    """Note record."""
-    classType = 'NOTE'
-    _type = Flags(0,Flags.getNames(
-            ( 0,'sound' ),
-            ( 1,'text' ),
-            ( 2,'image' ),
-            ( 3,'voice' ),
-            ))
-    class MelNoteTnam(MelBase):
-        """text or topic"""
-        def hasFids(self,formElements):
-            formElements.add(self)
-        def loadData(self,record,ins,type,size,readId):
-            if record.dataType == 1: # text (string)
-                value = ins.readString(size,readId)
-                record.__setattr__(self.attr, (False, value))
-            elif record.dataType == 3: # voice (fid:DIAL)
-                (value,) = ins.unpack('I',size,readId)
-                record.__setattr__(self.attr, (True, value))
-            else:
-                raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
-            if self._debug: print unpacked
-        def dumpData(self,record,out):
-            value = record.__getattribute__(self.attr)
-            if value is None: return
-            (isFid, value) = value
-            if value is not None:
-                if record.dataType == 1: # text (string)
-                    out.packSub0(self.subType,value)
-                elif record.dataType == 3: # voice (fid:DIAL)
-                    out.packRef(self.subType,value)
-                else:
-                    raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
-        def mapFids(self,record,function,save=False):
-            value = record.__getattribute__(self.attr)
-            if value is None: return
-            (isFid, value) = value
-            if isFid:
-                result = function(value)
-                if save: record.__setattr__(self.attr,(isFid,result))
-    class MelNoteSnam(MelBase):
-        """sound or npc"""
-        def hasFids(self,formElements):
-            formElements.add(self)
-        def loadData(self,record,ins,type,size,readId):
-            if record.dataType == 0: # sound (fid:SOUN)
-                (value,) = ins.unpack('I',size,readId)
-                record.__setattr__(self.attr, (True, value))
-            elif record.dataType == 3: # voice (fid:NPC_)
-                (value,) = ins.unpack('I',size,readId)
-                record.__setattr__(self.attr, (True, value))
-            else:
-                raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
-            if self._debug: print unpacked
-        def dumpData(self,record,out):
-            value = record.__getattribute__(self.attr)
-            if value is None: return
-            (isFid, value) = value
-            if value is not None: out.packRef(self.subType,value)
-        def mapFids(self,record,function,save=False):
-            value = record.__getattribute__(self.attr)
-            if value is None: return
-            (isFid, value) = value
-            if isFid:
-                result = function(value)
-                if save: record.__setattr__(self.attr,(isFid,result))
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        MelFid('YNAM','soundPickUp'),
-        MelFid('ZNAM','soundDrop'),
-        MelStruct('DATA','B','dataType'),
-        MelFidList('ONAM','quests'),
-        MelString('XNAM','texture'),
-        MelNoteTnam('TNAM', 'textTopic'),
-        MelNoteSnam('SNAM', 'soundNpc'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreNote(MelRecord):
+#     """Note record."""
+#     classType = 'NOTE'
+#     _type = Flags(0,Flags.getNames(
+#             ( 0,'sound' ),
+#             ( 1,'text' ),
+#             ( 2,'image' ),
+#             ( 3,'voice' ),
+#             ))
+#     class MelNoteTnam(MelBase):
+#         """text or topic"""
+#         def hasFids(self,formElements):
+#             formElements.add(self)
+#         def loadData(self,record,ins,type,size,readId):
+#             if record.dataType == 1: # text (string)
+#                 value = ins.readString(size,readId)
+#                 record.__setattr__(self.attr, (False, value))
+#             elif record.dataType == 3: # voice (fid:DIAL)
+#                 (value,) = ins.unpack('I',size,readId)
+#                 record.__setattr__(self.attr, (True, value))
+#             else:
+#                 raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+#             if self._debug: print unpacked
+#         def dumpData(self,record,out):
+#             value = record.__getattribute__(self.attr)
+#             if value is None: return
+#             (isFid, value) = value
+#             if value is not None:
+#                 if record.dataType == 1: # text (string)
+#                     out.packSub0(self.subType,value)
+#                 elif record.dataType == 3: # voice (fid:DIAL)
+#                     out.packRef(self.subType,value)
+#                 else:
+#                     raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+#         def mapFids(self,record,function,save=False):
+#             value = record.__getattribute__(self.attr)
+#             if value is None: return
+#             (isFid, value) = value
+#             if isFid:
+#                 result = function(value)
+#                 if save: record.__setattr__(self.attr,(isFid,result))
+#     class MelNoteSnam(MelBase):
+#         """sound or npc"""
+#         def hasFids(self,formElements):
+#             formElements.add(self)
+#         def loadData(self,record,ins,type,size,readId):
+#             if record.dataType == 0: # sound (fid:SOUN)
+#                 (value,) = ins.unpack('I',size,readId)
+#                 record.__setattr__(self.attr, (True, value))
+#             elif record.dataType == 3: # voice (fid:NPC_)
+#                 (value,) = ins.unpack('I',size,readId)
+#                 record.__setattr__(self.attr, (True, value))
+#             else:
+#                 raise ModError(ins.inName,_('Unexpected type: %d') % record.type)
+#             if self._debug: print unpacked
+#         def dumpData(self,record,out):
+#             value = record.__getattribute__(self.attr)
+#             if value is None: return
+#             (isFid, value) = value
+#             if value is not None: out.packRef(self.subType,value)
+#         def mapFids(self,record,function,save=False):
+#             value = record.__getattribute__(self.attr)
+#             if value is None: return
+#             (isFid, value) = value
+#             if isFid:
+#                 result = function(value)
+#                 if save: record.__setattr__(self.attr,(isFid,result))
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         MelFid('YNAM','soundPickUp'),
+#         MelFid('ZNAM','soundDrop'),
+#         MelStruct('DATA','B','dataType'),
+#         MelFidList('ONAM','quests'),
+#         MelString('XNAM','texture'),
+#         MelNoteTnam('TNAM', 'textTopic'),
+#         MelNoteSnam('SNAM', 'soundNpc'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreTerm(MelRecord):
-    """Terminal record."""
-    classType = 'TERM'
-    _flags = Flags(0L,Flags.getNames('leveled','unlocked','alternateColors','hideWellcomeTextWhenDisplayingImage'))
-    _menuFlags = Flags(0L,Flags.getNames('addNote','forceRedraw'))
-    _variableFlags = Flags(0L,Flags.getNames('isLongOrShort'))
-    class MelTermDnam(MelStruct):
-        """Handle older trucated DNAM for TERM subrecord."""
-        def loadData(self,record,ins,type,size,readId):
-            if size == 4:
-                MelStruct.loadData(self,record,ins,type,size,readId)
-                return
-            elif size == 3:
-                unpacked = ins.unpack('BBB',size,readId)
-            else:
-                raise "Unexpected size encountered for TERM:DNAM subrecord: %s" % size
-            unpacked += self.defaults[len(unpacked):]
-            setter = record.__setattr__
-            for attr,value,action in zip(self.attrs,unpacked,self.actions):
-                if callable(action): value = action(value)
-                setter(attr,value)
-            if self._debug: print unpacked
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelFid('SCRI','script'),
-        MelDestructable(),
-        MelString('DESC','description'),
-        MelFid('SNAM','soundLooping'),
-        MelFid('PNAM','passwordNote'),
-        MelTermDnam('DNAM','BBH','baseHackingDifficulty',(_flags,'flags'),'serverType'),
-        MelGroups('menuItems',
-            MelString('ITXT','itemText'),
-            MelString('RNAM','resultText'),
-            MelStruct('ANAM','B',(_menuFlags,'menuFlags')),
-            MelFid('INAM','displayNote'),
-            MelFid('TNAM','subMenu'),
-            MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
-            MelBase('SCDA','compiled_p'),
-            MelString('SCTX','scriptText'),
-            MelGroups('vars',
-                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
-                MelString('SCVR','name')),
-            MelScrxen('SCRV/SCRO','references'),
-            MelConditions(),
-        ),
-    )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreTerm(MelRecord):
+#     """Terminal record."""
+#     classType = 'TERM'
+#     _flags = Flags(0L,Flags.getNames('leveled','unlocked','alternateColors','hideWellcomeTextWhenDisplayingImage'))
+#     _menuFlags = Flags(0L,Flags.getNames('addNote','forceRedraw'))
+#     _variableFlags = Flags(0L,Flags.getNames('isLongOrShort'))
+#     class MelTermDnam(MelStruct):
+#         """Handle older trucated DNAM for TERM subrecord."""
+#         def loadData(self,record,ins,type,size,readId):
+#             if size == 4:
+#                 MelStruct.loadData(self,record,ins,type,size,readId)
+#                 return
+#             elif size == 3:
+#                 unpacked = ins.unpack('BBB',size,readId)
+#             else:
+#                 raise "Unexpected size encountered for TERM:DNAM subrecord: %s" % size
+#             unpacked += self.defaults[len(unpacked):]
+#             setter = record.__setattr__
+#             for attr,value,action in zip(self.attrs,unpacked,self.actions):
+#                 if callable(action): value = action(value)
+#                 setter(attr,value)
+#             if self._debug: print unpacked
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelFid('SCRI','script'),
+#         MelDestructable(),
+#         MelString('DESC','description'),
+#         MelFid('SNAM','soundLooping'),
+#         MelFid('PNAM','passwordNote'),
+#         MelTermDnam('DNAM','BBH','baseHackingDifficulty',(_flags,'flags'),'serverType'),
+#         MelGroups('menuItems',
+#             MelString('ITXT','itemText'),
+#             MelString('RNAM','resultText'),
+#             MelStruct('ANAM','B',(_menuFlags,'menuFlags')),
+#             MelFid('INAM','displayNote'),
+#             MelFid('TNAM','subMenu'),
+#             MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
+#             MelBase('SCDA','compiled_p'),
+#             MelString('SCTX','scriptText'),
+#             MelGroups('vars',
+#                 MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
+#                 MelString('SCVR','name')),
+#             MelScrxen('SCRV/SCRO','references'),
+#             MelConditions(),
+#         ),
+#     )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreAvif(MelRecord):
-    """ActorValue Information record."""
-    classType = 'AVIF'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelString('DESC','description'),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        MelString('ANAM','shortName'),
-    )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreAvif(MelRecord):
+#     """ActorValue Information record."""
+#     classType = 'AVIF'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelString('DESC','description'),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         MelString('ANAM','shortName'),
+#     )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreEczn(MelRecord):
-    """Encounter Zone record."""
-    classType = 'ECZN'
-    _flags = Flags(0L,Flags.getNames('neverResets','matchPCBelowMinimumLevel'))
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('DATA','=I2b2B',(FID,'owner',None),'rank','minimumLevel',(_flags,'flags',0L),('unused1',null1)),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreEczn(MelRecord):
+#     """Encounter Zone record."""
+#     classType = 'ECZN'
+#     _flags = Flags(0L,Flags.getNames('neverResets','matchPCBelowMinimumLevel'))
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('DATA','=I2b2B',(FID,'owner',None),'rank','minimumLevel',(_flags,'flags',0L),('unused1',null1)),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreBptd(MelRecord):
-    """Body part data record."""
-    classType = 'BPTD'
-    _flags = Flags(0L,Flags.getNames('severable','ikData','ikBipedData','explodable','ikIsHead','ikHeadtracking','toHitChanceAbsolute'))
-    class MelBptdGroups(MelGroups):
-        def loadData(self,record,ins,type,size,readId):
-            """Reads data from ins into record attribute."""
-            if type == self.type0:
-                target = self.getDefault()
-                record.__getattribute__(self.attr).append(target)
-            else:
-                targets = record.__getattribute__(self.attr)
-                if targets:
-                    target = targets[-1]
-                elif type == 'BPNN': # for NVVoidBodyPartData, NVraven02
-                    target = self.getDefault()
-                    record.__getattribute__(self.attr).append(target)
-            slots = []
-            for element in self.elements:
-                slots.extend(element.getSlotsUsed())
-            target.__slots__ = slots
-            self.loaders[type].loadData(target,ins,type,size,readId)
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelModel(),
-        MelBptdGroups('bodyParts',
-            MelString('BPTN','partName'),
-            MelString('BPNN','nodeName'),
-            MelString('BPNT','vatsTarget'),
-            MelString('BPNI','ikDataStartNode'),
-            MelStruct('BPND','f6BH2I2f3I7f2I2B2sf','damageMult',(_flags,'flags'),'partType','healthPercent','actorValue',
-                      'toHitChance','explodableChancePercent','explodableDebrisCount',(FID,'explodableDebris',0L),(FID,'explodableExplosion',0L),
-                      'trackingMaxAngle','explodableDebrisScale','severableDebrisCount',(FID,'severableDebris',0L),(FID,'severableExplosion',0L),
-                      'severableDebrisScale','goreEffectPosTransX','goreEffectPosTransY','goreEffectPosTransZ',
-                      'goreEffectPosRotX','goreEffectPosRotY','goreEffectPosRotZ',(FID,'severableImpactDataSet',0L),(FID,'explodableImpactDataSet',0L),
-                      'severableDecalCount','explodableDecalCount',('unused',null2),'limbReplacementScale'),
-            MelString('NAM1','limbReplacementModel'),
-            MelString('NAM4','goreEffectsTargetBone'),
-            MelBase('NAM5','endMarker'),
-            ),
-        MelFid('RAGA','ragdoll'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreBptd(MelRecord):
+#     """Body part data record."""
+#     classType = 'BPTD'
+#     _flags = Flags(0L,Flags.getNames('severable','ikData','ikBipedData','explodable','ikIsHead','ikHeadtracking','toHitChanceAbsolute'))
+#     class MelBptdGroups(MelGroups):
+#         def loadData(self,record,ins,type,size,readId):
+#             """Reads data from ins into record attribute."""
+#             if type == self.type0:
+#                 target = self.getDefault()
+#                 record.__getattribute__(self.attr).append(target)
+#             else:
+#                 targets = record.__getattribute__(self.attr)
+#                 if targets:
+#                     target = targets[-1]
+#                 elif type == 'BPNN': # for NVVoidBodyPartData, NVraven02
+#                     target = self.getDefault()
+#                     record.__getattribute__(self.attr).append(target)
+#             slots = []
+#             for element in self.elements:
+#                 slots.extend(element.getSlotsUsed())
+#             target.__slots__ = slots
+#             self.loaders[type].loadData(target,ins,type,size,readId)
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelModel(),
+#         MelBptdGroups('bodyParts',
+#             MelString('BPTN','partName'),
+#             MelString('BPNN','nodeName'),
+#             MelString('BPNT','vatsTarget'),
+#             MelString('BPNI','ikDataStartNode'),
+#             MelStruct('BPND','f6BH2I2f3I7f2I2B2sf','damageMult',(_flags,'flags'),'partType','healthPercent','actorValue',
+#                       'toHitChance','explodableChancePercent','explodableDebrisCount',(FID,'explodableDebris',0L),(FID,'explodableExplosion',0L),
+#                       'trackingMaxAngle','explodableDebrisScale','severableDebrisCount',(FID,'severableDebris',0L),(FID,'severableExplosion',0L),
+#                       'severableDebrisScale','goreEffectPosTransX','goreEffectPosTransY','goreEffectPosTransZ',
+#                       'goreEffectPosRotX','goreEffectPosRotY','goreEffectPosRotZ',(FID,'severableImpactDataSet',0L),(FID,'explodableImpactDataSet',0L),
+#                       'severableDecalCount','explodableDecalCount',('unused',null2),'limbReplacementScale'),
+#             MelString('NAM1','limbReplacementModel'),
+#             MelString('NAM4','goreEffectsTargetBone'),
+#             MelBase('NAM5','endMarker'),
+#             ),
+#         MelFid('RAGA','ragdoll'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreVtyp(MelRecord):
-    """Voice type record."""
-    classType = 'VTYP'
-    _flags = Flags(0L,Flags.getNames('allowDefaultDialog','female'))
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('DNAM','B',(_flags,'flags')),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreVtyp(MelRecord):
+#     """Voice type record."""
+#     classType = 'VTYP'
+#     _flags = Flags(0L,Flags.getNames('allowDefaultDialog','female'))
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('DNAM','B',(_flags,'flags')),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreMusc(MelRecord):
-    """Music type record."""
-    classType = 'MUSC'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FNAM','filename'),
-        MelStruct('ANAM','f','dB'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreMusc(MelRecord):
+#     """Music type record."""
+#     classType = 'MUSC'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FNAM','filename'),
+#         MelStruct('ANAM','f','dB'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MrePwat(MelRecord):
-    """Placeable water record."""
-    classType = 'PWAT'
-    _flags = Flags(0L,Flags.getNames(
-        ( 0,'reflects'),
-        ( 1,'reflectsActers'),
-        ( 2,'reflectsLand'),
-        ( 3,'reflectsLODLand'),
-        ( 4,'reflectsLODBuildings'),
-        ( 5,'reflectsTrees'),
-        ( 6,'reflectsSky'),
-        ( 7,'reflectsDynamicObjects'),
-        ( 8,'reflectsDeadBodies'),
-        ( 9,'reflects2'),
-        (10,'reflects2Actors'),
-        (11,'reflects2Lands'),
-        (16,'reflects2DynamicObjects'),
-        (17,'reflects2DeadBodies'),
-        (18,'silhouetteReflections'),
-        (28,'depth'),
-        (29,'objectTextureCoordinates'),
-        (31,'noUnderwaterFog'),
-        ))
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelModel(),
-        MelStruct('DNAM','2I',(_flags,'flags'),(FID,'water'))
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MrePwat(MelRecord):
+#     """Placeable water record."""
+#     classType = 'PWAT'
+#     _flags = Flags(0L,Flags.getNames(
+#         ( 0,'reflects'),
+#         ( 1,'reflectsActers'),
+#         ( 2,'reflectsLand'),
+#         ( 3,'reflectsLODLand'),
+#         ( 4,'reflectsLODBuildings'),
+#         ( 5,'reflectsTrees'),
+#         ( 6,'reflectsSky'),
+#         ( 7,'reflectsDynamicObjects'),
+#         ( 8,'reflectsDeadBodies'),
+#         ( 9,'reflects2'),
+#         (10,'reflects2Actors'),
+#         (11,'reflects2Lands'),
+#         (16,'reflects2DynamicObjects'),
+#         (17,'reflects2DeadBodies'),
+#         (18,'silhouetteReflections'),
+#         (28,'depth'),
+#         (29,'objectTextureCoordinates'),
+#         (31,'noUnderwaterFog'),
+#         ))
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelModel(),
+#         MelStruct('DNAM','2I',(_flags,'flags'),(FID,'water'))
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreAspc(MelRecord):
-    """Acoustic space record."""
-    classType = 'ASPC'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelFids('SNAM','soundLooping'),
-        MelStruct('WNAM','I','wallaTrigerCount'),
-        MelFid('RDAT','useSoundFromRegion'),
-        MelStruct('ANAM','I','environmentType'),
-        MelStruct('INAM','I','isInterior'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreAspc(MelRecord):
+#     """Acoustic space record."""
+#     classType = 'ASPC'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelFids('SNAM','soundLooping'),
+#         MelStruct('WNAM','I','wallaTrigerCount'),
+#         MelFid('RDAT','useSoundFromRegion'),
+#         MelStruct('ANAM','I','environmentType'),
+#         MelStruct('INAM','I','isInterior'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreHdpt(MelRecord):
-    """Head part record."""
-    classType = 'HDPT'
-    _flags = Flags(0L,Flags.getNames('playable',))
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelStruct('DATA','B',(_flags,'flags')),
-        MelFids('HNAM','extraParts'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreHdpt(MelRecord):
+#     """Head part record."""
+#     classType = 'HDPT'
+#     _flags = Flags(0L,Flags.getNames('playable',))
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelStruct('DATA','B',(_flags,'flags')),
+#         MelFids('HNAM','extraParts'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreDobj(MelRecord):
-    """Default object manager record."""
-    classType = 'DOBJ'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('DATA','34I',(FID,'stimpack'),(FID,'superStimpack'),(FID,'radX'),(FID,'radAway'),
-            (FID,'morphine'),(FID,'perkParalysis'),(FID,'playerFaction'),(FID,'mysteriousStrangerNpc'),
-            (FID,'mysteriousStrangerFaction'),(FID,'defaultMusic'),(FID,'battleMusic'),(FID,'deathMusic'),
-            (FID,'successMusic'),(FID,'levelUpMusic'),(FID,'playerVoiceMale'),(FID,'playerVoiceMaleChild'),
-            (FID,'playerVoiceFemale'),(FID,'playerVoiceFemaleChild'),(FID,'eatPackageDefaultFood'),
-            (FID,'everyActorAbility'),(FID,'drugWearsOffImageSpace'),(FID,'doctersBag'),(FID,'missFortuneNpc'),
-            (FID,'missFortuneFaction'),(FID,'meltdownExplosion'),(FID,'unarmedForwardPA'),(FID,'unarmedBackwardPA'),
-            (FID,'unarmedLeftPA'),(FID,'unarmedRightPA'),(FID,'unarmedCrouchPA'),(FID,'unarmedCounterPA'),
-            (FID,'spotterEffect'),(FID,'itemDetectedEffect'),(FID,'cateyeMobileEffect'),),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreDobj(MelRecord):
+#     """Default object manager record."""
+#     classType = 'DOBJ'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('DATA','34I',(FID,'stimpack'),(FID,'superStimpack'),(FID,'radX'),(FID,'radAway'),
+#             (FID,'morphine'),(FID,'perkParalysis'),(FID,'playerFaction'),(FID,'mysteriousStrangerNpc'),
+#             (FID,'mysteriousStrangerFaction'),(FID,'defaultMusic'),(FID,'battleMusic'),(FID,'deathMusic'),
+#             (FID,'successMusic'),(FID,'levelUpMusic'),(FID,'playerVoiceMale'),(FID,'playerVoiceMaleChild'),
+#             (FID,'playerVoiceFemale'),(FID,'playerVoiceFemaleChild'),(FID,'eatPackageDefaultFood'),
+#             (FID,'everyActorAbility'),(FID,'drugWearsOffImageSpace'),(FID,'doctersBag'),(FID,'missFortuneNpc'),
+#             (FID,'missFortuneFaction'),(FID,'meltdownExplosion'),(FID,'unarmedForwardPA'),(FID,'unarmedBackwardPA'),
+#             (FID,'unarmedLeftPA'),(FID,'unarmedRightPA'),(FID,'unarmedCrouchPA'),(FID,'unarmedCounterPA'),
+#             (FID,'spotterEffect'),(FID,'itemDetectedEffect'),(FID,'cateyeMobileEffect'),),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreIdlm(MelRecord):
-    """Idle marker record."""
-    classType = 'IDLM'
-    class MelIdlmIdlc(MelStruct):
-        """Handle older trucated IDLC for IDLM subrecord."""
-        def loadData(self,record,ins,type,size,readId):
-            if size == 4:
-                MelStruct.loadData(self,record,ins,type,size,readId)
-                return
-            elif size == 1:
-                unpacked = ins.unpack('B',size,readId)
-            else:
-                raise "Unexpected size encountered for TERM:DNAM subrecord: %s" % size
-            unpacked += self.defaults[len(unpacked):]
-            setter = record.__setattr__
-            for attr,value,action in zip(self.attrs,unpacked,self.actions):
-                if callable(action): value = action(value)
-                setter(attr,value)
-            if self._debug: print unpacked
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelStruct('IDLF','B','flags'),
-        MelIdlmIdlc('IDLC','B3s','animationCount',('unused',null3)),
-        MelStruct('IDLT','f','idleTimerSetting'),
-        MelFidList('IDLA','animations'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreIdlm(MelRecord):
+#     """Idle marker record."""
+#     classType = 'IDLM'
+#     class MelIdlmIdlc(MelStruct):
+#         """Handle older trucated IDLC for IDLM subrecord."""
+#         def loadData(self,record,ins,type,size,readId):
+#             if size == 4:
+#                 MelStruct.loadData(self,record,ins,type,size,readId)
+#                 return
+#             elif size == 1:
+#                 unpacked = ins.unpack('B',size,readId)
+#             else:
+#                 raise "Unexpected size encountered for TERM:DNAM subrecord: %s" % size
+#             unpacked += self.defaults[len(unpacked):]
+#             setter = record.__setattr__
+#             for attr,value,action in zip(self.attrs,unpacked,self.actions):
+#                 if callable(action): value = action(value)
+#                 setter(attr,value)
+#             if self._debug: print unpacked
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelStruct('IDLF','B','flags'),
+#         MelIdlmIdlc('IDLC','B3s','animationCount',('unused',null3)),
+#         MelStruct('IDLT','f','idleTimerSetting'),
+#         MelFidList('IDLA','animations'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreArma(MelRecord):
-    """Armor addon record."""
-    classType = 'ARMA'
-    _flags = MelBipedFlags(0L,Flags.getNames())
-    _generalFlags = Flags(0L,Flags.getNames(
-        (5,'powerArmor'),
-        (6,'notPlayable'),
-        (7,'heavyArmor')
-    ))
-    _etype = Flags(0L,Flags.getNames(
-        'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
-        'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
-    ))
-    class MelArmaDnam(MelStruct):
-        """Handle older trucated DNAM for ARMA subrecord."""
-        def loadData(self,record,ins,type,size,readId):
-            if size == 12:
-                MelStruct.loadData(self,record,ins,type,size,readId)
-                return
-            elif size == 4:
-                unpacked = ins.unpack('=HH',size,readId)
-            else:
-                raise "Unexpected size encountered for ARMA subrecord: %s" % size
-            unpacked += self.defaults[len(unpacked):]
-            setter = record.__setattr__
-            for attr,value,action in zip(self.attrs,unpacked,self.actions):
-                if callable(action): value = action(value)
-                setter(attr,value)
-            if self._debug: print unpacked, record.flags.getTrueAttrs()
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelStruct('BMDT','=2I',(_flags,'bipedFlags',0L),(_generalFlags,'generalFlags',0L)),
-        MelModel('maleBody'),
-        MelModel('maleWorld',2),
-        MelString('ICON','maleLargeIconPath'),
-        MelString('MICO','maleSmallIconPath'),
-        MelModel('femaleBody',3),
-        MelModel('femaleWorld',4),
-        MelString('ICO2','femaleLargeIconPath'),
-        MelString('MIC2','femaleSmallIconPath'),
-        MelStruct('ETYP','I',(_etype,'etype',0L)),
-        MelStruct('DATA','IIf','value','health','weight'),
-        MelArmaDnam('DNAM','=HHfI','ar','flags','dt',('unknown',0L)),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreArma(MelRecord):
+#     """Armor addon record."""
+#     classType = 'ARMA'
+#     _flags = MelBipedFlags(0L,Flags.getNames())
+#     _generalFlags = Flags(0L,Flags.getNames(
+#         (5,'powerArmor'),
+#         (6,'notPlayable'),
+#         (7,'heavyArmor')
+#     ))
+#     _etype = Flags(0L,Flags.getNames(
+#         'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
+#         'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
+#     ))
+#     class MelArmaDnam(MelStruct):
+#         """Handle older trucated DNAM for ARMA subrecord."""
+#         def loadData(self,record,ins,type,size,readId):
+#             if size == 12:
+#                 MelStruct.loadData(self,record,ins,type,size,readId)
+#                 return
+#             elif size == 4:
+#                 unpacked = ins.unpack('=HH',size,readId)
+#             else:
+#                 raise "Unexpected size encountered for ARMA subrecord: %s" % size
+#             unpacked += self.defaults[len(unpacked):]
+#             setter = record.__setattr__
+#             for attr,value,action in zip(self.attrs,unpacked,self.actions):
+#                 if callable(action): value = action(value)
+#                 setter(attr,value)
+#             if self._debug: print unpacked, record.flags.getTrueAttrs()
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelStruct('BMDT','=2I',(_flags,'bipedFlags',0L),(_generalFlags,'generalFlags',0L)),
+#         MelModel('maleBody'),
+#         MelModel('maleWorld',2),
+#         MelString('ICON','maleLargeIconPath'),
+#         MelString('MICO','maleSmallIconPath'),
+#         MelModel('femaleBody',3),
+#         MelModel('femaleWorld',4),
+#         MelString('ICO2','femaleLargeIconPath'),
+#         MelString('MIC2','femaleSmallIconPath'),
+#         MelStruct('ETYP','I',(_etype,'etype',0L)),
+#         MelStruct('DATA','IIf','value','health','weight'),
+#         MelArmaDnam('DNAM','=HHfI','ar','flags','dt',('unknown',0L)),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreTact(MelRecord):
-    """Talking activator record."""
-    classType = 'TACT'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel('model'),
-        MelFid('SCRI','script'),
-        MelDestructable(),
-        MelFid('SNAM','sound'),
-        MelFid('VNAM','voiceType'),
-        MelFid('INAM','radioTemplate'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreTact(MelRecord):
+#     """Talking activator record."""
+#     classType = 'TACT'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel('model'),
+#         MelFid('SCRI','script'),
+#         MelDestructable(),
+#         MelFid('SNAM','sound'),
+#         MelFid('VNAM','voiceType'),
+#         MelFid('INAM','radioTemplate'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreImod(MelRecord):
-    """Item mod."""
-    classType = 'IMOD'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        MelFid('SCRI','script'),
-        MelString('DESC','description'),
-        MelDestructable(),
-        MelFid('YNAM','soundPickUp'),
-        MelFid('ZNAM','soundDrop'),
-        MelStruct('DATA','If','value','weight'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreImod(MelRecord):
+#     """Item mod."""
+#     classType = 'IMOD'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         MelFid('SCRI','script'),
+#         MelString('DESC','description'),
+#         MelDestructable(),
+#         MelFid('YNAM','soundPickUp'),
+#         MelFid('ZNAM','soundDrop'),
+#         MelStruct('DATA','If','value','weight'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreRepu(MelRecord):
-    """Reputation."""
-    classType = 'REPU'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        MelStruct('DATA','I','value'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreRepu(MelRecord):
+#     """Reputation."""
+#     classType = 'REPU'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         MelStruct('DATA','I','value'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreRcpe(MelRecord):
-    """Recipe."""
-    classType = 'RCPE'
-    class MelRcpeDistributor(MelNull):
-        def __init__(self):
-            self._debug = False
-        def getLoaders(self,loaders):
-            """Self as loader for structure types."""
-            for type in ('RCQY',):
-                loaders[type] = self
-        def setMelSet(self,melSet):
-            """Set parent melset. Need this so that can reassign loaders later."""
-            self.melSet = melSet
-            self.loaders = {}
-            for element in melSet.elements:
-                attr = element.__dict__.get('attr',None)
-                if attr: self.loaders[attr] = element
-        def loadData(self,record,ins,type,size,readId):
-            if type in ('RCQY',):
-                outputs = record.__getattribute__('outputs')
-                if outputs:
-                    element = self.loaders['outputs']
-                else:
-                    element = self.loaders['ingredients']
-            element.loadData(record,ins,type,size,readId)
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelConditions(),
-        MelStruct('DATA','4I','skill','level',(FID,'category'),(FID,'subCategory')),
-        MelGroups('ingredients',
-            MelFid('RCIL','item'),
-            MelStruct('RCQY','I','quantity'),
-            ),
-        MelGroups('outputs',
-            MelFid('RCOD','item'),
-            MelStruct('RCQY','I','quantity'),
-            ),
-        MelRcpeDistributor(),
-        )
-    melSet.elements[-1].setMelSet(melSet)
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreRcpe(MelRecord):
+#     """Recipe."""
+#     classType = 'RCPE'
+#     class MelRcpeDistributor(MelNull):
+#         def __init__(self):
+#             self._debug = False
+#         def getLoaders(self,loaders):
+#             """Self as loader for structure types."""
+#             for type in ('RCQY',):
+#                 loaders[type] = self
+#         def setMelSet(self,melSet):
+#             """Set parent melset. Need this so that can reassign loaders later."""
+#             self.melSet = melSet
+#             self.loaders = {}
+#             for element in melSet.elements:
+#                 attr = element.__dict__.get('attr',None)
+#                 if attr: self.loaders[attr] = element
+#         def loadData(self,record,ins,type,size,readId):
+#             if type in ('RCQY',):
+#                 outputs = record.__getattribute__('outputs')
+#                 if outputs:
+#                     element = self.loaders['outputs']
+#                 else:
+#                     element = self.loaders['ingredients']
+#             element.loadData(record,ins,type,size,readId)
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelConditions(),
+#         MelStruct('DATA','4I','skill','level',(FID,'category'),(FID,'subCategory')),
+#         MelGroups('ingredients',
+#             MelFid('RCIL','item'),
+#             MelStruct('RCQY','I','quantity'),
+#             ),
+#         MelGroups('outputs',
+#             MelFid('RCOD','item'),
+#             MelStruct('RCQY','I','quantity'),
+#             ),
+#         MelRcpeDistributor(),
+#         )
+#     melSet.elements[-1].setMelSet(melSet)
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreRcct(MelRecord):
-    """Recipe Category."""
-    classType = 'RCCT'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelStruct('DATA','=B','flags'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreRcct(MelRecord):
+#     """Recipe Category."""
+#     classType = 'RCCT'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelStruct('DATA','=B','flags'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreChip(MelRecord):
-    """Casino Chip."""
-    classType = 'CHIP'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        MelDestructable(),
-        MelFid('YNAM','soundPickUp'),
-        MelFid('ZNAM','soundDrop'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreChip(MelRecord):
+#     """Casino Chip."""
+#     classType = 'CHIP'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         MelDestructable(),
+#         MelFid('YNAM','soundPickUp'),
+#         MelFid('ZNAM','soundDrop'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreCsno(MelRecord):
-    """Casino."""
-    classType = 'CSNO'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelStruct('DATA','2f9I2II','decksPercentBeforeShuffle','BlackjackPayoutRatio',
-            'slotReel0','slotReel1','slotReel2','slotReel3','slotReel4','slotReel5','slotReel6',
-            'numberOfDecks','maxWinnings',(FID,'currency'),(FID,'casinoWinningQuest'),'flags'),
-        MelGroups('chipModels',
-            MelString('MODL','model')),
-        MelString('MOD2','slotMachineModel'),
-        MelString('MOD3','blackjackTableModel'),
-        MelString('MOD4','rouletteTableModel'),
-        MelGroups('slotReelTextures',
-            MelString('ICON','texture')),
-        MelGroups('blackjackDecks',
-            MelString('ICO2','texture')),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreCsno(MelRecord):
+#     """Casino."""
+#     classType = 'CSNO'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelStruct('DATA','2f9I2II','decksPercentBeforeShuffle','BlackjackPayoutRatio',
+#             'slotReel0','slotReel1','slotReel2','slotReel3','slotReel4','slotReel5','slotReel6',
+#             'numberOfDecks','maxWinnings',(FID,'currency'),(FID,'casinoWinningQuest'),'flags'),
+#         MelGroups('chipModels',
+#             MelString('MODL','model')),
+#         MelString('MOD2','slotMachineModel'),
+#         MelString('MOD3','blackjackTableModel'),
+#         MelString('MOD4','rouletteTableModel'),
+#         MelGroups('slotReelTextures',
+#             MelString('ICON','texture')),
+#         MelGroups('blackjackDecks',
+#             MelString('ICO2','texture')),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreLsct(MelRecord):
-    """Load screen tip."""
-    classType = 'LSCT'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('DATA','I 4IfI3fI20s I3f4sI','type','data1X','data1Y','data1Width','data1Height','data1Orientation',
-            'data1Font','data1ColorR','data1ColorG','data1ColorB','data1Align','unknown1',
-            'data2Font','data2ColorR','data2ColorG','data2ColorB','unknown2','stats'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreLsct(MelRecord):
+#     """Load screen tip."""
+#     classType = 'LSCT'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('DATA','I 4IfI3fI20s I3f4sI','type','data1X','data1Y','data1Width','data1Height','data1Orientation',
+#             'data1Font','data1ColorR','data1ColorG','data1ColorB','data1Align','unknown1',
+#             'data2Font','data2ColorR','data2ColorG','data2ColorB','unknown2','stats'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreMset(MelRecord):
-    """Media Set."""
-    classType = 'MSET'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelStruct('NAM1','I','type'),
-        MelString('NAM2','I','nam2'),
-        MelString('NAM3','I','nam3'),
-        MelString('NAM4','I','nam4'),
-        MelString('NAM5','I','nam5'),
-        MelString('NAM6','I','nam6'),
-        MelString('NAM7','I','nam7'),
-        MelStruct('NAM8','f','nam8'),
-        MelStruct('NAM9','f','nam9'),
-        MelStruct('NAM0','f','nam0'),
-        MelStruct('ANAM','f','anam'),
-        MelStruct('BNAM','f','bnam'),
-        MelStruct('CNAM','f','cnam'),
-        MelStruct('JNAM','f','jnam'),
-        MelStruct('KNAM','f','knam'),
-        MelStruct('LNAM','f','lnam'),
-        MelStruct('MNAM','f','mnam'),
-        MelStruct('NNAM','f','nnam'),
-        MelStruct('ONAM','f','onam'),
-        MelStruct('PNAM','B','enableFlags'),
-        MelStruct('DNAM','f','dnam'),
-        MelStruct('ENAM','f','enam'),
-        MelStruct('FNAM','f','fnam'),
-        MelStruct('GNAM','f','gnam'),
-        MelFid('HNAM','I','hnam'),
-        MelFid('INAM','I','inam'),
-        MelBase('DATA','data'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreMset(MelRecord):
+#     """Media Set."""
+#     classType = 'MSET'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelStruct('NAM1','I','type'),
+#         MelString('NAM2','I','nam2'),
+#         MelString('NAM3','I','nam3'),
+#         MelString('NAM4','I','nam4'),
+#         MelString('NAM5','I','nam5'),
+#         MelString('NAM6','I','nam6'),
+#         MelString('NAM7','I','nam7'),
+#         MelStruct('NAM8','f','nam8'),
+#         MelStruct('NAM9','f','nam9'),
+#         MelStruct('NAM0','f','nam0'),
+#         MelStruct('ANAM','f','anam'),
+#         MelStruct('BNAM','f','bnam'),
+#         MelStruct('CNAM','f','cnam'),
+#         MelStruct('JNAM','f','jnam'),
+#         MelStruct('KNAM','f','knam'),
+#         MelStruct('LNAM','f','lnam'),
+#         MelStruct('MNAM','f','mnam'),
+#         MelStruct('NNAM','f','nnam'),
+#         MelStruct('ONAM','f','onam'),
+#         MelStruct('PNAM','B','enableFlags'),
+#         MelStruct('DNAM','f','dnam'),
+#         MelStruct('ENAM','f','enam'),
+#         MelStruct('FNAM','f','fnam'),
+#         MelStruct('GNAM','f','gnam'),
+#         MelFid('HNAM','I','hnam'),
+#         MelFid('INAM','I','inam'),
+#         MelBase('DATA','data'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreAloc(MelRecord):
-    """Media location controller."""
-    classType = 'ALOC'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelStruct('NAM1','I','flags'),
-        MelStruct('NAM2','I','num2'),
-        MelStruct('NAM3','I','nam3'),
-        MelStruct('NAM4','f','locationDelay'),
-        MelStruct('NAM5','I','dayStart'),
-        MelStruct('NAM6','I','nightStart'),
-        MelStruct('NAM7','f','retrigerDelay'),
-        MelFids('HNAM','neutralSets'),
-        MelFids('ZNAM','allySets'),
-        MelFids('XNAM','friendSets'),
-        MelFids('YNAM','enemySets'),
-        MelFids('LNAM','locationSets'),
-        MelFids('GNAM','battleSets'),
-        MelFid('RNAM','conditionalFaction'),
-        MelStruct('FNAM','I','fnam'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreAloc(MelRecord):
+#     """Media location controller."""
+#     classType = 'ALOC'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelStruct('NAM1','I','flags'),
+#         MelStruct('NAM2','I','num2'),
+#         MelStruct('NAM3','I','nam3'),
+#         MelStruct('NAM4','f','locationDelay'),
+#         MelStruct('NAM5','I','dayStart'),
+#         MelStruct('NAM6','I','nightStart'),
+#         MelStruct('NAM7','f','retrigerDelay'),
+#         MelFids('HNAM','neutralSets'),
+#         MelFids('ZNAM','allySets'),
+#         MelFids('XNAM','friendSets'),
+#         MelFids('YNAM','enemySets'),
+#         MelFids('LNAM','locationSets'),
+#         MelFids('GNAM','battleSets'),
+#         MelFid('RNAM','conditionalFaction'),
+#         MelStruct('FNAM','I','fnam'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreChal(MelRecord):
-    """Challenge record."""
-    classType = 'CHAL'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelFid('SCRI','script'),
-        MelString('DESC','description'),
-        MelStruct('DATA','2IB3sI2s2s4s','type','threshold','flags','unused','interval','dependOnType1','dependOnType2','dependOnType3'),
-        MelFid('SNAM','dependOnType4'),
-        MelFid('XNAM','dependOnType5'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreChal(MelRecord):
+#     """Challenge record."""
+#     classType = 'CHAL'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelFid('SCRI','script'),
+#         MelString('DESC','description'),
+#         MelStruct('DATA','2IB3sI2s2s4s','type','threshold','flags','unused','interval','dependOnType1','dependOnType2','dependOnType3'),
+#         MelFid('SNAM','dependOnType4'),
+#         MelFid('XNAM','dependOnType5'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreAmef(MelRecord):
-    """Ammo effect record."""
-    classType = 'AMEF'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelStruct('DATA','2If','type','operation','value'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreAmef(MelRecord):
+#     """Ammo effect record."""
+#     classType = 'AMEF'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelStruct('DATA','2If','type','operation','value'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreCcrd(MelRecord):
-    """Caravan Card."""
-    classType = 'CCRD'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        MelFid('SCRI','script'),
-        MelFid('YNAM','soundPickUp'),
-        MelFid('ZNAM','soundDrop'),
-        MelString('TX00','textureFace'),
-        MelString('TX01','textureBack'),
-        MelStructs('INTV','I','suitAndValue','value'),
-        MelStruct('DATA','I','value'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreCcrd(MelRecord):
+#     """Caravan Card."""
+#     classType = 'CCRD'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         MelFid('SCRI','script'),
+#         MelFid('YNAM','soundPickUp'),
+#         MelFid('ZNAM','soundDrop'),
+#         MelString('TX00','textureFace'),
+#         MelString('TX01','textureBack'),
+#         MelStructs('INTV','I','suitAndValue','value'),
+#         MelStruct('DATA','I','value'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreCmny(MelRecord):
-    """Caravan Money."""
-    classType = 'CMNY'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('OBND','=6h',
-                  'corner0X','corner0Y','corner0Z',
-                  'corner1X','corner1Y','corner1Z'),
-        MelString('FULL','full'),
-        MelModel(),
-        MelString('ICON','largeIconPath'),
-        MelString('MICO','smallIconPath'),
-        MelFid('YNAM','soundPickUp'),
-        MelFid('ZNAM','soundDrop'),
-        MelStruct('DATA','I','absoluteValue'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreCmny(MelRecord):
+#     """Caravan Money."""
+#     classType = 'CMNY'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('OBND','=6h',
+#                   'corner0X','corner0Y','corner0Z',
+#                   'corner1X','corner1Y','corner1Z'),
+#         MelString('FULL','full'),
+#         MelModel(),
+#         MelString('ICON','largeIconPath'),
+#         MelString('MICO','smallIconPath'),
+#         MelFid('YNAM','soundPickUp'),
+#         MelFid('ZNAM','soundDrop'),
+#         MelStruct('DATA','I','absoluteValue'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreCdck(MelRecord):
-    """Caravan deck record."""
-    classType = 'CDCK'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelString('FULL','full'),
-        MelFids('CARD','cards'),
-        MelStruct('DATA','I','count'),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreCdck(MelRecord):
+#     """Caravan deck record."""
+#     classType = 'CDCK'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelString('FULL','full'),
+#         MelFids('CARD','cards'),
+#         MelStruct('DATA','I','count'),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreDehy(MelRecord):
-    """Dehydration stage record."""
-    classType = 'DEHY'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreDehy(MelRecord):
+#     """Dehydration stage record."""
+#     classType = 'DEHY'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreHung(MelRecord):
-    """Hunger stage record."""
-    classType = 'HUNG'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreHung(MelRecord):
+#     """Hunger stage record."""
+#     classType = 'HUNG'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
-#------------------------------------------------------------------------------
-class MreSlpd(MelRecord):
-    """Sleep deprivation stage record."""
-    classType = 'SLPD'
-    melSet = MelSet(
-        MelString('EDID','eid'),
-        MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
-        )
-    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+# #------------------------------------------------------------------------------
+# class MreSlpd(MelRecord):
+#     """Sleep deprivation stage record."""
+#     classType = 'SLPD'
+#     melSet = MelSet(
+#         MelString('EDID','eid'),
+#         MelStruct('DATA','2I','trigerThreshold',(FID,'actorEffect')),
+#         )
+#     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
 # MreRecord.type_class
@@ -6329,7 +6408,7 @@ class MobBase(object):
 
     def getReader(self):
         """Returns a ModReader wrapped around self.data."""
-        return ModReader(self.inName,cStringIO.StringIO(self.data))
+        return ModReader(self.inName,stringBuffer(self.data))
 
     def convertFids(self,mapper,toLong):
         """Converts fids between formats according to mapper.
@@ -6734,7 +6813,7 @@ class MobCell(MobBase):
 
 #-------------------------------------------------------------------------------
 class MobCells(MobBase):
-    """A block containing cells. Subclassed by MobWorld and MobCells.
+    """A block containing cells. Subclassed by MobWorld and MobICells.
 
     Note that "blocks" here only roughly match the file block structure.
 
@@ -6943,6 +7022,7 @@ class MobWorld(MobCells):
         cells = {}
         block = None
         subblock = None
+        endBlockPos = endSubblockPos = 0
         cellBlocks = self.cellBlocks
         unpackCellBlocks = self.loadFactory.getUnpackCellBlocks('WRLD')
         insAtEnd = ins.atEnd
@@ -6955,6 +7035,11 @@ class MobWorld(MobCells):
         structUnpack = struct.unpack
         structPack = struct.pack
         while not insAtEnd(endPos,errLabel):
+            curPos = insTell()
+            if curPos >= endBlockPos:
+                block = None
+            if curPos >= endSubblockPos:
+                subblock = None
             #--Get record info and handle it
             header = insRecHeader()
             recType = header[0]
@@ -7011,10 +7096,6 @@ class MobWorld(MobCells):
                     raise ModError(self.inName,'Unexpected subgroup %d in world children group.' % groupType)
             else:
                 raise ModError(self.inName,'Unexpected %s record in world children group.' % recType)
-            if block and insTell() == endBlockPos:
-                cell = subblock = block = None
-            elif subblock and insTell() == endSubblockPos:
-                cell = subblock = None
         self.setChanged()
 
     def getNumRecords(self,includeGroups=True):
@@ -7251,6 +7332,7 @@ class ModFile:
         #--Cached data
         self.mgef_school = None
         self.mgef_name = None
+        self.hostileEffects = None
 
     def __getattr__(self,topType):
         """Returns top block of specified topType, creating it, if necessary."""
@@ -7286,17 +7368,25 @@ class ModFile:
             if type != 'GRUP' or groupType != 0:
                 raise ModError(self.fileInfo.name,_('Improperly grouped file.'))
             topClass = selfGetTopClass(label)
-            if topClass:
-                records = topClass(header,selfLoadFactory)
-                if size - recHeaderSize > 0:
-                    records.load(ins,unpack and (topClass != MobBase))
-                if self.tops.get(label):
-                    self.tops[label].mergeRecords(records)
+            try:
+                if topClass:
+                    records = topClass(header,selfLoadFactory)
+                    if size - recHeaderSize > 0:
+                        records.load(ins,unpack and (topClass != MobBase))
+                    if self.tops.get(label):
+                        self.tops[label].mergeRecords(records)
+                    else:
+                        self.tops[label] = records
                 else:
-                    self.tops[label] = records
-            else:
-                selfTopsSkipAdd(label)
-                insSeek(size-recHeaderSize,1,type + '.' + label)
+                    selfTopsSkipAdd(label)
+                    insSeek(size-recHeaderSize,1,type + '.' + label)
+            except:
+                if isinstance(self.fileInfo.name,str):
+                    print "Error in %s" % self.fileInfo.name
+                    raise
+                else:
+                    print "Error in %s" % self.fileInfo.name.s
+                    raise
         #--Done Reading
         ins.close()
 
@@ -7397,7 +7487,10 @@ class ModFile:
     def getMastersUsed(self):
         """Updates set of master names according to masters actually used."""
         if not self.longFids: raise StateError("ModFile fids not in long form.")
-        masters = MasterSet([GPath('FalloutNV.esm')]) #--Not so good for TCs. Fix later.
+        if dirs['mods'].join('FalloutNV.esm').exists():
+            masters = MasterSet([GPath('FalloutNV.esm')])
+        #elif dirs['mods'].join('Fallout3.esm').exists():
+        #    masters = MasterSet([GPath('Fallout3.esm')]) # insert witty joke here about the old comment
         for block in self.tops.values():
             block.updateMasters(masters)
         return masters.getOrdered()
@@ -7405,7 +7498,7 @@ class ModFile:
     def getMgefSchool(self,refresh=False):
         """Return a dictionary mapping magic effect code to magic effect school.
         This is intended for use with the patch file when it records for all magic effects.
-        If magic effects are not available, it will revert to busy.py version."""
+        If magic effects are not available, it will revert to bush.py version."""
         if self.mgef_school and not refresh:
             return self.mgef_school
         mgef_school = self.mgef_school = bush.mgef_school.copy()
@@ -7415,10 +7508,31 @@ class ModFile:
                     mgef_school[record.eid] = record.school
         return mgef_school
 
+    def getMgefHostiles(self,refresh=False):
+        """Return a set of hostile magic effect codes.
+        This is intended for use with the patch file when it records for all magic effects.
+        If magic effects are not available, it will revert to bush.py version."""
+        if self.hostileEffects and not refresh:
+            return self.hostileEffects
+        hostileEffects = self.hostileEffects = bush.hostileEffects.copy()
+        if 'MGEF' in self.tops:
+            hostile = set()
+            nonhostile = set()
+            for record in self.MGEF.getActiveRecords():
+                if isinstance(record,MreMgef):
+                    if record.flags.hostile:
+                        hostile.add(record.eid)
+                        hostile.add(cast(record.eid, POINTER(c_ulong)).contents.value)
+                    else:
+                        nonhostile.add(record.eid)
+                        nonhostile.add(cast(record.eid, POINTER(c_ulong)).contents.value)
+            hostileEffects = (hostileEffects - nonhostile) | hostile
+        return hostileEffects
+
     def getMgefName(self,refresh=False):
         """Return a dictionary mapping magic effect code to magic effect name.
         This is intended for use with the patch file when it records for all magic effects.
-        If magic effects are not available, it will revert to busy.py version."""
+        If magic effects are not available, it will revert to bush.py version."""
         if self.mgef_name and not refresh:
             return self.mgef_name
         mgef_name = self.mgef_name = bush.mgef_name.copy()
@@ -7573,7 +7687,7 @@ class SreNPC(object):
 
     def dumpText(self,saveFile):
         """Returns informal string representation of data."""
-        buff = cStringIO.StringIO()
+        buff = stringBuffer()
         fids = saveFile.fids
         if self.form != None:
             buff.write('Form:\n  %d' % self.form)
@@ -7709,7 +7823,7 @@ class NvseFile:
         self.formatVersion = None
         self.nvseVersion = None
         self.nvseMinorVersion = None
-        self.falloutNVVersion = None
+        self.falloutVersion = None
         self.plugins = None
         self.valid = False
 
@@ -7727,7 +7841,7 @@ class NvseFile:
         self.signature = ins.read(4)
         if self.signature != 'NVSE':
             raise FileError(self.name,'File signature != "NVSE"')
-        self.formatVersion,self.nvseVersion,self.nvseMinorVersion,self.falloutNVVersion, = unpack('IHHI',12)
+        self.formatVersion,self.nvseVersion,self.nvseMinorVersion,self.falloutVersion, = unpack('IHHI',12)
         # if self.formatVersion < X:
         #   raise FileError(self.name,'Unsupported file version: %I' % self.formatVersion)
         #--Plugins
@@ -7763,7 +7877,7 @@ class NvseFile:
         pack('=I',self.formatVersion)
         pack('=H',self.nvseVersion)
         pack('=H',self.nvseMinorVersion)
-        pack('=I',self.falloutNVVersion)
+        pack('=I',self.falloutVersion)
         #--Plugins
         pack('=I',len(self.plugins))
         for (opcodeBase,chunks) in self.plugins:
@@ -8000,7 +8114,7 @@ class SaveFile:
         'form','baseid','moved','havocMoved','scale','allExtra','lock','owner','unk8','unk9',
         'mapMarkerFlags','hadHavokMoveFlag','unk12','unk13','unk14','unk15',
         'emptyFlag','droppedItem','doorDefaultState','doorState','teleport',
-        'extraMagic','furnMarkers','falloutNVFlag','movementExtra','animation',
+        'extraMagic','furnMarkers','falloutFlag','movementExtra','animation',
         'script','inventory','created','unk29','enabled'))
 
     def __init__(self,saveInfo=None,canSave=True):
@@ -8129,9 +8243,10 @@ class SaveFile:
         progress(0,_('Writing Header.'))
         out.write(self.header)
         #--Save Header
-        pack('=IIB',5+len(self.pcName)+1+len(self.postNameHeader),
-            self.saveNum, len(self.pcName)+1)
-        out.write(self.pcName+'\x00')
+        pcName = Encode(self.pcName,'mbcs')
+        pack('=IIB',5+len(pcName)+1+len(self.postNameHeader),
+            self.saveNum, len(pcName)+1)
+        out.write(pcName+'\x00')
         out.write(self.postNameHeader)
         #--Masters
         pack('B',len(self.masters))
@@ -8358,7 +8473,7 @@ class SaveFile:
         log('  %d\t\t     Lost Refs (Fid == 0)' % (lostRefs))
         for modIndex,(irefed,changed) in enumerate(zip(idHist,changeHisto)):
             if irefed or changed:
-                log('  %d\t%d\t%-3d   %s' % (irefed,changed,modIndex,getMaster(modIndex)))
+                log('  %d\t%d\t%02X   %s' % (irefed,changed,modIndex,getMaster(modIndex)))
         #--Lost Changes
         if lostChanges:
             log.setHeader(_('LostChanges'))
@@ -8393,9 +8508,9 @@ class SaveFile:
         #--Header
         log.setHeader(_('Header'))
         log('=' * 80)
-        log(_('  Format version:   %08X') % (nvseFile.formatVersion,))
-        log(_('  NVSE version:     %u.%u') % (nvseFile.nvseVersion,nvseFile.nvseMinorVersion,))
-        log(_('  FalloutNV version: %08X') % (nvseFile.falloutNVVersion,))
+        log(_('  Format version:  %08X') % (nvseFile.formatVersion,))
+        log(_('  NVSE version:    %u.%u') % (nvseFile.nvseVersion,nvseFile.nvseMinorVersion,))
+        log(_('  Fallout version: %08X') % (nvseFile.falloutVersion,))
         #--Plugins
         if nvseFile.plugins != None:
             for (opcodeBase,chunks) in nvseFile.plugins:
@@ -8420,7 +8535,7 @@ class SaveFile:
                             stringData = ins.read(stringLength)
                             log(_('    Mod :  %02X (%s)') % (modIndex, self.masters[modIndex].s))
                             log(_('    ID  :  %u') % stringID)
-                            log(_('    Data:  %s') % stringData)
+                            log(_('    Data:  %s') % Unicode(stringData,'mbcs'))
                         elif chunkType == 'RVRA':
                             #--NVSE Array
                             modIndex,arrayID,keyType,isPacked, = unpack('=BIBB',7)
@@ -8470,7 +8585,7 @@ class SaveFile:
                                 elif dataType == 3:
                                     dataLen, = unpack('=H',2)
                                     data = ins.read(dataLen)
-                                    dataStr = data
+                                    dataStr = Unicode(data,'mbcs')
                                 elif dataType == 4:
                                     data, = unpack('=I',4)
                                     dataStr = '%u' % data
@@ -8498,7 +8613,7 @@ class SaveFile:
                             log(_('      StrID : %u') % (strId,))
                             log(_('      ModID : %02X %s') % (modId,espMap[modId] if modId in espMap else 'ERROR',))
                             log(_('      Flags : %u') % (strFlags,))
-                            log(_('      Data  : %s') % (strData,))
+                            log(_('      Data  : %s') % (Unicode(strData,'mbcs'),))
                         elif (chunkTypeNum == 3):
                             #--Pluggy TypeArray
                             log(_('    Pluggy Array'))
@@ -8543,7 +8658,7 @@ class SaveFile:
                             log(_('    Pluggy HudS'))
                             #UNTESTED - uncomment following line to skip this record type
                             #continue
-                            hudSid,modId,hudFlags,hoodRootID,hudShow,hudPosX,hudPosY,hudDepth,hudScaleX,hudScaleY,hudAlpha,hudAlignment,hudAutoScale, = unpack('=IBBBBffhffBBB',29)
+                            hudSid,modId,hudFlags,hudRootID,hudShow,hudPosX,hudPosY,hudDepth,hudScaleX,hudScaleY,hudAlpha,hudAlignment,hudAutoScale, = unpack('=IBBBBffhffBBB',29)
                             hudFileName = ins.read(len(chunkBuff) - ins.tell())
                             log(_('      HudSID : %u') % (hudSid,))
                             log(_('      ModID  : %02X %s') % (modId,espMap[modId] if modId in espMap else 'ERROR',))
@@ -8556,7 +8671,7 @@ class SaveFile:
                             log(_('      Alpha  : %02X') % (hudAlpha,))
                             log(_('      Align  : %02X') % (hudAlignment,))
                             log(_('      AutoSc : %02X') % (hudAutoScale,))
-                            log(_('      File   : %s') % (hudFileName,))
+                            log(_('      File   : %s') % (Unicode(hudFileName,'mbcs'),))
                         elif (chunkTypeNum == 7):
                             #--Pluggy TypeHudT
                             log(_('    Pluggy HudT'))
@@ -8581,13 +8696,13 @@ class SaveFile:
                             log(_('      Width  : %u') % (hudWidth,))
                             log(_('      Height : %u') % (hudHeight,))
                             log(_('      Format : %u') % (hudFormat,))
-                            log(_('      FName  : %s') % (hudFontName,))
+                            log(_('      FName  : %s') % (Unicode(hudFontName,'mbcs'),))
                             log(_('      FHght  : %u') % (hudFontHeight,))
                             log(_('      FWdth  : %u') % (hudFontWidth,))
                             log(_('      FWeigh : %u') % (hudWeight,))
                             log(_('      FItal  : %u') % (hudItalic,))
                             log(_('      FRGB   : %u,%u,%u') % (hudFontR,hudFontG,hudFontB,))
-                            log(_('      FText  : %s') % (hudText,))
+                            log(_('      FText  : %s') % (Unicode(hudText,'mbcs'),))
                     ins.close()
 
     def findBloating(self,progress=None):
@@ -8848,6 +8963,7 @@ class BsaFile:
             ('Fallout - Meshes.bsa',1138575220),
             ('Fallout - Misc.bsa',1139433736),
             ('Fallout - Sound.bsa',1138660560),
+            (inisettings['FalloutTexturesBSAName'],1138162634),
             ('Fallout - Textures.bsa',1138162634),
             ('Fallout - Textures2.bsa',1138162934),
             ('Fallout - Voices1.bsa',1138166742),
@@ -8933,6 +9049,10 @@ class BsaFile:
 #--------------------------------------------------------------------------------
 class IniFile:
     """Any old ini file."""
+    reComment = re.compile(';.*')
+    reSection = re.compile(r'^\[\s*(.+?)\s*\]$')
+    reSetting = re.compile(r'(.+?)\s*=(.*)')
+
     def __init__(self,path,defaultSection='General'):
         """Initialize."""
         self.path = path
@@ -8952,18 +9072,18 @@ class IniFile:
         """Gets settings for self."""
         return self.getTweakFileSettings(self.path,True)
 
-    def getTweakFileSettings(self,tweakPath,setCorrupted=False):
+    def getTweakFileSettings(self,tweakPath,setCorrupted=False,lineNumbers=False):
         """Gets settings in a tweak file."""
         ini_settings = {}
         if not tweakPath.exists() or tweakPath.isdir():
             return ini_settings
-        reComment = re.compile(';.*')
-        reSection = re.compile(r'^\[\s*(.+?)\s*\]$')
-        reSetting = re.compile(r'(.+?)\s*=(.*)')
+        reComment = self.reComment
+        reSection = self.reSection
+        reSetting = self.reSetting
         #--Read ini file
         iniFile = tweakPath.open('r')
         sectionSettings = None
-        for line in iniFile:
+        for i,line in enumerate(iniFile.readlines()):
             stripped = reComment.sub('',line).strip()
             maSection = reSection.match(stripped)
             maSetting = reSetting.match(stripped)
@@ -8973,9 +9093,69 @@ class IniFile:
                 if sectionSettings == None:
                     sectionSettings = ini_settings.setdefault(bolt.LString(self.defaultSection),{})
                     if setCorrupted: self.isCorrupted = True
-                sectionSettings[LString(maSetting.group(1))] = maSetting.group(2).strip()
+                if lineNumbers:
+                    sectionSettings[LString(maSetting.group(1))] = (maSetting.group(2).strip(),i)
+                else:
+                    sectionSettings[LString(maSetting.group(1))] = maSetting.group(2).strip()
         iniFile.close()
         return ini_settings
+
+    def getTweakFileLines(self,tweakPath):
+        """Get a line by line breakdown of the tweak file, in this format:
+        [(fulltext,section,setting,value,ini_line_number)]
+        where:
+        fulltext = full line of text from the ini
+        setting = the setting that is being edited
+        value = the value the setting is being set to
+        status:
+            -10: doesn't exist in the ini
+              0: does exist, but it's a heading or something else without a value
+             10: does exist, but value isn't the same
+             20: deos exist, and value is the same
+        ini_line_number = line number in the ini that this tweak applies to"""
+        lines = []
+        if not tweakPath.exists() or tweakPath.isdir():
+            return lines
+        iniSettings = self.getTweakFileSettings(self.path,True,True)
+        reComment = self.reComment
+        reSection = self.reSection
+        reSetting = self.reSetting
+        #--Read ini file
+        iniFile = tweakPath.open('r')
+        section = LString(self.defaultSection)
+        for i,line in enumerate(iniFile.readlines()):
+            stripped = reComment.sub('',line).strip()
+            maSection = reSection.match(stripped)
+            maSetting = reSetting.match(stripped)
+            setting = None
+            value = LString('')
+            status = 0
+            lineNo = -1
+            if maSection:
+                section = LString(maSection.group(1))
+                if section not in iniSettings:
+                    status = -10
+            elif maSetting:
+                if section in iniSettings:
+                    setting = LString(maSetting.group(1))
+                    if setting in iniSettings[section]:
+                        value = LString(maSetting.group(2).strip())
+                        lineNo = iniSettings[section][setting][1]
+                        if iniSettings[section][setting][0] == value:
+                            status = 20
+                        else:
+                            status = 10
+                    else:
+                        status = -10
+                    setting = setting._s
+                else:
+                    status = -10
+            else:
+                if len(stripped) != 0:
+                    status = -10
+            lines.append((line.strip(),section._s,setting,value._s,status,lineNo))
+        iniFile.close()
+        return lines
 
     def saveSetting(self,section,key,value):
         """Changes a single setting in the file."""
@@ -8990,9 +9170,9 @@ class IniFile:
             return
         ini_settings = dict((LString(x),dict((LString(u),v) for u,v in y.iteritems()))
             for x,y in ini_settings.iteritems())
-        reComment = re.compile(';.*')
-        reSection = re.compile(r'^\[\s*(.+?)\s*\]$')
-        reSetting = re.compile(r'(.+?)\s*=')
+        reComment = self.reComment
+        reSection = self.reSection
+        reSetting = self.reSetting
         #--Read init, write temp
         iniFile = self.path.open('r')
         tmpFile = self.path.temp.open('w')
@@ -9004,7 +9184,7 @@ class IniFile:
             if maSection:
                 section = LString(maSection.group(1))
                 sectionSettings = ini_settings.get(section,{})
-            elif maSetting and LString(maSetting.group(1)) in sectionSettings:
+            elif maSetting and sectionSettings and LString(maSetting.group(1)) in sectionSettings:
                 key = LString(maSetting.group(1))
                 value = sectionSettings[key]
                 if isinstance(value,str) and value[-1] == '\n':
@@ -9024,9 +9204,9 @@ class IniFile:
             return
         if not tweakPath.exists() or not tweakPath.isfile():
             return
-        reComment = re.compile(';.*')
-        reSection = re.compile(r'^\[\s*(.+?)\s*\]$')
-        reSetting = re.compile(r'(.+?)\s*=')
+        reComment = self.reComment
+        reSection = self.reSection
+        reSetting = self.reSetting
         #--Read Tweak file
         tweakFile = tweakPath.open('r')
         ini_settings = {}
@@ -9042,6 +9222,7 @@ class IniFile:
                 sectionSettings[LString(maSetting.group(1))] = line
         tweakFile.close()
         self.saveSettings(ini_settings)
+
 #-----------------------------------------------------------------------------------------------
 def BestIniFile(path):
     if path.csbody == 'fallout':
@@ -9062,7 +9243,10 @@ def BestIniFile(path):
 
 class OBSEIniFile(IniFile):
     """OBSE Configuration ini file.  Minimal support provided, only can
-    handle 'set' statements."""
+    handle 'set' and 'setGS' statements."""
+    reSet     = re.compile(r'\s*set\s+(.+?)\s+to\s+(.*)', re.I)
+    reSetGS   = re.compile(r'\s*setGS\s+(.+?)\s+(.*)', re.I)
+
     def __init__(self,path,defaultSection=''):
         """Change the default section to something that can't
         occur in a normal ini"""
@@ -9074,27 +9258,93 @@ class OBSEIniFile(IniFile):
         elif lstr == 'setGS': section = ']setGS['
         return IniFile.getSetting(self,section,key,default)
 
-    def getTweakFileSettings(self,tweakPath,setCorrupted=False):
+    def getTweakFileSettings(self,tweakPath,setCorrupted=False,lineNumbers=False):
         """Get the settings in the ini script."""
         ini_settings = {}
         if not tweakPath.exists() or tweakPath.isdir():
             return ini_settings
-        reComment = re.compile(';.*')
-        reSet =     re.compile(r'\s*(?i)set\s*(.+?)\s*(?i)to\s*(.*)')
-        reSetGS =   re.compile(r'\s*(?i)setgs\s*(.+?)\s*(.*)')
+        reComment = self.reComment
+        reSet = self.reSet
+        reSetGS = self.reSetGS
         iniFile = tweakPath.open('r')
-        for line in iniFile:
+        for i,line in enumerate(iniFile.readlines()):
             stripped = reComment.sub('',line).strip()
             maSet   = reSet.match(stripped)
             maSetGS = reSetGS.match(stripped)
             if maSet:
                 section = ini_settings.setdefault(bolt.LString(']set['),{})
-                section[LString(maSet.group(1))] = maSet.group(2).strip()
+                if lineNumbers:
+                    section[LString(maSet.group(1))] = (maSet.group(2).strip(),i)
+                else:
+                    section[LString(maSet.group(1))] = maSet.group(2).strip()
             elif maSetGS:
                 section = ini_settings.setdefault(bolt.LString(']setGS['),{})
-                section[LString(maSetGS.group(1))] = maSetGS.group(2).strip()
+                if lineNumbers:
+                    section[LString(maSetGS.group(1))] = (maSetGS.group(2).strip(),i)
+                else:
+                    section[LString(maSetGS.group(1))] = maSetGS.group(2).strip()
         iniFile.close()
         return ini_settings
+
+    def getTweakFileLines(self,tweakPath):
+        """Get a line by line breakdown of the tweak file, in this format:
+        [(fulltext,section,setting,value,status,ini_line_number)]
+        where:
+        fulltext = full line of text from the ini
+        setting = the setting that is being edited
+        value = the value the setting is being set to
+        status:
+            -10: doesn't exist in the ini
+              0: does exist, but it's a heading or something else without a value
+             10: does exist, but value isn't the same
+             20: deos exist, and value is the same
+        ini_line_number = line number in the ini that this tweak applies to"""
+        lines = []
+        if not tweakPath.exists() or tweakPath.isdir():
+            return lines
+        iniSettings = self.getTweakFileSettings(self.path,True,True)
+        reComment = self.reComment
+        reSet = self.reSet
+        reSetGS = self.reSetGS
+        iniFile = tweakPath.open('r')
+        section = ''
+        for line in iniFile:
+            stripped = reComment.sub('',line).strip()
+            maSet    = reSet.match(stripped)
+            maSetGS  = reSetGS.match(stripped)
+            if maSet:
+                section = LString(']set[')
+                groups = maSet.groups()
+            elif maSetGS:
+                section = LString(']setgs[')
+                groups = maSetGS.groups()
+            else:
+                if len(stripped) == 0:
+                    lines.append((line.strip('\r\n'),'','','',0,-1))
+                else:
+                    lines.append((line.strip('\r\n'),'','','',-10,-1))
+                continue
+            status = 0
+            setting = ''
+            value = ''
+            lineNo = -1
+            if section in iniSettings:
+                setting = LString(groups[0].strip())
+                if setting in iniSettings[section]:
+                    value = LString(groups[1].strip())
+                    lineNo = iniSettings[section][setting][1]
+                    if iniSettings[section][setting][0] == value:
+                        status = 20
+                        lineNo = iniSettings[section][setting][1]
+                    else:
+                        status = 10
+                else:
+                    status = -10
+            else:
+                status = -10
+            lines.append((line.strip(),section,setting,value,status,lineNo))
+        iniFile.close()
+        return lines
 
     def saveSetting(self,section,key,value):
         lstr = LString(section)
@@ -9107,9 +9357,9 @@ class OBSEIniFile(IniFile):
             return
         ini_settings = dict((LString(x),dict((LString(u),v) for u,v in y.iteritems()))
             for x,y in ini_settings.iteritems())
-        reComment = re.compile(';.*')
-        reSet     = re.compile(r'\s*(?i)set\s*(.+?)\s*(?i)to\s*(.*)')
-        reSetGS   = re.compile(r'\s*(?i)setGS\s*(.+?)\s*(.*)')
+        reComment = self.reComment
+        reSet = self.reSet
+        reSetGS = self.reSetGS
         iniFile = self.path.open('r')
         tmpFile = self.path.temp.open('w')
         section = {}
@@ -9129,7 +9379,7 @@ class OBSEIniFile(IniFile):
             elif maSetGS:
                 section = ini_settings.setdefault(bolt.LString(']setGS['),{})
                 if LString(maSetGS.group(1)) in section:
-                    key = LString(maSet.group(1))
+                    key = LString(maSetGS.group(1))
                     value = section[key]
                     if isinstance(value,str) and value[-1] == '\n':
                         line = value
@@ -9145,9 +9395,9 @@ class OBSEIniFile(IniFile):
             return
         if not tweakPath.exists() or not tweakPath.isfile():
             return
-        reComent = re.compile(';.*')
-        reSet    = re.compile(r'\s*(?i)set\s*(.+?)\s*(?i)to\s*(.*)')
-        reSetGS  = re.compile(r'\s*(?i)setGS\s*(.+?)\s*(.*)')
+        reComent = self.reComment
+        reSet = self.reSet
+        reSetGS = self.reSetGS
         tweakFile = tweakPath.open('r')
         ini_settings = {}
         for line in tweakFile:
@@ -9164,15 +9414,24 @@ class OBSEIniFile(IniFile):
                 section[LString(maSetGS.group(1))] = line
         tweakFile.close()
         self.saveSettings(ini_settings)
+
 #--------------------------------------------------------------------------------
 class FalloutIni(IniFile):
     """FALLOUT.INI file."""
-    #bsaRedirectors = set(('archiveinvalidationinvalidated!.bsa','..\nvmm\bsaredirection.bsa'))
     bsaRedirectors = set(('fallout - ai!.bsa',))
 
     def __init__(self):
         """Initialize."""
+        # Use local copy of the oblivion.ini if present
+        if dirs['app'].join('FALLOUT.INI').exists():
+            IniFile.__init__(self,dirs['app'].join('FALLOUT.INI'),'General')
+            # is bUseMyGamesDirectory set to 0?
+            if self.getSetting('General','bUseMyGamesDirectory','1') == '0':
+                return
+        # oblivion.ini was not found in the game directory or bUseMyGamesDirectory was not set."""
+        # default to user profile directory"""
         IniFile.__init__(self,dirs['saveBase'].join('FALLOUT.INI'),'General')
+
 
     def ensureExists(self):
         """Ensures that FALLOUT.INI file exists. Copies from default fallout.ini if necessary."""
@@ -9236,6 +9495,230 @@ class FalloutDefaultIni(FalloutIni):
         IniFile.__init__(self,dirs['app'].join('Fallout_default.ini'),'General')
 
 #------------------------------------------------------------------------------
+class OmodFile:
+    """Class for extracting data from omods."""
+    def __init__(self, path):
+        self.path = path
+
+    def readConfig(self,path):
+        """Read info about the omod from the 'config' file"""
+        with bolt.BinaryFile(path.s) as file:
+            self.version = file.readByte() # OMOD version
+            self.modName = file.readNetString() # Mod name
+            self.major = file.readInt32() # Mod major version - getting weird numbers here though
+            self.minor = file.readInt32() # Mod minor version
+            self.author = file.readNetString() # author
+            self.email = file.readNetString() # email
+            self.website = file.readNetString() # website
+            self.desc = file.readNetString() # description
+            if self.version >= 2:
+                self.ftime = file.readInt64() # creation time
+            else:
+                self.ftime = file.readNetString()
+            self.compType = file.readByte() # Compression type. 0 = lzma, 1 = zip
+            if self.version >= 1:
+                self.build = file.readInt32()
+            else:
+                self.build = -1
+
+    def writeInfo(self, path, filename, readme, script):
+        with path.open('w') as file:
+            file.write('%s\n\n' % filename)
+            file.write('[basic info]\n')
+            file.write('Name: %s\n' % self.modName)
+            file.write('Author: %s\n' % self.author)
+            file.write('version:\n') # TODO, fix this?
+            file.write('Contact: %s\n' % self.email)
+            file.write('Website: %s\n\n' % self.website)
+            file.write('%s\n\n' % self.desc)
+            #fTime = time.gmtime(self.ftime) #-error
+            #file.write('Date this omod was compiled: %s-%s-%s %s:%s:%s\n' % (fTime.tm_mon, fTime.tm_mday, fTime.tm_year, fTime.tm_hour, fTime.tm_min, fTime.tm_sec))
+            file.write('Contains readme: %s\n' % (['no','yes'][readme]))
+            file.write('Contains script: %s\n' % (['no','yes'][script]))
+            # Skip the reset that OBMM puts in
+
+    def getOmodContents(self):
+        """Return a list of the files and their uncompressed sizes, and the total uncompressed size of an archive"""
+        # Get contents of archive
+        cmd7z = [exe7z, 'l', '-r', self.path.s]
+        filesizes = dict()
+        totalSize = 0
+        reFileSize = re.compile(unicodeConvert(r'[0-9]{4}\-[0-9]{2}\-[0-9]{2}\s+[0-9]{2}\:[0-9]{2}\:[0-9]{2}.{6}\s+([0-9]+)\s+[0-9]+\s+(.+?)$'))
+        reFinalLine = re.compile(unicodeConvert(r'\s+([0-9]+)\s+[0-9]+\s+[0-9]+\s+files.*'))
+
+        with subprocess.Popen(cmd7z, stdout=subprocess.PIPE, startupinfo=startupinfo).stdout as ins:
+            for line in ins:
+                line = unicodeConvert(line)
+                maFinalLine = reFinalLine.match(line)
+                if maFinalLine:
+                    totalSize = int(maFinalLine.group(1))
+                    break
+                maFileSize = reFileSize.match(line)
+                if maFileSize:
+                    size = int(maFileSize.group(1))
+                    name = maFileSize.group(2).strip().strip('\r')
+                    filesizes[name] = size
+        return filesizes,totalSize
+
+    def extractToProject(self,outDir,progress=None):
+        """Extract the contents of the omod to a project, with omod conversion data"""
+        if progress is None: progress = bolt.Progress()
+        # First, extract the files to a temp directory
+        tempDir = dirs['mopy'].join('temp',self.path.body)
+
+        # Get contents of archive
+        sizes,total = self.getOmodContents()
+
+        # Extract the files
+        cmd7z = [exe7z,'e','-r',self.path.s,'-o%s' % tempDir.s]
+        reExtracting = re.compile(unicodeConvert(r'Extracting\s+(.+)'))
+        reError = re.compile(unicodeConvert(r'Error:'))
+        progress(0, '%s\nExtracting...' % self.path.stail)
+
+        subprogress = bolt.SubProgress(progress, 0, 0.4)
+        current = 0
+        with subprocess.Popen(cmd7z, stdout=subprocess.PIPE, startupinfo=startupinfo).stdout as ins:
+            for line in ins:
+                line = unicodeConvert(line)
+                maExtracting = reExtracting.match(line)
+                if maExtracting:
+                    name = maExtracting.group(1).strip().strip('\r')
+                    size = sizes[name]
+                    subprogress(float(current)/total,_("%s\nExtracting...\n%s") % (self.path.stail, name))
+                    current += size
+
+        # Get compression type
+        progress(0.4,'%s\Reading config' % self.path.stail)
+        self.readConfig(tempDir.join('config'))
+
+        # Collect OMOD conversion data
+        ocdDir = outDir.join('omod conversion data')
+        progress(0.46, '%s\nCreating omod conversion data\ninfo.txt' % self.path.stail)
+        self.writeInfo(ocdDir.join('info.txt'), self.path.stail, tempDir.join('readme').exists(), tempDir.join('script').exists())
+        progress(0.47, '%s\nCreating omod conversion data\nscript' % self.path.stail)
+        if tempDir.join('script').exists():
+            with bolt.BinaryFile(tempDir.join('script').s) as input:
+                with ocdDir.join('script.txt').open('w') as output:
+                    output.write(input.readNetString())
+        progress(0.48, '%s\nCreating omod conversion data\nreadme.rtf' % self.path.stail)
+        if tempDir.join('readme').exists():
+            with bolt.BinaryFile(tempDir.join('readme').s) as input:
+                with ocdDir.join('readme.rtf').open('w') as output:
+                    output.write(input.readNetString())
+        progress(0.49, '%s\nCreating omod conversion data\nscreenshot' % self.path.stail)
+        if tempDir.join('image').exists():
+            tempDir.join('image').moveTo(ocdDir.join('screenshot'))
+        progress(0.5,'%s\nCreating omod conversion data\nconfig' % self.path.stail)
+        tempDir.join('config').moveTo(ocdDir.join('config'))
+
+        # Extract the files
+        if self.compType == 0:
+            extract = self.extractFiles7z
+        else:
+            extract = self.extractFilesZip
+
+        pluginSize = sizes.get('plugins',0)
+        dataSize = sizes.get('data',0)
+        subprogress = bolt.SubProgress(progress, 0.5, 1)
+        if tempDir.join('plugins.crc').exists() and tempDir.join('plugins').exists():
+            pluginProgress = bolt.SubProgress(subprogress, 0, float(pluginSize)/(pluginSize+dataSize))
+            extract(tempDir.join('plugins.crc'),tempDir.join('plugins'),outDir,pluginProgress)
+        if tempDir.join('data.crc').exists() and tempDir.join('data').exists():
+            dataProgress = bolt.SubProgress(subprogress, subprogress.state, 1)
+            extract(tempDir.join('data.crc'),tempDir.join('data'),outDir,dataProgress)
+        progress(1,'%s\nExtracted' % self.path.stail)
+
+        # Clean up temp dir
+        dirs['mopy'].join('temp').rmtree('temp')
+
+    def extractFilesZip(self, crcPath, dataPath, outPath, progress):
+        fileNames, crcs, sizes = self.getFile_CrcSizes(crcPath)
+        if len(fileNames) == 0: return
+
+        # Extracted data stream is saved as a file named 'a'
+        progress(0,'%s\nUnpacking %s' % (self.path.stail, dataPath.stail))
+        cmd = [exe7z,'e','-r',dataPath.s,'-o%s' % outPath.s]
+        subprocess.call(cmd, startupinfo=startupinfo)
+
+        # Split the uncompress stream into files
+        progress(0.7,'%s\nUnpacking %s' % (self.path.stail, dataPath.stail))
+        self.splitStream(outPath.join('a'), outPath, fileNames, sizes,
+                         bolt.SubProgress(progress,0.7,1.0,len(fileNames))
+                         )
+        progress(1)
+
+        # Clean up
+        outPath.join('a').remove()
+
+    def splitStream(self, streamPath, outDir, fileNames, sizes, progress):
+        # Split the uncompressed stream into files
+        progress(0, '%s\nUnpacking %s' % (self.path.stail,streamPath.stail))
+        with streamPath.open('rb') as file:
+            for i,name in enumerate(fileNames):
+                progress(i,'%s\nUnpacking %s\n%s' % (self.path.stail, streamPath.stail, name))
+                outFile = outDir.join(name)
+                with outFile.open('wb') as output:
+                    output.write(file.read(sizes[i]))
+        progress(len(fileNames))
+
+    def extractFiles7z(self, crcPath, dataPath, outPath, progress):
+        fileNames, crcs, sizes = self.getFile_CrcSizes(crcPath)
+        if len(fileNames) == 0: return
+        totalSize = sum(sizes)
+
+        # Extract data stream to an uncompressed stream
+        subprogress = bolt.SubProgress(progress,0,0.3,full=dataPath.size)
+        subprogress(0,'%s\nUnpacking %s' % (self.path.stail, dataPath.stail))
+        with dataPath.open('rb') as file:
+            done = 0
+            with bolt.BinaryFile(outPath.join(dataPath.sbody+'.tmp').s,'wb') as output:
+                # Decoder properties
+                output.write(file.read(5))
+                done += 5
+                subprogress(5)
+
+                # Next 8 bytes are the size of the data stream
+                for i in range(8):
+                    out = totalSize >> (i*8)
+                    output.writeByte(out & 0xFF)
+                    done += 1
+                    subprogress(done)
+
+                # Now copy the data stream
+                while file.tell() < dataPath.size:
+                    output.write(file.read(512))
+                    done += 512
+                    subprogress(done)
+
+        # Now decompress
+        progress(0.3)
+        cmd = [dirs['compiled'].join('lzma').s,'d',outPath.join(dataPath.sbody+'.tmp').s, outPath.join(dataPath.sbody+'.uncomp').s]
+        subprocess.call(cmd,startupinfo=startupinfo)
+        progress(0.8)
+
+        # Split the uncompressed stream into files
+        self.splitStream(outPath.join(dataPath.sbody+'.uncomp'), outPath, fileNames, sizes,
+                         bolt.SubProgress(progress,0.8,1.0,full=len(fileNames))
+                         )
+        progress(1)
+
+        # Clean up temp files
+        outPath.join(dataPath.sbody+'.uncomp').remove()
+        outPath.join(dataPath.sbody+'.tmp').remove()
+
+    def getFile_CrcSizes(self, path):
+        fileNames = list()
+        crcs = list()
+        sizes = list()
+
+        with bolt.BinaryFile(path.s) as file:
+            while file.tell() < path.size:
+                fileNames.append(file.readNetString())
+                crcs.append(file.readInt32())
+                sizes.append(file.readInt64())
+        return fileNames,crcs,sizes
+
+#------------------------------------------------------------------------------
 class PluginsFullError(BoltError):
     """Usage Error: Attempt to add a mod to plugins when plugins is full."""
     def __init__(self,message=_('Load list is full.')):
@@ -9246,7 +9729,10 @@ class Plugins:
     """Plugins.txt file. Owned by modInfos. Almost nothing else should access it directly."""
     def __init__(self):
         """Initialize."""
-        self.dir = dirs['userApp']
+        if dirs['saveBase'] == dirs['app']: #--If using the game directory as rather than the appdata dir.
+            self.dir = dirs['app']
+        else:
+            self.dir = dirs['userApp']
         self.path = self.dir.join('Plugins.txt')
         self.mtime = 0
         self.size = 0
@@ -9660,6 +10146,8 @@ class ModInfo(FileInfo):
         mtime = int(mtime or self.mtime)
         FileInfo.setmtime(self,mtime)
         modInfos.mtimes[self.name] = mtime
+        # Prevent re-calculating the File CRC
+        modInfos.table.setItem(self.name,'crc_mtime',mtime)
 
     def writeNew(self,masters=[],mtime=0):
         """Creates a new file with the given name, masters and mtime."""
@@ -9702,24 +10190,20 @@ class ModInfo(FileInfo):
         if reBashTags.search(description):
             description = reBashTags.sub(strKeys,description)
         else:
-            description = strKeys+description
+            description = description + '\n' + strKeys
         self.writeDescription(description)
 
     def getBashTags(self):
         """Returns any Bash flag keys."""
         tags = modInfos.table.getItem(self.name,'bashTags',None)
         if tags is None:
-            tags = set()
-            tagstemp = self.getBashTagsDesc()
-            if tagstemp:
-                for tag in tagstemp:
-                    tags.add(tag)
-            tagstemp = configHelpers.getBashTags(self.name)
-            if tagstemp:
-                for tag in tagstemp:
-                    tags.add(tag)
-            #--Filter and return
-        tags.discard('Merge')
+            tags = (self.getBashTagsDesc() or set()) | (configHelpers.getBashTags(self.name) or set())
+            tags -= (configHelpers.getBashRemoveTags(self.name) or set())
+        # Filter and remove old tags
+        tags = tags & allTagsSet
+        if tags & oldTagsSet:
+            tags -= oldTagsSet
+            self.setBashTagsDesc(tags)
         return tags
 
     def getBashTagsDesc(self):
@@ -9730,8 +10214,7 @@ class ModInfo(FileInfo):
             return None
         else:
             bashTags = maBashKeys.group(1).split(',')
-            bashTags = [str.strip() for str in bashTags]
-            return set(bashTags)
+            return set([str.strip() for str in bashTags]) & allTagsSet - oldTagsSet
 
     def getDirtyMessage(self):
         """Returns a dirty message from BOSS."""
@@ -9802,14 +10285,14 @@ class ModInfo(FileInfo):
 
     def writeDescription(self,description):
         """Sets description to specified text and then writes hedr."""
-        description = description[:min(255,len(description))]
+        description = description[:min(511,len(description))] # 511 + 1 for null = 512
         self.header.description = description
         self.header.setChanged()
         self.writeHeader()
 
     def writeAuthor(self,author):
         """Sets author to specified text and then writes hedr."""
-        author = author[:min(512,len(author))]
+        author = author[:min(511,len(author))] # 511 + 1 for null = 512
         self.header.author = author
         self.header.setChanged()
         self.writeHeader()
@@ -9892,6 +10375,54 @@ class INIInfo(FileInfo):
             self._status = 10
         return self._status
 
+    def getLinesStatus(self):
+        """Return a list of the lines and their statuses, in the form:
+        [setting,value,status]
+        for statuses:
+        -10: highlight orange (not tweak not in ini)
+          0: no highlight (header, in ini)
+         10: highlight yellow (setting, in ini, but different)
+         20: highlight green (setting, in ini, and same)"""
+        ini = self.getFileInfos().ini
+        tweak = self.getPath()
+        ini_settings = ini.getSettings()
+        tweak_settings = ini.getTweakFileSettings(tweak)
+        reComment = re.compile(';.*')
+        reSection = re.compile(r'^\[\s*(.+?)\s*\]$')
+        reSetting = re.compile(r'(.+?)\s*=(.*)')
+        section = LString(ini.defaultSection)
+
+        lines = []
+
+        tweakFile = tweak.open('r')
+        for line in tweakFile:
+            stripped = reComment.sub('',line).strip()
+            maSection = reSection.match(stripped)
+            maSetting = reSetting.match(stripped)
+            if maSection:
+                section = LString(maSection.group(1))
+                if section in ini_settings:
+                    lines.append((line.strip('\n\r'),'',0))
+                else:
+                    lines.append((line.strip('\n\r'),'',-10))
+            elif maSetting:
+                if section in ini_settings:
+                    setting = LString(maSetting.group(1))
+                    if setting in ini_settings[section]:
+                        value = LString(maSetting.group(2).strip())
+                        if value == ini_settings[section][setting]:
+                            lines.append((maSetting.group(1),maSetting.group(2),20))
+                        else:
+                            lines.append((maSetting.group(1),maSetting.group(2),10))
+                    else:
+                        lines.append((maSetting.group(1),maSetting.group(2),-10))
+                else:
+                    lines.append((maSetting.group(1),maSetting.group(2),-10))
+            else:
+                lines.append((line.strip('\r\n'),'',0))
+        tweakFile.close()
+        return lines
+
     def listErrors(self):
         """Returns ini tweak errors as text."""
         #--Setup
@@ -9914,7 +10445,7 @@ class INIInfo(FileInfo):
         if len(text) == 1:
             text.append(' None')
 
-        log = bolt.LogFile(cStringIO.StringIO())
+        log = bolt.LogFile(stringBuffer())
         for line in text:
             log(line)
         return bolt.winNewLines(log.out.getvalue())
@@ -9961,41 +10492,14 @@ class SaveInfo(FileInfo):
 class BSAInfo(FileInfo):
     def getFileInfos(self):
         """Returns modInfos or saveInfos depending on fileInfo type."""
-        return BSAInfos
-
-    def getStatus(self):
-        status = FileInfo.getStatus(self)
-        #masterOrder = self.masterOrder
-        #--File size?
-     #   if status > 0 or len(masterOrder) > len(modInfos.ordered):
-      #      return status
-        #--Current ordering?
-       # if masterOrder != modInfos.ordered[:len(masterOrder)]:
-        #    return status
-        #elif masterOrder == modInfos.ordered:
-        #    return -20
-        #else:
-        #    return -10
-        return 20
+        return bsaInfos
 
     def getHeader(self):
-        """Read header for file."""
+        pass
 
-        try:
-            self.header = SaveHeader(self.getPath())
-            #--Master Names/Order
-            self.masterNames = tuple(self.header.masters)
-            self.masterOrder = tuple() #--Reset to empty for now
-        except struct.error, rex:
-            raise SaveFileError(self.name,_('Struct.error: ')+`rex`)
-
-    def coCopy(self,oldPath,newPath):
-        """Copies co files corresponding to oldPath to newPath."""
-        CoSaves(oldPath).copy(newPath)
-
-    def coSaves(self):
-        """Returns CoSaves instance corresponding to self."""
-        return CoSaves(self.getPath())
+    def resetMTime(self,mtime='01-01-2006 00:00:00'):
+        mtime = time.mktime(time.strptime(mtime,'%m-%d-%Y %H:%M:%S'))
+        self.setmtime(mtime)
 
 #------------------------------------------------------------------------------
 class FileInfos(DataDict):
@@ -10051,6 +10555,7 @@ class FileInfos(DataDict):
             if name in newNames: continue #--Must be a ghost duplicate. Ignore it.
             oldInfo = self.data.get(name)
             isAdded = name not in oldNames
+            # sanity check.
             if oldInfo is None and isAdded == False:
                 deprint(oldInfo,name,isAdded,oldNames,self.data)
                 isAdded = True
@@ -10154,7 +10659,7 @@ class ResourceReplacer:
     #--Class data
     dirExts = {
         'distantlod': ['.cmp', '.lod'],
-        'docs':['.txt','.html','.htm','.rtf','.doc','.gif','.jpg'],
+        'docs':['.txt','.html','.htm','.rtf','.doc','.gif','.jpg','.ods','.odp','.png'],
         'facegen': ['.ctl'],
         'fonts': ['.fnt', '.tex'],
         'menus': ['.bat', '.html', '.scc', '.txt', '.xml'],
@@ -10179,7 +10684,7 @@ class ResourceReplacer:
     def validate(self):
         """Does archive invalidation according to settings."""
         if settings.get('bash.replacers.autoEditBSAs',False):
-            bsaPath = dirs['mods'].join('FalloutNV - Textures - Compressed.bsa')
+            bsaPath = dirs['mods'].join(inisettings['FalloutTexturesBSAName'])
             bsaFile = BsaFile(bsaPath)
             bsaFile.scan()
             bsaFile.invalidate()
@@ -10300,7 +10805,7 @@ class ResourceReplacer:
             ('FalloutNV - Meshes.bsa',1138575220),
             ('FalloutNV - Misc.bsa',1139433736),
             ('FalloutNV - Sounds.bsa',1138660560),
-            ('FalloutNV - Textures - Compressed.bsa',1138162634),
+            (inisettings['FalloutTexturesBSAName'],1138162634),
             ('FalloutNV - Voices1.bsa',1138162934),
             ('FalloutNV - Voices2.bsa',1138166742),
             )
@@ -10326,12 +10831,12 @@ class INIInfos(FileInfos):
         return dirs['modsBash'].join('INI Data')
 #------------------------------------------------------------------------------
 class ModInfos(FileInfos):
-    """Collection of modinfos. Represents mods in the FalloutNV\Data directory."""
+    """Collection of modinfos. Represents mods in the Fallout New Vegas\Data directory."""
 
     def __init__(self):
         """Initialize."""
         FileInfos.__init__(self,dirs['mods'],ModInfo)
-        #--MTime resetting
+        #--MTime resettin
         self.lockTimes = settings['bosh.modInfos.resetMTimes']
         self.mtimes = self.table.getColumn('mtime')
         self.mtimesReset = [] #--Files whose mtimes have been reset.
@@ -10341,6 +10846,13 @@ class ModInfos(FileInfos):
         self.plugins = Plugins() #--Plugins instance.
         self.ordered = tuple() #--Active mods arranged in load order.
         #--Info lists/sets
+        if dirs['mods'].join('FalloutNV.esm').exists():
+            self.masterName = GPath('FalloutNV.esm')
+        #elif dirs['mods'].join('Fallout3.esm').exists():
+        #    self.masterName = GPath('Fallout3.esm')
+        else:
+            self.masterName = GPath('FalloutNV.esm')
+            deprint(_('Missing master file; Neither FalloutNV.esm or Fallout3.esm exists in an unghosted state in %s - presuming that Fallout3.esm is the correct masterfile.') % (dirs['mods'].s))
         self.mtime_mods = {}
         self.mtime_selected = {}
         self.exGroup_mods = {}
@@ -10354,13 +10866,12 @@ class ModInfos(FileInfos):
         #--FalloutNV version 
         self.version_voSize = {
             '1.0':int(_("245570393")),
-            #'1.1':int(_("288771181")),
-            #'1.4':int(_("288771262")),
+            '1.4':int(_("245650747")),
             }
         self.size_voVersion = bolt.invertDict(self.version_voSize)
         self.voCurrent = None
         self.voAvailable = set()
-                
+
     def getBashDir(self):
         """Returns Bash data storage directory."""
         return dirs['modsBash']
@@ -10392,7 +10903,7 @@ class ModInfos(FileInfos):
         hasGhosted = self.autoGhost()
         hasSorted = self.autoSort()
         self.refreshInfoLists()
-        self.getFalloutNVVersions()
+        self.getFalloutVersions()
         return bool(hasChanged) or hasSorted or hasGhosted
 
     def refreshHeaders(self):
@@ -10409,13 +10920,16 @@ class ModInfos(FileInfos):
         """Remember/reset mtimes of member files."""
         if not self.canSetTimes(): return
         del self.mtimesReset[:]
-        for fileName, fileInfo in sorted(self.data.iteritems(),key=lambda x: x[1].mtime):
-            oldMTime = int(self.mtimes.get(fileName,fileInfo.mtime))
-            self.mtimes[fileName] = oldMTime
-            if fileInfo.mtime != oldMTime and oldMTime  > 0:
-                #deprint(fileInfo.name, oldMTime - fileInfo.mtime)
-                fileInfo.setmtime(oldMTime)
-                self.mtimesReset.append(fileName)
+        try:
+            for fileName, fileInfo in sorted(self.data.iteritems(),key=lambda x: x[1].mtime):
+                oldMTime = int(self.mtimes.get(fileName,fileInfo.mtime))
+                self.mtimes[fileName] = oldMTime
+                if fileInfo.mtime != oldMTime and oldMTime  > 0:
+                    #deprint(fileInfo.name, oldMTime - fileInfo.mtime)
+                    fileInfo.setmtime(oldMTime)
+                    self.mtimesReset.append(fileName)
+        except:
+            self.mtimesReset = ['FAILED',fileName]
 
     def updateAutoGroups(self):
         """Update autogroup definitions."""
@@ -10550,19 +11064,37 @@ class ModInfos(FileInfos):
                 newMods.append(name)
         return newMods
 
-    def rescanMergeable(self,names,progress):
+    def rescanMergeable(self,names,progress,doCBash=None):
         """Will rescan specified mods."""
-        name_mergeInfo = self.table.getColumn('mergeInfo')
-        for index,name in enumerate(names):
-            progress(index,name.s)
-            modInfo = self[name]
-            canMerge = PatchFile.modIsMergeable(modInfo) == True
-            if canMerge:
-                self.mergeable.add(name)
-                name_mergeInfo[name] = (modInfo.size,True)
-            else:   
-                self.mergeable.discard(name)
-                name_mergeInfo[name] = (modInfo.size,False)
+        if doCBash is None:
+            doCBash = bool(CBash)
+        elif doCBash and not bool(CBash):
+            doCBash = False
+        mod_mergeInfo = self.table.getColumn('mergeInfo')
+        progress.setFull(len(names))
+        for i,fileName in enumerate(names):
+            progress(i,fileName.s)
+            if reFallout.match(fileName.s): continue
+            fileInfo = self[fileName]
+            try:
+                if not doCBash:
+                    canMerge = bosh.PatchFile.modIsMergeable(fileInfo)
+                else:
+                    canMerge = bosh.CBash_PatchFile.modIsMergeable(fileInfo)
+            except Exception, e:
+                deprint (_("Error scanning mod %s (%s)" %(fileName, str(e))))
+                canMerge = False #presume non-mergeable.
+            if fileName == "Oscuro's_Oblivion_Overhaul.esp": canMerge = False #can't be above because otherwise if the mergeability had already been set true this wouldn't unset it.
+            if canMerge == True:
+                self.mergeable.add(fileName)
+                mod_mergeInfo[fileName] = (fileInfo.size,True)
+            else:
+                if canMerge == _("\n.    Has 'NoMerge' tag."):
+                    mod_mergeInfo[fileName] = (fileInfo.size,True)
+                    self.mergeable.add(fileName)
+                else:
+                    mod_mergeInfo[fileName] = (fileInfo.size,False)
+                    self.mergeable.discard(fileName)
 
     #--Full Balo --------------------------------------------------------------
     def updateBaloHeaders(self):
@@ -10591,7 +11123,7 @@ class ModInfos(FileInfos):
                 bashGroups.append(offGroup)
         deleted = added = 0
         #--Remove invalid group headers
-        for offGroup,mod in group_header.items():
+        for offGroup,mod in group_header.iteritems():
             if offGroup not in offGroup_mtime:
                 del group_header[offGroup]
                 self.delete(mod,False)
@@ -10606,7 +11138,7 @@ class ModInfos(FileInfos):
                     newInfo = ModInfo(self.dir,newName)
                     newInfo.mtime = time.time()
                     newFile = ModFile(newInfo,LoadFactory(True))
-                    newFile.tes4.masters = [GPath('FalloutNV.esm')]
+                    newFile.tes4.masters = [modInfos.masterName]
                     newFile.tes4.author = '======'
                     newFile.tes4.description = _('Balo group header.')
                     newFile.safeSave()
@@ -10744,15 +11276,22 @@ class ModInfos(FileInfos):
 
     def getSemiActive(self,masters):
         """Returns (merged,imported) mods made semi-active by Bashed Patch."""
-        merged,imported,nullDict = set(),set(),{}
+        merged,imported = set(),set()
         for modName,modInfo in [(modName,self[modName]) for modName in masters]:
             if modInfo.header.author != 'BASHED PATCH': continue
             patchConfigs = self.table.getItem(modName,'bash.patch.configs',None)
             if not patchConfigs: continue
-            if patchConfigs.get('PatchMerger',nullDict).get('isEnabled'):
-                configChecks = patchConfigs['PatchMerger']['configChecks']
-                for modName in configChecks:
-                    if configChecks[modName]: merged.add(modName)
+            configIsCBash = CBash_PatchFile.configIsCBash(patchConfigs)
+            if not configIsCBash:
+                if patchConfigs.get('PatchMerger',{}).get('isEnabled'):
+                    configChecks = patchConfigs['PatchMerger']['configChecks']
+                    for modName in configChecks:
+                        if configChecks[modName]: merged.add(modName)
+            else:
+                if patchConfigs.get('CBash_PatchMerger',{}).get('isEnabled'):
+                    configChecks = patchConfigs['CBash_PatchMerger']['configChecks']
+                    for modName in configChecks:
+                        if configChecks[modName]: merged.add(modName)
             imported.update(patchConfigs.get('ImportedMods',tuple()))
         return (merged,imported)
 
@@ -10791,13 +11330,12 @@ class ModInfos(FileInfos):
         """Returns mod list as text. If fileInfo is provided will show mod list
         for its masters. Otherwise will show currently loaded mods."""
         #--Setup
-        log = bolt.LogFile(cStringIO.StringIO())
+        log = bolt.LogFile(stringBuffer())
         head = ('','=== ')[wtxt]
         bul = ('','* ')[wtxt]
         sMissing = (_('----> MISSING MASTER: '),_('  * __Missing Master:__ '))[wtxt]
         sDelinquent = (_('----> Delinquent MASTER: '),_('  * __Delinquent Master:__ '))[wtxt]
         sImported = ('**','&bull; &bull;')[wtxt]
-        if not wtxt: log.out.write('[spoiler][code]')
         if fileInfo:
             masters = set(fileInfo.header.masters)
             missing = sorted([x for x in masters if x not in self])
@@ -10818,6 +11356,7 @@ class ModInfos(FileInfos):
         allMods = self.getOrdered([x for x in allMods if x in self])
         #--List
         modIndex,header = 0, None
+        if not wtxt: log('[spoiler][xml]', False)
         for name in allMods:
             if name in masters:
                 prefix = bul+'%02X' % (modIndex)
@@ -10836,17 +11375,51 @@ class ModInfos(FileInfos):
                 log(header)
                 header = None
             if version:
-                log(_('%s  %s  [Version %s]') % (prefix,name.s,version))
+                log(_('%s  %s  [Version %s] [CRC: %08X]') % (prefix,name.s,version,self[name].cachedCrc()))
             else:
-                log('%s  %s' % (prefix,name.s))
+                log('%s  %s [CRC: %08X]' % (prefix,name.s,self[name].cachedCrc()))
             if name in masters:
                 for master2 in self[name].header.masters:
                     if master2 not in self:
                         log(sMissing+master2.s)
                     elif self.getOrdered((name,master2))[1] == master2:
                         log(sDelinquent+master2.s)
-        if not wtxt: log('[/code][/spoiler]')
+        if not wtxt: log('[/xml][/spoiler]')
         return bolt.winNewLines(log.out.getvalue())
+
+    def getTagList(self,modList=None):
+        """Returns the list as wtxt of current bash tags (but doesn't say what ones are applied via a patch).
+        Either for all mods in the data folder or if specified for one specific mod.
+        """
+        tagList = '=== Current Bash Tags:\n'
+        if modList:
+            for modInfo in modList:
+                tagList += '\n* ' + modInfo.name.s + '\n'
+                if modInfo.getBashTags():
+                    if modInfos.table.getItem(modInfo.name,'bashTags',''):
+                        tagList += '  * From Manual (if any this overrides Description/BOSS sourced tags): ' + ', '.join(sorted(modInfos.table.getItem(modInfo.name,'bashTags',''))) + '\n'
+                    if modInfo.getBashTagsDesc():
+                        tagList += '  * From Description: ' + ', '.join(sorted(modInfo.getBashTagsDesc())) + '\n'
+                    if configHelpers.getBashTags(modInfo.name):
+                        tagList += '  * From BOSS Masterlist and or userlist: ' + ', '.join(sorted(configHelpers.getBashTags(modInfo.name))) + '\n'
+                    if configHelpers.getBashRemoveTags(modInfo.name):
+                        tagList += '  * Removed by  BOSS Masterlist and or userlist: ' + ', '.join(sorted(configHelpers.getBashRemoveTags(modInfo.name))) + '\n'
+                    tagList += '  * Result: ' + ', '.join(sorted(modInfo.getBashTags())) + '\n'
+                else: tagList += '    No tags'
+        else:
+            for modInfo in sorted(modInfos.data.values(),cmp=lambda x,y: cmp(x.name.s.lower(), y.name.s.lower())):
+                if modInfo.getBashTags():
+                    tagList += '\n* ' + modInfo.name.s + '\n'
+                    if modInfos.table.getItem(modInfo.name,'bashTags',''):
+                        tagList += '  * From Manual (if any this overrides Description/BOSS sourced tags): ' + ', '.join(sorted(modInfos.table.getItem(modInfo.name,'bashTags',''))) + '\n'
+                    if modInfo.getBashTagsDesc():
+                        tagList += '  * From Description: ' + ', '.join(sorted(modInfo.getBashTagsDesc())) + '\n'
+                    if configHelpers.getBashTags(modInfo.name):
+                        tagList += '  * From BOSS Masterlist and or userlist: ' + ', '.join(sorted(configHelpers.getBashTags(modInfo.name))) + '\n'
+                    if configHelpers.getBashRemoveTags(modInfo.name):
+                        tagList += '  * Removed by BOSS Masterlist and or userlist: ' + ', '.join(sorted(configHelpers.getBashRemoveTags(modInfo.name))) + '\n'
+                    tagList += '  * Result: ' + ', '.join(sorted(modInfo.getBashTags())) + '\n'
+        return tagList
 
     #--Mod Specific ----------------------------------------------------------
     def rightFileType(self,fileName):
@@ -10921,6 +11494,20 @@ class ModInfos(FileInfos):
         mods = self.mtime_selected.get(mtime,tuple())
         return len(mods) > 1
 
+    def getFreeTime(self, startTime, defaultTime='+1', reverse=False):
+        """Tries to return a mtime that doesn't conflict with a mod. Returns defaultTime if it fails."""
+        haskey = self.mtime_mods.has_key
+        if reverse:
+            endTime = startTime - 1000
+            step = -1
+        else:
+            endTime = startTime + 1000
+            step = 1
+        for testTime in range(startTime, endTime, step): #1000 is an arbitrary limit
+            if not haskey(testTime):
+                return testTime
+        return defaultTime
+
     #--Mod move/delete/rename -------------------------------------------------
     def rename(self,oldName,newName):
         """Renames member file from oldName to newName."""
@@ -10971,30 +11558,30 @@ class ModInfos(FileInfos):
                         requires[key] = float(value or 0)
         return requires
 
-    #--FalloutNV 1.0/1.1/1.4 Swapping -----------------------------------------------
-    def getFalloutNVVersions(self):
-        """Returns tuple of FalloutNV versions."""
-        reFalloutNV = re.compile('^FalloutNV(|_1.0|_1.1|_1.4).esm$')
+    #--FalloutNV 1.0/1.4 Swapping -----------------------------------------------
+    def getFalloutVersions(self):
+        """Returns tuple of Fallout(3|NV) versions."""
+        reFallout = re.compile('^FalloutNV(|_1.0|_1.1|_1.2|_1.3|_1.4).esm$')
         self.voAvailable.clear()
         for name,info in self.data.iteritems():
-            maFalloutNV = reFalloutNV.match(name.s)
-            if maFalloutNV and info.size in self.size_voVersion:
+            maFallout = reFallout.match(name.s)
+            if maFallout and info.size in self.size_voVersion:
                 self.voAvailable.add(self.size_voVersion[info.size])
-        self.voCurrent = self.size_voVersion.get(self.data[GPath('FalloutNV.esm')].size,None)
+        self.voCurrent = self.size_voVersion.get(self.data[self.masterName].size,None)
 
-    def setFalloutNVVersion(self,newVersion):
-        """Swaps FalloutNV.esm to to specified version."""
+    def setFalloutVersion(self,newVersion):
+        """Swaps Fallout(3|NV).esm to to specified version."""
         #--Old info
-        baseName = GPath('FalloutNV.esm')
+        baseName = self.masterName
         newSize = self.version_voSize[newVersion]
         oldSize = self.data[baseName].size
         if newSize == oldSize: return
         if oldSize not in self.size_voVersion:
-            raise StateError(_("Can't match current FalloutNV.esm to known version."))
-        oldName = GPath('FalloutNV_'+self.size_voVersion[oldSize]+'.esm')
+            raise StateError(_("Can't match current main ESM to known version."))
+        oldName = GPath(baseName.sbody+'_'+self.size_voVersion[oldSize]+'.esm')
         if self.dir.join(oldName).exists():
             raise StateError(_("Can't swap: %s already exists.") % oldName)
-        newName = GPath('FalloutNV_'+newVersion+'.esm')
+        newName = GPath(baseName.sbody+'_'+newVersion+'.esm')
         if newName not in self.data:
             raise StateError(_("Can't swap: %s doesn't exist.") % newName)
         #--Rename
@@ -11003,8 +11590,32 @@ class ModInfos(FileInfos):
         basePath = baseInfo.getPath()
         newPath = newInfo.getPath()
         oldPath = self.dir.join(oldName)
-        basePath.moveTo(oldPath)
-        newPath.moveTo(basePath)
+        try:
+            basePath.moveTo(oldPath)
+        except WindowsError, werr:
+            if werr.winerror != 32: raise
+            while balt.askYes(self,_('Bash encountered an error when renaming %s to %s.\n\nThe file is in use by another process such as TES4Edit.\nPlease close the other program that is accessing %s.\n\nTry again?') % (basePath.s,oldPath.s,basePath.s),_('Bash Patch - Rename Error')):
+                try:
+                    basePath.moveTo(oldPath)
+                except WindowsError, werr:
+                    continue
+                break
+            else:
+                raise
+        try:
+            newPath.moveTo(basePath)
+        except WindowsError, werr:
+            if werr.winerror != 32: raise
+            while balt.askYes(self,_('Bash encountered an error when renaming %s to %s.\n\nThe file is in use by another process such as TES4Edit.\nPlease close the other program that is accessing %s.\n\nTry again?') % (newPath.s,basePath.s,newPath.s),_('Bash Patch - Rename Error')):
+                try:
+                    newPath.moveTo(basePath)
+                except WindowsError, werr:
+                    continue
+                break
+            else:
+                #Undo any changes
+                oldPath.moveTo(basePath)
+                raise
         basePath.mtime = baseInfo.mtime
         oldPath.mtime = newInfo.mtime
         self.mtimes[oldName] = newInfo.mtime
@@ -11115,7 +11726,7 @@ class SaveInfos(FileInfos):
         return (fileName.cext == '.ess')
 
     def enable(self,fileName,value=True):
-        """Enables file by changing extension to 'ess' (True) or 'for' (False)."""
+        """Enables file by changing extension to 'fos' (True) or 'for' (False)."""
         isEnabled = self.isEnabled(fileName)
         if isEnabled or value == isEnabled or re.match('(autosave|quicksave)',fileName.s,re.I):
             return fileName
@@ -11129,96 +11740,21 @@ class BSAInfos(FileInfos):
     """SaveInfo collection. Represents save directory and related info."""
     #--Init
     def __init__(self):
-        self.iniMTime = 0
         self.dir = dirs['mods']
         FileInfos.__init__(self,self.dir,BSAInfo)
-        self.profiles = bolt.Table(PickleDict(
-            dirs['saveBase'].join('BashProfiles.dat'),
-            dirs['userApp'].join('Profiles.pkl')))
-        self.table = bolt.Table(PickleDict(self.bashDir.join('Table.dat')))
 
     #--Right File Type (Used by Refresh)
     def rightFileType(self,fileName):
         """Bool: File is a mod."""
         return reBSAExt.search(fileName.s)
 
-    def refresh(self):
-        if self.refreshLocalSave():
-            self.data.clear()
-            self.table.save()
-            self.table = bolt.Table(PickleDict(
-                self.bashDir.join('Table.dat'),
-                self.bashDir.join('Table.pkl')))
-        return FileInfos.refresh(self)
+    def getBashDir(self):
+        """Return directory to save info."""
+        return dirs['modsBash'].join('BSA Data')
 
-    def delete(self,fileName):
-        """Deletes savefile and associated pluggy file."""
-        FileInfos.delete(self,fileName)
-        CoSaves(self.dir,fileName).delete()
-
-    def rename(self,oldName,newName):
-        """Renames member file from oldName to newName."""
-        FileInfos.rename(self,oldName,newName)
-        CoSaves(self.dir,oldName).move(self.dir,newName)
-
-    def copy(self,fileName,destDir,destName=None,mtime=False):
-        """Copies savefile and associated pluggy file."""
-        FileInfos.copy(self,fileName,destDir,destName,mtime)
-        CoSaves(self.dir,fileName).copy(destDir,destName or fileName)
-
-    def move(self,fileName,destDir,doRefresh=True):
-        """Moves member file to destDir. Will overwrite!"""
-        FileInfos.move(self,fileName,destDir,doRefresh)
-        CoSaves(self.dir,fileName).move(destDir,fileName)
-
-    #--Local Saves ------------------------------------------------------------
-    def getLocalSaveDirs(self):
-        """Returns a list of possible local save directories, NOT including the base directory."""
-        baseSaves = dirs['saveBase'].join('Saves')
-        if baseSaves.exists():
-            localSaveDirs = [x for x in baseSaves.list() if (x != 'Bash' and baseSaves.join(x).isdir())]
-        else:
-            localSaveDirs = []
-        localSaveDirs.sort()
-        return localSaveDirs
-
-    def refreshLocalSave(self):
-        """Refreshes self.localSave and self.dir."""
-        #--self.localSave is NOT a Path object.
-    #    self.localSave = getattr(self,'localSave','Saves\\')
-        self.dir = dirs['mods']
-        self.bashDir = self.getBashDir()
-    #    if falloutIni.path.exists() and (falloutIni.path.mtime != self.iniMTime):
-    #        self.localSave = falloutIni.getSetting('General','SLocalSavePath','Saves\\')
-    #        self.iniMTime = falloutIni.path.mtime
-    #    else:
-    #        return False
-        return True
-
-    def setLocalSave(self,localSave):
-        """Sets SLocalSavePath in .ini."""
-        self.table.save()
-        self.localSave = localSave
-        falloutIni.saveSetting('General','SLocalSavePath',localSave)
-        self.iniMTime = falloutIni.path.mtime
-        bashDir = dirs['saveBase'].join(localSave,'Bash')
-        self.table = bolt.Table(PickleDict(bashDir.join('Table.dat')))
-        self.refresh()
-
-    #--Enabled ----------------------------------------------------------------
-    def isEnabled(self,fileName):
-        """True if fileName is enabled)."""
-        return (fileName.cext == '.ess')
-
-    def enable(self,fileName,value=True):
-        """Enables file by changing extension to 'ess' (True) or 'esr' (False)."""
-        isEnabled = self.isEnabled(fileName)
-        if isEnabled or value == isEnabled or re.match('(autosave|quicksave)',fileName.s,re.I):
-            return fileName
-        (root,ext) = fileName.rootExt
-        newName = root + ((value and '.ess') or '.esr')
-        self.rename(fileName,newName)
-        return newName
+    def resetMTimes(self):
+        for file in self.data:
+            self[file].resetMTime()
 
 #------------------------------------------------------------------------------
 class ReplacersData(DataDict):
@@ -11498,7 +12034,7 @@ class ConfigHelpers:
                             crc = long(maDirty.group(1),16)
                             ##mod = LString(maDirty.group(2))
                             action = maDirty.group(3)
-                            if 'tes4edit' in action.lower() or 'fnvedit' in action.lower():
+                            if 'fnvedit' in action.lower():
                                 cleanIt = True
                             else:
                                 cleanIt = False
@@ -11823,19 +12359,26 @@ class Messages(DataDict):
             dates['today'] = datetime.datetime(year,month,day)
             dates['yesterday'] = dates['today'] - datetime.timedelta(1)
         reRelDate = re.compile(r'(Today|Yesterday), (\d+):(\d+) (AM|PM)')
+        reAbsDateNew = re.compile(r'(\d+) (\w+) (\d+) - (\d+):(\d+) (AM|PM)')
         reAbsDate = re.compile(r'(\w+) (\d+) (\d+), (\d+):(\d+) (AM|PM)')
         month_int = dict((x,i+1) for i,x in
             enumerate('Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',')))
+        month_int.update(dict((x,i+1) for i,x in
+            enumerate('January,February,March,April,May,June,July,August,September,October,November,December'.split(','))))
         def getTime(sentOn):
             maRelDate = reRelDate.search(sentOn)
             if not maRelDate:
                 #date = time.strptime(sentOn,'%b %d %Y, %I:%M %p')[:-1]+(0,)
                 maAbsDate = reAbsDate.match(sentOn)
-                month,day,year,hour,minute,ampm = maAbsDate.groups()
+                if maAbsDate:
+                    month,day,year,hour,minute,ampm = maAbsDate.groups()
+                else:
+                    maAbsDate = reAbsDateNew.match(sentOn)
+                    day,month,year,hour,minute,ampm = maAbsDate.groups()
                 day,year,hour,minute = map(int,(day,year,hour,minute))
                 month = month_int[month]
                 hour = (hour,0)[hour==12] + (0,12)[ampm=='PM']
-                date = (year,month,day,hour,minute,0,0,0,0)
+                date = (year,month,day,hour,minute,0,0,0,-1)
                 dates['previous'] = datetime.datetime(year,month,day)
             else:
                 if not dates['yesterday']:
@@ -11861,6 +12404,16 @@ class Messages(DataDict):
                     return match.group()
         #--Re's
         reHtmlEntity = re.compile("&(#?)(\d{1,5}|\w{1,8});")
+
+        #New style re's
+        reLineEndings   = re.compile("(?:\n)|(?:\r\n)")
+        reBodyNew       = re.compile("<body id='ipboard_body'>")
+        reTitleNew      = re.compile('<div id=["\']breadcrumb["\']>Bethesda Softworks Forums -> (.*?)</div>')
+        reAuthorNew     = re.compile('<h3><a href=["\']http\://forums\.bethsoft\.com/index\.php\?/user/.*?/["\']>(.*?)</a></h3>')
+        reDateNew       = re.compile('Sent (.*?)$')
+        reMessageNew    = re.compile('<div class=["\']post entry-content["\']>')
+        reEndMessageNew = re.compile('^        </div>$')
+        #Old style re's
         reBody         = re.compile('<body>')
         reWrapper      = re.compile('<div id=["\']ipbwrapper["\']>') #--Will be removed
         reMessage      = re.compile('<div class="borderwrapm">')
@@ -11871,47 +12424,86 @@ class Messages(DataDict):
         reSignatureOld = re.compile('<div class=\'pformstrip\'>')
         reSent         = re.compile('Sent (by|to) <b>(.+)</b> on (.+)</div>')
         #--Final setup, then parse the file
-        (HEADER,BODY,MESSAGE) = range(3)
+        (HEADER,BODY,MESSAGE,OLDSTYLE,NEWSTYLE,AUTHOR,DATE,MESSAGEBODY) = range(8)
+        whichStyle = OLDSTYLE
         mode = HEADER
         buff = None
         subject = "<No Subject>"
+        author = None
         ins = path.open()
         for line in ins:
-            line = reMessageOld.sub('<div class="borderwrapm">',line)
-            line = reTitleOld.sub('<div class="maintitle">',line)
-            line = reSignatureOld.sub('<div class="formsubtitle">',line)
-            #print mode,'>>',line,
+##            print mode,'>>',line,
             if mode == HEADER: #--header
-                if reBody.search(line):
+                if reBodyNew.search(line):
                     mode = BODY
-            elif mode == BODY:
-                if reMessage.search(line):
-                    subject = "<No Subject>"
-                    buff = cStringIO.StringIO()
-                    buff.write(reWrapper.sub('',line))
-                    mode = MESSAGE
-            elif mode == MESSAGE:
-                if reTitle.search(line):
-                    subject = reTitle.search(line).group(1)
-                    subject = reHtmlEntity.sub(subHtmlEntity,subject)
-                    buff.write(line)
-                elif reSignature.search(line):
-                    maSent = reSent.search(line)
-                    if maSent:
-                        direction = maSent.group(1)
-                        author = maSent.group(2)
-                        date = getTime(maSent.group(3))
-                        messageKey = '::'.join((subject,author,`int(date)`))
-                        newSent = (_('Sent %s <b>%s</b> on %s</div>') % (direction,
-                            author,time.strftime('%b %d %Y, %I:%M %p',time.localtime(date))))
-                        line = reSent.sub(newSent,line,1)
+                    whichStyle = NEWSTYLE
+                elif reBody.search(line):
+                    mode = BODY
+                    whichStyle = OLDSTYLE
+            if mode != HEADER and whichStyle == OLDSTYLE:
+                line = reMessageOld.sub('<div class="borderwrapm">',line)
+                line = reTitleOld.sub('<div class="maintitle">',line)
+                line = reSignatureOld.sub('<div class="formsubtitle">',line)
+                if mode == BODY:
+                    if reMessage.search(line):
+                        subject = "<No Subject>"
+                        buff = stringBuffer()
+                        buff.write(reWrapper.sub('',line))
+                        mode = MESSAGE
+                elif mode == MESSAGE:
+                    if reTitle.search(line):
+                        subject = reTitle.search(line).group(1)
+                        subject = reHtmlEntity.sub(subHtmlEntity,subject)
                         buff.write(line)
+                    elif reSignature.search(line):
+                        maSent = reSent.search(line)
+                        if maSent:
+                            direction = maSent.group(1)
+                            author = maSent.group(2)
+                            date = getTime(maSent.group(3))
+                            messageKey = '::'.join((subject,author,`int(date)`))
+                            newSent = (_('Sent %s <b>%s</b> on %s</div>') % (direction,
+                                author,time.strftime('%b %d %Y, %I:%M %p',time.localtime(date))))
+                            line = reSent.sub(newSent,line,1)
+                            buff.write(line)
+                            self.data[messageKey] = (subject,author,date,buff.getvalue())
+                        buff.close()
+                        buff = None
+                        mode = BODY
+                    else:
+                        buff.write(line)
+            elif mode != HEADER and whichStyle == NEWSTYLE:
+                if mode == BODY:
+                    if reTitleNew.search(line):
+                        subject = reTitleNew.search(line).group(1)
+                        subject = reHtmlEntity.sub(subHtmlEntity,subject)
+                        mode = AUTHOR
+                elif mode == AUTHOR:
+                    if reAuthorNew.search(line):
+                        author = reAuthorNew.search(line).group(1)
+                        mode = DATE
+                elif mode == DATE:
+                    if reDateNew.search(line):
+                        date = reDateNew.search(line).group(1)
+                        date = getTime(date)
+                        mode = MESSAGE
+                elif mode == MESSAGE:
+                    if reMessageNew.search(line):
+                        buff = stringBuffer()
+                        buff.write('<br /><div class="borderwrapm">\n')
+                        buff.write('    <div class="maintitle">PM: %s</div>\n' % subject)
+                        buff.write('    <div class="tablefill"><div class="postcolor">')
+                        mode = MESSAGEBODY
+                elif mode == MESSAGEBODY:
+                    if reEndMessageNew.search(line):
+                        buff.write('    <div class="formsubtitle">Sent by <b>%s</b> on %s</div>\n' % (author,time.strftime('%b %d %Y, %I:%M %p',time.localtime(date))))
+                        messageKey = '::'.join((subject,author,`int(date)`))
                         self.data[messageKey] = (subject,author,date,buff.getvalue())
-                    buff.close()
-                    buff = None
-                    mode = BODY
-                else:
-                    buff.write(line)
+                        buff.close()
+                        buff = None
+                        mode = AUTHOR
+                    else:
+                        buff.write(reLineEndings.sub('',line))
         ins.close()
         self.hasChanged = True
         self.save()
@@ -12039,7 +12631,7 @@ class PeopleData(PickleTankData, bolt.TankData, DataDict):
                 buffer.close()
                 buffer = None
             name = maName.group(1).strip()
-            if name: buffer = cStringIO.StringIO()
+            if name: buffer = stringBuffer()
         ins.close()
         if newNames: self.setChanged()
         return newNames
@@ -12074,17 +12666,6 @@ class ScreensData(DataDict):
             maImageExt = reImageExt.search(fileName.s)
             if maImageExt and filePath.isfile():
                 newData[fileName] = (maImageExt.group(1).lower(),filePath.mtime)
-        #--fallout3_cn.3dm screenshots
-        re3dmImageDir = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}_\d{2}_\d{2}$',re.I)
-        for dirName in self.dir.list():
-            dirPath = self.dir.join(dirName)
-            maImageDir = re3dmImageDir.search(dirName.s)
-            if maImageDir and dirPath.isdir():
-                for fileName in dirPath.list():
-                    filePath = dirPath.join(fileName)
-                    maImageExt = reImageExt.search(fileName.s)
-                    if maImageExt and filePath.isfile():
-                        newData[dirName.join(fileName)] = (maImageExt.group(1).lower(),filePath.mtime)
         changed = (self.data != newData)
         self.data = newData
         return changed
@@ -12104,22 +12685,22 @@ class Installer(object):
     persistent = ('archive','order','group','modified','size','crc',
         'fileSizeCrcs','type','isActive','subNames','subActives','dirty_sizeCrc',
         'comments','readMe','packageDoc','packagePic','src_sizeCrcDate','hasExtraData',
-        'skipVoices','espmNots','isSolid')
+        'skipVoices','espmNots','isSolid','blockSize','overrideSkips','remaps','skipRefresh')
     volatile = ('data_sizeCrc','skipExtFiles','skipDirFiles','status','missingFiles',
-        'mismatchedFiles','refreshed','mismatchedEspms','unSize','espms','underrides', 'hasWizard', 'espmMap')
+        'mismatchedFiles','refreshed','mismatchedEspms','unSize','espms','underrides', 'hasWizard', 'espmMap',)
     __slots__ = persistent+volatile
     #--Package analysis/porting.
     docDirs = set(('screenshots',))
     dataDirs = set(('bash patches','distantlod','docs','facegen','fonts',
         'menus','meshes','music','shaders','sound', 'textures', 'trees','video'))
-    dataDirsPlus = dataDirs | docDirs | set(('streamline','_tejon','ini tweaks','scripts','pluggy'))
-    dataDirsMinus = set(('bash','nvse','replacers')) #--Will be skipped even if hasExtraData == True.
-    reDataFile = re.compile(r'(masterlist.txt|dlclist.txt|\.(esp|esm|bsa))$',re.I)
+    dataDirsPlus = dataDirs | docDirs | set(('streamline','_tejon','ini tweaks','scripts','pluggy','ini','nvse'))
+    dataDirsMinus = set(('bash','replacers','--')) #--Will be skipped even if hasExtraData == True.
+    reDataFile = re.compile(r'(masterlist.txt|dlclist.txt|\.(esp|esm|bsa|ini))$',re.I)
     reReadMe = re.compile(r'^([^\\]*)(read[ _]?me|lisez[ _]?moi)([^\\]*)\.(txt|rtf|htm|html|doc|odt)$',re.I)
-    skipExts = set(('.exe','.py','.pyc','.7z','.zip','.rar','.db','.ace','.tgz','.tar','.tar.gz','.fomod'))
+    skipExts = set(('.exe','.py','.pyc','.7z','.zip','.rar','.db','.ace','.tgz','.tar','.gz','.bz2','.fomod','.tb2','.lzma'))
     skipExts.update(set(readExts))
-    docExts = set(('.txt','.rtf','.htm','.html','.doc','.docx','.odt','.mht','.pdf','.css','.xls'))
-    imageExts = set(('.gif','.jpg','.png'))
+    docExts = set(('.txt','.rtf','.htm','.html','.doc','.docx','.odt','.mht','.pdf','.css','.xls','.ods','.odp','.ppt'))
+    imageExts = set(('.gif','.jpg','.png','.jpeg','.bmp'))
     scriptExts = set(('.txt','.ini'))
     #--Temp Files/Dirs
     tempDir = GPath('InstallerTemp')
@@ -12136,20 +12717,28 @@ class Installer(object):
     @staticmethod
     def clearTemp():
         """Clear temp install directory -- DO NOT SCREW THIS UP!!!"""
-        Installer.tempDir.rmtree(safety='Temp')
+        try:
+            InstallerConverter.tempDir.rmtree(safety='Temp')
+        except:
+            InstallerConverter.tempDir.rmtree(safety='Temp')
 
     @staticmethod
     def sortFiles(files):
         """Utility function. Sorts files by directory, then file name."""
-        def sortKey(file):
-            #dirFile = file.lower().rsplit('\\',1)
-            #if len(dirFile) == 1: dirFile.insert(0,'')
-            pathParts = bolt.Path.mbSplit(file)
-            if len(pathParts) == 1:
-                dirFile = ['', pathParts[0]]
-            else:
-                dirFile = ['\\'.join(pathParts[0:-1]), pathParts[-1]]
-            return dirFile
+        if inisettings['EnableUnicode']:
+            def sortKey(file):
+                dirFile = file.lower().rsplit('\\',1)
+                if len(dirFile) == 1: dirFile.insert(0,'')
+                return dirFile
+        else:
+            splitter = bolt.Path.mbSplit
+            def sortKey(file):
+                pathParts = splitter(file)
+                if len(pathParts) == 1:
+                    dirFile = ['', pathParts[0]]
+                else:
+                    dirFile = ['\\'.join(pathParts[0:-1]), pathParts[-1]]
+                return dirFile
         sortKeys = dict((x,sortKey(x)) for x in files)
         return sorted(files,key=lambda x: sortKeys[x])
 
@@ -12163,7 +12752,10 @@ class Installer(object):
         rootName = apRoot.stail
         progress = progress or bolt.Progress()
         new_sizeCrcDate = {}
-        bethFiles = bush.bethDataFiles
+        if settings['bash.installers.autoRefreshBethsoft']:
+            bethFiles = set()
+        else:
+            bethFiles = bush.bethDataFiles
         skipExts = Installer.skipExts
         asRoot = apRoot.s
         relPos = len(apRoot.s)+1
@@ -12192,6 +12784,8 @@ class Installer(object):
                     sDirs[:] = [x for x in sDirs if x.lower() != 'distantlod']
                 if settings['bash.installers.skipScreenshots']:
                     sDirs[:] = [x for x in sDirs if x.lower() != 'screenshots']
+                if not settings['bash.installers.allowNVSEPlugins']:
+                    sDirs[:] = [x for x in sDirs if x.lower() != 'nvse']
                 if settings['bash.installers.skipDocs'] and settings['bash.installers.skipImages']:
                     sDirs[:] = [x for x in sDirs if x.lower() != 'docs']
                 if inisettings['KeepLog'] >= 1:
@@ -12211,7 +12805,6 @@ class Installer(object):
             rpDirJoin = rpDir.join
             apDirJoin = apDir.join
             for sFile in sFiles:
-                #print '...',sFile
                 ext = sFile[sFile.rfind('.'):].lower()
                 rpFile = rpDirJoin(sFile)
                 if inModsRoot:
@@ -12237,15 +12830,21 @@ class Installer(object):
         changed = bool(pending) or (len(new_sizeCrcDate) != len(old_sizeCrcDate))
         #--Update crcs?
         if pending:
+            totalSize = sum([apRootJoin(normGet(x,x)).size for x in pending])
+            done = 0
             progress(0,_("%s\nCalculating CRCs...\n") % rootName)
-            progress.setFull(1+len(pending))
+            progress.setFull(max(totalSize,1))
             for index,rpFile in enumerate(sorted(pending)):
-                progress(index,_("%s\nCalculating CRCs...\n%s") % (rootName,rpFile.s))
-                #print rpFile.s
-                apFile = apRootJoin(normGet(rpFile,rpFile))
-                crc = apFile.crc
-                size = apFile.size
-                date = apFile.mtime
+                progress(done,_("%s\nCalculating CRCs...\n%s") % (rootName,rpFile.s))
+                try:
+                    apFile = apRootJoin(normGet(rpFile,rpFile))
+                    size = apFile.size
+                    crc = apFile.crcProgress(bolt.SubProgress(progress,done,done+max(size,1)))
+                    date = apFile.mtime
+                    done += size
+                except WindowsError:
+                    deprint(_('Failed to calculate crc for %s - please report this and or try the unicode build of Wrye Bash.') % (apFile.s))
+                    continue
                 new_sizeCrcDate[rpFile] = (size,crc,date)
         old_sizeCrcDate.clear()
         old_sizeCrcDate.update(new_sizeCrcDate)
@@ -12261,7 +12860,8 @@ class Installer(object):
         self.size = 0 #--size of archive file
         self.crc = 0 #--crc of archive
         self.type = 0 #--Package type: 0: unset/invalid; 1: simple; 2: complex
-        self.isSolid = 0
+        self.isSolid = False
+        self.blockSize = None
         self.fileSizeCrcs = []
         self.subNames = []
         self.src_sizeCrcDate = {} #--For InstallerProject's
@@ -12272,11 +12872,14 @@ class Installer(object):
         #--User Only
         self.skipVoices = False
         self.hasExtraData = False
+        self.overrideSkips = False
+        self.skipRefresh = False    # Projects only
         self.comments = ''
         self.group = '' #--Default from abstract. Else set by user.
         self.order = -1 #--Set by user/interface.
         self.isActive = False
         self.espmNots = set() #--Lowercase esp/m file names that user has decided not to install.
+        self.remaps = {}
         #--Volatiles (unpickled values)
         #--Volatiles: directory specific
         self.refreshed = False
@@ -12295,6 +12898,40 @@ class Installer(object):
         self.missingFiles = set()
         self.mismatchedFiles = set()
         self.mismatchedEspms = set()
+
+    def resetEspmName(self,currentName):
+        oldName = self.getEspmName(currentName)
+        del self.remaps[oldName]
+        path = GPath(currentName)
+        if path in self.espmNots:
+            self.espmNots.discard(path)
+            self.espmNots.add(GPath(oldName))
+
+    def resetAllEspmNames(self):
+        for espm in self.remaps.keys():
+            # Need to use .keys(), since 'resetEspmName' will use
+            # del self.remaps[oldName], changing the dictionary
+            # size.
+            self.resetEspmName(self.remaps[espm])
+
+    def getEspmName(self,currentName):
+        for old in self.remaps:
+            if self.remaps[old] == currentName:
+                return old
+        return currentName
+
+    def setEspmName(self,currentName,newName):
+        oldName = self.getEspmName(currentName)
+        self.remaps[oldName] = newName
+        path = GPath(currentName)
+        if path in self.espmNots:
+            self.espmNots.discard(path)
+            self.espmNots.add(GPath(newName))
+        else:
+            self.espmNots.discard(GPath(newName))
+
+    def isEspmRenamed(self,currentName):
+        return self.getEspmName(currentName) != currentName
 
     def __init__(self,archive):
         """Initialize."""
@@ -12328,7 +12965,7 @@ class Installer(object):
             setter(clone,attr,copier(getter(self,attr)))
         return clone
 
-    def refreshDataSizeCrc(self):
+    def refreshDataSizeCrc(self,checkNVSE=False):
         """Updates self.data_sizeCrc and related variables.
         Also, returns dest_src map for install operation."""
         if isinstance(self,InstallerArchive):
@@ -12347,15 +12984,26 @@ class Installer(object):
         packageFiles = set(('package.txt','package.jpg'))
         unSize = 0
         espmNots = self.espmNots
-        skipVoices = self.skipVoices
-        if espmNots and not skipVoices:
-            skipEspmVoices = set(x.cs for x in espmNots)
-        else:
+        if self.overrideSkips:
+            skipVoices = False
             skipEspmVoices = None
-        skipScreenshots = settings['bash.installers.skipScreenshots']
-        skipDocs = settings['bash.installers.skipDocs']
-        skipImages = settings['bash.installers.skipImages']
-        skipDistantLOD = settings['bash.installers.skipDistantLOD']
+            skipScreenshots = False
+            skipDocs = False
+            skipImages = False
+            skipDistantLOD = False
+            skipLandscapeLODMeshes = False
+            skipLandscapeLODTextures = False
+            skipLandscapeLODNormals = False
+        else:
+            skipVoices = self.skipVoices
+            skipEspmVoices = set(x.cs for x in espmNots)
+            skipScreenshots = settings['bash.installers.skipScreenshots']
+            skipDocs = settings['bash.installers.skipDocs']
+            skipImages = settings['bash.installers.skipImages']
+            skipDistantLOD = settings['bash.installers.skipDistantLOD']
+            skipLandscapeLODMeshes = settings['bash.installers.skipLandscapeLODMeshes']
+            skipLandscapeLODTextures = settings['bash.installers.skipLandscapeLODTextures']
+            skipLandscapeLODNormals = settings['bash.installers.skipLandscapeLODNormals']
         hasExtraData = self.hasExtraData
         type = self.type
         if type == 2:
@@ -12369,48 +13017,75 @@ class Installer(object):
         data_sizeCrc = {}
         skipExtFiles = self.skipExtFiles
         skipDirFiles = self.skipDirFiles
+        skipDirFilesAdd = skipDirFiles.add
+        skipExtFilesAdd = skipExtFiles.add
+        goodDlls, badDlls = settings['bash.installers.goodDlls'],settings['bash.installers.badDlls']
         espms = self.espms
+        espmsAdd = espms.add
+        bUseUnicode = inisettings['EnableUnicode']
+        if not bUseUnicode:
+            splitter = bolt.Path.mbSplit
+        espmMap = self.espmMap = {}
+        espmMapSetdefault = espmMap.setdefault
+        reModExtMatch = reModExt.match
+        reReadMeMatch = reReadMe.match
         dest_src = {}
         #--Bad archive?
         if type not in (1,2): return dest_src
         #--Scan over fileSizeCrcs
         for full,size,crc in self.fileSizeCrcs:
-            file = full #--Default
+            file = full
             fileLower = file.lower()
-            if full[:2] == '--' or fileLower[:20] == 'fomod conversion data':
+            if fileLower.startswith(('--','fomod conversion data','wizard images')):
                 continue
             sub = ''
             bSkip = False
             if type == 2: #--Complex archive
-                #subFile = full.split('\\',1)
-                #if len(subFile) == 2:
-                #    sub,file = subFile
-                pathParts = bolt.Path.mbSplit(full)
-                if len(pathParts) > 1:
-                    sub = pathParts[0]
-                    file = '\\'.join(pathParts[1:])
-                    if sub not in activeSubs:
-                        if sub not in allSubs:
-                            skipDirFiles.add(file)
-                        bSkip = True
-                    fileLower = file.lower()
-            if sub not in self.espmMap:
-                self.espmMap[sub] = []
-            #rootPos = file.find('\\')
-            pathParts = bolt.Path.mbSplit(file)
-            rootPos = len(pathParts[0]) if len(pathParts) > 1 else -1
+                if bUseUnicode:
+                    subFile = full.split('\\',1)
+                    if len(subFile) == 2:
+                        sub,file = subFile
+                        if sub not in activeSubs:
+                            if sub not in allSubs:
+                                skipDirFilesAdd(file)
+                            bSkip = True
+                        fileLower = file.lower()
+                else:
+                    pathParts = splitter(full)
+                    if len(pathParts) > 1:
+                        sub = pathParts[0]
+                        file = '\\'.join(pathParts[1:])
+                        if sub not in activeSubs:
+                            if sub not in allSubs:
+                                skipDirFilesAdd(file)
+                            bSkip = True
+                        fileLower = file.lower()
+            subList = espmMapSetdefault(sub,[])
+            if bUseUnicode:
+                rootPos = file.find('\\')
+            else:
+                pathParts = splitter(file)
+                rootPos = len(pathParts[0]) if len(pathParts) > 1 else -1
             extPos = file.rfind('.')
-            fileLower = file.lower()
             rootLower = (rootPos > 0 and fileLower[:rootPos]) or ''
             fileExt = (extPos > 0 and fileLower[extPos:]) or ''
+            fileEndsWith = fileLower.endswith
+            fileStartsWith = fileLower.startswith
             #--Silent skips
-            if fileLower[-9:] == 'thumbs.db' or fileLower[-11:] == 'desktop.ini':
+            if fileEndsWith(('thumbs.db','desktop.ini')):
                 continue #--Silent skip
-            elif skipDistantLOD and fileLower[:10] == 'distantlod':
+            elif skipDistantLOD and fileStartsWith('distantlod'):
                 continue
-            elif skipVoices and fileLower[:11] == 'sound\\voice':
+            elif skipLandscapeLODMeshes and fileStartsWith(r'meshes\landscape\lod'):
                 continue
-            elif skipScreenshots and fileLower[:11] == 'screenshots':
+            elif fileStartsWith(r'textures\landscapelod\generated'):
+                if skipLandscapeLODNormals and fileEndsWith(r'_fn.dds'):
+                    continue
+                elif skipLandscapeLODTextures and not fileEndsWith(r'_fn.dds'):
+                    continue
+            elif skipVoices and fileStartsWith('sound\\voice'):
+                continue
+            elif skipScreenshots and fileStartsWith('screenshots'):
                 continue
             elif fileLower == 'wizard.txt':
                 self.hasWizard = full
@@ -12419,34 +13094,61 @@ class Installer(object):
                 continue
             elif skipDocs and fileExt in docExts:
                 continue
-            elif file[:2] == '--':
+            elif fileStartsWith('--'):
                 continue
+            elif not settings['bash.installers.allowNVSEPlugins'] and fileStartsWith('nvse\\'):
+                continue
+            elif fileExt in ['.dll','.dlx']:
+                if not settings['bash.installers.allowNVSEPlugins']: continue
+                if not fileStartsWith('nvse\\'):
+                    continue
+                if fileLower in badDlls and [archiveRoot,size,crc] in badDlls[fileLower]: continue
+                if not checkNVSE:
+                    pass
+                elif fileLower in goodDlls and [archiveRoot,size,crc] in goodDlls[fileLower]: pass
+                elif checkNVSE:
+                    message = _('This installer (%s) has an NVSE plugin DLL.\nThe file is %s\nSuch files can be malicious and hence you should be very sure you know what this file is and that it is legitimate.\nAre you sure you want to install this?') % (archiveRoot, full)
+                    if fileLower in goodDlls:
+                        message += _(' You have previously chosen to install a dll by this name but with a different size, crc and or source archive name.')
+                    elif fileLower in badDlls:
+                        message += _(' You have previously chosen to NOT install a dll by this name but with a different size, crc and or source archive name - make extra sure you want to install this one before saying yes.')
+                    if not balt.askYes(installersWindow,message,_('NVSE DLL Warning')):
+                        badDlls.setdefault(fileLower,[])
+                        badDlls[fileLower].append([archiveRoot,size,crc])
+                        continue
+                    goodDlls.setdefault(fileLower,[])
+                    goodDlls[fileLower].append([archiveRoot,size,crc])
             #--Noisy skips
             elif file in bethFiles:
-                if not bSkip: skipDirFiles.add(full)
+                if not bSkip: skipDirFilesAdd(full)
                 continue
             elif not hasExtraData and rootLower and rootLower not in dataDirsPlus:
-                if not bSkip: skipDirFiles.add(full)
+                if not bSkip: skipDirFilesAdd(full)
                 continue
             elif hasExtraData and rootLower and rootLower in dataDirsMinus:
-                if not bSkip: skipDirFiles.add(full)
+                if not bSkip: skipDirFilesAdd(full)
                 continue
             elif fileExt in skipExts:
-                if not bSkip: skipExtFiles.add(full)
+                if not bSkip: skipExtFilesAdd(full)
                 continue
             #--Esps
-            if not rootLower and reModExt.match(fileExt):
-                if file not in self.espmMap[sub]:
-                    self.espmMap[sub].append(file)
+            if not rootLower and reModExtMatch(fileExt):
+                #--Remap espms as defined by the user
+                if file in self.remaps:
+                    file = self.remaps[file]
+                if file not in subList:
+                    subList.append(file)
                 if bSkip: continue
                 pFile = GPath(file)
-                espms.add(pFile)
+                espmsAdd(pFile)
                 if pFile in espmNots: continue
             elif bSkip: continue
-            if skipEspmVoices and fileLower[:12] == 'sound\\voice\\':
-                #farPos = file.find('\\',12)
-                pathParts = bolt.Path.mbSplit(file[12:])
-                farPos = len(pathParts[0])+12 if len(pathParts) > 1 else -1
+            if skipEspmVoices and fileStartsWith('sound\\voice\\'):
+                if bUseUnicode:
+                    farPos = file.find('\\',12)
+                else:
+                    pathParts = splitter(file[12:])
+                    farPos = len(pathParts[0])+12 if len(pathParts) > 1 else -1
                 if farPos > 12 and fileLower[12:farPos] in skipEspmVoices:
                     continue
             #--Remap docs
@@ -12456,8 +13158,8 @@ class Installer(object):
             elif rootLower in dataDirsPlus:
                 pass
             elif not rootLower:
-                maReadMe = reReadMe.match(file)
-                if fileLower == 'masterlist.txt' or fileLower == 'dlclist.txt':
+                maReadMe = reReadMeMatch(file)
+                if fileLower in ('masterlist.txt','dlclist.txt'):
                     pass
                 elif maReadMe:
                     if not (maReadMe.group(1) or maReadMe.group(3)):
@@ -12479,6 +13181,7 @@ class Installer(object):
             dest_src[key] = full
             unSize += size
         self.unSize = unSize
+        settings['bash.installers.goodDlls'], settings['bash.installers.badDlls'] = goodDlls, badDlls
         (self.data_sizeCrc,old_sizeCrc) = (data_sizeCrc,self.data_sizeCrc)
         #--Update dirty?
         if self.isActive and data_sizeCrc != old_sizeCrc:
@@ -12496,29 +13199,37 @@ class Installer(object):
     def refreshBasic(self,archive,progress=None,fullRefresh=False):
         """Extract file/size/crc info from archive."""
         self.refreshSource(archive,progress,fullRefresh)
-        def fscSortKey(fsc):
-            #dirFile = fsc[0].lower().rsplit('\\',1)
-            #if len(dirFile) == 1: dirFile.insert(0,'')
-            pathParts = bolt.Path.mbSplit(fsc[0])
-            if len(pathParts) == 1:
-                dirFile = ['', pathParts[0]]
-            else:
-                dirFile = ['\\'.join(pathParts[0:-1]), pathParts[-1]]
-            return dirFile
+        if inisettings['EnableUnicode']:
+            def fscSortKey(fsc):
+                dirFile = fsc[0].lower().rsplit('\\',1)
+                if len(dirFile) == 1: dirFile.insert(0,'')
+                return dirFile
+        else:
+            splitter = bolt.Path.mbSplit
+            def fscSortKey(fsc):
+                pathParts = splitter(fsc[0])
+                if len(pathParts) == 1:
+                    dirFile = ['', pathParts[0]]
+                else:
+                    dirFile = ['\\'.join(pathParts[0:-1]), pathParts[-1]]
+                return dirFile
         fileSizeCrcs = self.fileSizeCrcs
         sortKeys = dict((x,fscSortKey(x)) for x in fileSizeCrcs)
         fileSizeCrcs.sort(key=lambda x: sortKeys[x])
         #--Type, subNames
         reDataFile = self.reDataFile
-        dataDirs = self.dataDirs
+        dataDirs = self.dataDirsPlus
         type = 0
         subNameSet = set()
         subNameSet.add('')
+        bUseUnicode = inisettings['EnableUnicode']
         for file,size,crc in fileSizeCrcs:
             fileLower = file.lower()
             if type != 1:
-                #frags = file.split('\\')
-                frags = bolt.Path.mbSplit(file)
+                if bUseUnicode:
+                    frags = file.split('\\')
+                else:
+                    frags = splitter(file)
                 nfrags = len(frags)
                 #--Type 1?
                 if (nfrags == 1 and reDataFile.search(frags[0]) or
@@ -12611,26 +13322,36 @@ class InstallerConverter(object):
     #--Temp Files/Dirs
     tempDir = GPath('InstallerTemp')
     tempList = GPath('InstallerTempList.txt')
-    def __init__(self,srcArchives=None, data=None, destArchive=None, BCFArchive=None,progress=None):
+    def __init__(self,srcArchives=None, data=None, destArchive=None, BCFArchive=None, blockSize=None, progress=None):
         #--Persistent variables are saved in the data tank for normal operations.
         #--persistBCF is read one time from BCF.dat, and then saved in Converters.dat to keep archive extractions to a minimum
         #--persistDAT has operational variables that are saved in Converters.dat
+        #--Do NOT reorder persistBCF,persistDAT,addedPersist or you will break existing BCFs!
+        #--Do NOT add new attributes to persistBCF, persistDAT.
         self.persistBCF = ['srcCRCs']
         self.persistDAT = ['crc','fullPath']
+        #--Any new BCF persistent variables are not allowed. Additional work needed to support backwards compat.
+        #--Any new DAT persistent variables must be appended to addedPersistDAT.
+        #----They must be able to handle being set to None
+        self.addedPersistDAT = []
         self.srcCRCs = set()
         self.crc = None
         #--fullPath is saved in Converters.dat, but it is also updated on every refresh in case of renaming
         self.fullPath = 'BCF: Missing!'
         #--Semi-Persistent variables are loaded only when and as needed. They're always read from BCF.dat
+        #--Do NOT reorder settings,volatile,addedSettings or you will break existing BCFs!
         self.settings = ['comments','espmNots','hasExtraData','isSolid','skipVoices','subActives']
         self.volatile = ['convertedFiles','dupeCount']
+        #--Any new saved variables, whether they're settings or volatile must be appended to addedSettings.
+        #----They must be able to handle being set to None
+        self.addedSettings = ['blockSize',]
         self.convertedFiles = []
         self.dupeCount = {}
         #--Cheap init overloading...
         if data != None:
             #--Build a BCF from scratch
             self.fullPath = dirs['converters'].join(BCFArchive)
-            self.build(srcArchives, data, destArchive, BCFArchive,progress)
+            self.build(srcArchives, data, destArchive, BCFArchive, blockSize, progress)
             self.crc = self.fullPath.crc
         elif isinstance(srcArchives,bolt.Path):
             #--Load a BCF from file
@@ -12641,41 +13362,48 @@ class InstallerConverter(object):
 
     def __getstate__(self):
         """Used by pickler to save object state. Used for Converters.dat"""
-        getter = object.__getattribute__
-        attrs = self.persistBCF + self.persistDAT
-        return tuple(getter(self,x) for x in attrs)
+        return tuple(map(self.__getattribute__, self.persistBCF + self.persistDAT + self.addedPersistDAT))
 
     def __setstate__(self,values):
         """Used by unpickler to recreate object. Used for Converters.dat"""
         self.__init__()
-        setter = object.__setattr__
-        attrs = self.persistBCF + self.persistDAT
-        for value,attr in zip(values,attrs):
-            setter(self,attr,value)
+        map(self.__setattr__,self.persistBCF + self.persistDAT + self.addedPersistDAT, values)
 
     def load(self,fullLoad=False):
         """Loads BCF.dat. Called once when a BCF is first installed, during a fullRefresh, and when the BCF is applied"""
         if not self.fullPath.exists(): raise StateError(_("\nLoading %s:\nBCF doesn't exist.") % self.fullPath.s)
-        command = '7z.exe x "%s" BCF.dat -y -so' % self.fullPath.s
+        command = '"%s" x "%s" BCF.dat -y -so' % (exe7z, self.fullPath.s)
+        command = Encode(command,'mbcs')
         try:
-            ins = os.popen(command,'rb')
-            values = cPickle.load(ins)
-            setter = object.__setattr__
-            for value,attr in zip(values,self.persistBCF):
-                setter(self,attr,value)
-            if fullLoad:
-                values = cPickle.load(ins)
-                for value,attr in zip(values,self.settings + self.volatile):
-                    setter(self,attr,value)
-            ins.close()
+            ins, err = Popen(command, stdout=PIPE, startupinfo=startupinfo).communicate()
         except:
-            if ins: ins.close()
             raise StateError(_("\nLoading %s:\nBCF extraction failed.") % self.fullPath.s)
+        ins = cStringIO.StringIO(Encode(ins))
+        setter = object.__setattr__
+        map(self.__setattr__, self.persistBCF, cPickle.load(ins))
+        if fullLoad:
+            map(self.__setattr__, self.settings + self.volatile + self.addedSettings, cPickle.load(ins))
+        ins.close()
+
+    def save(self, destInstaller):
+        #--Dump settings into BCF.dat
+        try:
+            f = open(destInstaller.tempDir.join("BCF.dat").s, 'wb')
+            cPickle.dump(tuple(map(self.__getattribute__, self.persistBCF)), f,-1)
+            cPickle.dump(tuple(map(self.__getattribute__, self.settings + self.volatile + self.addedSettings)), f,-1)
+            result = f.close()
+        finally:
+            if f: f.close()
+            if result:
+                raise StateError(_("Error creating BCF.dat:\nError Code: %s") % (result))
 
     @staticmethod
     def clearTemp():
         """Clear temp install directory -- DO NOT SCREW THIS UP!!!"""
-        InstallerConverter.tempDir.rmtree(safety='Temp')
+        try:
+            InstallerConverter.tempDir.rmtree(safety='Temp')
+        except:
+            InstallerConverter.tempDir.rmtree(safety='Temp')
 
     def apply(self,destArchive,crc_installer,progress=None):
         """Applies the BCF and packages the converted archive"""
@@ -12684,8 +13412,10 @@ class InstallerConverter(object):
         self.clearTemp()
         progress = progress or bolt.Progress()
         progress(0,_("%s\nExtracting files...") % self.fullPath.stail)
-        command = '7z.exe x "%s" -y -o"%s"' % (self.fullPath.s, self.tempDir.s)
-        ins = os.popen(command,'r')
+        command = '"%s" x "%s" -y -o"%s"' % (exe7z, self.fullPath.s, self.tempDir.s)
+        command = Encode(command,'mbcs')
+        ins, err = Popen(command, stdout=PIPE, startupinfo=startupinfo).communicate()
+        ins = stringBuffer(ins)
         #--Error checking
         reError = re.compile('Error:')
         regMatch = reError.match
@@ -12715,10 +13445,7 @@ class InstallerConverter(object):
 
     def applySettings(self,destInstaller):
         """Applies the saved settings to an Installer"""
-        setter = object.__setattr__
-        getter = object.__getattribute__
-        for attr in self.settings:
-            setter(destInstaller,attr,getter(self,attr))
+        map(destInstaller.__setattr__, self.settings + self.addedSettings, map(self.__getattribute__, self.settings + self.addedSettings))
 
     def arrangeFiles(self,progress):
         """Copies and/or moves extracted files into their proper arrangement."""
@@ -12729,19 +13456,21 @@ class InstallerConverter(object):
         dupes = dict(self.dupeCount.iteritems())
         destJoin = destDir.join
         tempJoin = self.tempDir.join
+
         #--Move every file
         for index, (crcValue, srcDir_File, destFile) in enumerate(self.convertedFiles):
             srcDir = srcDir_File[0]
-            srcFile = srcDir_File[1]
+            srcFile = Unicode(srcDir_File[1],'mbcs')
             if isinstance(srcDir,basestring):
                 #--either 'BCF-Missing', or crc read from 7z l -slt
                 srcFile = tempJoin(srcDir,srcFile)
             else:
                 srcFile = tempJoin("%08X" % srcDir,srcFile)
-            destFile = destJoin(destFile)
-            if not srcFile.exists() or destFile == None:
-                raise StateError(_("%s: Missing file:\n%s") % (self.fullPath.stail, destFile))
-                return
+            destFile = destJoin(Unicode(destFile,'mbcs'))
+            if not srcFile.exists():
+                raise StateError(_("%s: Missing source file:\n%s") % (self.fullPath.stail, srcFile.s))
+            if destFile == None:
+                raise StateError(_("%s: Unable to determine file destination for:\n%s") % (self.fullPath.stail, srcFile.s))
             numDupes = dupes[crcValue]
             #--Keep track of how many times the file is referenced by convertedFiles
             #--This allows files to be moved whenever possible, speeding file operations up
@@ -12753,7 +13482,7 @@ class InstallerConverter(object):
                 progress(index,_("Moving file...\n%s") % destFile.stail)
                 srcFile.moveTo(destFile)
 
-    def build(self, srcArchives, data, destArchive, BCFArchive,progress=None):
+    def build(self, srcArchives, data, destArchive, BCFArchive, blockSize, progress=None):
         """Builds and packages a BCF"""
         progress = progress or bolt.Progress()
         #--Initialization
@@ -12762,6 +13491,7 @@ class InstallerConverter(object):
         destFiles = []
         destInstaller = data[destArchive]
         self.missingFiles = []
+        self.blockSize = blockSize
         subArchives = dict()
         srcAdd = self.srcCRCs.add
         convertedFileAppend = self.convertedFiles.append
@@ -12770,12 +13500,10 @@ class InstallerConverter(object):
         dupeGet = self.dupeCount.get
         srcGet = srcFiles.get
         subGet = subArchives.get
-        setter = object.__setattr__
-        getter = object.__getattribute__
         lastStep = 0
         #--Get settings
-        for attr in ['espmNots','hasExtraData','skipVoices','comments','subActives','isSolid']:
-            setter(self,attr,getter(destInstaller,attr))
+        attrs = ['espmNots','hasExtraData','skipVoices','comments','subActives','isSolid']
+        map(self.__setattr__, attrs, map(destInstaller.__getattribute__,attrs))
         #--Make list of source files
         for installer in [data[x] for x in srcArchives]:
             installerCRC = installer.crc
@@ -12859,21 +13587,12 @@ class InstallerConverter(object):
             tempDir2.moveTo(destInstaller.tempDir.join('BCF-Missing'))
         #--Make the temp dir in case it doesn't exist
         destInstaller.tempDir.makedirs()
-        #--Dump settings into BCF.dat
-        try:
-            f = open(destInstaller.tempDir.join("BCF.dat").s, 'wb')
-            cPickle.dump(tuple(getter(self,x) for x in self.persistBCF), f,-1)
-            cPickle.dump(tuple(getter(self,x) for x in (self.settings + self.volatile)), f,-1)
-            result = f.close()
-        finally:
-            if f: f.close()
-            if result:
-                raise StateError(_("Error creating BCF.dat:\nError Code: %s") % (result))
+        self.save(destInstaller)
         #--Pack the BCF
         #--BCF's need to be non-Solid since they have to have BCF.dat extracted and read from during runtime
         self.isSolid = False
         self.pack(destInstaller.tempDir,BCFArchive,dirs['converters'],SubProgress(progress, lastStep, 1.0))
-        self.isSolid = getter(destInstaller,'isSolid')
+        self.isSolid = destInstaller.isSolid
 
     def pack(self,srcFolder,destArchive,outDir,progress=None):
         """Creates the BAIN'ified archive and cleans up temp"""
@@ -12887,12 +13606,26 @@ class InstallerConverter(object):
             destArchive = GPath(destArchive.sbody + defaultExt).tail
             archiveType = writeExts.get(destArchive.cext)
         outFile = outDir.join(destArchive)
-        solid = ('off','on')[self.isSolid]
-        command = '7z.exe a "%s" -t"%s" -ms="%s" -y -r -o"%s" "%s"' % ("%s" % outFile.temp.s, archiveType, solid, outDir.s, "%s\\*" % dirs['mopy'].join(srcFolder).s)
+
+        if self.isSolid:
+            if self.blockSize:
+                solid = '-ms=on -ms=%dm' % self.blockSize
+            else:
+                solid = '-ms=on'
+        else:
+            solid = '-ms=off'
+        if inisettings['7zExtraCompressionArguments']:
+            if '-ms=on' in inisettings['7zExtraCompressionArguments']:
+                solid = ' %s' % inisettings['7zExtraCompressionArguments']
+            else: solid += ' %s' % inisettings['7zExtraCompressionArguments']
+
+        command = '"%s" a "%s" -t"%s" %s -y -r -o"%s" "%s"' % (exe7z, "%s" % outFile.temp.s, archiveType, solid, outDir.s, "%s\\*" % dirs['mopy'].join(srcFolder).s)
+        command = Encode(command,'mbcs')
+
         progress(0,_("%s\nCompressing files...") % destArchive.s)
         progress.setFull(1+length)
         #--Pack the files
-        ins = os.popen(command,'r')
+        ins = Popen(command, stdout=PIPE, startupinfo=startupinfo).stdout
         #--Error checking and progress feedback
         reCompressing = re.compile('Compressing\s+(.+)')
         regMatch = reCompressing.match
@@ -12905,7 +13638,7 @@ class InstallerConverter(object):
             if len(errorLine) or regErrMatch(line):
                 errorLine.append(line)
             if maCompressing:
-                progress(index,destArchive.s+_("\nCompressing files...\n%s") % maCompressing.group(1).strip())
+                progress(index,Unicode(destArchive.s)+_("\nCompressing files...\n%s") % Unicode(maCompressing.group(1),'UTF8').strip())
                 index += 1
         result = ins.close()
         if result:
@@ -12924,10 +13657,9 @@ class InstallerConverter(object):
         #--Dump file list
         try:
             out = self.tempList.open('w')
-            out.write('\n'.join(fileNames))
-            result = out.close()
+            out.write(Encode('\n'.join(fileNames),'UTF8'))
         finally:
-            if out: out.close()
+            result = out.close()
             if result: raise StateError(_("Error creating file list for 7z:\nError Code: %s") % (result))
             result = 0
         #--Determine settings for 7z
@@ -12941,9 +13673,10 @@ class InstallerConverter(object):
         if progress:
             progress(0,_("%s\nExtracting files...") % srcInstaller.s)
             progress.setFull(1+len(fileNames))
-        command = '7z.exe x "%s" -y -o"%s" @%s -scsWIN' % (apath.s, subTempDir.s, self.tempList.s)
+        command = '"%s" x "%s" -y -o%s @%s -scsWIN' % (exe7z, apath.s, subTempDir.s, self.tempList.s)
+        command = Encode(command,'mbcs')
         #--Extract files
-        ins = os.popen(command,'r')
+        ins = Popen(command, stdout=PIPE, startupinfo=startupinfo).stdout
         #--Error Checking, and progress feedback
         #--Note subArchives for recursive unpacking
         subArchives = []
@@ -12968,6 +13701,7 @@ class InstallerConverter(object):
         self.tempList.remove()
         # Clear ReadOnly flag if set
         cmd = r'attrib -R "%s\*" /S /D' % (subTempDir.s)
+        cmd = Encode(cmd,'mbcs')
         ins, err = Popen(cmd, stdout=PIPE, startupinfo=startupinfo).communicate()
         if result:
             raise StateError(_("%s: Extraction failed:\n%s") % (srcInstaller.s, "\n".join(errorLine)))
@@ -13011,62 +13745,107 @@ class InstallerArchive(Installer):
         self.size = archive.size
         #--Get fileSizeCrcs
         fileSizeCrcs = self.fileSizeCrcs = []
-        reList = re.compile('(Solid|Path|Size|CRC|Attributes|Method) = (.*)')
+        oldstylefileSizeCrcs = []
+        if inisettings['EnableUnicode']:
+            reList = re.compile(u'(Solid|Path|Size|CRC|Attributes|Method) = (.*?)(?:\r\n|\n)')
+        else:
+            reList = re.compile('(Solid|Path|Size|CRC|Attributes|Method) = (.*?)(?:\r\n|\n)')
         file = size = crc = isdir = 0
         self.isSolid = False
-        ins = os.popen('7z.exe l -slt "%s"' % archive.s,'rt')
-        cumCRC = 0
-        for line in ins:
-            maList = reList.match(line)
-            if maList:
-                key,value = maList.groups()
-                if key == 'Solid': self.isSolid = (value[0] == '+')
-                elif key == 'Path':
-                    #--Should be able to twist 7z to export names in UTF-8, but can't (at
-                    #  least not prior to 7z 9.04 with -sccs(?) argument?) So instead,
-                    #  assume file is encoded in cp437 and that we want to decode to cp1252.
-                    #--Hopefully this will mostly resolve problem with german umlauts, etc.
-                    #  It won't solve problems with non-european characters though.
-                   ## try: file = value.decode('cp437').encode('cp1252')
-                   ## except: pass
-                    file = value
-                elif key == 'Size': size = int(value)
-                elif key == 'Attributes': isdir = (value[0] == 'D')
-                elif key == 'CRC' and value:
-                    crc = int(value,16)
-                elif key == 'Method':
-                    if file and not isdir and file != archive.s:
-                        fileSizeCrcs.append((file,size,crc))
-                        cumCRC += crc
-                    file = size = crc = isdir = 0
-        self.crc = cumCRC & 0xFFFFFFFFL
-        result = ins.close()
-        if result:
-            raise InstallerArchiveError('Unable to read archive %s (exit:%s).' % (archive.s,result))
+        if inisettings['EnableUnicode']:
+            ins = listArchiveContents(archive.s)
+        else:
+            command = r'"%s" l -slt "%s"' % (exe7z, archive.s)
+            ins, err = Popen(command, stdout=PIPE, startupinfo=startupinfo).communicate()
+            ins = stringBuffer(ins)
 
-    def unpackToTemp(self,archive,fileNames,progress=None):
+        cumCRC = 0
+        if inisettings['EnableUnicode']:
+            for line in ins.splitlines(True):
+                maList = reList.match(line)
+                if maList:
+                    key,value = maList.groups()
+                    if key == u'Solid': self.isSolid = (value[0] == u'+')
+                    elif key == u'Path':
+                        file = value.decode('utf8')
+                    elif key == u'Size': size = int(value)
+                    elif key == u'Attributes': isdir = (value[0] == u'D')
+                    elif key == u'CRC' and value:
+                        crc = int(value,16)
+                    elif key == u'Method':
+                        if file and not isdir and file != archive.s:
+                            fileSizeCrcs.append((file,size,crc))
+                            cumCRC += crc
+                        file = size = crc = isdir = 0
+        else:
+            for line in ins:
+                maList = reList.match(line)
+                if maList:
+                    key,value = maList.groups()
+                    if key == 'Solid': self.isSolid = (value[0] == '+')
+                    elif key == 'Path':
+                        #--Should be able to twist 7z to export names in UTF-8, but can't (at
+                        #  least not prior to 7z 9.04 with -sccs(?) argument?) So instead,
+                        #  assume file is encoded in cp437 and that we want to decode to cp1252.
+                        #--Hopefully this will mostly resolve problem with german umlauts, etc.
+                        #  It won't solve problems with non-european characters though.
+                       ## try: file = value.decode('cp437').encode('cp1252')
+                       ## except: pass
+                        file = value
+                    elif key == 'Size': size = int(value)
+                    elif key == 'Attributes': isdir = (value[0] == 'D')
+                    elif key == 'CRC' and value:
+                        crc = int(value,16)
+                    elif key == 'Method':
+                        if file and not isdir and file != archive.s:
+                            fileSizeCrcs.append((file,size,crc))
+                            cumCRC += crc
+                        file = size = crc = isdir = 0
+        self.crc = cumCRC & 0xFFFFFFFFL
+        if not inisettings['EnableUnicode']:
+            result = ins.close()
+            if result:
+                raise InstallerArchiveError('Unable to read archive %s (exit:%s).' % (archive.s,result))
+
+    def unpackToTemp(self,archive,fileNames,progress=None,recurse=False):
         """Erases all files from self.tempDir and then extracts specified files
         from archive to self.tempDir.
         fileNames: File names (not paths)."""
         if not fileNames: raise ArgumentError(_("No files to extract for %s.") % archive.s)
         progress = progress or bolt.Progress()
         progress.state,progress.full = 0,len(fileNames)
+        bUseUnicode = inisettings['EnableUnicode']
         #--Dump file list
-        out = self.tempList.open('w')
+        if bUseUnicode:
+            out = codecs.open(self.tempList.s, encoding='utf8', mode='w')
+        else:
+            out = self.tempList.open('w')
         out.write('\n'.join(fileNames))
         out.close()
         #--Extract files
         self.clearTemp()
         apath = dirs['installers'].join(archive)
-        command = '7z.exe x "%s" -y -o%s @%s -scsWIN' % (apath.s, self.tempDir.s, self.tempList.s)
-        ins = os.popen(command,'r')
-        reExtracting = re.compile('Extracting\s+(.+)')
-        reError = re.compile('Error:')
+        if bUseUnicode:
+            command = '"%s" x "%s" -y -o%s @%s -scsUTF8' % (exe7z, apath.s, self.tempDir.s, self.tempList.s)
+            command = Encode(command,'mbcs')
+        else:
+            command = '"%s" x "%s" -y -o%s @%s -scsWIN' % (exe7z, apath.s, self.tempDir.s, self.tempList.s)
+        if recurse:
+            command += ' -r'
+
+        ins = Popen(command, stdout=PIPE, startupinfo=startupinfo).stdout
+        if bUseUnicode:
+            reExtracting = re.compile(u'Extracting\s+(.+)')
+            reError = re.compile(u'Error:')
+        else:
+            reExtracting = re.compile('Extracting\s+(.+)')
+            reError = re.compile('Error:')
         extracted = []
         errorLine = []
         index = 0
         for line in ins:
-            #print line,
+            if bUseUnicode:
+                line = unicode(line,'UTF8')
             maExtracting = reExtracting.match(line)
             if len(errorLine) or reError.match(line):
                 errorLine.append(line)
@@ -13078,6 +13857,7 @@ class InstallerArchive(Installer):
         self.tempList.remove()
         # Clear ReadOnly flag if set
         cmd = r'attrib -R "%s\*" /S /D' % (self.tempDir.s)
+        cmd = Encode(cmd)
         ins, err = Popen(cmd, stdout=PIPE, startupinfo=startupinfo).communicate()
         if result:
             raise StateError(_("%s: Extraction failed\n%s") % (archive.s,"\n".join(errorLine)))
@@ -13090,7 +13870,7 @@ class InstallerArchive(Installer):
         destFiles = set(destFiles)
         norm_ghost = Installer.getGhosted()
         data_sizeCrc = self.data_sizeCrc
-        dest_src = dict((x,y) for x,y in self.refreshDataSizeCrc().iteritems() if x in destFiles)
+        dest_src = dict((x,y) for x,y in self.refreshDataSizeCrc(True).iteritems() if x in destFiles)
         if not dest_src: return 0
         #--Extract
         progress(0,archive.s+_("\nExtracting files..."))
@@ -13101,12 +13881,24 @@ class InstallerArchive(Installer):
         count = 0
         tempDir = self.tempDir
         norm_ghost = Installer.getGhosted()
+        mtimes = set()
+        i = 0
+        subprogress = SubProgress(progress,0.9,1.0)
+        subprogress.setFull(max(len(dest_src),1))
         for dest,src in dest_src.iteritems():
+            subprogress(i,Unicode(archive.s)+_("\nMoving files...")+'\n'+dest.s)
+            i += 1
             size,crc = data_sizeCrc[dest]
             srcFull = tempDir.join(src)
             destFull = destDir.join(norm_ghost.get(dest,dest))
             if srcFull.exists():
                 srcFull.moveTo(destFull)
+                if reModExt.search(destFull.s):
+                    newTime = destFull.mtime
+                    while newTime in mtimes:
+                        newTime += 1
+                    destFull.mtime = newTime
+                    mtimes.add(newTime)
                 data_sizeCrcDate[dest] = (size,crc,destFull.mtime)
                 count += 1
         self.clearTemp()
@@ -13129,6 +13921,7 @@ class InstallerArchive(Installer):
         tempDir = self.tempDir
         # Clear ReadOnly flag if set
         cmd = r'attrib -R "%s\*" /S /D' % (self.tempDir.s)
+        cmd = Encode(cmd)
         ins, err = Popen(cmd, stdout=PIPE, startupinfo=startupinfo).communicate()
         for file in files:
             srcFull = tempDir.join(file)
@@ -13142,49 +13935,80 @@ class InstallerArchive(Installer):
     def listSource(self, archive):
         """Returns package structure as text."""
         #--Setup
-        log = bolt.LogFile(cStringIO.StringIO())
-        log.out.write('[spoiler][code]')
-        log.setHeader(_('Package Structure:'))
-
-        reList = re.compile('(Solid|Path|Size|CRC|Attributes|Method) = (.*)')
-        file = ''
+        bUseUnicode = inisettings['EnableUnicode']
+        log = bolt.LogFile(stringBuffer())
+        if bUseUnicode:
+            log.setHeader(_(u'Package Structure:'))
+            log(u'[spoiler][xml]', False)
+            reList = re.compile(u'(Solid|Path|Size|CRC|Attributes|Method) = (.*?)(?:\r\n|\n)')
+            file = u''
+        else:
+            log.setHeader(_('Package Structure:'))
+            log('[spoiler][xml]', False)
+            reList = re.compile('(Solid|Path|Size|CRC|Attributes|Method) = (.*?)(?:\r\n|\n)')
+            file = ''
         isdir = False
         apath = dirs['installers'].join(archive)
-        ins = os.popen('7z.exe l -slt "%s"' % apath.s,'rt')
+        if bUseUnicode:
+            ins = listArchiveContents(apath.s)
+        else:
+            command = '"%s" l -slt "%s"' % (exe7z, apath.s)
+            ins, err = Popen(command, stdout=PIPE, startupinfo=startupinfo).communicate()
+            ins = stringBuffer(ins)
+
         text = []
-        for line in ins:
-            maList = reList.match(line)
-            if maList:
-                key,value = maList.groups()
-                if key == 'Path':
-                    #--Should be able to twist 7z to export names in UTF-8, but can't (at
-                    #  least not prior to 7z 9.04 with -sccs(?) argument?) So instead, 
-                    #  assume file is encoded in cp437 and that we want to decode to cp1252.
-                    #--Hopefully this will mostly resolve problem with german umlauts, etc.
-                    #  It won't solve problems with non-european characters though.
-                    #try: file = value.decode('cp437').encode('cp1252')
-                    #except: pass
-                    file = value
-                elif key == 'Attributes':
-                    isdir = (value[0] == 'D')
-                    text.append(('%s' % (file), isdir))
-                elif key == 'Method':
-                    file = ''
-                    isdir = False
-        result = ins.close()
-        if result:
-            raise InstallerArchiveError('Unable to read archive %s (exit:%s).' % (apath.s,result))
+        if bUseUnicode:
+            for line in ins.splitlines(True):
+                maList = reList.match(line)
+                if maList:
+                    key,value = maList.groups()
+                    if key == u'Path':
+                        file = value.decode('utf8')
+                    elif key == u'Attributes':
+                        isdir = (value[0] == u'D')
+                        text.append((u'%s' % (file), isdir))
+                    elif key == u'Method':
+                        file = u''
+                        isdir = False
+        else:
+            for line in ins:
+                maList = reList.match(line)
+                if maList:
+                    key,value = maList.groups()
+                    if key == 'Path':
+                        #--Should be able to twist 7z to export names in UTF-8, but can't (at
+                        #  least not prior to 7z 9.04 with -sccs(?) argument?) So instead,
+                        #  assume file is encoded in cp437 and that we want to decode to cp1252.
+                        #--Hopefully this will mostly resolve problem with german umlauts, etc.
+                        #  It won't solve problems with non-european characters though.
+                        try: file = value.decode('cp437').encode('cp1252')
+                        except: pass
+                    elif key == 'Attributes':
+                        isdir = (value[0] == 'D')
+                        text.append(('%s' % (file), isdir))
+                    elif key == 'Method':
+                        file = ''
+                        isdir = False
+            result = ins.close()
+            if result:
+                raise InstallerArchiveError('Unable to read archive %s (exit:%s).' % (apath.s,result))
+
         text.sort()
-        
         for line in text:
             dir = line[0]
             isdir = line[1]
-            if isdir:
-                log('  ' * dir.count(os.sep) + os.path.split(dir)[1] + os.sep)
+            if bUseUnicode:
+                if isdir:
+                    log(u'  ' * dir.count(os.sep) + os.path.split(dir)[1] + os.sep)
+                else:
+                    log(u'  ' * dir.count(os.sep) + os.path.split(dir)[1])
             else:
-                log('  ' * dir.count(os.sep) + os.path.split(dir)[1])
-        log('[/code][/spoiler]')
-        return bolt.winNewLines(log.out.getvalue())   
+                if isdir:
+                    log('  ' * dir.count(os.sep) + os.path.split(dir)[1] + os.sep)
+                else:
+                    log('  ' * dir.count(os.sep) + os.path.split(dir)[1])
+        log('[/xml][/spoiler]')
+        return bolt.winNewLines(log.out.getvalue())
 #------------------------------------------------------------------------------
 class InstallerProject(Installer):
     """Represents a directory/build installer entry."""
@@ -13225,18 +14049,30 @@ class InstallerProject(Installer):
         destDir = dirs['mods']
         destFiles = set(destFiles)
         data_sizeCrc = self.data_sizeCrc
-        dest_src = dict((x,y) for x,y in self.refreshDataSizeCrc().iteritems() if x in destFiles)
+        dest_src = dict((x,y) for x,y in self.refreshDataSizeCrc(True).iteritems() if x in destFiles)
         if not dest_src: return 0
+        progress.setFull(len(dest_src))
+        progress(0,name.stail+_("\nMoving files..."))
         #--Copy Files
         count = 0
         norm_ghost = Installer.getGhosted()
         srcDir = dirs['installers'].join(name)
+        mtimes = set()
+        i = 0
         for dest,src in dest_src.iteritems():
+            progress(i,name.stail+_("\nMoving files...")+'\n'+dest.s)
+            i += 1
             size,crc = data_sizeCrc[dest]
             srcFull = srcDir.join(src)
             destFull = destDir.join(norm_ghost.get(dest,dest))
             if srcFull.exists():
                 srcFull.copyTo(destFull)
+                if reModExt.search(destFull.s):
+                    newTime = destFull.mtime
+                    while newTime in mtimes:
+                        newTime += 1
+                    destFull.mtime = newTime
+                    mtimes.add(newTime)
                 data_sizeCrcDate[dest] = (size,crc,destFull.mtime)
                 count += 1
         return count
@@ -13263,7 +14099,7 @@ class InstallerProject(Installer):
         self.removeEmpties(package)
         return (updated,removed)
 
-    def packToArchive(self,project,archive,isSolid,progress=None,release=False):
+    def packToArchive(self,project,archive,isSolid,blockSize,progress=None,release=False):
         """Packs project to build directory. Release filters out developement material from the archive"""
         progress = progress or bolt.Progress()
         length = len(self.fileSizeCrcs)
@@ -13278,7 +14114,17 @@ class InstallerProject(Installer):
         if archive.cext in noSolidExts:
             solid = ''
         else:
-            solid = ('-ms=off','-ms=on')[isSolid]
+            if isSolid:
+                if blockSize:
+                    solid = '-ms=on -ms=%dm' % blockSize
+                else:
+                    solid = '-ms=on'
+            else:
+                solid = '-ms=off'
+        if inisettings['7zExtraCompressionArguments']:
+            if '-ms=' in inisettings['7zExtraCompressionArguments']:
+                solid = ' %s' % inisettings['7zExtraCompressionArguments']
+            else: solid += ' %s' % inisettings['7zExtraCompressionArguments']
         #--Dump file list
         out = self.tempList.open('w')
         if release:
@@ -13287,10 +14133,11 @@ class InstallerProject(Installer):
             out.write('--*\\')
         out.close()
         #--Compress
-        command = '7z.exe a "%s" -t"%s" %s -y -r -o"%s" -i!"%s\\*" -x@%s -scsWIN' % (outFile.temp.s, archiveType, solid, outDir.s, project.s, self.tempList.s)
+        command = '"%s" a "%s" -t"%s" %s -y -r -o"%s" -i!"%s\\*" -x@%s -scsWIN' % (exe7z, outFile.temp.s, archiveType, solid, outDir.s, project.s, self.tempList.s)
+        command = Encode(command,'mbcs')
         progress(0,_("%s\nCompressing files...") % archive.s)
         progress.setFull(1+length)
-        ins = os.popen(command,'r')
+        ins = Popen(command, stdout=PIPE, startupinfo=startupinfo).stdout
         reCompressing = re.compile('Compressing\s+(.+)')
         regMatch = reCompressing.match
         reError = re.compile('Error: (.*)')
@@ -13298,11 +14145,12 @@ class InstallerProject(Installer):
         errorLine = []
         index = 0
         for line in ins:
+            # TODO: figure out why 7z isn't puttin anything out to stdout
             maCompressing = regMatch(line)
             if len(errorLine) or regErrMatch(line):
                 errorLine.append(line)
             if maCompressing:
-                progress(index,archive.s+_("\nCompressing files...\n%s") % maCompressing.group(1).strip())
+                progress(index,Unicode(archive.s)+_("\nCompressing files...\n%s") % Unicode(maCompressing.group(1)).strip())
                 index += 1
         result = ins.close()
         self.tempList.remove()
@@ -13390,13 +14238,13 @@ class InstallerProject(Installer):
              else:
                  log(' ' * depth + file)
         #--Setup
-        log = bolt.LogFile(cStringIO.StringIO())
-        log.out.write('[spoiler][code]')
+        log = bolt.LogFile(stringBuffer())
         log.setHeader(_('Package Structure:'))
+        log('[spoiler][xml]', False)
         apath = dirs['installers'].join(archive)
-        
+
         walkPath(apath.s, 0)
-        log('[/code][/spoiler]')
+        log('[/xml][/spoiler]')
         return bolt.winNewLines(log.out.getvalue())
 #------------------------------------------------------------------------------
 class InstallersData(bolt.TankData, DataDict):
@@ -13417,7 +14265,7 @@ class InstallersData(bolt.TankData, DataDict):
         #--Default Params
         self.defaultParam('columns',self.tankColumns)
         self.defaultParam('colWidths',{
-            'Package':100,'Package':100,'Order':10,'Group':60,'Modified':60,'Size':40,'Files':20})
+            'Package':100,'Order':10,'Group':60,'Modified':60,'Size':40,'Files':20})
         self.defaultParam('colAligns',{'Order':'RIGHT','Size':'RIGHT','Files':'RIGHT','Modified':'RIGHT'})
         #--Persistent data
         self.dictFile = PickleDict(self.bashDir.join('Installers.dat'))
@@ -13522,10 +14370,9 @@ class InstallersData(bolt.TankData, DataDict):
             attr = column.lower()
             if column in ('Package','Group'):
                 getter = lambda x: object.__getattribute__(data[x],attr).lower()
-                items.sort(key=getter,reverse=reverse)
             else:
                 getter = lambda x: object.__getattribute__(data[x],attr)
-                items.sort(key=getter,reverse=reverse)
+            items.sort(key=getter,reverse=reverse)
         #--Special sorters
         if settings['bash.installers.sortStructure']:
             items.sort(key=lambda x: data[x].type)
@@ -13541,24 +14388,31 @@ class InstallersData(bolt.TankData, DataDict):
         columns = self.getParam('columns')
         if item == None: return columns[:]
         labels,installer = [],self.data[item]
+        marker = isinstance(installer, InstallerMarker)
         for column in columns:
             if column == 'Package':
-                labels.append(item.s)
+                value = item.s
             elif column == 'Files':
-                labels.append(formatInteger(len(installer.fileSizeCrcs)))
+                if not marker:
+                    value = formatInteger(len(installer.fileSizeCrcs))
             else:
                 value = object.__getattribute__(installer,column.lower())
-                if column in ('Package','Group'):
-                    pass
-                elif column == 'Order':
+                if column == 'Order':
                     value = `value`
+                elif marker:
+                    value = ''
+                elif column in ('Package','Group'):
+                    pass
                 elif column == 'Modified':
                     value = formatDate(value)
                 elif column == 'Size':
-                    value = formatInteger(value/1024)+' KB'
+                    if value == 0:
+                        value = '0 KB'
+                    else:
+                        value = max(formatInteger(value/1024),formatInteger(1))+' KB'
                 else:
                     raise ArgumentError(column)
-                labels.append(value)
+            labels.append(value)
         return labels
 
     def getGuiKeys(self,item):
@@ -13581,6 +14435,8 @@ class InstallersData(bolt.TankData, DataDict):
             iconKey = 'corrupt'
         elif isinstance(installer,InstallerProject):
             iconKey += '.dir'
+        if settings['bash.installers.wizardOverlay'] and installer.hasWizard:
+            iconKey += '.wiz'
         return (iconKey,textKey,backKey)
 
     def getName(self,item):
@@ -13616,8 +14472,8 @@ class InstallersData(bolt.TankData, DataDict):
         if destDir == self.dir:
             self.data[destName] = installer = copy.copy(self.data[item])
             installer.isActive = False
-            self.refreshOrder()
             self.moveArchives([destName],self.data[item].order+1)
+            self.refreshOrder()
 
     #--Refresh Functions --------------------------------------------------------
     def refreshInstallers(self,progress=None,fullRefresh=False):
@@ -13635,10 +14491,11 @@ class InstallersData(bolt.TankData, DataDict):
         dataGet = self.data.get
         pendingAdd = pending.add
         for archive in dirs['installers'].list():
+            if archive.s.lower().startswith(('--','bash')): continue
             apath = installersJoin(archive)
             isdir = apath.isdir()
             if isdir: projects.add(archive)
-            if (isdir and archive != 'Bash' and archive != dirs['converters'].stail) or archive.cext in readExts:
+            if (isdir and archive != dirs['converters'].stail) or archive.cext in readExts:
                 installer = dataGet(archive)
                 if not installer:
                     pendingAdd(archive)
@@ -13666,6 +14523,7 @@ class InstallersData(bolt.TankData, DataDict):
                 installer = newDataGet(package)
                 if not installer:
                     installer = newDataSetDefault(package,iClass(package))
+                if installer.skipRefresh and isinstance(installer, InstallerProject) and not fullRefresh: continue
                 apath = installersJoin(package)
                 try: installer.refreshBasic(apath,SubProgress(progress,index,index+1))
                 except InstallerArchiveError:
@@ -13683,9 +14541,12 @@ class InstallersData(bolt.TankData, DataDict):
         installersAdd = installers.add
         for item in dirs['installers'].list():
             apath = installersJoin(item)
+            if item.s.lower().startswith(('bash','--')): continue
             if settings['bash.installers.autoRefreshProjects']:
                 if (apath.isdir() and item != 'Bash' and item != dirs['converters'].stail) or (apath.isfile() and item.cext in readExts):
                     installer = dataGet(item)
+                    if installer and installer.skipRefresh:
+                        continue
                     if not installer or (installer.size,installer.modified) != (apath.size,apath.getmtime(True)):
                         return True
                     installersAdd(item)
@@ -13697,27 +14558,32 @@ class InstallersData(bolt.TankData, DataDict):
                     installersAdd(item)
         #--Added/removed packages?
         if settings['bash.installers.autoRefreshProjects']:
-            return installers != set(x for x,y in self.data.iteritems() if not isinstance(y,InstallerMarker))
+            return installers != set(x for x,y in self.data.iteritems() if not isinstance(y,InstallerMarker) and not (isinstance(y,InstallerProject) and y.skipRefresh))
         else:
             return installers != set(x for x,y in self.data.iteritems() if isinstance(y,InstallerArchive))
 
     def refreshConvertersNeeded(self):
         """Returns true if refreshConverters is necessary. (Point is to skip use
         of progress dialog when possible."""
-        if not len(self.bcfPath_sizeCrcDate):
-            return True
+        self.pruneConverters()
         archives = set([])
+        scanned = set([])
         convertersJoin = dirs['converters'].join
         converterGet = self.bcfPath_sizeCrcDate.get
         bcfPath_sizeCrcDate = self.bcfPath_sizeCrcDate
         archivesAdd = archives.add
+        scannedAdd = scanned.add
         for archive in dirs['converters'].list():
             apath = convertersJoin(archive)
-            if apath.isfile() and archive.cext in (defaultExt):
-                size,crc,modified = converterGet(apath,(None,None,None))
-                if crc is None or (size,modified) != (apath.size,apath.mtime):
-                    return True
-                archivesAdd(apath)
+            if apath.isfile() and self.validConverterName(archive):
+                scannedAdd(apath)
+        if len(scanned) != len(self.bcfPath_sizeCrcDate):
+            return True
+        for archive in scanned:
+            size,crc,modified = converterGet(archive,(None,None,None))
+            if crc is None or (size,modified) != (archive.size,archive.mtime):
+                return True
+            archivesAdd(archive)
         #--Added/removed packages?
         return archives != set(self.bcfPath_sizeCrcDate)
 
@@ -13777,6 +14643,9 @@ class InstallersData(bolt.TankData, DataDict):
             changed |= installer.refreshStatus(self)
         return changed
 
+    def validConverterName(self,path):
+        return path.cext in (defaultExt) and (path.csbody[-4:] == '-bcf' or '-bcf-' in path.csbody)
+
     def refreshConverters(self,progress=None,fullRefresh=False):
         """Refreshes converter status, and moves duplicate BCFs out of the way"""
         progress = progress or bolt.Progress()
@@ -13792,14 +14661,15 @@ class InstallersData(bolt.TankData, DataDict):
         for archive in dirs['converters'].list():
             bcfPath = convJoin(archive)
             if bcfPath.isdir(): continue
-            if archive.cext in (defaultExt) and (archive.csbody[-4:] == '-bcf' or '-bcf-' in archive.csbody):
+            if self.validConverterName(archive):
                 size,crc,modified = self.bcfPath_sizeCrcDate.get(bcfPath,(None,None,None))
                 if crc == None or (size,modified) != (bcfPath.size,bcfPath.mtime):
                     crc = bcfPath.crc
                     (size,modified) = (bcfPath.size,bcfPath.mtime)
-                    if crc in bcfCRC_converter and bcfPath != bcfCRC_converter[crc].fullPath and bcfCRC_converter[crc].fullPath.exists():
-                        bcfPath.moveTo(dirs['dupeBCFs'].join(bcfPath.tail))
+                    if crc in bcfCRC_converter and bcfPath != bcfCRC_converter[crc].fullPath:
                         self.bcfPath_sizeCrcDate.pop(bcfPath,None)
+                        if bcfCRC_converter[crc].fullPath.exists():
+                            bcfPath.moveTo(dirs['dupeBCFs'].join(bcfPath.tail))
                         continue
                 self.bcfPath_sizeCrcDate[bcfPath] = (size, crc, modified)
                 if fullRefresh or crc not in bcfCRC_converter:
@@ -13807,28 +14677,25 @@ class InstallersData(bolt.TankData, DataDict):
                 else:
                     newData[crc] = bcfCRC_converter[crc]
                     newData[crc].fullPath = bcfPath
-        changed = bool(pending) or (len(newData) != len(bcfCRC_converter))
         #--New/update crcs?
         self.bcfCRC_converter = newData
+        pendingChanged = False
         if bool(pending):
             progress(0,_("Scanning Converters..."))
             progress.setFull(len(pending))
             for index,archive in enumerate(sorted(pending)):
                 progress(index,_("Scanning Converter...\n")+archive.s)
-                self.addConverter(archive)
+                pendingChanged |= self.addConverter(archive)
+        changed = pendingChanged or (len(newData) != len(bcfCRC_converter))
         self.pruneConverters()
         return changed
 
     def pruneConverters(self):
         """Remove any converters that no longer exist."""
-        srcCRC_converters = self.srcCRC_converters
-        for srcCRC in srcCRC_converters.keys():
-            for converter in srcCRC_converters[srcCRC][:]:
-                if not (isinstance(converter.fullPath,bolt.Path) and converter.fullPath.exists()):
-                    srcCRC_converters[srcCRC].remove(converter)
-                    self.removeConverter(converter)
-            if len(self.srcCRC_converters[srcCRC]) == 0:
-                del srcCRC_converters[srcCRC]
+        bcfPath_sizeCrcDate = self.bcfPath_sizeCrcDate
+        for bcfPath in bcfPath_sizeCrcDate.keys():
+            if not bcfPath.exists() or bcfPath.isdir():
+                self.removeConverter(bcfPath)
 
     def addConverter(self,converter):
         """Links the new converter to installers"""
@@ -13840,7 +14707,13 @@ class InstallersData(bolt.TankData, DataDict):
             newConverter = converter
         else:
             #--Adding a new file
-            newConverter = InstallerConverter(converter)
+            try:
+                newConverter = InstallerConverter(converter)
+            except:
+                fullPath = dirs['converters'].join(converter)
+                fullPath.moveTo(dirs['corruptBCFs'].join(converter.tail))
+                del self.bcfPath_sizeCrcDate[fullPath]
+                return False
         #--Check if overriding an existing converter
         oldConverter = self.bcfCRC_converter.get(newConverter.crc)
         if oldConverter:
@@ -13851,6 +14724,7 @@ class InstallersData(bolt.TankData, DataDict):
         [srcCRC_converters[srcCRC].append(newConverter) for srcCRC in newConverter.srcCRCs if srcCRC_converters.setdefault(srcCRC,[newConverter]) != [newConverter]]
         self.bcfCRC_converter[newConverter.crc] = newConverter
         self.bcfPath_sizeCrcDate[newConverter.fullPath] = (newConverter.fullPath.size, newConverter.crc, newConverter.fullPath.mtime)
+        return True
 
     def removeConverter(self,converter):
         """Unlinks the old converter from installers and deletes it"""
@@ -13864,8 +14738,9 @@ class InstallersData(bolt.TankData, DataDict):
         else:
             #--Removing by filepath
             bcfPath = dirs['converters'].join(converter)
-            oldConverter = self.bcfCRC_converter.pop(bcfPath.crc,None)
-            self.bcfPath_sizeCrcDate.pop(bcfPath,None)
+            size,crc,modified = self.bcfPath_sizeCrcDate.pop(bcfPath,(None,None,None))
+            if crc is not None:
+                oldConverter = self.bcfCRC_converter.pop(crc,None)
         #--Sanity check
         if oldConverter is None: return
         #--Unlink the converter from Bash
@@ -13932,6 +14807,7 @@ class InstallersData(bolt.TankData, DataDict):
 
     def uninstall(self,unArchives,progress=None):
         """Uninstall selected archives."""
+        if unArchives == 'ALL': unArchives = self.data
         unArchives = set(unArchives)
         data = self.data
         data_sizeCrcDate = self.data_sizeCrcDate
@@ -14055,6 +14931,32 @@ class InstallersData(bolt.TankData, DataDict):
                         SubProgress(progress,index,index+1))
                     InstallersData.updateTable(destFiles, package.s)
 
+    def clean(self,progress):
+        data = self.data
+        getArchiveOrder =  lambda x: data[x].order
+        installed = []
+        for package in sorted(data,key=getArchiveOrder,reverse=True):
+            installer = data[package]
+            if installer.isActive:
+                installed += installer.data_sizeCrc
+        bethFiles = [GPath(f) for f in bush.allBethFiles]
+        keepFiles = set(installed + bethFiles)
+        data_sizeCrcDate = self.data_sizeCrcDate
+        removes = set(data_sizeCrcDate) - keepFiles
+        destDir = dirs['bainData'].join('Data Folder Contents (%s)' %(datetime.datetime.now().strftime('%d-%m-%Y %H%M.%S')))
+        emptyDirs = set()
+        for file in removes:
+            path = dirs['mods'].join(file)
+            try:
+                path.moveTo(destDir.join(file))
+            except:
+                GPath(path.s+'.ghost').moveTo(destDir.join(file))
+            data_sizeCrcDate.pop(file,None)
+            emptyDirs.add(path.head)
+        for emptyDir in emptyDirs:
+            if emptyDir.isdir() and not emptyDir.list():
+                emptyDir.removedirs()
+                
     def getConflictReport(self,srcInstaller,mode):
         """Returns report of overrides for specified package for display on conflicts tab.
         mode: O: Overrides; U: Underrides"""
@@ -14079,34 +14981,39 @@ class InstallersData(bolt.TankData, DataDict):
             if not showLower and installer.order < srcOrder: continue
             curConflicts = Installer.sortFiles([x.s for x,y in installer.data_sizeCrc.iteritems()
                 if x in mismatched and y != src_sizeCrc[x]])
-            if curConflicts: packConflicts.append((installer.order,package.s,curConflicts))
+            if curConflicts: packConflicts.append((installer,package.s,curConflicts))
         #--Unknowns
         isHigher = -1
-        buff = cStringIO.StringIO()
-        for order,package,files in packConflicts:
+        buff = stringBuffer()
+        for installer,package,files in packConflicts:
+            order = installer.order
             if showLower and (order > srcOrder) != isHigher:
                 isHigher = (order > srcOrder)
                 buff.write('= %s %s\n' % ((_('Lower'),_('Higher'))[isHigher],'='*40))
             buff.write('==%d== %s\n'% (order,package))
             for file in files:
-                buff.write(file)
+                oldName = installer.getEspmName(file)
+                buff.write(oldName)
+                if oldName != file:
+                    buff.write(' -> ')
+                    buff.write(file)
                 buff.write('\n')
             buff.write('\n')
         report = buff.getvalue()
         if not conflictsMode and not report and not srcInstaller.isActive:
             report = _("No Underrides. Mod is not completely un-installed.")
         return report
-        
+
     def getPackageList(self,showInactive=True):
         """Returns package list as text."""
         #--Setup
-        log = bolt.LogFile(cStringIO.StringIO())
-        log.out.write('[spoiler][code]')
+        log = bolt.LogFile(stringBuffer())
         log.setHeader(_('Bain Packages:'))
         orderKey = lambda x: self.data[x].order
         allPackages = sorted(self.data,key=orderKey)
         #--List
         modIndex,header = 0, None
+        log('[spoiler][xml]',False)
         for package in allPackages:
             prefix = '%03d' % (self.data[package].order)
             if isinstance(self.data[package],InstallerMarker):
@@ -14115,7 +15022,7 @@ class InstallersData(bolt.TankData, DataDict):
                 log('++ %s - %s (%08X) (Installed)' % (prefix,package.s,self.data[package].crc))
             elif showInactive:
                 log('-- %s - %s (%08X) (Not Installed)' % (prefix,package.s,self.data[package].crc))
-        log('[/code][/spoiler]')
+        log('[/xml][/spoiler]')
         return bolt.winNewLines(log.out.getvalue())
 # Utilities -------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -14131,75 +15038,43 @@ class ActorFactions:
 
     def readFactionEids(self,modInfo):
         """Extracts faction editor ids from modInfo and its masters."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            loadFactory= LoadFactory(False,MreFact)
-            for modName in (modInfo.header.masters + [modInfo.name]):
-                if modName in self.gotFactions: continue
-                modFile = ModFile(modInfos[modName],loadFactory)
-                modFile.load(True)
-                mapper = modFile.getLongMapper()
-                for record in modFile.FACT.getActiveRecords():
-                    self.id_eid[mapper(record.fid)] = record.eid
-                self.gotFactions.add(modName)
-        else:
-            for modName in (modInfo.header.masters + [modInfo.name]):
-                if modName in self.gotFactions: continue
-                
-                Current = Collection(ModsPath=dirs['mods'].s)
-                modFile = Current.addMod(modName.s)
-                Current.minimalLoad(LoadMasters=False)
-            
-                for record in modFile.FACT:
-                    self.id_eid[record.longFid] = record.eid
-                self.gotFactions.add(modName)
-
-    def readFromMod(self,modInfo):
-        """Imports eids from specified mod."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            self.readFactionEids(modInfo)
-            type_id_factions,types,id_eid = self.type_id_factions,self.types,self.id_eid
-            loadFactory= LoadFactory(False,*types)
-            modFile = ModFile(modInfo,loadFactory)
+        loadFactory= LoadFactory(False,MreFact)
+        for modName in (modInfo.header.masters + [modInfo.name]):
+            if modName in self.gotFactions: continue
+            modFile = ModFile(modInfos[modName],loadFactory)
             modFile.load(True)
             mapper = modFile.getLongMapper()
-            for type in (x.classType for x in types):
-                typeBlock = modFile.tops.get(type,None)
-                if not typeBlock: continue
-                id_factions = type_id_factions[type]
-                for record in typeBlock.getActiveRecords():
-                    longid = mapper(record.fid)
-                    if record.factions:
-                        id_eid[longid] = record.eid
-                        id_factions[longid] = [(mapper(x.faction),x.rank) for x in record.factions]
-        else:
-            self.readFactionEids(modInfo)
-            type_id_factions,id_eid = self.type_id_factions,self.id_eid
+            for record in modFile.FACT.getActiveRecords():
+                self.id_eid[mapper(record.fid)] = record.eid
+            self.gotFactions.add(modName)
 
-            Current = Collection(ModsPath=dirs['mods'].s)
-            modFile = Current.addMod(modInfo.name.s)
-            Current.minimalLoad(LoadMasters=False)
-
-            types = dict((('CREA', modFile.CREA),('NPC_', modFile.NPC_)))
-            mapper = modFile.MakeLongFid
-            for type,block in types.iteritems():
-                id_factions = type_id_factions[type]
-                for record in block:
-                    longid = record.longFid
-                    if record.factions:
-                        id_eid[longid] = record.eid
-                        id_factions[longid] = [(mapper(x.faction),x.rank) for x in record.factions]
+    def readFromMod(self,modInfo):
+        """Imports faction data from specified mod."""
+        self.readFactionEids(modInfo)
+        type_id_factions,types,id_eid = self.type_id_factions,self.types,self.id_eid
+        loadFactory= LoadFactory(False,*types)
+        modFile = ModFile(modInfo,loadFactory)
+        modFile.load(True)
+        mapper = modFile.getLongMapper()
+        for type in (x.classType for x in types):
+            typeBlock = modFile.tops.get(type,None)
+            if not typeBlock: continue
+            id_factions = type_id_factions[type]
+            for record in typeBlock.getActiveRecords():
+                longid = mapper(record.fid)
+                if record.factions:
+                    id_eid[longid] = record.eid
+                    id_factions[longid] = [(mapper(x.faction),x.rank) for x in record.factions]
 
     def writeToMod(self,modInfo):
-        """Exports eids to specified mod."""
+        """Exports faction data to specified mod."""
         type_id_factions,types = self.type_id_factions,self.types
         loadFactory= LoadFactory(True,*types)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
         shortMapper = modFile.getShortMapper()
-        changed = {'CREA':0,'NPC':0}
+        changed = {'CREA':0,'NPC_':0}
         for type in (x.classType for x in types):
             id_factions = type_id_factions.get(type,None)
             typeBlock = modFile.tops.get(type,None)
@@ -14209,9 +15084,9 @@ class ActorFactions:
                 if longid not in id_factions: continue
                 newFactions = set(id_factions[longid])
                 curFactions = set((mapper(x.faction),x.rank) for x in record.factions)
-                changed = newFactions - curFactions
-                if not changed: continue
-                for faction,rank in changed:
+                changes = newFactions - curFactions
+                if not changes: continue
+                for faction,rank in changes:
                     faction = shortMapper(faction)
                     for entry in record.factions:
                         if entry.faction == faction:
@@ -14230,7 +15105,7 @@ class ActorFactions:
         return changed
 
     def readFromText(self,textPath):
-        """Imports eids from specified text file."""
+        """Imports faction data from specified text file."""
         type_id_factions,id_eid = self.type_id_factions, self.id_eid
         aliases = self.aliases
         ins = bolt.CsvReader(textPath)
@@ -14244,23 +15119,18 @@ class ActorFactions:
             rank = int(rank)
             id_factions = type_id_factions[type]
             factions = id_factions.get(aid)
-            if factions is None:
-                factions = id_factions[aid] = []
-            for index,entry in enumerate(factions):
-                if entry[0] == fid:
-                    factions[index] = (fid,rank)
-                    break
-            else:
-                factions.append((fid,rank))
+            factiondict = dict(factions or [])
+            factiondict.update({fid:rank})
+            id_factions[aid] = [(fid,rank) for fid,rank in factiondict.iteritems()]
         ins.close()
 
     def writeToText(self,textPath):
-        """Exports eids to specified text file."""
+        """Exports faction data to specified text file."""
         type_id_factions,id_eid = self.type_id_factions, self.id_eid
         headFormat = '"%s","%s","%s","%s","%s","%s","%s","%s"\n'
         rowFormat = '"%s","%s","%s","0x%06X","%s","%s","0x%06X","%s"\n'
         out = textPath.open('w')
-        out.write(headFormat % (_('Type'),_('Actor Eid'),_('Actor Mod'),_('Actor Object'),_('Faction Eid'),_('Faction Mod'),_('Faction Object'),_('Rank')))
+        out.write(Encode(headFormat % (_('Type'),_('Actor Eid'),_('Actor Mod'),_('Actor Object'),_('Faction Eid'),_('Faction Mod'),_('Faction Object'),_('Rank')),'mbcs'))
         for type in sorted(type_id_factions):
             id_factions = type_id_factions[type]
             for id in sorted(id_factions,key = lambda x: id_eid.get(x)):
@@ -14270,147 +15140,360 @@ class ActorFactions:
                     out.write(rowFormat % (type,actorEid,id[0].s,id[1],factionEid,faction[0].s,faction[1],rank))
         out.close()
 
+class CBash_ActorFactions:
+    """Factions for npcs and creatures with functions for importing/exporting from/to mod/text file."""
+    def __init__(self,aliases=None):
+        """Initialize."""
+        self.group_fid_factions = {'CREA':{},'NPC_':{}} #--factions = group_fid_factions[group][longid]
+        self.fid_eid = {}
+        self.aliases = aliases or {}
+        self.gotFactions = set()
+
+    def readFromMod(self,modInfo):
+        """Imports faction data from specified mod."""
+        group_fid_factions,fid_eid,gotFactions = self.group_fid_factions,self.fid_eid,self.gotFactions
+
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x00000068)
+        Current.load()
+        try:
+            importFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_ActorFactions:readFromMod"
+            print error[0]
+            return
+
+        for modFile in Current.LoadOrderMods:
+            modName = modFile.GName
+            if modName in gotFactions: continue
+            for record in modFile.FACT:
+                fid_eid[record.fid] = record.eid
+            if modFile != importFile: continue
+            types = dict((('CREA', modFile.CREA),('NPC_', modFile.NPC_)))
+            for group,block in types.iteritems():
+                fid_factions = group_fid_factions[group]
+                for record in block:
+                    fid = record.fid
+                    factions = record.factions_list
+                    if factions:
+                        fid_eid[fid] = record.eid
+                        fid_factions[fid] = factions
+                    record.UnloadRecord()
+            gotFactions.add(modName)
+        del Current
+
+    def writeToMod(self,modInfo):
+        """Exports faction data to specified mod."""
+        group_fid_factions,fid_eid = self.group_fid_factions,self.fid_eid
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x00000038)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_ActorFactions:writeToMod"
+            print error[0]
+            return
+
+        changed = {'CREA':0,'NPC_':0}
+        types = dict((('CREA', modFile.CREA),('NPC_', modFile.NPC_)))
+        for group,block in types.iteritems():
+            fid_factions = group_fid_factions.get(group,None)
+            for record in block:
+                fid = record.fid
+                if fid not in fid_factions: continue
+                newFactions = set(fid_factions[fid])
+                curFactions = set(record.factions_list)
+                changes = newFactions - curFactions
+                if not changes: continue
+                for faction,rank in changes:
+                    for entry in record.factions:
+                        if entry.faction == faction:
+                            entry.rank = rank
+                            break
+                    else:
+                        entry = record.create_faction()
+                        entry.faction = faction
+                        entry.rank = rank
+                changed[group] += 1
+        #--Done
+        if sum(changed.values()): modFile.save()
+        del Current
+        return changed
+
+    def readFromText(self,textPath):
+        """Imports faction data from specified text file."""
+        group_fid_factions,fid_eid = self.group_fid_factions, self.fid_eid
+        aliases = self.aliases
+        ins = bolt.CsvReader(textPath)
+        for fields in ins:
+            if len(fields) < 8 or fields[3][:2] != '0x': continue
+            group,aed,amod,aobj,fed,fmod,fobj,rank = fields[:9]
+            group = _coerce(group,str)
+            amod = GPath(_coerce(amod,str))
+            fmod = GPath(_coerce(fmod,str))
+            aid = (aliases.get(amod,amod),_coerce(aobj[2:],int,16))
+            fid = (aliases.get(fmod,fmod),_coerce(fobj[2:],int,16))
+            rank = _coerce(rank, int)
+            fid_factions = group_fid_factions[group]
+            factions = fid_factions.get(aid)
+            factiondict = dict(factions or [])
+            factiondict.update({fid:rank})
+            fid_factions[aid] = [(fid,rank) for fid,rank in factiondict.iteritems()]
+        ins.close()
+
+    def writeToText(self,textPath):
+        """Exports faction data to specified text file."""
+        group_fid_factions,fid_eid = self.group_fid_factions, self.fid_eid
+        headFormat = '"%s","%s","%s","%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","%s","%s","0x%06X","%s","%s","0x%06X","%s"\n'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Type'),_('Actor Eid'),_('Actor Mod'),_('Actor Object'),_('Faction Eid'),_('Faction Mod'),_('Faction Object'),_('Rank')), 'mbcs'))
+        for group in sorted(group_fid_factions):
+            fid_factions = group_fid_factions[group]
+            for fid in sorted(fid_factions,key = lambda x: fid_eid.get(x)):
+                actorEid = fid_eid.get(fid,'Unknown')
+                for faction, rank in sorted(fid_factions[fid],key=lambda x: fid_eid.get(x[0])):
+                    factionEid = fid_eid.get(faction,'Unknown')
+                    out.write(rowFormat % (group,actorEid,fid[0].s,fid[1],factionEid,faction[0].s,faction[1],rank))
+        out.close()
 #------------------------------------------------------------------------------
 class ActorLevels:
     """Package: Functions for manipulating actor levels."""
+    def __init__(self,aliases=None):
+        """Initialize."""
+        self.mod_id_levels = {} #--levels = mod_id_levels[mod][longid]
+        self.aliases = aliases or {}
+        self.gotLevels = set()
 
     @staticmethod
-    def dumpText(modInfo,outPath,progress=None):
-        """Export NPC level data to text file."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            progress = progress or bolt.Progress()
-            #--Mod levels
-            progress(0,_('Loading ')+modInfo.name.s)
-            loadFactory= LoadFactory(False,MreNpc)
-            modFile = ModFile(modInfo,loadFactory)
-            modFile.load(True)
-            offsetFlag = 0x80
-            npcLevels = {}
-            for npc in modFile.NPC_.records:
-                if npc.flags.pcLevelOffset:
-                    npcLevels[npc.fid] = (npc.eid,npc.level,npc.calcMin, npc.calcMax)
-            #--FalloutNV Levels (for comparison)
-            progress(0.25,_('Loading FalloutNV.esm'))
-            obFactory= LoadFactory(False,MreNpc)
-            obInfo = modInfos[GPath('FalloutNV.esm')]
-            obFile = ModFile(obInfo,obFactory)
-            obFile.load(True)
-            obNPCs = {}
-            for npc in obFile.NPC_.records:
-                obNPCs[npc.fid] = npc
-            #--File, column headings
-            progress(0.75,_('Writing ')+outPath.stail)
-            out = outPath.open('w')
-            headings = (_('Fid'),_('EditorId'),_('Offset'),_('CalcMin'),_('CalcMax'),_(''),
-                _('Old bOffset'),_('Old Offset'),_('Old CalcMin'),_('Old CalcMax'),)
-            out.write('"'+('","'.join(headings))+'"\n')
-            #--Sort by eid and print
-            for fid in sorted(npcLevels.keys(),key=lambda a: npcLevels[a][0]):
-                npcLevel = npcLevels[fid]
-                out.write('"0x%08X","%s",%d,%d,%d' % ((fid,)+npcLevel))
-                obNPC = obNPCs.get(fid,None)
-                if obNPC:
-                    flagged = (obNPC.flags.pcLevelOffset and offsetFlag) and 1 or 0
-                    out.write(',,%d,%d,%d,%d' % (flagged,obNPC.level,obNPC.calcMin,obNPC.calcMax))
-                out.write('\n')
-            out.close()
-            progress(1,_('Done'))
-        else:
-            progress = progress or bolt.Progress()
-            #--Mod levels
-            progress(0,_('Loading:')+modInfo.name.s)
-            Current = Collection(ModsPath=dirs['mods'].s)
-            obFile = Current.addMod('FalloutNV.esm')
-            modFile = Current.addMod(modInfo.name.s)
-            Current.minimalLoad(LoadMasters=False)
-            
-            offsetFlag = 0x80
-            npcLevels = {}
-            for npc in modFile.NPC_:
-                if npc.IsPCLevelOffset:
-                    npcLevels[npc.fid] = (npc.eid,npc.level,npc.calcMin, npc.calcMax)
-            #--FalloutNV Levels (for comparison)
-            obNPCs = {}
-            for npc in obFile.NPC_:
-                obNPCs[npc.fid] = npc
-            #--File, column headings
-            progress(0.75,_('Writing ')+outPath.stail)
-            out = outPath.open('w')
-            headings = (_('Fid'),_('EditorId'),_('Offset'),_('CalcMin'),_('CalcMax'),_(''),
-                _('Old bOffset'),_('Old Offset'),_('Old CalcMin'),_('Old CalcMax'),)
-            out.write('"'+('","'.join(headings))+'"\n')
-            #--Sort by eid and print
-            for fid in sorted(npcLevels.keys(),key=lambda a: npcLevels[a][0]):
-                npcLevel = npcLevels[fid]
-                out.write('"0x%08X","%s",%d,%d,%d' % ((fid,)+npcLevel))
-                obNPC = obNPCs.get(fid,None)
-                if obNPC:
-                    flagged = (obNPC.IsPCLevelOffset and offsetFlag) and 1 or 0
-                    out.write(',,%d,%d,%d,%d' % (flagged,obNPC.level,obNPC.calcMin,obNPC.calcMax))
-                out.write('\n')
-            out.close()
-            progress(1,_('Done'))
+    def coerce(value, type, base=None):
+        try:
+            if type is float:
+                pack,unpack = struct.pack,struct.unpack
+                return round(unpack('f',pack('f',float(value)))[0], 6) #--Force standard precision
+            if base:
+                return type(value, base)
+            return type(value)
+        except TypeError:
+            return None
 
-    @staticmethod
-    def loadText(modInfo,inPath,progress=None):
-        """Import NPC level data from text file."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            inPath = GPath(inPath)
-            progress = progress or bolt.Progress()
-            #--Sort and print
-            progress(0,_('Reading ')+inPath.stail)
-            inNPCs = {}
-            ins = bolt.CsvReader(inPath)
-            for fields in ins:
-                if '0x' not in fields[0]: continue
-                inNPCs[int(fields[0],0)] = tuple(map(int,fields[2:5]))
-            ins.close()
-            #--Load Mod
-            progress(0.25,_('Loading ')+modInfo.name.s)
-            loadFactory= LoadFactory(True,MreNpc)
-            modFile = ModFile(modInfo,loadFactory)
+    def readFromMod(self,modInfo):
+        """Imports actor level data from the specified mod and its masters."""
+        mod_id_levels, gotLevels = self.mod_id_levels, self.gotLevels
+        loadFactory= LoadFactory(False,MreNpc)
+        for modName in (modInfo.header.masters + [modInfo.name]):
+            if modName in gotLevels: continue
+            modFile = ModFile(modInfos[modName],loadFactory)
             modFile.load(True)
-            offsetFlag = 0x80
-            npcLevels = {}
-            for npc in modFile.NPC_.records:
-                if npc.fid in inNPCs:
-                    (npc.level, npc.calcMin, npc.calcMax) = inNPCs[npc.fid]
-                    npc.setChanged()
-            progress(0.5,_('Saving ')+modInfo.name.s)
-            modFile.safeSave()
-            progress(1.0,_('Done'))
-        else:
-            inPath = GPath(inPath)
-            progress = progress or bolt.Progress()
-            #--Sort and print
-            progress(0,_('Reading ')+inPath.stail)
-            inNPCs = {}
-            ins = bolt.CsvReader(inPath)
-            for fields in ins:
-                if '0x' not in fields[0]: continue
-                inNPCs[int(fields[0],0)] = tuple(map(int,fields[2:5]))
-            ins.close()
-            #--Load Mod
-            progress(0.25,_('Loading ')+modInfo.name.s)
-            Current = Collection(ModsPath=dirs['mods'].s)
-            modFile = Current.addMod(modInfo.name.s)
-            Current.fullLoad(LoadMasters=False)
-            
-            offsetFlag = 0x80
-            npcLevels = {}
-            changed = []
-            for npc in modFile.NPC_:
-                if npc.fid in inNPCs:
-                    level, calcMin, calcMax = inNPCs[npc.fid]
-                    if((npc.level, npc.calcMin, npc.calcMax) != (level, calcMin, calcMax)):
-                        (npc.level, npc.calcMin, npc.calcMax) = (level, calcMin, calcMax)
-                        changed.append(npc.fid)
-            if(changed):
-                progress(0.5,_('Saving ')+modInfo.name.s)
-                modFile.safeCloseSave()
-            progress(1.0,_('Done'))
+            mapper = modFile.getLongMapper()
+            for record in modFile.NPC_.getActiveRecords():
+                id_levels = mod_id_levels.setdefault(modName, {})
+                id_levels[mapper(record.fid)] = (record.eid, record.flags.pcLevelOffset and 1 or 0, record.level, record.calcMin, record.calcMax)
+            gotLevels.add(modName)
+
+    def writeToMod(self,modInfo):
+        """Exports actor levels to specified mod."""
+        mod_id_levels = self.mod_id_levels
+        loadFactory= LoadFactory(True,MreNpc)
+        modFile = ModFile(modInfo,loadFactory)
+        modFile.load(True)
+        mapper = modFile.getLongMapper()
+
+        changed = 0
+        id_levels = mod_id_levels.get(modInfo.name,mod_id_levels.get(GPath('Unknown'),None))
+        if id_levels:
+            for record in modFile.NPC_.records:
+                fid = mapper(record.fid)
+                if fid in id_levels:
+                    eid, isOffset, level, calcMin, calcMax = id_levels[fid]
+                    if((record.level, record.calcMin, record.calcMax) != (level, calcMin, calcMax)):
+                        (record.level, record.calcMin, record.calcMax) = (level, calcMin, calcMax)
+                        record.setChanged()
+                        changed += 1
+        #else:
+           # print mod_id_levels
+        #--Done
+        if changed: modFile.safeSave()
+        return changed
+
+    def readFromText(self,textPath):
+        """Imports NPC level data from specified text file."""
+        mod_id_levels, coerce = self.mod_id_levels, self.coerce
+        aliases = self.aliases
+        ins = bolt.CsvReader(textPath)
+        for fields in ins:
+            if fields[0][:2] == '0x': #old format
+                fid,eid,offset,calcMin,calcMax = fields[:5]
+                source = GPath('Unknown')
+                fidObject = coerce(fid[4:], int, 16)
+                fid = (GPath('Oblivion.esm'), fidObject)
+                eid = coerce(eid, str)
+                offset = coerce(offset, int)
+                calcMin = coerce(calcMin, int)
+                calcMax = coerce(calcMax, int)
+            else:
+                if len(fields) < 7 or fields[3][:2] != '0x': continue
+                source,eid,fidMod,fidObject,offset,calcMin,calcMax = fields[:7]
+                source = coerce(source, str)
+                if source.lower() in ('none', 'oblivion.esm'): continue
+                source = GPath(source)
+                eid = coerce(eid, str)
+                fidMod = GPath(coerce(fidMod, str))
+                if fidMod.s.lower() == 'none': continue
+                fidObject = coerce(fidObject[2:], int, 16)
+                if fidObject is None: continue
+                fid = (aliases.get(fidMod,fidMod),fidObject)
+                offset = coerce(offset, int)
+                calcMin = coerce(calcMin, int)
+                calcMax = coerce(calcMax, int)
+            id_levels = mod_id_levels.setdefault(source, {})
+            id_levels[fid] = (eid, 1, offset, calcMin, calcMax)
+        ins.close()
+
+    def writeToText(self,textPath):
+        """Export NPC level data to specified text file."""
+        mod_id_levels = self.mod_id_levels
+        headFormat = '"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","%s","%s","0x%06X","%d","%d","%d"'
+        extendedRowFormat = ',"%d","%d","%d","%d"\n'
+        blankExtendedRow = ',,,,\n'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Source Mod'),_('Actor Eid'),_('Actor Mod'),_('Actor Object'),_('Offset'),_('CalcMin'),_('CalcMax'),_('Old IsPCLevelOffset'),_('Old Offset'),_('Old CalcMin'),_('Old CalcMax')),'mbcs'))
+        #Sorted based on mod, then editor ID
+        obId_levels = mod_id_levels[GPath('Oblivion.esm')]
+        for mod in sorted(mod_id_levels):
+            if mod.s.lower() == 'oblivion.esm': continue
+            id_levels = mod_id_levels[mod]
+            for id in sorted(id_levels,key=lambda k: (k[0].s,id_levels[k][0])):
+                eid, isOffset, offset, calcMin, calcMax = id_levels[id]
+                if isOffset:
+                    source = mod.s
+                    fidMod, fidObject = id[0].s,id[1]
+                    out.write(rowFormat % (source, eid, fidMod, fidObject, offset, calcMin, calcMax))
+                    oldLevels = obId_levels.get(id,None)
+                    if oldLevels:
+                        oldEid, wasOffset, oldOffset, oldCalcMin, oldCalcMax = oldLevels
+                        out.write(extendedRowFormat % (wasOffset, oldOffset, oldCalcMin, oldCalcMax))
+                    else:
+                        out.write(blankExtendedRow)
+        out.close()
+
+class CBash_ActorLevels:
+    """Package: Functions for manipulating actor levels."""
+    def __init__(self,aliases=None):
+        """Initialize."""
+        self.mod_fid_levels = {} #--levels = mod_id_levels[mod][longid]
+        self.aliases = aliases or {}
+        self.gotLevels = set()
+
+    def readFromMod(self,modInfo):
+        """Imports actor level data from the specified mod and its masters."""
+        mod_fid_levels, gotLevels = self.mod_fid_levels, self.gotLevels
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod('Oblivion.esm', Flags=0x00000068)
+        Current.addMod(modInfo.getPath().stail, Flags=0x00000068)
+        Current.load()
+
+        for modFile in Current.LoadOrderMods:
+            modName = modFile.GName
+            if modName in gotLevels: continue
+            fid_levels = mod_fid_levels.setdefault(modName, {})
+            for record in modFile.NPC_:
+                fid_levels[record.fid] = (record.eid, record.IsPCLevelOffset and 1 or 0, record.level, record.calcMin, record.calcMax)
+                record.UnloadRecord()
+            gotLevels.add(modName)
+        del Current
+
+    def writeToMod(self,modInfo):
+        """Exports actor levels to specified mod."""
+        mod_fid_levels = self.mod_fid_levels
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x00000038)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_ActorLevels:writeToMod"
+            print error[0]
+            return
+
+        changed = 0
+        fid_levels = mod_fid_levels.get(modFile.GName,mod_fid_levels.get(GPath('Unknown'),None))
+        if fid_levels:
+            for record in modFile.NPC_:
+                fid = record.fid
+                if fid not in fid_levels: continue
+                eid, isOffset, level, calcMin, calcMax = fid_levels[fid]
+                if((record.level, record.calcMin, record.calcMax) != (level, calcMin, calcMax)):
+                    (record.level, record.calcMin, record.calcMax) = (level, calcMin, calcMax)
+                    changed += 1
+        #--Done
+        if changed: modFile.save()
+        del Current
+        return changed
+
+    def readFromText(self,textPath):
+        """Imports NPC level data from specified text file."""
+        mod_fid_levels = self.mod_fid_levels
+        aliases = self.aliases
+        ins = bolt.CsvReader(textPath)
+        for fields in ins:
+            if fields[0][:2] == '0x': #old format
+                fid,eid,offset,calcMin,calcMax = fields[:5]
+                source = GPath('Unknown')
+                fidObject = _coerce(fid[4:], int, 16)
+                fid = (GPath('Oblivion.esm'), fidObject)
+                eid = _coerce(eid, str, AllowNone=True)
+                offset = _coerce(offset, int)
+                calcMin = _coerce(calcMin, int)
+                calcMax = _coerce(calcMax, int)
+            else:
+                if len(fields) < 7 or fields[3][:2] != '0x': continue
+                source,eid,fidMod,fidObject,offset,calcMin,calcMax = fields[:7]
+                source = _coerce(source, str)
+                if source.lower() in ('none', 'oblivion.esm'): continue
+                source = GPath(source)
+                eid = _coerce(eid, str, AllowNone=True)
+                fidMod = GPath(_coerce(fidMod, str))
+                if fidMod.s.lower() == 'none': continue
+                fidObject = _coerce(fidObject[2:], int, 16)
+                if fidObject is None: continue
+                fid = (aliases.get(fidMod,fidMod),fidObject)
+                offset = _coerce(offset, int)
+                calcMin = _coerce(calcMin, int)
+                calcMax = _coerce(calcMax, int)
+            fid_levels = mod_fid_levels.setdefault(source, {})
+            fid_levels[fid] = (eid, 1, offset, calcMin, calcMax)
+        ins.close()
+
+    def writeToText(self,textPath):
+        """Export NPC level data to specified text file."""
+        mod_fid_levels = self.mod_fid_levels
+        headFormat = '"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","%s","%s","0x%06X","%d","%d","%d"'
+        extendedRowFormat = ',"%d","%d","%d","%d"\n'
+        blankExtendedRow = ',,,,\n'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Source Mod'),_('Actor Eid'),_('Actor Mod'),_('Actor Object'),_('Offset'),_('CalcMin'),_('CalcMax'),_('Old IsPCLevelOffset'),_('Old Offset'),_('Old CalcMin'),_('Old CalcMax')),'mbcs'))
+        #Sorted based on mod, then editor ID
+        obfid_levels = mod_fid_levels[GPath('Oblivion.esm')]
+        for mod in sorted(mod_fid_levels):
+            if mod.s.lower() == 'oblivion.esm': continue
+            fid_levels = mod_fid_levels[mod]
+            for fid in sorted(fid_levels,key=lambda k: (k[0].s,fid_levels[k][0])):
+                eid, isOffset, offset, calcMin, calcMax = fid_levels[fid]
+                if isOffset:
+                    source = mod.s
+                    fidMod, fidObject = fid[0].s,fid[1]
+                    out.write(rowFormat % (source, eid, fidMod, fidObject, offset, calcMin, calcMax))
+                    oldLevels = obfid_levels.get(fid,None)
+                    if oldLevels:
+                        oldEid, wasOffset, oldOffset, oldCalcMin, oldCalcMax = oldLevels
+                        out.write(extendedRowFormat % (wasOffset, oldOffset, oldCalcMin, oldCalcMax))
+                    else:
+                        out.write(blankExtendedRow)
+        out.close()
 
 #------------------------------------------------------------------------------
 class EditorIds:
@@ -14428,164 +15511,89 @@ class EditorIds:
 
     def readFromMod(self,modInfo):
         """Imports eids from specified mod."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            type_id_eid,types = self.type_id_eid,self.types
-            classes = [MreRecord.type_class[x] for x in types]
-            loadFactory= LoadFactory(False,*classes)
-            modFile = ModFile(modInfo,loadFactory)
-            modFile.load(True)
-            mapper = modFile.getLongMapper()
-            for type in types:
-                typeBlock = modFile.tops.get(type)
-                if not typeBlock: continue
-                if type not in type_id_eid: type_id_eid[type] = {}
-                id_eid = type_id_eid[type]
-                for record in typeBlock.getActiveRecords():
-                    longid = mapper(record.fid)
-                    if record.eid: id_eid[longid] = record.eid
-        else:
-            type_id_eid = self.type_id_eid
-            Current = Collection(ModsPath=dirs['mods'].s)
-            modFile = Current.addMod(modInfo.name.s)
-            Current.minimalLoad(LoadMasters=False)
-        
-            for type,block in modFile.aggregates.iteritems():
-                if type not in type_id_eid: type_id_eid[type] = {}
-                id_eid = type_id_eid[type]
-                for record in block:
-                    longid = record.longFid
-                    if record.eid: id_eid[longid] = record.eid
+        type_id_eid,types = self.type_id_eid,self.types
+        classes = [MreRecord.type_class[x] for x in types]
+        loadFactory= LoadFactory(False,*classes)
+        modFile = ModFile(modInfo,loadFactory)
+        modFile.load(True)
+        mapper = modFile.getLongMapper()
+        for type in types:
+            typeBlock = modFile.tops.get(type)
+            if not typeBlock: continue
+            if type not in type_id_eid: type_id_eid[type] = {}
+            id_eid = type_id_eid[type]
+            for record in typeBlock.getActiveRecords():
+                longid = mapper(record.fid)
+                if record.eid: id_eid[longid] = record.eid
 
     def writeToMod(self,modInfo):
         """Exports eids to specified mod."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            type_id_eid,types = self.type_id_eid,self.types
-            classes = [MreRecord.type_class[x] for x in types]
-            loadFactory= LoadFactory(True,*classes)
-            loadFactory.addClass(MreScpt)
-            loadFactory.addClass(MreQust)
-            modFile = ModFile(modInfo,loadFactory)
-            modFile.load(True)
-            mapper = modFile.getLongMapper()
-            changed = []
-            for type in types:
-                id_eid = type_id_eid.get(type,None)
-                typeBlock = modFile.tops.get(type,None)
-                if not id_eid or not typeBlock: continue
-                for record in typeBlock.records:
-                    longid = mapper(record.fid)
-                    newEid = id_eid.get(longid)
-                    oldEid = record.eid
-                    if newEid and record.eid and newEid != oldEid:
-                        record.eid = newEid
-                        record.setChanged()
-                        changed.append((oldEid,newEid))
-            #--Update scripts
-            old_new = dict(self.old_new)
-            old_new.update(dict([(oldEid.lower(),newEid) for oldEid,newEid in changed]))
-            changed.extend(self.changeScripts(modFile,old_new))
-            #--Done
-            if changed: modFile.safeSave()
-            return changed
-        else:
-            type_id_eid = self.type_id_eid
-            Current = Collection(ModsPath=dirs['mods'].s)
-            modFile = Current.addMod(modInfo.name.s)
-            Current.fullLoad(LoadMasters=False)
-
-            changed = []
-            for type,block in modFile.aggregates.iteritems():
-                id_eid = type_id_eid.get(type,None)
-                if not id_eid: continue
-                for record in block:
-                    longid = record.longFid
-                    newEid = id_eid.get(longid)
-                    oldEid = record.eid
-                    if newEid and newEid != oldEid:
-                        record.eid = newEid
-                        changed.append((oldEid,newEid))
-            #--Update scripts
-            old_new = dict(self.old_new)
-            old_new.update(dict([(oldEid.lower(),newEid) for oldEid,newEid in changed]))
-            changed.extend(self.changeScripts(modFile,old_new))
-            #--Done
-            if changed: modFile.safeCloseSave()
-            return changed
+        type_id_eid,types = self.type_id_eid,self.types
+        classes = [MreRecord.type_class[x] for x in types]
+        loadFactory= LoadFactory(True,*classes)
+        loadFactory.addClass(MreScpt)
+        loadFactory.addClass(MreQust)
+        modFile = ModFile(modInfo,loadFactory)
+        modFile.load(True)
+        mapper = modFile.getLongMapper()
+        changed = []
+        for type in types:
+            id_eid = type_id_eid.get(type,None)
+            typeBlock = modFile.tops.get(type,None)
+            if not id_eid or not typeBlock: continue
+            for record in typeBlock.records:
+                longid = mapper(record.fid)
+                newEid = id_eid.get(longid)
+                oldEid = record.eid
+                if newEid and record.eid and newEid != oldEid:
+                    record.eid = newEid
+                    record.setChanged()
+                    changed.append((oldEid,newEid))
+        #--Update scripts
+        old_new = dict(self.old_new)
+        old_new.update(dict([(oldEid.lower(),newEid) for oldEid,newEid in changed]))
+        changed.extend(self.changeScripts(modFile,old_new))
+        #--Done
+        if changed: modFile.safeSave()
+        return changed
 
     def changeScripts(self,modFile,old_new):
         """Changes scripts in modfile according to changed."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            changed = []
-            if not old_new: return changed
-            reWord = re.compile('\w+')
-            def subWord(match):
-                word = match.group(0)
-                newWord = old_new.get(word.lower())
-                if not newWord:
-                    return word
-                else:
-                    return newWord
-            #--Scripts
-            for script in sorted(modFile.SCPT.records,key=attrgetter('eid')):
-                if not script.scriptText: continue
-                newText = reWord.sub(subWord,script.scriptText)
-                if newText != script.scriptText:
-                    header = '\r\n\r\n; %s %s\r\n' % (script.eid,'-'*(77-len(script.eid)))
-                    script.scriptText = newText
-                    script.setChanged()
-                    changed.append((_("Script"),script.eid))
-            #--Quest Scripts
-            for quest in sorted(modFile.QUST.records,key=attrgetter('eid')):
-                questChanged = False
-                for stage in quest.stages:
-                    for entry in stage.entries:
-                        oldScript = entry.scriptText
-                        if not oldScript: continue
-                        newScript = reWord.sub(subWord,oldScript)
-                        if newScript != oldScript:
-                            entry.scriptText = newScript
-                            questChanged = True
-                if questChanged:
-                    changed.append((_("Quest"),quest.eid))
-                    quest.setChanged()
-            #--Done
-            return changed
-        else:
-            changed = []
-            if not old_new: return changed
-            reWord = re.compile('\w+')
-            def subWord(match):
-                word = match.group(0)
-                newWord = old_new.get(word.lower())
-                if not newWord:
-                    return word
-                else:
-                    return newWord
-            #--Scripts
-            for script in sorted(modFile.SCPT,key=attrgetter('eid')):
-                if not script.scriptText: continue
-                newText = reWord.sub(subWord,script.scriptText)
-                if newText != script.scriptText:
-                    script.scriptText = newText
-                    changed.append((_("Script"),script.eid))
-            #--Quest Scripts
-            for quest in sorted(modFile.QUST,key=attrgetter('eid')):
-                questChanged = False
-                for stage in quest.stages:
-                    for entry in stage.entries:
-                        oldScript = entry.scriptText
-                        if not oldScript: continue
-                        newScript = reWord.sub(subWord,oldScript)
-                        if newScript != oldScript:
-                            entry.scriptText = newScript
-                            questChanged = True
-                if questChanged:
-                    changed.append((_("Quest"),quest.eid))
-            #--Done
-            return changed
+        changed = []
+        if not old_new: return changed
+        reWord = re.compile('\w+')
+        def subWord(match):
+            word = match.group(0)
+            newWord = old_new.get(word.lower())
+            if not newWord:
+                return word
+            else:
+                return newWord
+        #--Scripts
+        for script in sorted(modFile.SCPT.records,key=attrgetter('eid')):
+            if not script.scriptText: continue
+            newText = reWord.sub(subWord,script.scriptText)
+            if newText != script.scriptText:
+                header = '\r\n\r\n; %s %s\r\n' % (script.eid,'-'*(77-len(script.eid)))
+                script.scriptText = newText
+                script.setChanged()
+                changed.append((_("Script"),script.eid))
+        #--Quest Scripts
+        for quest in sorted(modFile.QUST.records,key=attrgetter('eid')):
+            questChanged = False
+            for stage in quest.stages:
+                for entry in stage.entries:
+                    oldScript = entry.scriptText
+                    if not oldScript: continue
+                    newScript = reWord.sub(subWord,oldScript)
+                    if newScript != oldScript:
+                        entry.scriptText = newScript
+                        questChanged = True
+            if questChanged:
+                changed.append((_("Quest"),quest.eid))
+                quest.setChanged()
+        #--Done
+        return changed
 
     def readFromText(self,textPath):
         """Imports eids from specified text file."""
@@ -14595,18 +15603,18 @@ class EditorIds:
         reNewEid = re.compile('^[a-zA-Z][a-zA-Z0-9]+$')
         for fields in ins:
             if len(fields) < 4 or fields[2][:2] != '0x': continue
-            type,mod,objectIndex,eid = fields[:4]
-            mod = GPath(mod)
-            longid = (aliases.get(mod,mod),int(objectIndex[2:],16))
+            group,mod,objectIndex,eid = fields[:4]
+            group = _coerce(group,str)
+            mod = GPath(_coerce(mod,str))
+            longid = (aliases.get(mod,mod),_coerce(objectIndex[2:],int,16))
+            eid = _coerce(eid,str, AllowNone=True)
             if not reNewEid.match(eid):
                 continue
-            elif type in type_id_eid:
-                type_id_eid[type][longid] = eid
-            else:
-                type_id_eid[type] = {longid:eid}
+            id_eid = type_id_eid.setdefault(group, {})
+            id_eid[longid] = eid
             #--Explicit old to new def? (Used for script updating.)
             if len(fields) > 4:
-                self.old_new[fields[4].lower()] = fields[3]
+                self.old_new[_coerce(fields[4], str).lower()] = eid
         ins.close()
 
     def writeToText(self,textPath):
@@ -14615,11 +15623,147 @@ class EditorIds:
         headFormat = '"%s","%s","%s","%s"\n'
         rowFormat = '"%s","%s","0x%06X","%s"\n'
         out = textPath.open('w')
-        out.write(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id')))
+        out.write(Encode(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id')),'mbcs'))
         for type in sorted(type_id_eid):
             id_eid = type_id_eid[type]
             for id in sorted(id_eid,key = lambda a: id_eid[a]):
                 out.write(rowFormat % (type,id[0].s,id[1],id_eid[id]))
+        out.close()
+class CBash_EditorIds:
+    """Editor ids for records, with functions for importing/exporting from/to mod/text file."""
+    def __init__(self,types=None,aliases=None):
+        """Initialize."""
+        self.group_fid_eid = {} #--eid = group_fid_eid[group][longid]
+        self.old_new = {}
+        if types:
+            self.groups = set(types)
+        else:
+            self.groups = aggregateTypes
+        self.aliases = aliases or {}
+
+    def readFromMod(self,modInfo):
+        """Imports eids from specified mod."""
+        group_fid_eid,groups = self.group_fid_eid,self.groups
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000028)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_EditorIds:readFromMod"
+            print error[0]
+            return
+
+        for group in groups:
+            fid_eid = group_fid_eid.setdefault(group[:4], {})
+            for record in getattr(modFile, group):
+                eid = record.eid
+                if eid: fid_eid[record.fid] = eid
+                record.UnloadRecord()
+        del Current
+
+    def writeToMod(self,modInfo):
+        """Exports eids to specified mod."""
+        group_fid_eid = self.group_fid_eid
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000038)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_EditorIds:writeToMod"
+            print error[0]
+            return
+
+        changed = []
+        for group,block in modFile.aggregates.iteritems():
+            fid_eid = group_fid_eid.get(group[:4],None)
+            if not fid_eid: continue
+            for record in block:
+                fid = record.fid
+                newEid = fid_eid.get(fid)
+                oldEid = record.eid
+                if newEid and newEid != oldEid:
+                    record.eid = newEid
+                    if record.eid == newEid: #Can silently fail if a record keyed by editorID (GMST,MGEF) already has the value
+                        changed.append((oldEid,newEid))
+        #--Update scripts
+        old_new = dict(self.old_new)
+        old_new.update(dict([(oldEid.lower(),newEid) for oldEid,newEid in changed]))
+        changed.extend(self.changeScripts(modFile,old_new))
+        #--Done
+        if changed: modFile.save()
+        return changed
+
+    def changeScripts(self,modFile,old_new):
+        """Changes scripts in modfile according to changed."""
+        changed = []
+        if not old_new: return changed
+        reWord = re.compile('\w+')
+        def subWord(match):
+            word = match.group(0)
+            newWord = old_new.get(word.lower())
+            if not newWord:
+                return word
+            else:
+                return newWord
+        #--Scripts
+        for script in sorted(modFile.SCPT,key=attrgetter('eid')):
+            if not script.scriptText: continue
+            newText = reWord.sub(subWord,script.scriptText)
+            if newText != script.scriptText:
+                script.scriptText = newText
+                changed.append((_("Script"),script.eid))
+        #--Quest Scripts
+        for quest in sorted(modFile.QUST,key=attrgetter('eid')):
+            questChanged = False
+            for stage in quest.stages:
+                for entry in stage.entries:
+                    oldScript = entry.scriptText
+                    if not oldScript: continue
+                    newScript = reWord.sub(subWord,oldScript)
+                    if newScript != oldScript:
+                        entry.scriptText = newScript
+                        questChanged = True
+            if questChanged:
+                changed.append((_("Quest"),quest.eid))
+        #--Done
+        return changed
+
+    def readFromText(self,textPath):
+        """Imports eids from specified text file."""
+        group_fid_eid = self.group_fid_eid
+        aliases = self.aliases
+        ins = bolt.CsvReader(textPath)
+        reNewEid = re.compile('^[a-zA-Z][a-zA-Z0-9]+$')
+        for fields in ins:
+            if len(fields) < 4 or fields[2][:2] != '0x': continue
+            group,mod,objectIndex,eid = fields[:4]
+            group = _coerce(group,str)[:4]
+            if group not in validTypes: continue
+            mod = GPath(_coerce(mod,str))
+            longid = (aliases.get(mod,mod),_coerce(objectIndex[2:],int,16))
+            eid = _coerce(eid,str, AllowNone=True)
+            if not reNewEid.match(eid):
+                continue
+            fid_eid = group_fid_eid.setdefault(group, {})
+            fid_eid[longid] = eid
+            #--Explicit old to new def? (Used for script updating.)
+            if len(fields) > 4:
+                self.old_new[_coerce(fields[4], str).lower()] = eid
+        ins.close()
+
+    def writeToText(self,textPath):
+        """Exports eids to specified text file."""
+        group_fid_eid = self.group_fid_eid
+        headFormat = '"%s","%s","%s","%s"\n'
+        rowFormat = '"%s","%s","0x%06X","%s"\n'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id')),'mbcs'))
+        for group in sorted(group_fid_eid):
+            fid_eid = group_fid_eid[group]
+            for fid in sorted(fid_eid,key = lambda a: fid_eid[a]):
+                out.write(rowFormat % (group,fid[0].s,fid[1],fid_eid[fid]))
         out.close()
 #------------------------------------------------------------------------------
 class FactionRelations:
@@ -14672,10 +15816,11 @@ class FactionRelations:
         for fields in ins:
             if len(fields) < 8 or fields[2][:2] != '0x': continue
             med,mmod,mobj,oed,omod,oobj,disp,groupCombatReaction = fields[:8]
-            mid = (GPath(aliases.get(mmod,mmod)),int(mobj[2:],16))
-            oid = (GPath(aliases.get(omod,omod)),int(oobj[2:],16))
-            disp = int(disp)
-            groupCombatReaction = int(groupCombatReaction)
+            mmod = _coerce(mmod, str)
+            omod = _coerce(omod, str)
+            mid = (GPath(aliases.get(mmod,mmod)),_coerce(mobj[2:],int,16))
+            oid = (GPath(aliases.get(omod,omod)),_coerce(oobj[2:],int,16))
+            disp = _coerce(disp, int)
             relations = id_relations.get(mid)
             if relations is None:
                 relations = id_relations[mid] = []
@@ -14687,13 +15832,47 @@ class FactionRelations:
                 relations.append((oid,disp,groupCombatReaction))
         ins.close()
 
+    def writeToMod(self,modInfo):
+        """Exports faction relations to specified mod."""
+        raise NotImplementedError
+        id_relations,id_eid = self.id_relations, self.id_eid
+        loadFactory= LoadFactory(True,MreFact)
+        modFile = ModFile(modInfo,loadFactory)
+        modFile.load(True)
+        mapper = modFile.getLongMapper()
+        shortMapper = modFile.getShortMapper()
+        changed = 0
+        for record in modFile.FACT.getActiveRecords():
+            longid = mapper(record.fid)
+            if longid not in id_relations: continue
+            newRelations = set(id_relations[longid])
+            curRelations = set((mapper(x.faction),x.mod) for x in record.relations)
+            changes = newRelations - curRelations
+            if not changes: continue
+            for faction,mod in changes:
+                faction = shortMapper(faction)
+                for entry in record.relations:
+                    if entry.faction == faction:
+                        entry.mod = mod
+                        break
+                else:
+                    entry = MelObject()
+                    entry.faction = faction
+                    entry.mod = mod
+                    record.relations.append(entry)
+                record.setChanged()
+            changed += 1
+        #--Done
+        if changed: modFile.safeSave()
+        return changed
+
     def writeToText(self,textPath):
         """Exports faction relations to specified text file."""
         id_relations,id_eid = self.id_relations, self.id_eid
         headFormat = '%s","%s","%s","%s","%s","%s","%s","%s"\n'
         rowFormat = '"%s","%s","0x%06X","%s","%s","0x%06X","%s","%s"\n'
         out = textPath.open('w')
-        out.write(headFormat % (_('Main Eid'),_('Main Mod'),_('Main Object'),_('Other Eid'),_('Other Mod'),_('Other Object'),_('Disp'),_('GroupCombatReaction')))
+        out.write(Encode(headFormat % (_('Main Eid'),_('Main Mod'),_('Main Object'),_('Other Eid'),_('Other Mod'),_('Other Object'),_('Disp'),_('GroupCombatReaction')),'mbcs'))
         for main in sorted(id_relations,key = lambda x: id_eid.get(x)):
             mainEid = id_eid.get(main,'Unknown')
             for other,disp,groupCombatReaction in sorted(id_relations[main],key=lambda x: id_eid.get(x[0])):
@@ -14701,6 +15880,115 @@ class FactionRelations:
                 out.write(rowFormat % (mainEid,main[0].s,main[1],otherEid,other[0].s,other[1],disp,groupCombatReaction))
         out.close()
 
+class CBash_FactionRelations:
+    """Faction relations."""
+    def __init__(self,aliases=None):
+        """Initialize."""
+        self.fid_faction_mod = {}
+        self.fid_eid = {} #--For all factions.
+        self.aliases = aliases or {}
+        self.gotFactions = set()
+
+    def readFromMod(self,modInfo):
+        """Imports faction relations from specified mod."""
+        fid_faction_mod,fid_eid,gotFactions = self.fid_faction_mod,self.fid_eid,self.gotFactions
+
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x00000068)
+        Current.load()
+        try:
+            importFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_FactionRelations:readFromMod"
+            print error[0]
+            return
+
+        for modFile in Current.LoadOrderMods:
+            modName = modFile.GName
+            if modName in gotFactions: continue
+            if modFile == importFile:
+                for record in modFile.FACT:
+                    fid = record.fid
+                    fid_eid[fid] = record.eid
+                    relations = record.relations_list
+                    if relations:
+                        faction_mod = fid_faction_mod.setdefault(fid,{})
+                        faction_mod.update(relations)
+                    record.UnloadRecord()
+            else:
+                for record in modFile.FACT:
+                    fid_eid[record.fid] = record.eid
+                    record.UnloadRecord()
+            gotFactions.add(modName)
+        del Current
+
+    def readFromText(self,textPath):
+        """Imports faction relations from specified text file."""
+        fid_faction_mod,fid_eid = self.fid_faction_mod, self.fid_eid
+        aliases = self.aliases
+        ins = bolt.CsvReader(textPath)
+        for fields in ins:
+            if len(fields) < 7 or fields[2][:2] != '0x': continue
+            med,mmod,mobj,oed,omod,oobj,disp = fields[:9]
+            mmod = _coerce(mmod, str)
+            omod = _coerce(omod, str)
+            mid = (GPath(aliases.get(mmod,mmod)),_coerce(mobj[2:],int,16))
+            oid = (GPath(aliases.get(omod,omod)),_coerce(oobj[2:],int,16))
+            disp = _coerce(disp, int)
+            faction_mod = fid_faction_mod.setdefault(mid,{})
+            faction_mod[oid] = disp
+        ins.close()
+
+    def writeToMod(self,modInfo):
+        """Exports faction relations to specified mod."""
+        fid_faction_mod,fid_eid = self.fid_faction_mod, self.fid_eid
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x00000038)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_FactionRelations:writeToMod"
+            print error[0]
+            return
+
+        changed = 0
+        for record in modFile.FACT:
+            fid = record.fid
+            if fid not in fid_faction_mod: continue
+            newRelations = set([(faction, mod) for faction, mod in fid_faction_mod[fid].iteritems()])
+            curRelations = set(record.relations_list)
+            changes = newRelations - curRelations
+            if not changes: continue
+            for faction,mod in changes:
+                for entry in record.relations:
+                    if entry.faction == faction:
+                        entry.mod = mod
+                        break
+                else:
+                    entry = record.create_relation()
+                    entry.faction = faction
+                    entry.mod = mod
+            changed += 1
+        #--Done
+        if changed: modFile.save()
+        del Current
+        return changed
+
+    def writeToText(self,textPath):
+        """Exports faction relations to specified text file."""
+        fid_faction_mod,fid_eid = self.fid_faction_mod, self.fid_eid
+        headFormat = '"%s","%s","%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","%s","0x%06X","%s","%s","0x%06X","%s"\n'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Main Eid'),_('Main Mod'),_('Main Object'),_('Other Eid'),_('Other Mod'),_('Other Object'),_('Disp')),'mbcs'))
+        for main in sorted(fid_faction_mod,key = lambda x: fid_eid.get(x)):
+            mainEid = fid_eid.get(main,'Unknown')
+            faction_mod = fid_faction_mod[main]
+            for other, disp in sorted(faction_mod.items(),key=lambda x: fid_eid.get(x[0])):
+                otherEid = fid_eid.get(other,'Unknown')
+                out.write(rowFormat % (mainEid,main[0].s,main[1],otherEid,other[0].s,other[1],disp))
+        out.close()
 #------------------------------------------------------------------------------
 class FidReplacer:
     """Replaces one set of fids with another."""
@@ -14714,7 +16002,7 @@ class FidReplacer:
         self.new_eid = {} #--Maps new fid to new editor id
 
     def readFromText(self,textPath):
-        """Reads replacment data from specified text file."""
+        """Reads replacement data from specified text file."""
         old_new,old_eid,new_eid = self.old_new,self.old_eid,self.new_eid
         aliases = self.aliases
         ins = bolt.CsvReader(textPath)
@@ -14722,9 +16010,13 @@ class FidReplacer:
         for fields in ins:
             if len(fields) < 7 or fields[2][:2] != '0x' or fields[6][:2] != '0x': continue
             oldMod,oldObj,oldEid,newEid,newMod,newObj = fields[1:7]
+            oldMod = _coerce(oldMod, str)
+            oldEid = _coerce(oldEid, str, AllowNone=True)
+            newEid = _coerce(newEid, str, AllowNone=True)
+            newMod = _coerce(newMod, str)
             oldMod,newMod = map(GPath,(oldMod,newMod))
-            oldId = (GPath(aliases.get(oldMod,oldMod)),int(oldObj,16))
-            newId = (GPath(aliases.get(newMod,newMod)),int(newObj,16))
+            oldId = (GPath(aliases.get(oldMod,oldMod)),_coerce(oldObj,int,16))
+            newId = (GPath(aliases.get(newMod,newMod)),_coerce(newObj,int,16))
             old_new[oldId] = newId
             old_eid[oldId] = oldEid
             new_eid[newId] = newEid
@@ -14771,6 +16063,68 @@ class FidReplacer:
         entries.sort(key=itemgetter(1))
         return '\n'.join(['%3d %s >> %s' % entry for entry in entries])
 
+class CBash_FidReplacer:
+    """Replaces one set of fids with another."""
+
+    def __init__(self,types=None,aliases=None):
+        """Initialize."""
+        self.aliases = aliases or {} #--For aliasing mod names
+        self.old_new = {} #--Maps old fid to new fid
+        self.old_eid = {} #--Maps old fid to old editor id
+        self.new_eid = {} #--Maps new fid to new editor id
+
+    def readFromText(self,textPath):
+        """Reads replacement data from specified text file."""
+        old_new,old_eid,new_eid = self.old_new,self.old_eid,self.new_eid
+        aliases = self.aliases
+        ins = bolt.CsvReader(textPath)
+        pack,unpack = struct.pack,struct.unpack
+        for fields in ins:
+            if len(fields) < 7 or fields[2][:2] != '0x' or fields[6][:2] != '0x': continue
+            oldMod,oldObj,oldEid,newEid,newMod,newObj = fields[1:7]
+            oldMod = _coerce(oldMod, str)
+            oldEid = _coerce(oldEid, str)
+            newEid = _coerce(newEid, str, AllowNone=True)
+            newMod = _coerce(newMod, str, AllowNone=True)
+            oldMod,newMod = map(GPath,(oldMod,newMod))
+            oldId = (GPath(aliases.get(oldMod,oldMod)),_coerce(oldObj,int,16))
+            newId = (GPath(aliases.get(newMod,newMod)),_coerce(newObj,int,16))
+            old_new[oldId] = newId
+            old_eid[oldId] = oldEid
+            new_eid[newId] = newEid
+        ins.close()
+
+    def updateMod(self, modInfo,changeBase=False):
+        """Updates specified mod file."""
+        old_new,old_eid,new_eid = self.old_new,self.old_eid,self.new_eid
+        #Filter the fid replacements to only include existing mods
+        existing = modInfos.keys()
+        old_new = dict((oldId, newId) for oldId, newId in old_new.iteritems() if oldId[0] in existing and newId[0] in existing)
+        if not old_new: return False
+        old_count = {}
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        for newId in set(old_new.values()):
+            Current.addMod(modInfos[newId[0]].getPath().stail, Flags=0x00000068)
+        Current.addMod(modInfo.getPath().stail, Flags=0x00000078)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_FidReplacer:updateMod"
+            print error[0]
+            return
+
+        for oldId, newId in old_new.iteritems():
+            count = modFile.UpdateReferences(oldId,newId) #returns -1 on error
+            if count > 0: old_count[oldId] = count
+
+        #--Done
+        if not sum(old_count.values()): return False
+        modFile.save()
+        entries = [(count,old_eid[oldId],new_eid[old_new[oldId]]) for oldId,count in old_count.iteritems()]
+        entries.sort(key=itemgetter(1))
+        return '\n'.join(['%3d %s >> %s' % entry for entry in entries])
+
 #------------------------------------------------------------------------------
 class FullNames:
     """Names for records, with functions for importing/exporting from/to mod/text file."""
@@ -14791,118 +16145,62 @@ class FullNames:
 
     def readFromMod(self,modInfo):
         """Imports type_id_name from specified mod."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            type_id_name,types = self.type_id_name, self.types
-            type_id_sname = self.type_id_sname
-            classes = [MreRecord.type_class[x] for x in self.types]
-            loadFactory= LoadFactory(False,*classes)
-            modFile = ModFile(modInfo,loadFactory)
-            modFile.load(True)
-            mapper = modFile.getLongMapper()
-            for type in types:
-                typeBlock = modFile.tops.get(type,None)
-                if not typeBlock: continue
-                if type not in type_id_name: type_id_name[type] = {}
-                if type not in type_id_sname: type_id_sname[type] = {}
-                id_name = type_id_name[type]
-                id_sname = type_id_sname[type]
-                for record in typeBlock.getActiveRecords():
-                    longid = mapper(record.fid)
-                    full = record.full or (type != 'LIGH' and 'NO NAME')
-                    if record.eid and full:
-                        id_name[longid] = (record.eid,full)
-                    if(hasattr(record, 'shortName')):
-                        sname = record.shortName
-                        if record.eid and sname:
-                            id_sname[longid] = (record.eid,sname)
-        else:
-            type_id_name = self.type_id_name
-            type_id_sname = self.type_id_sname
-            Current = Collection(ModsPath=dirs['mods'].s)
-            modFile = Current.addMod(modInfo.name.s)
-            Current.minimalLoad(LoadMasters=False)
-            mapper = modFile.MakeLongFid
-            for type,block in modFile.aggregates.iteritems():
-                if type not in type_id_name: type_id_name[type] = {}
-                if type not in type_id_sname: type_id_sname[type] = {}
-                id_name = type_id_name[type]
-                id_sname = type_id_sname[type]
-                for record in block:
-                    longid = record.longFid
-                    if(hasattr(record, 'full')):
-                        full = record.full or (type != 'LIGH' and 'NO NAME')
-                        eid = record.eid
-                        if eid and full:
-                            id_name[longid] = (eid,full)
-                    if(hasattr(record, 'shortName')):
-                        sname = record.shortName
-                        eid = record.eid
-                        if eid and sname:
-                            id_sname[longid] = (eid,sname)
-
+        type_id_name,types = self.type_id_name, self.types
+        type_id_sname = self.type_id_sname
+        classes = [MreRecord.type_class[x] for x in self.types]
+        loadFactory= LoadFactory(False,*classes)
+        modFile = ModFile(modInfo,loadFactory)
+        modFile.load(True)
+        mapper = modFile.getLongMapper()
+        for type in types:
+            typeBlock = modFile.tops.get(type,None)
+            if not typeBlock: continue
+            if type not in type_id_name: type_id_name[type] = {}
+            if type not in type_id_sname: type_id_sname[type] = {}
+            id_name = type_id_name[type]
+            id_sname = type_id_sname[type]
+            for record in typeBlock.getActiveRecords():
+                longid = mapper(record.fid)
+                full = record.full or (type != 'LIGH' and 'NO NAME')
+                if record.eid and full:
+                    id_name[longid] = (record.eid,full)
+                if(hasattr(record, 'shortName')):
+                    sname = record.shortName
+                    if record.eid and sname:
+                        id_sname[longid] = (record.eid,sname)
 
     def writeToMod(self,modInfo):
         """Exports type_id_name to specified mod."""
-        ###Remove from Bash after CBash integrated
-        if(CBash == None):
-            type_id_name,types = self.type_id_name,self.types
-            type_id_sname = self.type_id_sname
-            classes = [MreRecord.type_class[x] for x in self.types]
-            loadFactory= LoadFactory(True,*classes)
-            modFile = ModFile(modInfo,loadFactory)
-            modFile.load(True)
-            mapper = modFile.getLongMapper()
-            changed = {}
-            for type in types:
-                id_name = type_id_name.get(type,None)
-                id_sname = type_id_sname.get(type,None)
-                typeBlock = modFile.tops.get(type,None)
-                if not id_name or not typeBlock: continue
-                for record in typeBlock.records:
-                    longid = mapper(record.fid)
-                    full = record.full
-                    sname = record.shortName if (hasattr(record, 'shortName')) else None
-                    eid,newFull = id_name.get(longid,(0,0))
-                    eid2,newSname = id_sname.get(longid,(0,0))
-                    if newFull and newFull not in (full,'NO NAME'):
-                        record.full = newFull
-                        record.setChanged()
-                        changed[eid] = (full,newFull)
-                    if newSname and newSname not in (sname,'NO NAME'):
-                        record.shortName = newSname
-                        record.setChanged()
-                        if not changed.has_key(eid):
-                            changed[eid] = (sname,newSname)
-            if changed: modFile.safeSave()
-            return changed
-        else:
-            type_id_name = self.type_id_name
-            type_id_sname = self.type_id_sname
-            Current = Collection(ModsPath=dirs['mods'].s)
-            modFile = Current.addMod(modInfo.name.s)
-            Current.fullLoad(LoadMasters=False)
-            mapper = modFile.MakeLongFid
-            changed = {}
-            for type,block in modFile.aggregates.iteritems():
-                id_name = type_id_name.get(type,None)
-                id_sname = type_id_sname.get(type,None)
-                if not id_name: continue
-                for record in block:
-                    longid = record.longFid
-                    full = record.full
-                    sname = record.shortName if (hasattr(record, 'shortName')) else None
-                    eid,newFull = id_name.get(longid,(0,0))
-                    eid2,newSname = id_sname.get(longid,(0,0))
-                    if newFull and newFull not in (full,'NO NAME'):
-                        record.full = newFull
-                        changed[eid] = (full,newFull)
-                    if newSname and newSname not in (sname,'NO NAME'):
-                        record.shortName = newSname
-                        if not changed.has_key(eid):
-                            changed[eid] = (sname,newSname)
-            if changed: modFile.safeCloseSave()
-            return changed
+        type_id_name,types = self.type_id_name,self.types
+        type_id_sname = self.type_id_sname
+        classes = [MreRecord.type_class[x] for x in self.types]
+        loadFactory= LoadFactory(True,*classes)
+        modFile = ModFile(modInfo,loadFactory)
+        modFile.load(True)
+        mapper = modFile.getLongMapper()
+        changed = {}
+        for type in types:
+            id_name = type_id_name.get(type,None)
+            id_sname = type_id_sname.get(type,None)
+            typeBlock = modFile.tops.get(type,None)
+            if not id_name or not typeBlock: continue
+            for record in typeBlock.records:
+                longid = mapper(record.fid)
+                full = record.full
+                sname = record.shortName if (hasattr(record, 'shortName')) else None
+                eid,newFull = id_name.get(longid,(0,0))
+                eid2,newSname = id_sname.get(longid,(0,0))
+                if newFull and newFull not in (full,'NO NAME'):
+                    record.full = newFull
+                    record.setChanged()
+                    changed[eid] = (full,newFull)
+                if newSname and newSname not in (sname,'NO NAME'):
+                    record.shortName = newSname
+                    record.setChanged()
+                    if not changed.has_key(eid):
+                        changed[eid] = (sname,newSname)
+        if changed: modFile.safeSave()
+        return changed
 
     def readFromText(self,textPath):
         """Imports type_id_name from specified text file."""
@@ -14913,18 +16211,21 @@ class FullNames:
         ins = bolt.CsvReader(textPath)
         for fields in ins:
             if len(fields) < 5 or fields[2][:2] != '0x': continue
-            type,mod,objectIndex,eid,full = fields[:5]
+            group,mod,objectIndex,eid,full = fields[:5]
+            group = _coerce(group, str)
             sname = fields[5] if type in self.hasShortNameTypes else None
-            mod = GPath(mod)
-            longid = (aliases.get(mod,mod),int(objectIndex[2:],16))
-            if type in type_id_name:
-                type_id_name[type][longid] = (eid,full)
+            mod = GPath(_coerce(mod, str))
+            longid = (aliases.get(mod,mod),_coerce(objectIndex[2:],int,16))
+            eid = _coerce(eid, str, AllowNone=True)
+            full = _coerce(full, str, AllowNone=True)
+            if group in type_id_name:
+                type_id_name[group][longid] = (eid,full)
             else:
-                type_id_name[type] = {longid:(eid,full)}
-            if type in type_id_sname:
-                type_id_sname[type][longid] = (eid,sname)
+                type_id_name[group] = {longid:(eid,full)}
+            if group in type_id_sname:
+                type_id_sname[group][longid] = (eid,sname)
             else:
-                type_id_sname[type] = {longid:(eid,sname)}
+                type_id_sname[group] = {longid:(eid,sname)}
         ins.close()
 
     def writeToText(self,textPath):
@@ -14937,11 +16238,11 @@ class FullNames:
             if type in self.hasShortNameTypes:
                 headFormat = '"%s","%s","%s","%s","%s","%s"\n'
                 rowFormat = '"%s","%s","0x%06X","%s","%s","%s"\n'
-                out.write(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name'),_('Short Name')))
+                out.write(Encode(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name'),_('Short Name')), 'mbcs'))
             else:
                 headFormat = '"%s","%s","%s","%s","%s"\n'
                 rowFormat = '"%s","%s","0x%06X","%s","%s"\n'
-                out.write(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name')))
+                out.write(Encode(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name')), 'mbcs'))
             id_name = type_id_name[type]
             id_sname = type_id_sname.get(type, {})
             longids = id_name.keys()
@@ -14951,96 +16252,660 @@ class FullNames:
                 eid,name = id_name[longid]
                 if type in self.hasShortNameTypes:
                     eid2,sname = id_sname.get(longid,(eid,''))
-                    out.write(rowFormat % (type,longid[0].s,longid[1],eid,name.replace('"', '""'),sname.replace('"', '""')))
+                    out.write(rowFormat % (type,Encode(longid[0].s,'mbcs'),longid[1],eid,name.replace('"', '""'),sname.replace('"', '""')))
                 else:
-                    out.write(rowFormat % (type,longid[0].s,longid[1],eid,name.replace('"', '""')))
+                    out.write(rowFormat % (type,Encode(longid[0].s,'mbcs'),longid[1],eid,name.replace('"', '""')))
         out.close()
+
+class CBash_FullNames:
+    """Names for records, with functions for importing/exporting from/to mod/text file."""
+    defaultTypes = set((
+        'ALCH', 'AMMO', 'APPA', 'ARMO', 'BOOK', 'CLAS', 'CLOT', 'CONT', 'CREA', 'DOOR',
+        'EYES', 'FACT', 'FLOR', 'HAIR', 'INGR', 'KEYM', 'LIGH', 'MISC', 'NOTE', 'NPC_',
+        'RACE', 'SPEL', 'TERM', 'WEAP', 'ACTI', 'TACT',
+        'CMNY', 'CCRD', 'IMOD', 'REPU', 'RCPE', 'RCCT', 'CHIP', 'CSNO'))
+    hasShortNameTypes = set((
+        'AMMO', 'AVIF', ))
+
+    def __init__(self,types=None,aliases=None):
+        """Initialize."""
+        self.group_fid_name = {} #--(eid,name) = group_fid_name[group][longid]
+        self.types = types or CBash_FullNames.defaultTypes
+        self.aliases = aliases or {}
+
+    def readFromMod(self,modInfo):
+        """Imports type_id_name from specified mod."""
+        group_fid_name = self.group_fid_name
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000028)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_FullNames:readFromMod"
+            print error[0]
+            return
+
+        for group in self.types:
+            fid_name = group_fid_name.setdefault(group[:4],{})
+            for record in getattr(modFile,group):
+                if(hasattr(record, 'full')):
+                    full = record.full or (type != 'LIGH' and 'NO NAME')
+                    eid = record.eid
+                    if eid and full:
+                        fid_name[record.fid] = (eid,full)
+                record.UnloadRecord()
+        del Current
+
+    def writeToMod(self,modInfo):
+        """Exports type_id_name to specified mod."""
+        group_fid_name = self.group_fid_name
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000038)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_FullNames:writeToMod"
+            print error[0]
+            return
+
+        changed = {}
+        for type in self.types:
+            fid_name = group_fid_name.get(type,None)
+            if not fid_name: continue
+            for record in getattr(modFile,type):
+                fid = record.fid
+                full = record.full
+                eid,newFull = fid_name.get(fid,(0,0))
+                if newFull and newFull not in (full,'NO NAME'):
+                    record.full = newFull
+                    changed[eid] = (full,newFull)
+        if changed: modFile.save()
+        del Current
+        return changed
+
+    def readFromText(self,textPath):
+        """Imports type_id_name from specified text file."""
+        textPath = GPath(textPath)
+        group_fid_name = self.group_fid_name
+        aliases = self.aliases
+        ins = bolt.CsvReader(textPath)
+        for fields in ins:
+            if len(fields) < 5 or fields[2][:2] != '0x': continue
+            group,mod,objectIndex,eid,full = fields[:5]
+            group = _coerce(group, str)
+            mod = GPath(_coerce(mod, str))
+            longid = (aliases.get(mod,mod),_coerce(objectIndex[2:],int,16))
+            eid = _coerce(eid, str, AllowNone=True)
+            full = _coerce(full, str, AllowNone=True)
+            group_fid_name.setdefault(group, {})[longid] = (eid,full)
+        ins.close()
+
+    def writeToText(self,textPath):
+        """Exports type_id_name to specified text file."""
+        textPath = GPath(textPath)
+        group_fid_name = self.group_fid_name
+        headFormat = '"%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","%s","0x%06X","%s","%s"\n'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Type'),_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name')), 'mbcs'))
+        for group in sorted(group_fid_name):
+            fid_name = group_fid_name[group]
+            longids = fid_name.keys()
+            longids.sort(key=lambda a: fid_name[a][0])
+            longids.sort(key=itemgetter(0))
+            for longid in longids:
+                eid,name = fid_name[longid]
+                out.write(rowFormat % (group,Encode(longid[0].s,'mbcs'),longid[1],eid,name.replace('"', '""')))
+        out.close()
+
+#------------------------------------------------------------------------------
+class CBash_MapMarkers:
+    """Map marker references, with functions for importing/exporting from/to mod/text file."""
+
+    def __init__(self,types=None,aliases=None):
+        """Initialize."""
+        self.fid_markerdata = {}
+        self.aliases = aliases or {}
+        self.markerFid = (GPath('Oblivion.esm'), 0x000010)
+        self.attrs = ['eid','markerName','markerType','IsVisible','IsCanTravelTo','posX','posY','posZ','rotX','rotY','rotZ']
+        self.markerTypeNumber_Name = {
+            None : 'NONE',
+            0 : 'NONE',
+            1 : 'Camp',
+            2 : 'Cave',
+            3 : 'City',
+            4 : 'Elven Ruin',
+            5 : 'Fort Ruin',
+            6 : 'Mine',
+            7 : 'Landmark',
+            8 : 'Tavern',
+            9 : 'Settlement',
+            10 : 'Daedric Shrine',
+            11 : 'Oblivion Gate',
+            12 : '?',
+            13 : 'Ayleid Well',
+            14 : 'Wayshrine',
+            15 : 'Magical Stone',
+            16 : 'Spire',
+            17 : 'Obelisk of Order',
+            18 : 'House',
+            19 : 'Player marker (flag)',
+            20 : 'Player marker (Q flag)',
+            21 : 'Player marker (i flag)',
+            22 : 'Player marker (? flag)',
+            23 : 'Harbor/dock',
+            24 : 'Stable',
+            25 : 'Castle',
+            26 : 'Farm',
+            27 : 'Chapel',
+            28 : 'Merchant',
+            29 : 'Ayleid Step (old Ayleid ruin icon)',}
+        self.markerTypeName_Number = dict([(y.lower(),x) for x,y in self.markerTypeNumber_Name.iteritems() if x is not None])
+
+    def readFromMod(self,modInfo):
+        """Imports type_id_name from specified mod."""
+        fid_markerdata,markerFid,attrs = self.fid_markerdata,self.markerFid,self.attrs
+
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000028)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_MapMarkers:readFromMod"
+            print error[0]
+            return
+
+        for record in modFile.REFRS:
+            if record.base == markerFid:
+                fid_markerdata[record.fid] = [getattr(record, attr) for attr in attrs]
+            record.UnloadRecord()
+
+        del Current
+
+    def writeToMod(self,modInfo):
+        """Imports type_id_name to specified mod."""
+        fid_markerdata,markerFid,attrs = self.fid_markerdata,self.markerFid,self.attrs
+        changed = []
+
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000038)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_MapMarkers:writeToMod"
+            print error[0]
+            return
+
+        for record in modFile.REFRS:
+            fid = record.fid
+            if not fid in fid_markerdata: continue
+            if record.base == markerFid:
+                oldValues = [getattr(record, attr) for attr in attrs]
+                newValues = fid_markerdata[fid]
+                if oldValues != newValues:
+                    changed.append(oldValues[0]) #eid
+                    for attr, value in zip(attrs, newValues):
+                        setattr(record, attr, value)
+
+        if changed: modFile.save()
+        del Current
+        return changed
+
+    def readFromText(self,textPath):
+        """Imports type_id_name from specified text file."""
+        fid_markerdata,aliases,markerTypeName_Number = self.fid_markerdata,self.aliases,self.markerTypeName_Number
+        ins = bolt.CsvReader(GPath(textPath))
+        for fields in ins:
+            if len(fields) < 13 or fields[1][:2] != '0x': continue
+            mod,objectIndex,eid,markerName,_markerType,IsVisible,IsCanTravelTo,posX,posY,posZ,rotX,rotY,rotZ = fields[:13]
+            mod = GPath(_coerce(mod, str))
+            longid = (aliases.get(mod,mod),_coerce(objectIndex, int, 16))
+            eid = _coerce(eid, str, AllowNone=True)
+            markerName = _coerce(markerName, str, AllowNone=True)
+            markerType = _coerce(_markerType, int)
+            if markerType is None: #coercion failed
+                markerType = markerTypeName_Number.get(_markerType.lower(), 0)
+            IsVisible = _coerce(IsVisible, bool)
+            IsCanTravelTo = _coerce(IsCanTravelTo, bool)
+            posX = _coerce(posX, float)
+            posY = _coerce(posY, float)
+            posZ = _coerce(posZ, float)
+            rotX = _coerce(rotX, float)
+            rotY = _coerce(rotY, float)
+            rotZ = _coerce(rotZ, float)
+            fid_markerdata[longid] = [eid,markerName,markerType,IsVisible,IsCanTravelTo,posX,posY,posZ,rotX,rotY,rotZ]
+        ins.close()
+
+    def writeToText(self,textPath):
+        """Exports markers to specified text file."""
+        fid_markerdata,markerTypeNumber_Name = self.fid_markerdata,self.markerTypeNumber_Name
+        textPath = GPath(textPath)
+        headFormat = '"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","0x%06X","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"\n'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Mod Name'),_('ObjectIndex'),_('Editor Id'),_('Name'),_('Type'),_('IsVisible'),_('IsCanTravelTo'),_('posX'),_('posY'),_('posZ'),_('rotX'),_('rotY'),_('rotZ')),'mbcs'))
+        longids = fid_markerdata.keys()
+        longids.sort(key=lambda a: fid_markerdata[a][0])
+        longids.sort(key=itemgetter(0))
+        for longid in longids:
+            eid,markerName,markerType,IsVisible,IsCanTravelTo,posX,posY,posZ,rotX,rotY,rotZ = fid_markerdata[longid]
+            markerType = markerTypeNumber_Name.get(markerType,markerType)
+            out.write(rowFormat % (longid[0].s,longid[1],eid,markerName,markerType,IsVisible,IsCanTravelTo,posX,posY,posZ,rotX,rotY,rotZ))
+        out.close()
+
+#------------------------------------------------------------------------------
+class CBash_CellBlockInfo:
+    """Map marker references, with functions for importing/exporting from/to mod/text file."""
+
+    def __init__(self,types=None,aliases=None):
+        """Initialize."""
+        self.celldata = {}
+        self.aliases = aliases or {}
+
+    def readFromMod(self,modInfo):
+        """Imports type_id_name from specified mod."""
+        celldata = self.celldata
+
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000028)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_CellBlockInfo:readFromMod"
+            print error[0]
+            return
+
+        for record in modFile.CELLS:
+            celldata[record.eid] = record.bsb
+            record.UnloadRecord()
+            
+        del Current
+
+    def writeToText(self,textPath):
+        """Exports markers to specified text file."""
+        celldata = self.celldata
+        textPath = GPath(textPath)
+        headFormat = '"%s","%s","%s",\n'
+        rowFormat  = '"%s","%s","%s",\n'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Editor Id'),_('Block'),_('Sub-Block')),'mbcs'))
+        eids = celldata.keys()
+        eids.sort()
+        for eid in eids:
+            block, subblock = celldata[eid]
+            out.write(rowFormat % (eid, block, subblock))
+        out.close()
+
 #------------------------------------------------------------------------------
 class SigilStoneDetails:
     """Details on SigilStones, with functions for importing/exporting from/to mod/text file."""
-#just ignore me... or fix me to also export the effect data as Pacific Morrowind is attempting (with little luck).
     def __init__(self,types=None,aliases=None):
         """Initialize."""
-        #--type_stats[type] = ...
-        #--SFST: (eid, weight, value)
-        self.type_stats = {'SGST':{},}
-        self.type_attrs = {
-            'SGST':('eid', 'full', 'model', 'iconPath', 'script', 'uses', 'value', 'weight', 'effects'),
-            }
+        self.fid_stats = {}
         self.aliases = aliases or {} #--For aliasing mod names
+        self.recipientTypeNumber_Name = {
+            None : 'NONE',
+            0 : 'Self',
+            1 : 'Touch',
+            2 : 'Target',}
+        self.recipientTypeName_Number = dict([(y.lower(),x) for x,y in self.recipientTypeNumber_Name.iteritems() if x is not None])
+        self.actorValueNumber_Name = dict([(x, y) for x,y in enumerate(bush.actorValues)])
+        self.actorValueNumber_Name[None] = 'NONE'
+        self.actorValueName_Number = dict([(y.lower(),x) for x,y in self.actorValueNumber_Name.iteritems() if x is not None])
 
     def readFromMod(self,modInfo):
         """Reads stats from specified mod."""
+        fid_stats = self.fid_stats
         loadFactory= LoadFactory(False,MreSgst)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
-        mapper = modFile.getLongMapper()
-        for type in self.type_stats:
-            stats, attrs = self.type_stats[type], self.type_attrs[type]
-            for record in getattr(modFile,type).getActiveRecords():
-                longid = mapper(record.fid)
-                recordGetAttr = record.__getattribute__
-                stats[longid] = tuple(recordGetAttr(attr) for attr in attrs)
+        modFile.convertToLongFids(['SGST'])
+        for record in modFile.SGST.getActiveRecords():
+            effects = []
+            for effect in record.effects:
+                effectlist = [effect.name, effect.magnitude, effect.area, effect.duration, effect.recipient, effect.actorValue]
+                if effect.scriptEffect:
+                    effectlist.append([effect.scriptEffect.script, effect.scriptEffect.school, effect.scriptEffect.visual,
+                                       effect.scriptEffect.flags.hostile, effect.scriptEffect.full])
+                else: effectlist.append([])
+                effects.append(effectlist)
+            fid_stats[record.fid] = [record.eid, record.full, record.model.modPath, round(record.model.modb,6), record.iconPath, record.script, record.uses, record.value, round(record.weight,6), effects]
 
     def writeToMod(self,modInfo):
         """Writes stats to specified mod."""
-        loadFactory= LoadFactory(False,MreSgst)
+        fid_stats = self.fid_stats
+        loadFactory= LoadFactory(True,MreSgst)
         modFile = ModFile(modInfo,loadFactory)
         modFile.load(True)
         mapper = modFile.getLongMapper()
-        changed = {} #--changed[modName] = numChanged
-        for type in self.type_stats:
-            stats, attrs = self.type_stats[type], self.type_attrs[type]
-            for record in getattr(modFile,type).getActiveRecords():
-                longid = mapper(record.fid)
-                itemStats = stats.get(longid,None)
-                if not itemStats: continue
-                map(record.__setattr__,attrs,itemStats)
+        shortMapper = modFile.getShortMapper()
+        changed = [] #eids
+        for record in modFile.SGST.getActiveRecords():
+            newStats = fid_stats.get(mapper(record.fid), None)
+            if not newStats: continue
+            effects = []
+            for effect in record.effects:
+                effectlist = [effect.name, effect.magnitude, effect.area, effect.duration, effect.recipient, effect.actorValue]
+                if effect.scriptEffect:
+                    effectlist.append([mapper(effect.scriptEffect.script), effect.scriptEffect.school, effect.scriptEffect.visual,
+                                       effect.scriptEffect.flags.hostile, effect.scriptEffect.full])
+                else: effectlist.append([])
+                effects.append(effectlist)
+            oldStats = [record.eid, record.full, record.model.modPath, round(record.model.modb,6), record.iconPath, mapper(record.script), record.uses, record.value, round(record.weight,6), effects]
+            if oldStats != newStats:
+                changed.append(oldStats[0]) #eid
+                record.eid, record.full, record.model.modPath, record.model.modb, record.iconPath, script, record.uses, record.value, record.weight, effects = newStats
+                record.script = shortMapper(script)
+                record.effects = []
+                for effect in effects:
+                    neweffect = record.getDefault('effects')
+                    neweffect.name, neweffect.magnitude, neweffect.area, neweffect.duration, neweffect.recipient, neweffect.actorValue, scripteffect = effect
+                    if len(scripteffect):
+                        scriptEffect = record.getDefault('effects.scriptEffect')
+                        script, scriptEffect.school, scriptEffect.visual, scriptEffect.flags.hostile, scriptEffect.full = scripteffect
+                        scriptEffect.script = shortMapper(script)
+                        neweffect.scriptEffect = scriptEffect
+                    record.effects.append(neweffect)
                 record.setChanged()
-                changed[longid[0]] = 1 + changed.get(longid[0],0)
         if changed: modFile.safeSave()
         return changed
 
     def readFromText(self,textPath):
-        """Reads stats from specified text file."""
-        Spells = [self.type_stats[type] for type in ('SGST',)]
-        aliases = self.aliases
+        """Imports stats from specified text file."""
+        fid_stats,aliases,recipientTypeName_Number,actorValueName_Number = self.fid_stats, self.aliases, self.recipientTypeName_Number, self.actorValueName_Number
         ins = bolt.CsvReader(textPath)
-        pack,unpack = struct.pack,struct.unpack
-        sfloat = lambda a: unpack('f',pack('f',float(a)))[0] #--Force standard precision
         for fields in ins:
-            if len(fields) < 3 or fields[2][:2] != '0x': continue
-            type,modName,objectStr,eid = fields[0:4]
-            modName = GPath(modName)
-            longid = (GPath(aliases.get(modName,modName)),int(objectStr[2:],16))
-            if type == 'SGST':
-                Spells[longid] = (eid,) + tuple(func(field) for func,field in
-                    #--(name, model, icon, script, uses, value, weight, effects)
-                    zip((sfloat,sfloat,sfloat,sfloat,sfloat,int,float,int,sfloat,),fields[4:12]))
+            if len(fields) < 12 or fields[1][:2] != '0x': continue
+            mmod,mobj,eid,full,modPath,modb,iconPath,smod,sobj,uses,value,weight = fields[:12]
+            mmod = _coerce(mmod, str)
+            mid = (GPath(aliases.get(mmod,mmod)),_coerce(mobj,int,16))
+            smod = _coerce(smod, str, AllowNone=True)
+            if smod is None: sid = None
+            else: sid = (GPath(aliases.get(smod,smod)),_coerce(sobj,int,16))
+            eid = _coerce(eid, str, AllowNone=True)
+            full = _coerce(full, str, AllowNone=True)
+            modPath = _coerce(modPath, str, AllowNone=True)
+            modb = _coerce(modb, float)
+            iconPath = _coerce(iconPath, str, AllowNone=True)
+            uses = _coerce(uses, int)
+            value = _coerce(value, int)
+            weight = _coerce(weight, float)
+            effects = []
+            _effects = fields[12:]
+            while len(_effects) >= 13:
+                _effect, _effects = _effects[1:13], _effects[13:]
+                name,magnitude,area,duration,range,actorvalue,semod,seobj,seschool,sevisual,seflags,sename = tuple(_effect)
+                name = _coerce(name, str, AllowNone=True)
+                magnitude = _coerce(magnitude, int, AllowNone=True)
+                area = _coerce(area, int, AllowNone=True)
+                duration = _coerce(duration, int, AllowNone=True)
+                range = _coerce(range, str, AllowNone=True)
+                if range:
+                    range = recipientTypeName_Number.get(range.lower(),_coerce(range,int))
+                actorvalue = _coerce(actorvalue, str, AllowNone=True)
+                if actorvalue:
+                    actorvalue = actorValueName_Number.get(actorvalue.lower(),_coerce(actorvalue,int))
+                if None in (name,magnitude,area,duration,range,actorvalue):
+                    continue
+                effect = [name,magnitude,area,duration,range,actorvalue]
+                semod = _coerce(semod, str, AllowNone=True)
+                seobj = _coerce(seobj, int, 16, AllowNone=True)
+                seschool = _coerce(seschool, int, AllowNone=True)
+                sevisual = _coerce(sevisual, int, AllowNone=True)
+                seflags = _coerce(seflags, int, AllowNone=True)
+                sename = _coerce(sename, str, AllowNone=True)
+                if None in (semod,seobj,seschool,sevisual,seflags,sename):
+                    effect.append([])
+                else:
+                    sefid = (GPath(aliases.get(semod,semod)),seobj)
+                    effect.append([sefid, seschool, sevisual,seflags, sename])
+                effects.append(effect)
+            fid_stats[mid] = [eid, full, modPath, modb, iconPath, sid, uses, value, weight, effects]
         ins.close()
 
     def writeToText(self,textPath):
-        """Writes stats to specified text file."""
+        """Exports stats to specified text file."""
+        fid_stats,recipientTypeNumber_Name,actorValueNumber_Name = self.fid_stats, self.recipientTypeNumber_Name, self.actorValueNumber_Name
+        headFormat = '"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","0x%06X","%s","%s","%s","%f","%s","%s","0x%06X","%d","%d","%f"'
+        altrowFormat = '"%s","0x%06X","%s","%s","%s","%f","%s","%s","%s","%d","%d","%f"'
+        effectFormat = ',,"%s","%d","%d","%d","%s","%s"'
+        scriptEffectFormat = ',"%s","0x%06X","%d","%s","%s","%s"'
+        noscriptEffectFiller = ',"None","None","None","None","None","None"'
         out = textPath.open('w')
-        def getSortedIds(stats):
-            longids = stats.keys()
-            longids.sort(key=lambda a: stats[a][0])
-            longids.sort(key=itemgetter(0))
-            return longids
-        for type,format,header in (
-            #--Sigil Stones
-            ('SGST', bolt.csvFormat('sssssifis')+'\n',
-                ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Name'),_('Model'),_('Icon'),_('Script'),_('Uses'),_('Value'),_('Weight'),_('Effects')
-                )) + '"\n')),
-            ):
-            stats = self.type_stats[type]
-            if not stats: continue
-            out.write(header)
-            for longid in getSortedIds(stats):
-                out.write('"%s","%s","0x%06X",' % (type,longid[0].s,longid[1]))
-                out.write(format % stats[longid])
+        out.write(Encode(headFormat % (_('Mod Name'),_('ObjectIndex'),_('Editor Id'),
+                                _('Name'),_('Model Path'),_('Bound Radius'),
+                                _('Icon Path'),_('Script Mod Name'),_('Script ObjectIndex'),
+                                _('Uses'),_('Value'),_('Weight'),
+                                _('Effect'),_('Name'),_('Magnitude'),_('Area'),_('Duration'),_('Range'),_('Actor Value'),
+                                _('SE Mod Name'),_('SE ObjectIndex'),_('SE school'),_('SE visual'),_('SE Is Hostile'),_('SE Name'),
+                                _('Effect'),_('Name'),_('Magnitude'),_('Area'),_('Duration'),_('Range'),_('Actor Value'),
+                                _('SE Mod Name'),_('SE ObjectIndex'),_('SE school'),_('SE visual'),_('SE Is Hostile'),_('SE Name'),_('Additional Effects (Same format)')
+                                ),'mbcs'))
+        for fid in sorted(fid_stats,key = lambda x: fid_stats[x][0]):
+            eid,name,modpath,modb,iconpath,scriptfid,uses,value,weight,effects = fid_stats[fid]
+            scriptfid = scriptfid or (GPath('None'), None)
+            try:
+                output = rowFormat % (fid[0].s,fid[1],eid,name,modpath,modb,iconpath,scriptfid[0].s,scriptfid[1],uses,value,weight)
+            except TypeError:
+                output = altrowFormat % (fid[0].s,fid[1],eid,name,modpath,modb,iconpath,scriptfid[0].s,scriptfid[1],uses,value,weight)
+            for effect in effects:
+                efname,magnitude,area,duration,range,actorvalue = effect[:-1]
+                range = recipientTypeNumber_Name.get(range,range)
+                actorvalue = actorValueNumber_Name.get(actorvalue,actorvalue)
+                scripteffect = effect[-1]
+                output += effectFormat % (efname,magnitude,area,duration,range,actorvalue)
+                if len(scripteffect):
+                    longid,seschool,sevisual,seflags,sename = scripteffect
+                    if sevisual == '\x00\x00\x00\x00':
+                        sevisual = ''
+                    output += scriptEffectFormat % (longid[0].s,longid[1],seschool,sevisual,seflags,sename)
+                else:
+                    output += noscriptEffectFiller
+            output += '\n'
+            out.write(output)
         out.close()
+class CBash_SigilStoneDetails:
+    """Details on SigilStones, with functions for importing/exporting from/to mod/text file."""
+    def __init__(self,types=None,aliases=None):
+        """Initialize."""
+        self.fid_stats = {}
+        self.aliases = aliases or {} #--For aliasing mod names
+        self.recipientTypeNumber_Name = {
+            None : 'NONE',
+            0 : 'Self',
+            1 : 'Touch',
+            2 : 'Target',}
+        self.recipientTypeName_Number = dict([(y.lower(),x) for x,y in self.recipientTypeNumber_Name.iteritems() if x is not None])
+        self.actorValueNumber_Name = dict([(x, y) for x,y in enumerate(bush.actorValues)])
+        self.actorValueNumber_Name[None] = 'NONE'
+        self.actorValueName_Number = dict([(y.lower(),x) for x,y in self.actorValueNumber_Name.iteritems() if x is not None])
+
+    def readFromMod(self,modInfo):
+        """Reads stats from specified mod."""
+        fid_stats = self.fid_stats
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000028)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_SigilStoneDetails:readFromMod"
+            print error[0]
+            return
+
+        for record in modFile.SGST:
+            fid_stats[record.fid] = [record.eid, record.full, record.modPath, record.modb, record.iconPath, record.script, record.uses, record.value, record.weight, record.effects_list]
+
+    def writeToMod(self,modInfo):
+        """Writes stats to specified mod."""
+        fid_stats = self.fid_stats
+        changed = []
+
+        Current = ObCollection(ModsPath=dirs['mods'].s)
+        Current.addMod(modInfo.getPath().stail, Flags=0x000000038)
+        Current.load()
+        try:
+            modFile = Current.LookupModFile(modInfo.getPath().stail)
+        except KeyError, error:
+            print "CBash_SigilStoneDetails:writeToMod"
+            print error[0]
+            return
+
+        for record in modFile.SGST:
+            newStats = fid_stats.get(record.fid, None)
+            if not newStats: continue
+            oldStats = [record.eid, record.full, record.modPath, record.modb, record.iconPath, record.script, record.uses, record.value, record.weight, record.effects_list]
+            if oldStats != newStats:
+                changed.append(oldStats[0]) #eid
+                record.eid, record.full, record.modPath, record.modb, record.iconPath, record.script, record.uses, record.value, record.weight, effects = newStats
+                record.effects_list = effects
+        if changed: modFile.save()
+        return changed
+
+    def readFromText(self,textPath):
+        """Imports stats from specified text file."""
+        fid_stats,aliases,recipientTypeName_Number,actorValueName_Number = self.fid_stats, self.aliases, self.recipientTypeName_Number, self.actorValueName_Number
+        ins = bolt.CsvReader(textPath)
+        for fields in ins:
+            if len(fields) < 12 or fields[1][:2] != '0x': continue
+            mmod,mobj,eid,full,modPath,modb,iconPath,smod,sobj,uses,value,weight = fields[:12]
+            mmod = _coerce(mmod, str)
+            mid = (GPath(aliases.get(mmod,mmod)),_coerce(mobj,int,16))
+            smod = _coerce(smod, str, AllowNone=True)
+            if smod is None: sid = None
+            else: sid = (GPath(aliases.get(smod,smod)),_coerce(sobj,int,16))
+            eid = _coerce(eid, str, AllowNone=True)
+            full = _coerce(full, str, AllowNone=True)
+            modPath = _coerce(modPath, str, AllowNone=True)
+            modb = _coerce(modb, float)
+            iconPath = _coerce(iconPath, str, AllowNone=True)
+            uses = _coerce(uses, int)
+            value = _coerce(value, int)
+            weight = _coerce(weight, float)
+            effects = []
+            _effects = fields[12:]
+            while len(_effects) >= 13:
+                _effect, _effects = _effects[1:13], _effects[13:]
+                name,magnitude,area,duration,range,actorvalue,semod,seobj,seschool,sevisual,seflags,sename = tuple(_effect)
+                name = _coerce(name, str, AllowNone=True)
+                name = cast(name, POINTER(c_ulong)).contents.value #convert 4 char string to int (doesn't support obme)
+                magnitude = _coerce(magnitude, int, AllowNone=True)
+                area = _coerce(area, int, AllowNone=True)
+                duration = _coerce(duration, int, AllowNone=True)
+                range = _coerce(range, str, AllowNone=True)
+                if range:
+                    range = recipientTypeName_Number.get(range.lower(),_coerce(range,int))
+                actorvalue = _coerce(actorvalue, str, AllowNone=True)
+                if actorvalue:
+                    actorvalue = actorValueName_Number.get(actorvalue.lower(),_coerce(actorvalue,int))
+                if None in (name,magnitude,area,duration,range,actorvalue):
+                    continue
+                effect = [name,magnitude,area,duration,range,actorvalue]
+                semod = _coerce(semod, str, AllowNone=True)
+                seobj = _coerce(seobj, int, 16, AllowNone=True)
+                seschool = _coerce(seschool, int, AllowNone=True)
+                sevisual = _coerce(sevisual, int, AllowNone=True)
+                seflags = _coerce(seflags, int, AllowNone=True)
+                sename = _coerce(sename, str, AllowNone=True)
+                if None in (semod,seobj,seschool,sevisual,seflags,sename):
+                    effect.extend([None,None,None,None,None])
+                else:
+                    sefid = (GPath(aliases.get(semod,semod)),seobj)
+                    effect.extend([sefid, seschool, sevisual,seflags, sename])
+                effects.append(tuple(effect))
+            fid_stats[mid] = [eid, full, modPath, modb, iconPath, sid, uses, value, weight, effects]
+        ins.close()
+
+    def writeToText(self,textPath):
+        """Exports stats to specified text file."""
+        fid_stats,recipientTypeNumber_Name,actorValueNumber_Name = self.fid_stats, self.recipientTypeNumber_Name, self.actorValueNumber_Name
+        headFormat = '"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"\n'
+        rowFormat = '"%s","0x%06X","%s","%s","%s","%f","%s","%s","0x%06X","%d","%d","%f"'
+        altrowFormat = '"%s","0x%06X","%s","%s","%s","%f","%s","%s","%s","%d","%d","%f"'
+        effectFormat = ',,"%s","%d","%d","%d","%s","%s"'
+        scriptEffectFormat = ',"%s","0x%06X","%d","%d","%d","%s"'
+        noscriptEffectFiller = ',"None","None","None","None","None","None"'
+        out = textPath.open('w')
+        out.write(Encode(headFormat % (_('Mod Name'),_('ObjectIndex'),_('Editor Id'),
+                                _('Name'),_('Model Path'),_('Bound Radius'),
+                                _('Icon Path'),_('Script Mod Name'),_('Script ObjectIndex'),
+                                _('Uses'),_('Value'),_('Weight'),
+                                _('Effect'),_('Name'),_('Magnitude'),_('Area'),_('Duration'),_('Range'),_('Actor Value'),
+                                _('SE Mod Name'),_('SE ObjectIndex'),_('SE school'),_('SE visual'),_('SE Is Hostile'),_('SE Name'),
+                                _('Effect'),_('Name'),_('Magnitude'),_('Area'),_('Duration'),_('Range'),_('Actor Value'),
+                                _('SE Mod Name'),_('SE ObjectIndex'),_('SE school'),_('SE visual'),_('SE Is Hostile'),_('SE Name'),_('Additional Effects (Same format)')
+                                ),'mbcs'))
+        for fid in sorted(fid_stats,key = lambda x: fid_stats[x][0]):
+            eid,name,modpath,modb,iconpath,scriptfid,uses,value,weight,effects = fid_stats[fid]
+            scriptfid = scriptfid or (GPath('None'), None)
+            try:
+                output = rowFormat % (fid[0].s,fid[1],eid,name,modpath,modb,iconpath,scriptfid[0].s,scriptfid[1],uses,value,weight)
+            except TypeError:
+                output = altrowFormat % (fid[0].s,fid[1],eid,name,modpath,modb,iconpath,scriptfid[0].s,scriptfid[1],uses,value,weight)
+            for effect in effects:
+                efname,magnitude,area,duration,range,actorvalue = effect[:6]
+                efname = c_ulong(efname)
+                efname = cast(byref(efname), POINTER(c_char * 4)).contents.value #convert int to 4 char string (doesn't support obme)
+                range = recipientTypeNumber_Name.get(range,range)
+                actorvalue = actorValueNumber_Name.get(actorvalue,actorvalue)
+                scripteffect = effect[6:]
+                output += effectFormat % (efname,magnitude,area,duration,range,actorvalue)
+                if None not in scripteffect:
+                    output += scriptEffectFormat % tuple(scripteffect)
+                else:
+                    output += noscriptEffectFiller
+            output += '\n'
+            out.write(output)
+        out.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ここまでマージ
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #------------------------------------------------------------------------------
 class ItemStats:
@@ -24171,57 +26036,31 @@ def initDefaultTools():
 def initDefaultSettings():
     #other settings from the INI:
     inisettings['EnableUnicode'] = False
+    if 'steam' in dirs['app'].cs:
+        inisettings['SteamInstall'] = True
+    else:
+        inisettings['SteamInstall'] = False
     inisettings['ScriptFileExt']='.txt'
     inisettings['KeepLog'] = 0
     inisettings['LogFile'] = dirs['mopy'].join('bash.log')
-    inisettings['EnableWizard'] = False
+    inisettings['EnableReplacers'] = False
+    inisettings['EnableBalo'] = False
+    inisettings['ResetBSATimestamps'] = True
+    inisettings['FalloutTexturesBSAName'] = 'Fallout - Textures.bsa'
+    inisettings['ClearRO'] = True
     inisettings['Tes4GeckoJavaArg'] = '-Xmx1024m'
     inisettings['OblivionBookCreatorJavaArg'] = '-Xmx1024m'
     inisettings['ShowTextureToolLaunchers'] = True
     inisettings['ShowModelingToolLaunchers'] = True
     inisettings['ShowAudioToolLaunchers'] = True
     inisettings['7zExtraCompressionArguments'] = ''
-    inisettings['Custom1txt'] = 'Not Set in INI'
-    inisettings['Custom2txt'] = 'Not Set in INI'
-    inisettings['Custom3txt'] = 'Not Set in INI'
-    inisettings['Custom4txt'] = 'Not Set in INI'
-    inisettings['Custom5txt'] = 'Not Set in INI'
-    inisettings['Custom6txt'] = 'Not Set in INI'
-    inisettings['Custom7txt'] = 'Not Set in INI'
-    inisettings['Custom8txt'] = 'Not Set in INI'
-    inisettings['Custom9txt'] = 'Not Set in INI'
-    inisettings['Custom10txt'] = 'Not Set in INI'
-    inisettings['Custom11txt'] = 'Not Set in INI'
-    inisettings['Custom12txt'] = 'Not Set in INI'
-    inisettings['Custom13txt'] = 'Not Set in INI'
-    inisettings['Custom14txt'] = 'Not Set in INI'
-    inisettings['Custom15txt'] = 'Not Set in INI'
-    inisettings['Custom16txt'] = 'Not Set in INI'
-    inisettings['Custom17txt'] = 'Not Set in INI'
-    inisettings['Custom18txt'] = 'Not Set in INI'
-    inisettings['Custom1opt'] = ''
-    inisettings['Custom2opt'] = ''
-    inisettings['Custom3opt'] = ''
-    inisettings['Custom4opt'] = ''
-    inisettings['Custom5opt'] = ''
-    inisettings['Custom6opt'] = ''
-    inisettings['Custom7opt'] = ''
-    inisettings['Custom8opt'] = ''
-    inisettings['Custom9opt'] = ''
-    inisettings['Custom10opt'] = ''
-    inisettings['Custom11opt'] = ''
-    inisettings['Custom12opt'] = ''
-    inisettings['Custom13opt'] = ''
-    inisettings['Custom14opt'] = ''
-    inisettings['Custom15opt'] = ''
-    inisettings['Custom16opt'] = ''
-    inisettings['Custom17opt'] = ''
-    inisettings['Custom18opt'] = ''
     inisettings['IconSize'] = '16'
     inisettings['AutoItemCheck'] = False
     inisettings['SkipHideConfirmation'] = False
     inisettings['SkipResetTimeNotifications'] = False
-    #inisettings['show?toollaunchers'] = True
+    inisettings['AutoSizeListColumns'] = 0
+    inisettings['SoundSuccess'] = GPath('')
+    inisettings['SoundError'] = GPath('')
 
 def initOptions(bashIni):
     initDefaultTools()
