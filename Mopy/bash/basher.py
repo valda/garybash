@@ -14452,6 +14452,11 @@ def InitStatusBar():
             _("Launch GECK"),
             _("Launch GECK + NVSE"),
             '-editor'))
+    BashStatusBar.buttons.append( #FNV4GB
+        App_Button(
+            bosh.dirs['app'].join('fnv4gb.exe'),
+            Image(GPath(bosh.dirs['images'].join('fnv4gb'+bosh.inisettings['IconSize']+'.png'))),
+            _("Launch FNV4GB")))
     BashStatusBar.buttons.append( #FOMM
         App_Button(
             (bosh.tooldirs['FOMMPath'],r'-game FalloutNV'),
@@ -14538,13 +14543,13 @@ def InitStatusBar():
              Image(GPath(bosh.dirs['images'].join('fnvedit'+bosh.inisettings['IconSize']+'.png'))),
             _("Launch FNVEdit")))
     BashStatusBar.buttons.append( #MasterUpdate
-        App_Tes4View(
-             (bosh.tooldirs['FNVMasterUpdatePath'],'-FNV -masterupdate'),
+        App_Button(
+             (bosh.tooldirs['FNVMasterUpdatePath']),
              Image(GPath(bosh.dirs['images'].join('masterupdate'+bosh.inisettings['IconSize']+'.png'))),
             _("Launch MasterUpdate")))
     BashStatusBar.buttons.append( #MasterRestore
-        App_Tes4View(
-             (bosh.tooldirs['FNVMasterRestorePath'],'-FNV -masterrestore'),
+        App_Button(
+             (bosh.tooldirs['FNVMasterRestorePath']),
              Image(GPath(bosh.dirs['images'].join('masterrestore'+bosh.inisettings['IconSize']+'.png'))),
             _("Launch MasterRestore")))
     configHelpers = bosh.ConfigHelpers()

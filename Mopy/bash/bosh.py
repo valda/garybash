@@ -26454,7 +26454,9 @@ class WeaponModsPatcher(ImportPatcher):
         self.classestemp = set()
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
+        recFlags_class = self.recFlags_class = {}
         recFidAttrs_class = self.recFidAttrs_class = {}
+        recFidFlags_class = self.recFidFlags_class = {}
         for recClass in (MreWeap,):
             recAttrs_class[recClass] = ('modelWithMods','firstPersonModelWithMods','weaponMods','soundMod1Shoot3Ds','soundMod1Shoot2D',
                                         'effectMod1','effectMod2','effectMod3','valueAMod1','valueAMod2','valueAMod3',
@@ -26469,8 +26471,9 @@ class WeaponModsPatcher(ImportPatcher):
         if not self.isActive: return
         id_data = self.id_data
         recAttrs_class = self.recAttrs_class
+        recFlags_class = self.recFlags_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
-        longTypes = self.longTypes & set(x.classType for x in self.recAttrs_class)
+        longTypes = self.longTypes & set(x.classType for x in recAttrs_class)
         progress.setFull(len(self.sourceMods))
         cachedMasters = {}
         for index,srcMod in enumerate(self.sourceMods):
