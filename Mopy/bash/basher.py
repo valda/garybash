@@ -14527,12 +14527,12 @@ def InitStatusBar():
             _("Launch FO3Edit")))
     BashStatusBar.buttons.append( #MasterUpdate
         App_Tes4View(
-             (bosh.tooldirs['FO3MasterUpdatePath'],'-FO3 -masterupdate'),
+             (bosh.tooldirs['FO3MasterUpdatePath']),
              Image(GPath(bosh.dirs['images'].join('masterupdate'+bosh.inisettings['IconSize']+'.png'))),
             _("Launch MasterUpdate")))
     BashStatusBar.buttons.append( #MasterRestore
         App_Tes4View(
-             (bosh.tooldirs['FO3MasterRestorePath'],'-FO3 -masterrestore'),
+             (bosh.tooldirs['FO3MasterRestorePath']),
              Image(GPath(bosh.dirs['images'].join('masterrestore'+bosh.inisettings['IconSize']+'.png'))),
             _("Launch MasterRestore")))
     configHelpers = bosh.ConfigHelpers()
