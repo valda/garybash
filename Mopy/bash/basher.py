@@ -2202,7 +2202,7 @@ class INIPanel(SashPanel):
         refresh = True
         if self.choice == 0:
             refresh = bosh.iniInfos.ini != bosh.FalloutIni
-            bosh.iniInfos.setBaseIni(bosh.FalloutIni)
+            bosh.iniInfos.setBaseIni(bosh.falloutIni)
             self.button.Enable(False)
         else:
             if not path:
@@ -4829,7 +4829,7 @@ class BashFrame(wx.Frame):
         #--Layout
         sizer = vSizer((notebook,1,wx.GROW))
         self.SetSizer(sizer)
-        deprint(_("Wrye Flash NV in %s Mode") % (['ANSI','Unicode'][bolt.bUseUnicode]))
+        deprint(_("Wrye Flash in %s Mode") % (['ANSI','Unicode'][bolt.bUseUnicode]))
         if bolt.bUseUnicode: 
             wxver = wx.version()
             deprint(wxver)
@@ -4944,7 +4944,7 @@ class BashFrame(wx.Frame):
             message += _("The following save files have corrupted headers: ")
             message += listFiles(sorted(corruptSaves))
             self.knownCorrupted |= corruptSaves
-        invalidVersions = set([x for x in bosh.modInfos.data if round(bosh.modInfos[x].header.version,6) not in (1.32,1.33,1.34)])
+        invalidVersions = set([x for x in bosh.modInfos.data if round(bosh.modInfos[x].header.version,6) not in (0.85,0.94)])
         if not invalidVersions <= self.knownInvalidVerions:
             if message: message += '\n'
             message += _("The following mods have unrecognized TES4 header versions: ")
@@ -5472,7 +5472,7 @@ class BashApp(wx.App):
         #--Constants
         self.InitResources()
         #--Init Data
-        progress = wx.ProgressDialog(Unicode("Wrye Flash NV"),_("Initializing Data")+' '*10,
+        progress = wx.ProgressDialog(Unicode("Wrye Flash"),_("Initializing Data")+' '*10,
             style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | (sys.version[:3] != '2.4' and wx.PD_SMOOTH))
         self.InitData(progress)
         progress.Update(70,_("Initializing Version"))
@@ -5831,7 +5831,7 @@ class PatchDialog(wx.Dialog):
                     patchFile.safeSave()
                 except WindowsError, werr:
                     if werr.winerror != 32: raise
-                    while balt.askYes(self,_('Bash encountered an error when saving %s.\n\nThe file is in use by another process such as FNVEdit.\nPlease close the other program that is accessing %s.\n\nTry again?') % (patchName.s,patchName.s),_('Bash Patch - Save Error')):
+                    while balt.askYes(self,_('Bash encountered an error when saving %s.\n\nThe file is in use by another process such as FO3Edit.\nPlease close the other program that is accessing %s.\n\nTry again?') % (patchName.s,patchName.s),_('Bash Patch - Save Error')):
                         try:
                             patchFile.safeSave()
                         except WindowsError, werr:
@@ -6624,57 +6624,57 @@ class CBash_PatchMerger(bosh.CBash_PatchMerger,ListPatcher):
     listLabel = _("Mergeable Mods")
 # Patchers 20 ------------------------------------------------------------------
 class GraphicsPatcher(bosh.GraphicsPatcher,ListPatcher): pass
-class CBash_GraphicsPatcher(bosh.CBash_GraphicsPatcher,ListPatcher): pass
+#class CBash_GraphicsPatcher(bosh.CBash_GraphicsPatcher,ListPatcher): pass
 
 class KFFZPatcher(bosh.KFFZPatcher,ListPatcher): pass
-class CBash_KFFZPatcher(bosh.CBash_KFFZPatcher,ListPatcher): pass
+#class CBash_KFFZPatcher(bosh.CBash_KFFZPatcher,ListPatcher): pass
 
 class NPCAIPackagePatcher(bosh.NPCAIPackagePatcher,ListPatcher): pass
-class CBash_NPCAIPackagePatcher(bosh.CBash_NPCAIPackagePatcher,ListPatcher): pass
+#class CBash_NPCAIPackagePatcher(bosh.CBash_NPCAIPackagePatcher,ListPatcher): pass
 
 class ActorImporter(bosh.ActorImporter,ListPatcher): pass
-class CBash_ActorImporter(bosh.CBash_ActorImporter,ListPatcher): pass
+#class CBash_ActorImporter(bosh.CBash_ActorImporter,ListPatcher): pass
 
 class DeathItemPatcher(bosh.DeathItemPatcher,ListPatcher): pass
-class CBash_DeathItemPatcher(bosh.CBash_DeathItemPatcher,ListPatcher): pass
+#class CBash_DeathItemPatcher(bosh.CBash_DeathItemPatcher,ListPatcher): pass
 
 class CellImporter(bosh.CellImporter,ListPatcher): pass
-class CBash_CellImporter(bosh.CBash_CellImporter,ListPatcher): pass
+#class CBash_CellImporter(bosh.CBash_CellImporter,ListPatcher): pass
 
 class ImportFactions(bosh.ImportFactions,ListPatcher): pass
-class CBash_ImportFactions(bosh.CBash_ImportFactions,ListPatcher): pass
+#class CBash_ImportFactions(bosh.CBash_ImportFactions,ListPatcher): pass
 
 class ImportRelations(bosh.ImportRelations,ListPatcher): pass
-class CBash_ImportRelations(bosh.CBash_ImportRelations,ListPatcher): pass
+#class CBash_ImportRelations(bosh.CBash_ImportRelations,ListPatcher): pass
 
 class ImportInventory(bosh.ImportInventory,ListPatcher): pass
-class CBash_ImportInventory(bosh.CBash_ImportInventory,ListPatcher): pass
+#class CBash_ImportInventory(bosh.CBash_ImportInventory,ListPatcher): pass
 
 class ImportActorsSpells(bosh.ImportActorsSpells,ListPatcher): pass
-class CBash_ImportActorsSpells(bosh.CBash_ImportActorsSpells,ListPatcher): pass
+#class CBash_ImportActorsSpells(bosh.CBash_ImportActorsSpells,ListPatcher): pass
 
 class NamesPatcher(bosh.NamesPatcher,ListPatcher): pass
-class CBash_NamesPatcher(bosh.CBash_NamesPatcher,ListPatcher): pass
+#class CBash_NamesPatcher(bosh.CBash_NamesPatcher,ListPatcher): pass
 
 class NpcFacePatcher(bosh.NpcFacePatcher,ListPatcher): pass
-class CBash_NpcFacePatcher(bosh.CBash_NpcFacePatcher,ListPatcher): pass
+#class CBash_NpcFacePatcher(bosh.CBash_NpcFacePatcher,ListPatcher): pass
 
 class RacePatcher(bosh.RacePatcher,ListPatcher):
     listLabel = _("Race Mods")
-class CBash_RacePatcher(bosh.CBash_RacePatcher,ListPatcher):
-    listLabel = _("Race Mods")
+#class CBash_RacePatcher(bosh.CBash_RacePatcher,ListPatcher):
+#    listLabel = _("Race Mods")
 
 class RoadImporter(bosh.RoadImporter,ListPatcher): pass
-class CBash_RoadImporter(bosh.CBash_RoadImporter,ListPatcher): pass
+#class CBash_RoadImporter(bosh.CBash_RoadImporter,ListPatcher): pass
 
 class SoundPatcher(bosh.SoundPatcher,ListPatcher): pass
-class CBash_SoundPatcher(bosh.CBash_SoundPatcher,ListPatcher): pass
+#class CBash_SoundPatcher(bosh.CBash_SoundPatcher,ListPatcher): pass
 
 class StatsPatcher(bosh.StatsPatcher,ListPatcher): pass
-class CBash_StatsPatcher(bosh.CBash_StatsPatcher,ListPatcher): pass
+#class CBash_StatsPatcher(bosh.CBash_StatsPatcher,ListPatcher): pass
 
 class ImportScripts(bosh.ImportScripts,ListPatcher):pass
-class CBash_ImportScripts(bosh.CBash_ImportScripts,ListPatcher):pass
+#class CBash_ImportScripts(bosh.CBash_ImportScripts,ListPatcher):pass
 
 class ImportScriptContents(bosh.ImportScriptContents,ListPatcher):pass
 ##class CBash_ImportScriptContents(bosh.CBash_ImportScriptContents,ListPatcher):pass
@@ -6687,54 +6687,54 @@ class DestructiblePatcher(bosh.DestructiblePatcher,ListPatcher): pass
 
 # Patchers 30 ------------------------------------------------------------------
 class AssortedTweaker(bosh.AssortedTweaker,TweakPatcher): pass
-class CBash_AssortedTweaker(bosh.CBash_AssortedTweaker,TweakPatcher): pass
+#class CBash_AssortedTweaker(bosh.CBash_AssortedTweaker,TweakPatcher): pass
 
-class ClothesTweaker(bosh.ClothesTweaker,TweakPatcher): pass
-class CBash_ClothesTweaker(bosh.CBash_ClothesTweaker,TweakPatcher): pass
+#class ClothesTweaker(bosh.ClothesTweaker,TweakPatcher): pass
+#class CBash_ClothesTweaker(bosh.CBash_ClothesTweaker,TweakPatcher): pass
 
 class GlobalsTweaker(bosh.GlobalsTweaker,TweakPatcher): pass
-class CBash_GlobalsTweaker(bosh.CBash_GlobalsTweaker,TweakPatcher): pass
+#class CBash_GlobalsTweaker(bosh.CBash_GlobalsTweaker,TweakPatcher): pass
 
 class GmstTweaker(bosh.GmstTweaker,TweakPatcher): pass
 class CBash_GmstTweaker(bosh.CBash_GmstTweaker,TweakPatcher): pass
 
 class NamesTweaker(bosh.NamesTweaker,TweakPatcher): pass
-class CBash_NamesTweaker(bosh.CBash_NamesTweaker,TweakPatcher): pass
+#class CBash_NamesTweaker(bosh.CBash_NamesTweaker,TweakPatcher): pass
 
-class TweakActors(bosh.TweakActors,TweakPatcher): pass
-class CBash_TweakActors(bosh.CBash_TweakActors,TweakPatcher): pass
+#class TweakActors(bosh.TweakActors,TweakPatcher): pass
+#class CBash_TweakActors(bosh.CBash_TweakActors,TweakPatcher): pass
 
 # Patchers 40 ------------------------------------------------------------------
-class AlchemicalCatalogs(bosh.AlchemicalCatalogs,Patcher): pass
-class CBash_AlchemicalCatalogs(bosh.CBash_AlchemicalCatalogs,Patcher): pass
+#class AlchemicalCatalogs(bosh.AlchemicalCatalogs,Patcher): pass
+#class CBash_AlchemicalCatalogs(bosh.CBash_AlchemicalCatalogs,Patcher): pass
 
-class CoblExhaustion(bosh.CoblExhaustion,ListPatcher): pass
-class CBash_CoblExhaustion(bosh.CBash_CoblExhaustion,ListPatcher): pass
+#class CoblExhaustion(bosh.CoblExhaustion,ListPatcher): pass
+#class CBash_CoblExhaustion(bosh.CBash_CoblExhaustion,ListPatcher): pass
 
 class UpdateReferences(bosh.UpdateReferences,ListPatcher): pass
-class CBash_UpdateReferences(bosh.CBash_UpdateReferences,ListPatcher): pass
+#class CBash_UpdateReferences(bosh.CBash_UpdateReferences,ListPatcher): pass
 
 class ListsMerger(bosh.ListsMerger,ListPatcher):
     listLabel = _("Override Delev/Relev Tags")
-class CBash_ListsMerger(bosh.CBash_ListsMerger,ListPatcher):
-    listLabel = _("Override Delev/Relev Tags")
+#class CBash_ListsMerger(bosh.CBash_ListsMerger,ListPatcher):
+#    listLabel = _("Override Delev/Relev Tags")
 
 class FidListsMerger(bosh.FidListsMerger,ListPatcher):
     listLabel = _("Override Deflst Tags")
 #class CBash_FidListsMerger(bosh.FidListsMerger,ListPatcher):
 #    listLabel = _("Override Deflst Tags")
 
-class MFactMarker(bosh.MFactMarker,ListPatcher): pass
-class CBash_MFactMarker(bosh.CBash_MFactMarker,ListPatcher): pass
+#class MFactMarker(bosh.MFactMarker,ListPatcher): pass
+#class CBash_MFactMarker(bosh.CBash_MFactMarker,ListPatcher): pass
 
-class PowerExhaustion(bosh.PowerExhaustion,Patcher): pass
-class CBash_PowerExhaustion(bosh.CBash_PowerExhaustion,Patcher): pass
+#class PowerExhaustion(bosh.PowerExhaustion,Patcher): pass
+#class CBash_PowerExhaustion(bosh.CBash_PowerExhaustion,Patcher): pass
 
-class SEWorldEnforcer(bosh.SEWorldEnforcer,Patcher): pass
-class CBash_SEWorldEnforcer(bosh.CBash_SEWorldEnforcer,Patcher): pass
+#class SEWorldEnforcer(bosh.SEWorldEnforcer,Patcher): pass
+#class CBash_SEWorldEnforcer(bosh.CBash_SEWorldEnforcer,Patcher): pass
 
 class ContentsChecker(bosh.ContentsChecker,Patcher): pass
-class CBash_ContentsChecker(bosh.CBash_ContentsChecker,Patcher): pass
+#class CBash_ContentsChecker(bosh.CBash_ContentsChecker,Patcher): pass
 
 ##class ForceMerger(bosh.ForceMerger,Patcher): pass
 ##class CBash_ForceMerger(bosh.CBash_ForceMerger,ListPatcher): pass
@@ -6783,111 +6783,112 @@ PatchDialog.patchers.extend((
     ))
 PatchDialog.CBash_patchers.extend((
     CBash_AliasesPatcher(),
-    CBash_AssortedTweaker(),
+#    CBash_AssortedTweaker(),
     CBash_PatchMerger(),
 ##    CBash_AlchemicalCatalogs(),
-    CBash_KFFZPatcher(),
-    CBash_ActorImporter(),
-    CBash_DeathItemPatcher(),
-    CBash_NPCAIPackagePatcher(),
+#    CBash_KFFZPatcher(),
+#    CBash_ActorImporter(),
+#    CBash_DeathItemPatcher(),
+#    CBash_NPCAIPackagePatcher(),
 ##    CBash_CoblExhaustion(),
-    CBash_UpdateReferences(),
-    CBash_CellImporter(),
+#    CBash_UpdateReferences(),
+#    CBash_CellImporter(),
 ##    CBash_ClothesTweaker(),
-    CBash_GlobalsTweaker(),
+#    CBash_GlobalsTweaker(),
     CBash_GmstTweaker(),
-    CBash_GraphicsPatcher(),
-    CBash_ImportFactions(),
-    CBash_ImportInventory(),
+#    CBash_GraphicsPatcher(),
+#    CBash_ImportFactions(),
+#    CBash_ImportInventory(),
 ##    CBash_SpellsPatcher(),
 ##    CBash_TweakActors(),
-    CBash_ImportRelations(),
-    CBash_ImportScripts(),
+#    CBash_ImportRelations(),
+#    CBash_ImportScripts(),
 ##    CBash_ImportScriptContents(),
 ##    CBash_ImportActorsSpells(),
-    CBash_ListsMerger(),
+#    CBash_ListsMerger(),
 ##    CBash_MFactMarker(),
-    CBash_NamesPatcher(),
-    CBash_NamesTweaker(),
-    CBash_NpcFacePatcher(),
+#    CBash_NamesPatcher(),
+#    CBash_NamesTweaker(),
+#    CBash_NpcFacePatcher(),
 ##    CBash_PowerExhaustion(),
-    CBash_RacePatcher(),
-    CBash_RoadImporter(),
-    CBash_SoundPatcher(),
-    CBash_StatsPatcher(),
+#    CBash_RacePatcher(),
+#    CBash_RoadImporter(),
+#    CBash_SoundPatcher(),
+#    CBash_StatsPatcher(),
 ##    CBash_SEWorldEnforcer(),
-    CBash_ContentsChecker(),
+#    CBash_ContentsChecker(),
 ##    CBash_ForceMerger(),
     ))
 otherPatcherDict = {AliasesPatcher().__class__.__name__ : CBash_AliasesPatcher(),
-                    AssortedTweaker().__class__.__name__ : CBash_AssortedTweaker(),
+                    #AssortedTweaker().__class__.__name__ : CBash_AssortedTweaker(),
                     PatchMerger().__class__.__name__ : CBash_PatchMerger(),
-                    AlchemicalCatalogs().__class__.__name__ : CBash_AlchemicalCatalogs(),
-                    KFFZPatcher().__class__.__name__ : CBash_KFFZPatcher(),
-                    ActorImporter().__class__.__name__ : CBash_ActorImporter(),
-                    DeathItemPatcher().__class__.__name__ : CBash_DeathItemPatcher(),
-                    NPCAIPackagePatcher().__class__.__name__ : CBash_NPCAIPackagePatcher(),
-                    CoblExhaustion().__class__.__name__ : CBash_CoblExhaustion(),
-                    UpdateReferences().__class__.__name__ : CBash_UpdateReferences(),
-                    CellImporter().__class__.__name__ : CBash_CellImporter(),
-                    ClothesTweaker().__class__.__name__ : CBash_ClothesTweaker(),
-                    GlobalsTweaker().__class__.__name__ : CBash_GlobalsTweaker(),
+                    #AlchemicalCatalogs().__class__.__name__ : CBash_AlchemicalCatalogs(),
+                    #KFFZPatcher().__class__.__name__ : CBash_KFFZPatcher(),
+                    #ActorImporter().__class__.__name__ : CBash_ActorImporter(),
+                    #DeathItemPatcher().__class__.__name__ : CBash_DeathItemPatcher(),
+                    #NPCAIPackagePatcher().__class__.__name__ : CBash_NPCAIPackagePatcher(),
+                    #CoblExhaustion().__class__.__name__ : CBash_CoblExhaustion(),
+                    #UpdateReferences().__class__.__name__ : CBash_UpdateReferences(),
+                    #CellImporter().__class__.__name__ : CBash_CellImporter(),
+                    #ClothesTweaker().__class__.__name__ : CBash_ClothesTweaker(),
+                    #GlobalsTweaker().__class__.__name__ : CBash_GlobalsTweaker(),
                     GmstTweaker().__class__.__name__ : CBash_GmstTweaker(),
-                    GraphicsPatcher().__class__.__name__ : CBash_GraphicsPatcher(),
-                    ImportFactions().__class__.__name__ : CBash_ImportFactions(),
-                    ImportInventory().__class__.__name__ : CBash_ImportInventory(),
-                    SpellsPatcher().__class__.__name__ : CBash_SpellsPatcher(),
-                    TweakActors().__class__.__name__ : CBash_TweakActors(),
-                    ImportRelations().__class__.__name__ : CBash_ImportRelations(),
-                    ImportScripts().__class__.__name__ : CBash_ImportScripts(),
+                    #GraphicsPatcher().__class__.__name__ : CBash_GraphicsPatcher(),
+                    #ImportFactions().__class__.__name__ : CBash_ImportFactions(),
+                    #ImportInventory().__class__.__name__ : CBash_ImportInventory(),
+                    #SpellsPatcher().__class__.__name__ : CBash_SpellsPatcher(),
+                    #TweakActors().__class__.__name__ : CBash_TweakActors(),
+                    #ImportRelations().__class__.__name__ : CBash_ImportRelations(),
+                    #ImportScripts().__class__.__name__ : CBash_ImportScripts(),
                     ImportScriptContents().__class__.__name__ : ImportScriptContents(), #No CBash equiv
-                    ImportActorsSpells().__class__.__name__ : CBash_ImportActorsSpells(),
-                    ListsMerger().__class__.__name__ : CBash_ListsMerger(),
-                    MFactMarker().__class__.__name__ : CBash_MFactMarker(),
-                    NamesPatcher().__class__.__name__ : CBash_NamesPatcher(),
-                    NamesTweaker().__class__.__name__ : CBash_NamesTweaker(),
-                    NpcFacePatcher().__class__.__name__ : CBash_NpcFacePatcher(),
-                    PowerExhaustion().__class__.__name__ : CBash_PowerExhaustion(),
-                    RacePatcher().__class__.__name__ : CBash_RacePatcher(),
-                    RoadImporter().__class__.__name__ : CBash_RoadImporter(),
-                    SoundPatcher().__class__.__name__ : CBash_SoundPatcher(),
-                    StatsPatcher().__class__.__name__ : CBash_StatsPatcher(),
-                    SEWorldEnforcer().__class__.__name__ : CBash_SEWorldEnforcer(),
-                    ContentsChecker().__class__.__name__ : CBash_ContentsChecker(),
+                    #ImportActorsSpells().__class__.__name__ : CBash_ImportActorsSpells(),
+                    #ListsMerger().__class__.__name__ : CBash_ListsMerger(),
+                    #MFactMarker().__class__.__name__ : CBash_MFactMarker(),
+                    #NamesPatcher().__class__.__name__ : CBash_NamesPatcher(),
+                    #NamesTweaker().__class__.__name__ : CBash_NamesTweaker(),
+                    #NpcFacePatcher().__class__.__name__ : CBash_NpcFacePatcher(),
+                    #PowerExhaustion().__class__.__name__ : CBash_PowerExhaustion(),
+                    #RacePatcher().__class__.__name__ : CBash_RacePatcher(),
+                    #RoadImporter().__class__.__name__ : CBash_RoadImporter(),
+                    #SoundPatcher().__class__.__name__ : CBash_SoundPatcher(),
+                    #StatsPatcher().__class__.__name__ : CBash_StatsPatcher(),
+                    #SEWorldEnforcer().__class__.__name__ : CBash_SEWorldEnforcer(),
+                    #ContentsChecker().__class__.__name__ : CBash_ContentsChecker(),
                     CBash_AliasesPatcher().__class__.__name__ : AliasesPatcher(),
-                    CBash_AssortedTweaker().__class__.__name__ : AssortedTweaker(),
+                    #CBash_AssortedTweaker().__class__.__name__ : AssortedTweaker(),
                     CBash_PatchMerger().__class__.__name__ : PatchMerger(),
-                    CBash_AlchemicalCatalogs().__class__.__name__ : AlchemicalCatalogs(),
-                    CBash_KFFZPatcher().__class__.__name__ : KFFZPatcher(),
-                    CBash_ActorImporter().__class__.__name__ : ActorImporter(),
-                    CBash_DeathItemPatcher().__class__.__name__ : DeathItemPatcher(),
-                    CBash_NPCAIPackagePatcher().__class__.__name__ : NPCAIPackagePatcher(),
-                    CBash_CoblExhaustion().__class__.__name__ : CoblExhaustion(),
-                    CBash_UpdateReferences().__class__.__name__ : UpdateReferences(),
-                    CBash_CellImporter().__class__.__name__ : CellImporter(),
-                    CBash_ClothesTweaker().__class__.__name__ : ClothesTweaker(),
-                    CBash_GlobalsTweaker().__class__.__name__ : GlobalsTweaker(),
+                    #CBash_AlchemicalCatalogs().__class__.__name__ : AlchemicalCatalogs(),
+                    #CBash_KFFZPatcher().__class__.__name__ : KFFZPatcher(),
+                    #CBash_ActorImporter().__class__.__name__ : ActorImporter(),
+                    #CBash_DeathItemPatcher().__class__.__name__ : DeathItemPatcher(),
+                    #CBash_NPCAIPackagePatcher().__class__.__name__ : NPCAIPackagePatcher(),
+                    #CBash_CoblExhaustion().__class__.__name__ : CoblExhaustion(),
+                    #CBash_UpdateReferences().__class__.__name__ : UpdateReferences(),
+                    #CBash_CellImporter().__class__.__name__ : CellImporter(),
+                    #CBash_ClothesTweaker().__class__.__name__ : ClothesTweaker(),
+                    #CBash_GlobalsTweaker().__class__.__name__ : GlobalsTweaker(),
                     CBash_GmstTweaker().__class__.__name__ : GmstTweaker(),
-                    CBash_GraphicsPatcher().__class__.__name__ : GraphicsPatcher(),
-                    CBash_ImportFactions().__class__.__name__ : ImportFactions(),
-                    CBash_ImportInventory().__class__.__name__ : ImportInventory(),
-                    CBash_SpellsPatcher().__class__.__name__ : SpellsPatcher(),
-                    CBash_TweakActors().__class__.__name__ : TweakActors(),
-                    CBash_ImportRelations().__class__.__name__ : ImportRelations(),
-                    CBash_ImportScripts().__class__.__name__ : ImportScripts(),
-                    CBash_ImportActorsSpells().__class__.__name__ : ImportActorsSpells(),
-                    CBash_ListsMerger().__class__.__name__ : ListsMerger(),
-                    CBash_MFactMarker().__class__.__name__ : MFactMarker(),
-                    CBash_NamesPatcher().__class__.__name__ : NamesPatcher(),
-                    CBash_NamesTweaker().__class__.__name__ : NamesTweaker(),
-                    CBash_NpcFacePatcher().__class__.__name__ : NpcFacePatcher(),
-                    CBash_PowerExhaustion().__class__.__name__ : PowerExhaustion(),
-                    CBash_RacePatcher().__class__.__name__ : RacePatcher(),
-                    CBash_RoadImporter().__class__.__name__ : RoadImporter(),
-                    CBash_SoundPatcher().__class__.__name__ : SoundPatcher(),
-                    CBash_StatsPatcher().__class__.__name__ : StatsPatcher(),
-                    CBash_SEWorldEnforcer().__class__.__name__ : SEWorldEnforcer(),
-                    CBash_ContentsChecker().__class__.__name__ : ContentsChecker()}
+                    #CBash_GraphicsPatcher().__class__.__name__ : GraphicsPatcher(),
+                    #CBash_ImportFactions().__class__.__name__ : ImportFactions(),
+                    #CBash_ImportInventory().__class__.__name__ : ImportInventory(),
+                    #CBash_SpellsPatcher().__class__.__name__ : SpellsPatcher(),
+                    #CBash_TweakActors().__class__.__name__ : TweakActors(),
+                    #CBash_ImportRelations().__class__.__name__ : ImportRelations(),
+                    #CBash_ImportScripts().__class__.__name__ : ImportScripts(),
+                    #CBash_ImportActorsSpells().__class__.__name__ : ImportActorsSpells(),
+                    #CBash_ListsMerger().__class__.__name__ : ListsMerger(),
+                    #CBash_MFactMarker().__class__.__name__ : MFactMarker(),
+                    #CBash_NamesPatcher().__class__.__name__ : NamesPatcher(),
+                    #CBash_NamesTweaker().__class__.__name__ : NamesTweaker(),
+                    #CBash_NpcFacePatcher().__class__.__name__ : NpcFacePatcher(),
+                    #CBash_PowerExhaustion().__class__.__name__ : PowerExhaustion(),
+                    #CBash_RacePatcher().__class__.__name__ : RacePatcher(),
+                    #CBash_RoadImporter().__class__.__name__ : RoadImporter(),
+                    #CBash_SoundPatcher().__class__.__name__ : SoundPatcher(),
+                    #CBash_StatsPatcher().__class__.__name__ : StatsPatcher(),
+                    #CBash_SEWorldEnforcer().__class__.__name__ : SEWorldEnforcer(),
+                    #CBash_ContentsChecker().__class__.__name__ : ContentsChecker()
+                    }
 # Files Links -----------------------------------------------------------------
 #------------------------------------------------------------------------------
 class BoolLink(Link):
@@ -8466,7 +8467,7 @@ class Installer_OpenSearch(InstallerLink):
         Link.AppendToMenu(self,menu,window,data)
         menuItem = wx.MenuItem(menu,self.id,_('Google...'))
         menu.AppendItem(menuItem)
-        x = bosh.reTesNexus.search(data[0].s)
+        x = bosh.reNewVegasNexus.search(data[0].s)
         menuItem.Enable(bool(self.isSingleArchive() and x and x.group(1)))
 
     def Execute(self,event):
@@ -14474,11 +14475,11 @@ def InitStatusBar():
             bosh.tooldirs['OBMLG'],
             Image(GPath(bosh.dirs['images'].join('modlistgenerator'+bosh.inisettings['IconSize']+'.png'))),
             _("Oblivion Mod List Generator")))
-    BashStatusBar.buttons.append( #OblivionBookCreator
-        App_Button(
-            (bosh.tooldirs['OblivionBookCreatorPath'],bosh.inisettings['OblivionBookCreatorJavaArg']),
-            Image(GPath(bosh.dirs['images'].join('oblivionbookcreator'+bosh.inisettings['IconSize']+'.png'))),
-            _("Launch Oblivion Book Creator")))
+    # BashStatusBar.buttons.append( #OblivionBookCreator
+    #     App_Button(
+    #         (bosh.tooldirs['OblivionBookCreatorPath'],bosh.inisettings['OblivionBookCreatorJavaArg']),
+    #         Image(GPath(bosh.dirs['images'].join('oblivionbookcreator'+bosh.inisettings['IconSize']+'.png'))),
+    #         _("Launch Oblivion Book Creator")))
     BashStatusBar.buttons.append( #BSACommander
         App_Button(
             bosh.tooldirs['BSACMD'],
@@ -14489,36 +14490,51 @@ def InitStatusBar():
             bosh.tooldirs['Tabula'],
             Image(GPath(bosh.dirs['images'].join('tabula'+bosh.inisettings['IconSize']+'.png'))),
             _("Launch Tabula")))
-    BashStatusBar.buttons.append( #Tes4Files
-        App_Button(
-            bosh.tooldirs['Tes4FilesPath'],
-            Image(GPath(bosh.dirs['images'].join('tes4files'+bosh.inisettings['IconSize']+'.png'))),
-            _("Launch TES4Files")))
-    BashStatusBar.buttons.append( #Tes4Gecko
-        App_Button(
-            (bosh.tooldirs['Tes4GeckoPath'],bosh.inisettings['Tes4GeckoJavaArg']),
-            Image(GPath(bosh.dirs['images'].join('tes4gecko'+bosh.inisettings['IconSize']+'.png'))),
-            _("Launch Tes4Gecko")))
-    BashStatusBar.buttons.append( #Tes4View
+    # BashStatusBar.buttons.append( #Tes4Files
+    #     App_Button(
+    #         bosh.tooldirs['Tes4FilesPath'],
+    #         Image(GPath(bosh.dirs['images'].join('tes4files'+bosh.inisettings['IconSize']+'.png'))),
+    #         _("Launch TES4Files")))
+    # BashStatusBar.buttons.append( #Tes4Gecko
+    #     App_Button(
+    #         (bosh.tooldirs['Tes4GeckoPath'],bosh.inisettings['Tes4GeckoJavaArg']),
+    #         Image(GPath(bosh.dirs['images'].join('tes4gecko'+bosh.inisettings['IconSize']+'.png'))),
+    #         _("Launch Tes4Gecko")))
+    # BashStatusBar.buttons.append( #Tes4View
+    #     App_Tes4View(
+    #         (bosh.tooldirs['Tes4ViewPath'],'-TES4'), #no cmd argument to force view mode
+    #         Image(GPath(bosh.dirs['images'].join('tes4view'+bosh.inisettings['IconSize']+'.png'))),
+    #         _("Launch TES4View")))
+    # BashStatusBar.buttons.append( #Tes4Edit
+    #     App_Tes4View(
+    #         (bosh.tooldirs['Tes4EditPath'],'-TES4 -edit'),
+    #         Image(GPath(bosh.dirs['images'].join('tes4edit'+bosh.inisettings['IconSize']+'.png'))),
+    #         _("Launch TES4Edit")))
+    # BashStatusBar.buttons.append( #Tes4Trans
+    #     App_Tes4View(
+    #         (bosh.tooldirs['Tes4TransPath'],'-TES4 -translate'),
+    #         Image(GPath(bosh.dirs['images'].join('tes4trans'+bosh.inisettings['IconSize']+'.png'))),
+    #         _("Launch TES4Trans")))
+    # BashStatusBar.buttons.append( #Tes4LODGen
+    #     App_Tes4View(
+    #         (bosh.tooldirs['Tes4LodGenPath'],'-TES4 -lodgen'),
+    #         Image(GPath(bosh.dirs['images'].join('tes4lodgen'+bosh.inisettings['IconSize']+'.png'))),
+    #         _("Launch Tes4LODGen")))
+    BashStatusBar.buttons.append( #(TES4|FO3|FNV)Edit
         App_Tes4View(
-            (bosh.tooldirs['Tes4ViewPath'],'-TES4'), #no cmd argument to force view mode
-            Image(GPath(bosh.dirs['images'].join('tes4view'+bosh.inisettings['IconSize']+'.png'))),
-            _("Launch TES4View")))
-    BashStatusBar.buttons.append( #Tes4Edit
+             (bosh.tooldirs['FO3EditPath'],'-FO3 -edit'),
+             Image(GPath(bosh.dirs['images'].join('fo3edit'+bosh.inisettings['IconSize']+'.png'))),
+            _("Launch FO3Edit")))
+    BashStatusBar.buttons.append( #MasterUpdate
         App_Tes4View(
-            (bosh.tooldirs['Tes4EditPath'],'-TES4 -edit'),
-            Image(GPath(bosh.dirs['images'].join('tes4edit'+bosh.inisettings['IconSize']+'.png'))),
-            _("Launch TES4Edit")))
-    BashStatusBar.buttons.append( #Tes4Trans
+             (bosh.tooldirs['FO3MasterUpdatePath'],'-FO3 -masterupdate'),
+             Image(GPath(bosh.dirs['images'].join('masterupdate'+bosh.inisettings['IconSize']+'.png'))),
+            _("Launch MasterUpdate")))
+    BashStatusBar.buttons.append( #MasterRestore
         App_Tes4View(
-            (bosh.tooldirs['Tes4TransPath'],'-TES4 -translate'),
-            Image(GPath(bosh.dirs['images'].join('tes4trans'+bosh.inisettings['IconSize']+'.png'))),
-            _("Launch TES4Trans")))
-    BashStatusBar.buttons.append( #Tes4LODGen
-        App_Tes4View(
-            (bosh.tooldirs['Tes4LodGenPath'],'-TES4 -lodgen'),
-            Image(GPath(bosh.dirs['images'].join('tes4lodgen'+bosh.inisettings['IconSize']+'.png'))),
-            _("Launch Tes4LODGen")))
+             (bosh.tooldirs['FO3MasterRestorePath'],'-FO3 -masterrestore'),
+             Image(GPath(bosh.dirs['images'].join('masterrestore'+bosh.inisettings['IconSize']+'.png'))),
+            _("Launch MasterRestore")))
     configHelpers = bosh.ConfigHelpers()
     configHelpers.refresh()
     version = configHelpers.bossVersion
@@ -14980,7 +14996,7 @@ def InitInstallerLinks():
     InstallersPanel.mainMenu.append(Installers_ConflictsReportShowsLower())
     InstallersPanel.mainMenu.append(Installers_WizardOverlay())
     InstallersPanel.mainMenu.append(SeparatorLink())
-    InstallersPanel.mainMenu.append(Installers_SkipOBSEPlugins())
+    InstallersPanel.mainMenu.append(Installers_SkipNVSEPlugins())
     InstallersPanel.mainMenu.append(Installers_SkipScreenshots())
     InstallersPanel.mainMenu.append(Installers_SkipImages())
     InstallersPanel.mainMenu.append(Installers_SkipDocs())
