@@ -26454,15 +26454,12 @@ class WeaponModsPatcher(ImportPatcher):
         self.classestemp = set()
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
-        recFlags_class = self.recFlags_class = {}
         recFidAttrs_class = self.recFidAttrs_class = {}
-        recFidFlags_class = self.recFidFlags_class = {}
         for recClass in (MreWeap,):
             recAttrs_class[recClass] = ('modelWithMods','firstPersonModelWithMods','weaponMods','soundMod1Shoot3Ds','soundMod1Shoot2D',
                                         'effectMod1','effectMod2','effectMod3','valueAMod1','valueAMod2','valueAMod3',
-                                        'valueBMod1','valueBMod2','valueBMod3','reloadAnimationMod','vatsModReqiured','scopeModel')
-            recFlags_class[recClass] = {'dnamFlags1': ('hasScope',),
-                                        'dnamFlags2': ('scopeFromMod',)}
+                                        'valueBMod1','valueBMod2','valueBMod3','reloadAnimationMod','vatsModReqiured','scopeModel',
+                                        'dnamFlags1.hasScope','dnamFlags2.scopeFromMod')
         self.longTypes = set(('WEAP',))
         #self.longTypes = set(('WEAP','STAT','IMOD','SOUN'))
 
@@ -26471,7 +26468,6 @@ class WeaponModsPatcher(ImportPatcher):
         if not self.isActive: return
         id_data = self.id_data
         recAttrs_class = self.recAttrs_class
-        recFlags_class = self.recFlags_class
         loadFactory = LoadFactory(False,*recAttrs_class.keys())
         longTypes = self.longTypes & set(x.classType for x in recAttrs_class)
         progress.setFull(len(self.sourceMods))
@@ -26493,7 +26489,8 @@ class WeaponModsPatcher(ImportPatcher):
                 for record in srcFile.tops[recClass.classType].getActiveRecords():
                     fid = mapper(record.fid)
                     if recFidAttrs:
-                        attr_fidvalue = dict((attr,record.__getattribute__(attr)) for attr in recFidAttrs)
+                        #attr_fidvalue = dict((attr,record.__getattribute__(attr)) for attr in recFidAttrs)
+                        attr_fidvalue = dict((attr,reduce(getattr, attr.split('.'), record)) for attr in recFidAttrs)
                         for fidvalue in attr_fidvalue.values():
                             if fidvalue and (fidvalue[0] is None or fidvalue[0] not in self.patchFile.loadSet):
                                 #Ignore the record. Another option would be to just ignore the attr_fidvalue result
@@ -26501,10 +26498,12 @@ class WeaponModsPatcher(ImportPatcher):
                                 mod_skipcount[srcMod] = mod_skipcount.setdefault(srcMod, 0) + 1
                                 break
                         else:
-                            temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+                            #temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+                            temp_id_data[fid] = dict((attr,reduce(getattr, attr.split('.'), record)) for attr in recAttrs)
                             temp_id_data[fid].update(attr_fidvalue)
                     else:
-                        temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+                        #temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
+                        temp_id_data[fid] = dict((attr,reduce(getattr, attr.split('.'), record)) for attr in recAttrs)
             for master in masters:
                 if not master in modInfos: continue # or break filter mods
                 if master in cachedMasters:
@@ -26523,7 +26522,8 @@ class WeaponModsPatcher(ImportPatcher):
                         fid = mapper(record.fid)
                         if fid not in temp_id_data: continue
                         for attr, value in temp_id_data[fid].iteritems():
-                            if value == record.__getattribute__(attr): continue
+                            #if value == record.__getattribute__(attr): continue
+                            if value == reduce(getattr, attr.split('.'), record): continue
                             else:
                                 if fid not in id_data: id_data[fid] = dict()
                                 try:
@@ -26536,7 +26536,7 @@ class WeaponModsPatcher(ImportPatcher):
         self.isActive = bool(self.srcClasses)
 
     def scanModFile(self, modFile, progress):
-        """Scan mod file against source data."""
+        """Scan mod file against source data."""k
         if not self.isActive: return
         id_data = self.id_data
         modName = modFile.fileInfo.name
@@ -26552,7 +26552,8 @@ class WeaponModsPatcher(ImportPatcher):
                 if not record.longFids: fid = mapper(fid)
                 if fid not in id_data: continue
                 for attr,value in id_data[fid].iteritems():
-                    if record.__getattribute__(attr) != value:
+                    #if record.__getattribute__(attr) != value:
+                    if reduce(getattr, attr.split('.'), record) != value:
                         patchBlock.setRecord(record.getTypeCopy(mapper))
                         break
 
@@ -26571,23 +26572,28 @@ class WeaponModsPatcher(ImportPatcher):
                 fid = record.fid
                 if fid not in id_data: continue
                 for attr,value in id_data[fid].iteritems():
-                    if isinstance(record.__getattribute__(attr),str) and isinstance(value, str):
-                        if record.__getattribute__(attr).lower() != value.lower():
+                    #if isinstance(record.__getattribute__(attr),str) and isinstance(value, str):
+                    if isinstance(reduce(getattr, attr.split('.'), record),str) and isinstance(value, str):
+                        #if record.__getattribute__(attr).lower() != value.lower():
+                        if reduce(getattr, attr.split('.'), record).lower() != value.lower():
                             break
                         continue
                     elif attr == 'model':
                         try:
-                            if record.__getattribute__(attr).modPath.lower() != value.modPath.lower():
+                            #if record.__getattribute__(attr).modPath.lower() != value.modPath.lower():
+                            if reduce(getattr, attr.split('.'), record).modPath.lower() != value.modPath.lower():
                                 break
                             continue
                         except:
                             break #assume they are not equal (ie they aren't __both__ NONE)
-                    if record.__getattribute__(attr) != value:
+                    #if record.__getattribute__(attr) != value:
+                    if reduce(getattr, attr.split('.'), record) != value:
                         break
                 else:
                     continue
                 for attr,value in id_data[fid].iteritems():
-                    record.__setattr__(attr,value)
+                    #record.__setattr__(attr,value)
+                    reduce(__setattr__, attr.split('.'), record)
                 keep(fid)
                 type_count[type] += 1
         id_data = None
