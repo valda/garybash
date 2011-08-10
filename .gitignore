@@ -5,5 +5,12 @@ Data/menus/
 Data/sound/
 Data/music/
 Data/shaders/
+Data/video/
+Data/*.bsa
+Data/*.esm
+Data/*.esp
+Mopy/bash/l10n/*.pkl
 NVJP/
 Redists/
+*.pyc
+*.bak
