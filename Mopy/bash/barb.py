@@ -63,7 +63,7 @@ class BaseBackupSettings:
         #end if
         self.parent = parent
         self.verDat = basher.settings['bash.version']
-        self.verApp = basher.GetBashVersion()[1]
+        self.verApp = basher.settings['bash.readme'][1].split('.')[0]
         self.files = {}
         self.tmp = None
 
@@ -95,7 +95,8 @@ class BaseBackupSettings:
         return cmp(self.verDat, basher.settings['bash.version'])
 
     def CmpAppVersion(self):
-        return cmp(self.verApp, basher.settings['bash.readme'][1])
+        return cmp(self.verApp.split('.')[0], basher.settings['bash.readme'][1].split('.')[0])
+        #return cmp(self.verApp, basher.settings['bash.readme'][1])
 
     def SameDataVersion(self):
         return not self.CmpDataVersion()
@@ -196,7 +197,7 @@ class BackupSettings(BaseBackupSettings):
         # dump the version info and file listing
         out = self.tmp.join('backup.dat').open('wb')
         cPickle.dump(self.verDat, out, -1) #data version, if this doesn't match the installed data version, do not allow restore
-        cPickle.dump(self.verApp, out, -1) #app version, if this doesn't match the installer app version, warn the use on restore
+        cPickle.dump(self.verApp, out, -1) #app version, if this doesn't match the installer app version, warn the user on restore
         out.close()
 
         # create the backup archive
@@ -214,7 +215,7 @@ class BackupSettings(BaseBackupSettings):
         #returns False if user cancels
         if self.archive == None or self.dir.join(self.archive).exists():
             dt = datetime.datetime.now()
-            file = 'Backup Bash Settings v%s (%s).7z' % (self.verDat,dt.strftime('%d-%m-%Y %H%M.%S'))
+            file = 'Backup Bash Settings v%s (%s).7z' % (self.verApp,dt.strftime('%d-%m-%Y %H%M.%S'))
             if not self.quit:
                 path = askSave(self.parent,_('Backup Bash Settings'),self.dir,file,'*.7z')
                 if not path: return False

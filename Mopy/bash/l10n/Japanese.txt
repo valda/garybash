@@ -4729,7 +4729,7 @@ Saves
 === bash\basher.py, 4735
 INI Edits
 >>>>
-Oblivion.ini編集
+INI編集
 === bash\basher.py, 4736
 Screenshots
 >>>>
@@ -7477,11 +7477,11 @@ NVSE Enabled
 === bash\basher.py, 14276
 Auto-Quit Disabled
 >>>>
-Oblivion起動時の自動Wrye Bash終了が無効になっています
+ゲーム起動時の自動Wrye Bash終了が無効になっています
 === bash\basher.py, 14276
 Auto-Quit Enabled
 >>>>
-Oblivion起動時の自動Wrye Bash終了が有効になっています
+ゲーム起動時の自動Wrye Bash終了が有効になっています
 === bash\basher.py, 14296
 Help File
 >>>>
