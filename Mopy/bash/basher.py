@@ -1812,7 +1812,7 @@ class ModDetails(wx.Window):
         self.edited = False
         textWidth = 200
         #--Version
-        self.version = staticText(self,'v0.0')
+        self.version = staticText(self,'v0.0 ')
         id = self.fileId = wx.NewId()
         #--File Name
         self.file = textCtrl(self,id,size=(textWidth,-1))
@@ -1896,7 +1896,7 @@ class ModDetails(wx.Window):
             self.authorStr = Unicode('')
             self.modifiedStr = Unicode('')
             self.descriptionStr = Unicode('')
-            self.versionStr = Unicode('v0.0')
+            self.versionStr = Unicode('v0.0 ')
             tagsStr = Unicode('')
         #--Valid fileName?
         else:
@@ -1906,7 +1906,7 @@ class ModDetails(wx.Window):
             self.authorStr = Unicode(modInfo.header.author,'mbcs')
             self.modifiedStr = Unicode(formatDate(modInfo.mtime))
             self.descriptionStr = Unicode(modInfo.header.description,'mbcs')
-            self.versionStr = Unicode('v%0.1f' % (modInfo.header.version,))
+            self.versionStr = Unicode('v%0.2f' % (modInfo.header.version,))
             tagsStr = Unicode('\n').join(sorted(modInfo.getBashTags()))
         #--Editable mtime?
         if fileName in bosh.modInfos.autoSorted:
