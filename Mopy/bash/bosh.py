@@ -349,8 +349,8 @@ reCsvExt  = re.compile(r'\.csv$',re.I)
 reINIExt  = re.compile(r'\.ini$',re.I)
 reQuoted  = re.compile(r'^"(.*)"$')
 reGroupHeader = re.compile(r'^(\+\+|==)')
-reFallout3Nexus = re.compile(r'(.*?)(?:-(\d{4,6})(?:\.tessource)?(?:-bain)?(?:-\d{0,6})?(?:-\d{0,6})?(?:-\d{0,6})?(?:\w)?)?\.(7z|zip|rar|7z.001)$',re.I)
-reTESA = re.compile(r'(.*?)(?:-(\d{1,6})(?:\.tessource)?(?:-bain)?)?\.(7z|zip|rar)$',re.I)
+reFallout3Nexus = re.compile(r'(.*?)(?:-(\d{4,6})(?:\.tessource)?(?:-bain)?(?:-\d{0,6})?(?:-\d{0,6})?(?:-\d{0,6})?(?:\w)?)?(\.7z|\.zip|\.rar|\.7z\.001|)$',re.I)
+reTESA = re.compile(r'(.*?)(?:-(\d{1,6})(?:\.tessource)?(?:-bain)?)?(\.7z|\.zip|\.rar|)$',re.I)
 reSplitOnNonAlphaNumeric = re.compile(r'\W+')
 
 
@@ -7400,7 +7400,7 @@ class SaveHeader:
         """Extract info from save file."""
         ins = path.open('rb')
         try:
-            #--Header 
+            #--Header
             ins.seek(11) # FO3SAVEGAME
             headerSize, = struct.unpack('I',ins.read(4))
             unknown,delim = struct.unpack('Ic',ins.read(5))
@@ -8591,7 +8591,7 @@ class IniFile:
             else:
                 if len(stripped) != 0:
                     status = -10
-            lines.append((line.strip(),section._s,setting,value._s,status,lineNo))
+            lines.append((line.rstrip(),section._s,setting,value._s,status,lineNo))
         iniFile.close()
         return lines
 
@@ -9488,6 +9488,7 @@ class FileInfo:
         normal = self.dir.join(self.name)
         ghost = normal+'.ghost'
         try:
+            if not normal.editable() or not ghost.editable(): return self.isGhost
             if isGhost: normal.moveTo(ghost)
             else: ghost.moveTo(normal)
             self.isGhost = isGhost
@@ -9545,6 +9546,12 @@ class ModInfo(FileInfo):
         else:
             crc = modInfos.table.getItem(self.name,'crc')
         return crc
+
+    def txt_status(self):
+        if self.name in modInfos.ordered: return 'Active'
+        elif self.name in modInfos.merged: return 'Merged'
+        elif self.name in modInfos.imported: return 'Imported'
+        else: return 'Non-Active'
 
     def hasTimeConflict(self):
         """True if has an mtime conflict with another mod."""
@@ -10291,7 +10298,7 @@ class ModInfos(FileInfos):
         self.autoHeaders = set() #--Full balo headers
         self.autoGroups = {} #--Auto groups as read from group files.
         self.group_header = {}
-        #--Fallout3 version 
+        #--Fallout3 version
         self.version_voSize = {
             '1.0':int(_("288769595")),
             '1.1':int(_("288771181")),
@@ -12128,7 +12135,7 @@ class Installer(object):
     reReadMe = re.compile(r'^([^\\]*)(read[ _]?me|lisez[ _]?moi)([^\\]*)\.(txt|rtf|htm|html|doc|odt)$',re.I)
     skipExts = set(('.exe','.py','.pyc','.7z','.zip','.rar','.db','.ace','.tgz','.tar','.gz','.bz2','.fomod','.tb2','.lzma'))
     skipExts.update(set(readExts))
-    docExts = set(('.txt','.rtf','.htm','.html','.doc','.docx','.odt','.mht','.pdf','.css','.xls','.ods','.odp','.ppt'))
+    docExts = set(('.txt','.rtf','.htm','.html','.doc','.docx','.odt','.mht','.pdf','.css','.xls','.xlsx','.ods','.odp','.ppt','.pptx'))
     imageExts = set(('.gif','.jpg','.png','.jpeg','.bmp'))
     scriptExts = set(('.txt','.ini'))
     #--Temp Files/Dirs
@@ -14381,7 +14388,7 @@ class InstallersData(bolt.TankData, DataDict):
         for emptyDir in emptyDirs:
             if emptyDir.isdir() and not emptyDir.list():
                 emptyDir.removedirs()
-                
+
     def getConflictReport(self,srcInstaller,mode):
         """Returns report of overrides for specified package for display on conflicts tab.
         mode: O: Overrides; U: Underrides"""
@@ -15948,7 +15955,7 @@ class FullNames:
 #         for record in modFile.CELLS:
 #             celldata[record.eid] = record.bsb
 #             record.UnloadRecord()
-            
+
 #         del Current
 
 #     def writeToText(self,textPath):
@@ -19151,7 +19158,7 @@ class ModCleaner:
     ITM     = 0x02  # Identical to master records
     FOG     = 0x04  # Nvidia Fog Fix
     ALL = UDR|ITM|FOG
-    
+
     def __init__(self,modInfo):
         self.modInfo = modInfo
         self.itm = set()    # Fids for Identical To Master records
@@ -20198,6 +20205,15 @@ class CBash_PatchFile(ObModFile):
             print "buildPatch"
             print error[0]
             return
+        if self.ObCollection.LookupModFileLoadOrder(self.patchName.temp.s) == 0:
+            print _("Please copy this entire message and report it on the current official thread at "
+                    "http://forums.bethsoft.com/index.php?/forum/25-mods/.\n Also with:\n1. Your OS:"
+                    "\n2. Your installed MS Visual C++ redistributable versions:\n3. Your system RAM "
+                    "amount:\n4. How much memory Python.exe\pythonw.exe or Wrye Bash.exe is using\n5."
+                    " and finally... if restarting Wrye Bash and trying again and building the CBash "
+                    "Bashed Patch right away works fine\n")
+            print ObCollection.Debug_DumpModFiles()
+            raise StateError()
         ObModFile.__init__(self, patchFile._CollectionID, patchFile._ModID)
 
         self.TES4.author = 'BASHED PATCH'
@@ -23279,7 +23295,7 @@ class ImportFactions(ImportPatcher):
 #     text = _("Import factions from source mods/files.")
 #     defaultItemCheck = inisettings['AutoItemCheck'] #--GUI: Whether new items are checked by default or not.
 #     autoKey = set(('Factions',))
-    
+
 #     #--Config Phase -----------------------------------------------------------
 #     def initPatchFile(self,patchFile,loadMods):
 #         """Prepare to handle specified patch mod. All functions are called after this."""
@@ -24408,7 +24424,7 @@ class ImportActorsSpells(ImportPatcher):
 #                 if mod.GName in self.srcs:
 #                     tags = modInfos[mod.GName].getBashTags()
 #                     self.scan(mod,conflict,tags)
-#             else: break        
+#             else: break
 #         recordId = record.fid
 #         mergedSpells = self.id_spells.get(recordId,None)
 #         if mergedSpells:
@@ -24676,7 +24692,7 @@ class NpcFacePatcher(ImportPatcher):
             for npc in faceFile.NPC_.getActiveRecords():
                 if npc.fid[0] in self.patchFile.loadSet:
                     attrs, fidattrs = [],[]
-                    if 'Npc.HairOnly' in bashTags: 
+                    if 'Npc.HairOnly' in bashTags:
                         fidattrs += ['hair']
                         attrs = ['hairLength','hairRed','hairBlue','hairGreen']
                     if 'Npc.EyesOnly' in bashTags: fidattrs += ['eye']
@@ -24803,7 +24819,7 @@ class NpcFacePatcher(ImportPatcher):
 #             self.id_face[record.fid] = face
 #         else:
 #             fidattrs, attrs = [], []
-#             if 'Npc.HairOnly' in bashTags: 
+#             if 'Npc.HairOnly' in bashTags:
 #                 fidattrs += ['hair']
 #                 attrs =['hairLength','hairRed','hairBlue','hairGreen']
 #             if 'Npc.EyesOnly' in bashTags: fidattrs += ['eye']
@@ -24832,7 +24848,7 @@ class NpcFacePatcher(ImportPatcher):
 #                         if same:
 #                             return
 #             self.id_face.setdefault(fid,{}).update(attr_fidvalue)
-#             if fidattrs: 
+#             if fidattrs:
 #                 self.id_face.setdefault(fid,{}).update(record.ConflictDetails(attrs, False))
 #             else:
 #                 self.id_face.setdefault(fid,{}).update(record.ConflictDetails(self.faceData, False))
@@ -25252,7 +25268,7 @@ class SoundPatcher(ImportPatcher):
 #                 if mod.GName in self.srcs:
 #                     tags = modInfos[mod.GName].getBashTags()
 #                     self.scan(mod,conflict,tags)
-#             else: break        
+#             else: break
 #         recordId = record.fid
 #         prev_attr_value = self.fid_attr_value.get(recordId,None)
 #         if prev_attr_value:
@@ -27541,7 +27557,7 @@ class AssortedTweak_NoLightFlicker(MultiTweakItem):
 #             if oldValues != newValues:
 #                 override = record.CopyAsOverride(self.patchFile)
 #                 if override:
-#                     map(record.__setattr__, attrs, newValues)
+#                     map(override.__setattr__, attrs, newValues)
 #                     record.UnloadRecord()
 #                     record._ModID, record._RecordID = override._ModID, override._RecordID
 
@@ -29595,11 +29611,11 @@ class GmstTweaker(MultiTweaker):
     def getReadClasses(self):
         """Returns load factory classes needed for writing."""
         return (None,(MreGmst,))[self.isActive]
-        
+
     def getWriteClasses(self):
         """Returns load factory classes needed for writing."""
         return (None,(MreGmst,))[self.isActive]
-        
+
     def scanModFile(self,modFile,progress):
         """Scans specified mod file to extract info. May add record to patch mod,
         but won't alter it."""
@@ -29611,7 +29627,7 @@ class GmstTweaker(MultiTweaker):
             if mapper(record.fid) in id_records: continue
             record = record.getTypeCopy(mapper)
             patchRecords.setRecord(record)
-            
+
     def buildPatch(self,log,progress):
         """Edits patch file as desired. Will write to log."""
         if not self.isActive: return
@@ -31385,7 +31401,7 @@ class BasalCreatureTweaker(MultiTweakItem):
 #             # skeletonList gets files that match the pattern "skel_*.nif", but not "skel_special_*.nif"
 #             # skeletonSetSpecial gets files that match "skel_special_*.nif"
 #             skeletonList = [x for x in skeletonDir.list() if x.csbody.startswith('skel_') and not x.csbody.startswith('skel_special_') and x.cext == '.nif']
-#             skeletonSetSpecial = set((x for x in skeletonDir.list() if x.csbody.startswith('skel_special_') and x.cext == '.nif'))
+#             skeletonSetSpecial = set((x.s for x in skeletonDir.list() if x.csbody.startswith('skel_special_') and x.cext == '.nif'))
 
 #             if len(skeletonList) > 0:
 #                 femaleOnly = self.choiceValues[self.chosen][0] == 1
@@ -31454,7 +31470,7 @@ class BasalCreatureTweaker(MultiTweakItem):
 #         skeletonDir = bosh.dirs['mods'].join('Meshes', 'Characters', '_male')
 #         if skeletonDir.exists():
 #             self.skeletonList = [x for x in skeletonDir.list() if x.csbody.startswith('skel_') and not x.csbody.startswith('skel_special_') and x.cext == '.nif']
-#             self.skeletonSetSpecial = set((x for x in skeletonDir.list() if x.csbody.startswith('skel_special_') and x.cext == '.nif'))
+#             self.skeletonSetSpecial = set((x.s for x in skeletonDir.list() if x.csbody.startswith('skel_special_') and x.cext == '.nif'))
 
 #     def getTypes(self):
 #         return ['NPC_']
@@ -34347,7 +34363,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
         #--Npcs with unassigned eyes/hair
         for npc in patchFile.NPC_.records:
             #if npc.fid == (GPath('Oblivion.esm'), 0x000007): continue #skip player
-            #if npc.race == (GPath('Oblivion.esm'), 0x038010) and not reProcess.search(npc.full): continue
+            #if npc.full is not None and npc.race == (GPath('Oblivion.esm'), 0x038010) and not reProcess.search(npc.full): continue
             raceEyes = defaultEyes.get(npc.race)
             if not npc.eye and raceEyes:
                 npc.eye = random.choice(raceEyes)
@@ -34445,7 +34461,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
 #                 if mod.GName in self.srcs:
 #                     tags = modInfos[mod.GName].getBashTags()
 #                     self.scan(mod,conflict,tags)
-#             else: break        
+#             else: break
 #         recordId = record.fid
 #         if(recordId in self.fid_faction_mod):
 #             newRelations = set((faction,mod) for faction,mod in self.fid_faction_mod[recordId].iteritems())
@@ -34613,7 +34629,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
 #                 if mod.GName in self.srcs:
 #                     tags = modInfos[mod.GName].getBashTags()
 #                     self.scan(mod,conflict,tags)
-#             else: break        
+#             else: break
 #         recordId = record.fid
 #         if(recordId in self.id_spells):
 #             newSpells = self.id_spells[recordId]
@@ -34632,6 +34648,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
 #     autoKey = set(('Eyes-D','Eyes-R','Eyes-E','Eyes'))
 #     blueEye = (GPath('Oblivion.esm'),0x27308)
 #     argonianEye = (GPath('Oblivion.esm'),0x3e91e)
+#     dremoraRace = (GPath('Oblivion.esm'),0x038010)
 # ##    defaultMesh = (r'characters\imperial\eyerighthuman.nif', r'characters\imperial\eyelefthuman.nif')
 #     reX117 = re.compile('^117[a-z]',re.I)
 #     iiMode = False
@@ -34745,7 +34762,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
 #         eyeNames = self.eyeNames
 #         maleHairs = self.maleHairs
 #         femaleHairs = self.femaleHairs
-#         playableRaces = set([(GPath('Oblivion.esm'), 0x038010)]) #Dremora
+#         playableRaces = set([self.dremoraRace])
 
 #         #--Eye Mesh filtering
 #         eye_meshes = self.eye_meshes
@@ -34782,7 +34799,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
 #             (GPath('Oblivion.esm'),0x54bb9), #--Dark Seducer
 #             (GPath('Oblivion.esm'),0x54bba), #--Golden Saint
 #             (GPath('Oblivion.esm'),0x5fa43), #--Ordered
-#             (GPath('Oblivion.esm'),0x038010), #--Dremora
+#             self.dremoraRace,
 #             ):
 #             eye_meshes.setdefault(eye,blueEyeMeshes)
 #         def setRaceEyeMesh(race,rightPath,leftPath):
@@ -34886,7 +34903,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
 #                 if recordId in fixedNPCs: continue #--already processed once (added to patchFile, and now the patchFile is being processed)
 #                 raceId = npc.race
 #                 if raceId not in playableRaces: continue
-#                 if raceId == (GPath('Oblivion.esm'), 0x038010) and not reProcess.search(npc.full): continue # So as not to give OOO's spectral warriors different hairs/eyes since they are dremora race. 
+#                 if npc.full is not None and raceId == self.dremoraRace and not reProcess.search(npc.full): continue # So as not to give OOO's spectral warriors different hairs/eyes since they are dremora race.
 #                 #IsNewest
 #                 if npc.IsWinning():
 #                     npcChanged = False
@@ -35760,6 +35777,7 @@ def initOptions(bashIni):
                     if not value.isabs():
                         value = dirs['app'].join(value)
                 elif settingType is bool:
+                    if value == '.': continue
                     value = bashIni.getboolean(section,key)
                 else:
                     value = settingType(value)
@@ -35831,7 +35849,7 @@ def initSettings(readOnly=False):
                 dirs['saveBase'].join('BashSettings.dat'),
                 dirs['userApp'].join('bash config.pkl'),
                 readOnly))
-            else:raise  
+            else:raise
     settings.loadDefaults(settingDefaults)
 
 # Main ------------------------------------------------------------------------
