@@ -1809,7 +1809,7 @@ Mods with non standard TES4 versions
 === bash\bosh.py, 12187
 Following mods have a TES4 version that isn't recognized as one of the standard versions (1.32, 1.33 and 1.34).  It is untested what effect this can have on the game, but presumably Fallout New Vegas will refuse to load anything above 1.34
 >>>>
-
+以下のMODは一般的なTES4バージョン(1.32, 1.33 and 1.34)のいずれにも該当しないバージョンを有しています. ゲームにどのような影響を及ぼすかは不明ですが、1.34より大きい数値のものはFalloutNVがロードを拒否する可能性があります
 === bash\bosh.py, 12194
 Missing/Delinquent Masters
 >>>>
