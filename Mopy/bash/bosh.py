@@ -26536,7 +26536,7 @@ class WeaponModsPatcher(ImportPatcher):
         self.isActive = bool(self.srcClasses)
 
     def scanModFile(self, modFile, progress):
-        """Scan mod file against source data."""k
+        """Scan mod file against source data."""
         if not self.isActive: return
         id_data = self.id_data
         modName = modFile.fileInfo.name
@@ -26593,7 +26593,9 @@ class WeaponModsPatcher(ImportPatcher):
                     continue
                 for attr,value in id_data[fid].iteritems():
                     #record.__setattr__(attr,value)
-                    reduce(__setattr__, attr.split('.'), record)
+                    sattr = attr.split('.')
+                    lastattr = sattr.pop()
+                    reduce(getattr, sattr, record).__setattr__(lastattr, value)
                 keep(fid)
                 type_count[type] += 1
         id_data = None
@@ -29806,7 +29808,7 @@ class GmstTweak(MultiTweakItem):
                         keep(record.fid)
                     break
             else:
-                gmst = MreGmst(('GMST',0,0,0,0))
+                gmst = MreGmst(('GMST',0,0,0,0,0))
                 gmst.eid,gmst.value,gmst.longFids = eid,value,True
                 fid = gmst.fid = keep(gmst.getGMSTFid())
                 patchFile.GMST.setRecord(gmst)
@@ -34761,13 +34763,13 @@ class RacePatcher(SpecialPatcher,ListPatcher):
         for record in modFile.RACE.getActiveRecords():
             if record.fid not in id_records:
                 patchBlock.setRecord(record.getTypeCopy(mapper))
-            if not record.rightEye or not record.leftEye:
-                #deprint(_('No right and/or no left eye recorded in race %s, from mod %s') % (record.full, modName))
+            if not record.maleRightEye or not record.maleLeftEye:
+                deprint(_('No right and/or no left eye recorded in race %s, from mod %s') % (record.full, modName))
                 continue
             for eye in record.eyes:
                 if eye in srcEyes:
-                    eye_mesh[eye] = (record.maleRightEye.modPath.lower(),record.femaleRightEye.modPath.lower(),
-                                     record.maleLeftEye.modPath.lower(),record.femaleLeftEye.modPath.lower())
+                    eye_mesh[eye] = (record.maleRightEye.modPath.lower(),record.maleLeftEye.modPath.lower(),
+                                     record.femaleRightEye.modPath.lower(),record.femaleLeftEye.modPath.lower())
 
     def buildPatch(self,log,progress):
         """Updates races as needed."""
@@ -34846,12 +34848,12 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 keep(race.fid)
         #--Eye Mesh filtering
         # eye_mesh = self.eye_mesh
+        # ghoulEyeMesh = eye_mesh[(GPath('FalloutNV.esm'),0x35e4f)]
         # hazelEyeMesh = eye_mesh[(GPath('FalloutNV.esm'),0x4255)]
-        # #argonianEyeMesh = eye_mesh[(GPath('Oblivion.esm'),0x3e91e)]
         # if debug:
         #     print '== Eye Mesh Filtering'
         #     print 'hazelEyeMesh',hazelEyeMesh
-        #     #print 'argonianEyeMesh',argonianEyeMesh
+        #     print 'ghoulEyeMesh',ghoulEyeMesh
         # for eye in (
         #     (GPath('FalloutNV.esm'),0x1a), #--Reanimate
         #     #(GPath('Oblivion.esm'),0x54bb9), #--Dark Seducer
@@ -34877,8 +34879,8 @@ class RacePatcher(SpecialPatcher,ListPatcher):
         #         if mesh not in mesh_eye:
         #             mesh_eye[mesh] = []
         #         mesh_eye[mesh].append(eye)
-        #     currentMesh = (race.maleRightEye.modPath.lower(),race.femaleRightEye.modPath.lower(),
-        #                    race.maleLeftEye.modPath.lower(),race.femaleLeftEye.modPath.lower())
+        #     currentMesh = (race.maleRightEye.modPath.lower(),race.maleLeftEye.modPath.lower(),
+        #                    race.femaleRightEye.modPath.lower(),race.femaleLeftEye.modPath.lower())
         #     #print race.eid, mesh_eye
         #     maxEyesMesh = sorted(mesh_eye.keys(),key=lambda a: len(mesh_eye[a]))[0]
         #     #--Single eye mesh, but doesn't match current mesh?
@@ -34892,13 +34894,13 @@ class RacePatcher(SpecialPatcher,ListPatcher):
         #             for eye in eyes: print ' ',strFid(eye)
         #     if len(mesh_eye) > 1 and race.flags.playable:
         #         #--If hazelEyeMesh (mesh used for vanilla eyes) is present, use that.
-        #         if hazelEyeMesh in mesh_eye: #and currentMesh != argonianEyeMesh:
+        #         if hazelEyeMesh in mesh_eye and currentMesh != hazelEyeMesh:
         #             setRaceEyeMesh(race,*hazelEyeMesh)
         #             race.eyes = mesh_eye[hazelEyeMesh]
         #             raceChanged = True
-        #         #elif argonianEyeMesh in mesh_eye:
-        #         #    setRaceEyeMesh(race,*argonianEyeMesh)
-        #         #    race.eyes = mesh_eye[argonianEyeMesh]
+        #         #elif ghoulEyeMesh in mesh_eye:
+        #         #    setRaceEyeMesh(race,*ghoulEyeMesh)
+        #         #    race.eyes = mesh_eye[ghoulEyeMesh]
         #         #    raceChanged = True
         #         #--Else figure that current eye mesh is the correct one
         #         elif currentMesh in mesh_eye:
