@@ -6,9 +6,15 @@ Data/sound/
 Data/music/
 Data/shaders/
 Data/video/
+Data/*.nam
 Data/*.bsa
 Data/*.esm
 Data/*.esp
+Data/*.ghost
+Data/*.esm.backup.*
+Data/*.esp.backup.*
+Data/*.esm.save.*
+Data/*.esp.save.*
 Mopy/bash/l10n/*.pkl
 NVJP/
 Redists/
