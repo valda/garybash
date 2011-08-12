@@ -14008,6 +14008,12 @@ class App_Button(Link):
         else:
             self.exePath = exePathArgs
             self.exeArgs = tuple()
+        # Pathlist with args (for GeMM).
+        if isinstance(self.exePath, list):
+            for path in self.exePath:
+                if path.exists():
+                    self.exePath = path
+                    break
         self.image = image
         self.tip = tip
         if workingDir:
@@ -14511,7 +14517,7 @@ def InitStatusBar():
             '-editor'))
     BashStatusBar.buttons.append( #FOMM
         App_Button(
-            (bosh.tooldirs['FOMMPath'],r'-game Fallout3'),
+            (bosh.tooldirs['FOMMPath'],'-game Fallout3'),
             Image(GPath(bosh.dirs['images'].join('fomm'+bosh.inisettings['IconSize']+'.png'))),
             _("Launch FOMM")))
     BashStatusBar.buttons.append( #ISOBL
