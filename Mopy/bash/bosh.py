@@ -36231,7 +36231,7 @@ def initDefaultTools():
     pf = [GPath(r'C:\Program Files'),GPath(r'C:\Program Files (x86)')]
     def pathlist(*args): return [x.join(*args) for x in pf]
 
-    tooldirs['FOMMPath'] = GPath(r'C:\Program Files\GeMM\fomm.exe')
+    tooldirs['FOMMPath'] = pathlist('GeMM','fomm.exe')
     #tooldirs['Tes4FilesPath'] = dirs['app'].join('TES4Files.exe')
     tooldirs['FNVEditPath'] = dirs['app'].join('FNVEdit.exe')
     #tooldirs['Tes4LodGenPath'] = dirs['app'].join('TES4LodGen.exe')
