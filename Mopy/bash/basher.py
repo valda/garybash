@@ -4890,7 +4890,7 @@ class BashFrame(wx.Frame):
         #--Have any mtimes been reset?
         if bosh.modInfos.mtimesReset:
             if bosh.modInfos.mtimesReset[0] == 'FAILED':
-                balt.showWarning(self,_("It appears that the current user doesn't have permissions for some or all of the files in Oblivion\\Data.\nSpecifically had permission denied to change the time on:\n%s") % bosh.modInfos.mtimesReset[1].s)
+                balt.showWarning(self,_("It appears that the current user doesn't have permissions for some or all of the files in Fallout New Vegas\\Data.\nSpecifically had permission denied to change the time on:\n%s") % bosh.modInfos.mtimesReset[1].s)
             if not bosh.inisettings['SkipResetTimeNotifications']:
                 message = _('Modified dates have been reset for some mod files:')
                 message += listFiles(sorted(bosh.modInfos.mtimesReset))
@@ -7488,10 +7488,10 @@ class Installers_UninstallAllPackages(Link):
 #------------------------------------------------------------------------------
 class Installers_UninstallAllUnknownFiles(Link):
     """Uninstall all files that do not come from a current package/bethesda files.
-       For safety just moved to Oblivion Mods\Bash Installers\Bash\Data Folder Contents (date/time)\."""
+       For safety just moved to Fallout New Vegas Mods\Bash Installers\Bash\Data Folder Contents (date/time)\."""
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Clean Data'),_('This will move all non-bethesda files that are not linked to an active installer out of the data folder to "Oblivion Mods\uninstalled\<date>.'))
+        menuItem = wx.MenuItem(menu,self.id,_('Clean Data'),_('This will move all non-bethesda files that are not linked to an active installer out of the data folder to "Fallout New Vegas Mods\uninstalled\<date>.'))
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
@@ -7763,7 +7763,7 @@ class Installers_SkipNVSEPlugins(Installers_Skip):
     """Toggle skipDistantLOD setting and update."""
     def __init__(self): BoolLink.__init__(self,
                                           _('Skip NVSE Plugins'),
-                                          'bash.installers.allowOBSEPlugins',
+                                          'bash.installers.allowNVSEPlugins',
                                           )
 
     def AppendToMenu(self,menu,window,data):
@@ -7817,14 +7817,14 @@ class Installers_ExportDllInfo(Link):
     def AppendToMenu(self,menu,window,data):
         self.wdw = window
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_("Export list of allowed/disallowed OBSE plugin dlls"))
+        menuItem = wx.MenuItem(menu,self.id,_("Export list of allowed/disallowed NVSE plugin dlls"))
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
         textDir = bosh.dirs['patches']
         textDir.makedirs()
         #--File dialog
-        textPath = balt.askSave(self.wdw,_('Export list of allowed/disallowed OBSE plugin dlls to:'), textDir, _("OBSE dll permissions.txt"), '*.txt')
+        textPath = balt.askSave(self.wdw,_('Export list of allowed/disallowed NVSE plugin dlls to:'), textDir, _("NVSE dll permissions.txt"), '*.txt')
         if not textPath: return
         try:
             out = textPath.open("w")
@@ -7849,15 +7849,15 @@ class Installers_ImportDllInfo(Link):
     def AppendToMenu(self,menu,window,data):
         self.wdw = window
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_("Import list of allowed/disallowed OBSE plugin dlls"))
+        menuItem = wx.MenuItem(menu,self.id,_("Import list of allowed/disallowed NVSE plugin dlls"))
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
         textDir = bosh.dirs['patches']
         textDir.makedirs()
         #--File dialog
-        textPath = balt.askOpen(self.wdw,_('Import list of allowed/disallowed OBSE plugin dlls from:'),
-            textDir, _("OBSE dll permissions.txt"), '*.txt',mustExist=True)
+        textPath = balt.askOpen(self.wdw,_('Import list of allowed/disallowed NVSE plugin dlls from:'),
+            textDir, _("NVSE dll permissions.txt"), '*.txt',mustExist=True)
         if not textPath: return
         message = _("Merge permissions from file with current dll permissions?\n('No' Replaces current permissions instead.)")
         if not balt.askYes(self.wdw,message,_('Merge permissions?')): replace = True
@@ -8098,7 +8098,7 @@ class Installer_Wizard(InstallerLink):
                     # User what tweaks to apply manually.
                     manuallyApply.append((outFile,iniFile))
                     continue
-                # Editing an INI file from this installer is ok, but editing Oblivion.ini
+                # Editing an INI file from this installer is ok, but editing Fallout.ini
                 # give a warning message
                 if iniFile.cs == 'falout.ini':
                     message = _("Apply an ini tweak to Fallout.ini?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
@@ -8109,7 +8109,7 @@ class Installer_Wizard(InstallerLink):
                 iniList.data.ini.applyTweakFile(outFile)
                 lastApplied = outFile.tail
             else:
-                # We wont automatically apply tweaks to anything other than Oblivion.ini or an ini from
+                # We wont automatically apply tweaks to anything other than Fallout.ini or an ini from
                 # this installer
                 manuallyApply.append((outFile,iniFile))
         #--Refresh after all the tweaks are applied
@@ -9548,9 +9548,9 @@ class INI_Apply(Link):
 
     def Execute(self,event):
         """Handle applying INI Tweaks."""
-        #-- If we're applying to Oblivion.ini, show the warning
+        #-- If we're applying to Fallout.ini, show the warning
         if self.window.GetParent().GetParent().GetParent().comboBox.GetSelection() == 0:
-            message = _("Apply an ini tweak to Oblivion.ini?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
+            message = _("Apply an ini tweak to Fallout.ini?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!")
             if not balt.askContinue(self.window,message,'bash.iniTweaks.continue',_("INI Tweaks")):
                 return
         dir = self.window.data.dir
@@ -10402,9 +10402,10 @@ class Mod_CreateBOSSReport(Link):
             #-- CRC
             text += '\nCRC: %08X' % fileInfo.cachedCrc()
             #-- Dirty edits
-            udrs,itms,fogs = udr_itm_fog[i]
-            if udrs or itms:
-                text += '\nUDR: %i, ITM: %i (via Wrye Flash NV)' % (len(udrs),len(itms))
+            if i < len(udr_itm_fog):
+                udrs,itms,fogs = udr_itm_fog[i]
+                if udrs or itms:
+                    text += '\nUDR: %i, ITM: %i (via Wrye Flash NV)' % (len(udrs),len(itms))
             text += '\n\n'
         if spoiler: text += '[/spoiler]'
 
@@ -11552,7 +11553,7 @@ class Mod_Patch_Update(Link):
             deactivate = [x for x in ActivePriortoPatch if 'Deactivate' in bosh.modInfos[x].getBashTags() and not 'Filter' in bosh.modInfos[x].getBashTags()]
             if deactivate: message += _("The following mods are tagged 'Deactivate'. These should be deactivated before building the patch, and then imported into the patch during build.\n*%s") % ('\n* '.join(x.s for x in deactivate)) + '\n\n'
             if unfiltered: message += _("The following mods are tagged 'Filter'. These should be deactivated before building the patch, and then merged into the patch during build.\n*%s") % ('\n* '.join(x.s for x in unfiltered)) + '\n\n'
-            if merge: message += _("The following mods are mergeable. While it is not important to Wrye Bash functionality or the end contents of the bashed patch, it is suggest that they be deactivated and merged into the patch; this (helps) avoid the  Oblivion maximum esp/m limit.\n*%s") % ('\n* '.join(x.s for x in merge)) + '\n\n'
+            if merge: message += _("The following mods are mergeable. While it is not important to Wrye Bash functionality or the end contents of the bashed patch, it is suggest that they be deactivated and merged into the patch; this (helps) avoid the  Fallout maximum esp/m limit.\n*%s") % ('\n* '.join(x.s for x in merge)) + '\n\n'
             if noMerge: message += _("The following mods are tagged 'NoMerge'. These should be deactivated before building the patch and imported according to tag(s), and preferences.\n*%s") % ('\n* '.join(x.s for x in noMerge)) + '\n\n'
         if message:
             message += 'Automatically deactivate those mods now?'
@@ -11727,16 +11728,16 @@ class Mod_SetVersion(Link):
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
         self.fileInfo = window.data[data[0]]
-        menuItem = wx.MenuItem(menu,self.id,_('Version 0.8'))
+        menuItem = wx.MenuItem(menu,self.id,_('Version 1.32'))
         menu.AppendItem(menuItem)
         #print self.fileInfo.header.version
-        menuItem.Enable((len(data) == 1) and (int(10*self.fileInfo.header.version) != 8))
+        menuItem.Enable((len(data) == 1) and (int(100*self.fileInfo.header.version) != 132))
 
     def Execute(self,event):
-        message = _("WARNING! For advanced modders only! This feature allows you to edit newer official mods in the TES Construction Set by resetting the internal file version number back to 0.8. While this will make the mod editable, it may also break the mod in some way.")
+        message = _("WARNING! For advanced modders only! This feature allows you to edit newer official mods in the GECK by resetting the internal file version number back to 1.32. While this will make the mod editable, it may also break the mod in some way.")
         if not balt.askContinue(self.window,message,'bash.setModVersion.continue',_('Set File Version')):
             return
-        self.fileInfo.header.version = 0.8
+        self.fileInfo.header.version = 1.32
         self.fileInfo.header.setChanged()
         self.fileInfo.writeHeader()
         #--Repopulate
