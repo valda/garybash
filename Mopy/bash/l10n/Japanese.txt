@@ -1,0 +1,8016 @@
+=== bash\bolt.py, 733
+Abstract section called
+>>>>
+概要セクションがコールされました
+=== bash\bolt.py, 739
+Argument is out of allowed ranged of values
+>>>>
+引数が範囲外の値を参照しています
+=== bash\bolt.py, 745
+Object is in a bad state
+>>>>
+オブジェクトは異常な状態になっています
+=== bash\bolt.py, 751
+Section is not coded yet
+>>>>
+このセクションはまだコーディングされていません
+=== bash\bolt.py, 757
+Action aborted by user
+>>>>
+アクションはユーザによって中断しました
+=== bash\bolt.py, 762
+Action skipped by user
+>>>>
+アクションはユーザによってスキップされました
+=== bash\bolt.py, 769
+Access is denied
+>>>>
+アクセスが拒否されました
+=== bash\bolt.py, 1045
+Unable to determine size of %s - probably a unicode error
+>>>>
+%sのサイズが測定できません. おそらくUnicodeエラーです
+=== bash\bolt.py, 1053
+Unable to determine atime of %s - probably a unicode error
+>>>>
+%sのatimeが測定できません. おそらくUnicodeエラーです
+=== bash\bolt.py, 1081
+Unable to determine modified time of %s - probably a unicode error
+>>>>
+%sの更新日時が測定できません. おそらくUnicodeエラーです
+=== bash\bolt.py, 1097
+Unable to set modified time of %s - probably a unicode error
+>>>>
+%sの更新日時を設定できません. おそらくUnicodeエラーです
+=== bash\bolt.py, 1127
+Unable to get crc of %s - probably a unicode error
+>>>>
+%sのCRCを取得できません. おそらくUnicodeエラーです
+=== bash\bolt.py, 1236
+cannot be moved because it does not exist
+>>>>
+存在しないため移動できません
+=== bash\bolt.py, 1958
+String too long to convert
+>>>>
+文字列が長すぎます
+=== bash\balt.py, 125
+Missing resource file: %s
+>>>>
+ソースファイルがありません: %s
+=== bash\balt.py, 222
+index = -1, name = %s, value = %s
+>>>>
+
+=== bash\balt.py, 380
+Choose a directory
+>>>>
+ディレクトリを選択
+=== bash\balt.py, 392
+Warning
+>>>>
+警告
+=== bash\balt.py, 401
+Don't show this in the future
+>>>>
+今後、この画面を表示させない
+=== bash\balt.py, 428
+Don't show this for rest of operation
+>>>>
+この作業の間はこの画面を表示させない
+=== bash\balt.py, 530
+Error
+>>>>
+エラー
+=== bash\balt.py, 538
+Information
+>>>>
+インフォメーション
+=== bash\balt.py, 549
+\n(And %d others.)
+>>>>
+\n(上記+%d個のプラグイン)
+=== bash\balt.py, 720
+Invalid sound file %s
+>>>>
+ソースファイルが不適切です: %s
+=== bash\balt.py, 840
+Action
+>>>>
+アクション
+=== bash\balt.py, 841
+Add
+>>>>
+追加
+=== bash\balt.py, 842
+Edit
+>>>>
+編集
+=== bash\balt.py, 843
+Rename
+>>>>
+リネーム
+=== bash\balt.py, 844
+Remove
+>>>>
+削除
+=== bash\balt.py, 845
+Save
+>>>>
+保存
+=== bash\balt.py, 846
+Cancel
+>>>>
+キャンセル
+=== bash\balt.py, 916
+Rename to
+>>>>
+リネームするファイル名を決めてください
+=== bash\balt.py, 920
+Name must be unique
+>>>>
+ユニークなファイル名をつけてください
+=== bash\balt.py, 1040
+Progress
+>>>>
+進行
+=== bash\balt.py, 1072
+Dialog already destroyed
+>>>>
+ダイアログは既に破棄されています
+=== bash\balt.py, 1649
+Delete Items
+>>>>
+削除します
+=== bash\balt.py, 1774
+Open
+>>>>
+このディレクトリを開く
+=== bash\balt.py, 1774
+Open '%s'
+>>>>
+%sを開く
+=== bash\balt.py, 1789
+Delete
+>>>>
+削除
+=== bash\balt.py, 1805
+Open selected files
+>>>>
+選択したファイルを開く
+=== bash\balt.py, 1823
+Duplicate
+>>>>
+複製
+=== bash\balt.py, 1832
+Duplicate as
+>>>>
+名前をつけて複製
+=== bash\balt.py, 1836
+Files cannot be duplicated to themselves!
+>>>>
+複製元と同じファイル名にすることはできません！
+=== bash\bush.py, 396
+Top (Type)
+>>>>
+
+=== bash\bush.py, 397
+World Children
+>>>>
+
+=== bash\bush.py, 398
+Int Cell Block
+>>>>
+
+=== bash\bush.py, 399
+Int Cell Sub-Block
+>>>>
+
+=== bash\bush.py, 400
+Ext Cell Block
+>>>>
+
+=== bash\bush.py, 401
+Ext Cell Sub-Block
+>>>>
+
+=== bash\bush.py, 402
+Cell Children
+>>>>
+
+=== bash\bush.py, 403
+Topic Children
+>>>>
+
+=== bash\bush.py, 404
+Cell Persistent Childen
+>>>>
+
+=== bash\bush.py, 405
+Cell Temporary Children
+>>>>
+
+=== bash\bush.py, 406
+Cell Visible Distant Children
+>>>>
+
+=== bash\bush.py, 450
+Caucasian
+>>>>
+
+=== bash\bush.py, 451
+Hispanic
+>>>>
+
+=== bash\bush.py, 452
+Asian
+>>>>
+
+=== bash\bush.py, 453
+Ghoul
+>>>>
+
+=== bash\bush.py, 454
+AfricanAmerican
+>>>>
+
+=== bash\bush.py, 455
+AfricanAmerican Child
+>>>>
+
+=== bash\bush.py, 456
+AfricanAmerican Old
+>>>>
+
+=== bash\bush.py, 457
+Asian Child
+>>>>
+
+=== bash\bush.py, 458
+Asian Old
+>>>>
+
+=== bash\bush.py, 459
+Caucasian Child
+>>>>
+
+=== bash\bush.py, 460
+Caucasian Old
+>>>>
+
+=== bash\bush.py, 461
+Hispanic Child
+>>>>
+
+=== bash\bush.py, 462
+Hispanic Old
+>>>>
+
+=== bash\bush.py, 463
+Caucasian Raider
+>>>>
+
+=== bash\bush.py, 464
+Hispanic Raider
+>>>>
+
+=== bash\bush.py, 465
+Asian Raider
+>>>>
+
+=== bash\bush.py, 466
+AfricanAmerican Raider
+>>>>
+
+=== bash\bush.py, 467
+Hispanic Old Aged
+>>>>
+
+=== bash\bush.py, 468
+Asian Old Aged
+>>>>
+
+=== bash\bush.py, 469
+AfricanAmerican Old Aged
+>>>>
+
+=== bash\bush.py, 470
+Caucasian Old Aged
+>>>>
+
+=== bash\bush.py, 865
+Big gun
+>>>>
+
+=== bash\bush.py, 866
+Energy
+>>>>
+
+=== bash\bush.py, 867
+Small gun
+>>>>
+
+=== bash\bush.py, 868
+Melee
+>>>>
+
+=== bash\bush.py, 869
+Unarmed
+>>>>
+
+=== bash\bush.py, 870
+Thrown
+>>>>
+
+=== bash\bush.py, 871
+Mine
+>>>>
+
+=== bash\bush.py, 875
+Absorb Attribute
+>>>>
+
+=== bash\bush.py, 876
+Absorb Fatigue
+>>>>
+
+=== bash\bush.py, 877
+Absorb Health
+>>>>
+
+=== bash\bush.py, 878
+Absorb Skill
+>>>>
+
+=== bash\bush.py, 879
+Absorb Magicka
+>>>>
+
+=== bash\bush.py, 880
+Bound Armor Extra 01
+>>>>
+
+=== bash\bush.py, 881
+Bound Armor Extra 02
+>>>>
+
+=== bash\bush.py, 882
+Bound Armor Extra 03
+>>>>
+
+=== bash\bush.py, 883
+Bound Armor Extra 04
+>>>>
+
+=== bash\bush.py, 884
+Bound Armor Extra 05
+>>>>
+
+=== bash\bush.py, 885
+Bound Armor Extra 06
+>>>>
+
+=== bash\bush.py, 886
+Bound Armor Extra 07
+>>>>
+
+=== bash\bush.py, 887
+Bound Armor Extra 08
+>>>>
+
+=== bash\bush.py, 888
+Bound Armor Extra 09
+>>>>
+
+=== bash\bush.py, 889
+Bound Armor Extra 10
+>>>>
+
+=== bash\bush.py, 890
+Bound Boots
+>>>>
+
+=== bash\bush.py, 891
+Bound Cuirass
+>>>>
+
+=== bash\bush.py, 892
+Bound Gauntlets
+>>>>
+
+=== bash\bush.py, 893
+Bound Greaves
+>>>>
+
+=== bash\bush.py, 894
+Bound Helmet
+>>>>
+
+=== bash\bush.py, 895
+Bound Shield
+>>>>
+
+=== bash\bush.py, 896
+Burden
+>>>>
+
+=== bash\bush.py, 897
+Bound Order Weapon 1
+>>>>
+
+=== bash\bush.py, 898
+Bound Order Weapon 2
+>>>>
+
+=== bash\bush.py, 899
+Bound Order Weapon 3
+>>>>
+
+=== bash\bush.py, 900
+Bound Order Weapon 4
+>>>>
+
+=== bash\bush.py, 901
+Bound Order Weapon 5
+>>>>
+
+=== bash\bush.py, 902
+Bound Order Weapon 6
+>>>>
+
+=== bash\bush.py, 903
+Summon Staff of Sheogorath
+>>>>
+
+=== bash\bush.py, 904
+Bound Priest Dagger
+>>>>
+
+=== bash\bush.py, 905
+Bound Weapon Extra 09
+>>>>
+
+=== bash\bush.py, 906
+Bound Weapon Extra 10
+>>>>
+
+=== bash\bush.py, 907
+Bound Axe
+>>>>
+
+=== bash\bush.py, 908
+Bound Bow
+>>>>
+
+=== bash\bush.py, 909
+Bound Dagger
+>>>>
+
+=== bash\bush.py, 910
+Bound Mace
+>>>>
+
+=== bash\bush.py, 911
+Bound Sword
+>>>>
+
+=== bash\bush.py, 912
+Calm
+>>>>
+
+=== bash\bush.py, 913
+Chameleon
+>>>>
+
+=== bash\bush.py, 914
+Charm
+>>>>
+
+=== bash\bush.py, 915
+Command Creature
+>>>>
+
+=== bash\bush.py, 916
+Command Humanoid
+>>>>
+
+=== bash\bush.py, 917
+Cure Disease
+>>>>
+
+=== bash\bush.py, 918
+Cure Paralysis
+>>>>
+
+=== bash\bush.py, 919
+Cure Poison
+>>>>
+
+=== bash\bush.py, 920
+DO NOT USE - Darkness
+>>>>
+
+=== bash\bush.py, 921
+Demoralize
+>>>>
+
+=== bash\bush.py, 922
+Damage Attribute
+>>>>
+
+=== bash\bush.py, 923
+Damage Fatigue
+>>>>
+
+=== bash\bush.py, 924
+Damage Health
+>>>>
+
+=== bash\bush.py, 925
+Damage Magicka
+>>>>
+
+=== bash\bush.py, 926
+Disintegrate Armor
+>>>>
+
+=== bash\bush.py, 927
+Disease Info
+>>>>
+
+=== bash\bush.py, 928
+Disintegrate Weapon
+>>>>
+
+=== bash\bush.py, 929
+Drain Attribute
+>>>>
+
+=== bash\bush.py, 930
+Drain Fatigue
+>>>>
+
+=== bash\bush.py, 931
+Drain Health
+>>>>
+
+=== bash\bush.py, 932
+Drain Skill
+>>>>
+
+=== bash\bush.py, 933
+Drain Magicka
+>>>>
+
+=== bash\bush.py, 934
+Dispel
+>>>>
+
+=== bash\bush.py, 935
+Detect Life
+>>>>
+
+=== bash\bush.py, 936
+Mehrunes Dagon
+>>>>
+
+=== bash\bush.py, 937
+Fire Damage
+>>>>
+
+=== bash\bush.py, 938
+Fire Shield
+>>>>
+
+=== bash\bush.py, 939
+Fortify Attribute
+>>>>
+
+=== bash\bush.py, 940
+Fortify Fatigue
+>>>>
+
+=== bash\bush.py, 941
+Fortify Health
+>>>>
+
+=== bash\bush.py, 942
+Fortify Magicka Multiplier
+>>>>
+
+=== bash\bush.py, 943
+Fortify Skill
+>>>>
+
+=== bash\bush.py, 944
+Fortify Magicka
+>>>>
+
+=== bash\bush.py, 945
+Frost Damage
+>>>>
+
+=== bash\bush.py, 946
+Frenzy
+>>>>
+
+=== bash\bush.py, 947
+Frost Shield
+>>>>
+
+=== bash\bush.py, 948
+Feather
+>>>>
+
+=== bash\bush.py, 949
+Invisibility
+>>>>
+
+=== bash\bush.py, 950
+Light
+>>>>
+
+=== bash\bush.py, 951
+Shock Shield
+>>>>
+
+=== bash\bush.py, 952
+DO NOT USE - Lock
+>>>>
+
+=== bash\bush.py, 953
+Summon Mythic Dawn Helm
+>>>>
+
+=== bash\bush.py, 954
+Summon Mythic Dawn Armor
+>>>>
+
+=== bash\bush.py, 955
+Night-Eye
+>>>>
+
+=== bash\bush.py, 957
+Paralyze
+>>>>
+
+=== bash\bush.py, 958
+Poison Info
+>>>>
+
+=== bash\bush.py, 959
+Rally
+>>>>
+
+=== bash\bush.py, 960
+Reanimate
+>>>>
+
+=== bash\bush.py, 961
+Restore Attribute
+>>>>
+
+=== bash\bush.py, 962
+Reflect Damage
+>>>>
+
+=== bash\bush.py, 963
+Restore Fatigue
+>>>>
+
+=== bash\bush.py, 964
+Restore Health
+>>>>
+
+=== bash\bush.py, 965
+Restore Magicka
+>>>>
+
+=== bash\bush.py, 966
+Reflect Spell
+>>>>
+
+=== bash\bush.py, 967
+Resist Disease
+>>>>
+
+=== bash\bush.py, 968
+Resist Fire
+>>>>
+
+=== bash\bush.py, 969
+Resist Frost
+>>>>
+
+=== bash\bush.py, 970
+Resist Magic
+>>>>
+
+=== bash\bush.py, 971
+Resist Normal Weapons
+>>>>
+
+=== bash\bush.py, 972
+Resist Paralysis
+>>>>
+
+=== bash\bush.py, 973
+Resist Poison
+>>>>
+
+=== bash\bush.py, 974
+Resist Shock
+>>>>
+
+=== bash\bush.py, 975
+Resist Water Damage
+>>>>
+
+=== bash\bush.py, 976
+Spell Absorption
+>>>>
+
+=== bash\bush.py, 977
+Script Effect
+>>>>
+
+=== bash\bush.py, 978
+Shock Damage
+>>>>
+
+=== bash\bush.py, 979
+Shield
+>>>>
+
+=== bash\bush.py, 980
+Silence
+>>>>
+
+=== bash\bush.py, 981
+Stunted Magicka
+>>>>
+
+=== bash\bush.py, 982
+Soul Trap
+>>>>
+
+=== bash\bush.py, 983
+Sun Damage
+>>>>
+
+=== bash\bush.py, 984
+Telekinesis
+>>>>
+
+=== bash\bush.py, 985
+Turn Undead
+>>>>
+
+=== bash\bush.py, 986
+Vampirism
+>>>>
+
+=== bash\bush.py, 987
+Water Breathing
+>>>>
+
+=== bash\bush.py, 988
+Water Walking
+>>>>
+
+=== bash\bush.py, 989
+Weakness to Disease
+>>>>
+
+=== bash\bush.py, 990
+Weakness to Fire
+>>>>
+
+=== bash\bush.py, 991
+Weakness to Frost
+>>>>
+
+=== bash\bush.py, 992
+Weakness to Magic
+>>>>
+
+=== bash\bush.py, 993
+Weakness to Normal Weapons
+>>>>
+
+=== bash\bush.py, 994
+Weakness to Poison
+>>>>
+
+=== bash\bush.py, 995
+Weakness to Shock
+>>>>
+
+=== bash\bush.py, 996
+Summon Rufio\'s Ghost
+>>>>
+
+=== bash\bush.py, 997
+Summon Ancestor Guardian
+>>>>
+
+=== bash\bush.py, 998
+Summon Spiderling
+>>>>
+
+=== bash\bush.py, 999
+Summon Flesh Atronach
+>>>>
+
+=== bash\bush.py, 1000
+Summon Bear
+>>>>
+
+=== bash\bush.py, 1001
+Summon Gluttonous Hunger
+>>>>
+
+=== bash\bush.py, 1002
+Summon Ravenous Hunger
+>>>>
+
+=== bash\bush.py, 1003
+Summon Voracious Hunger
+>>>>
+
+=== bash\bush.py, 1004
+Summon Dark Seducer
+>>>>
+
+=== bash\bush.py, 1005
+Summon Golden Saint
+>>>>
+
+=== bash\bush.py, 1006
+Wabba Summon
+>>>>
+
+=== bash\bush.py, 1007
+Summon Decrepit Shambles
+>>>>
+
+=== bash\bush.py, 1008
+Summon Shambles
+>>>>
+
+=== bash\bush.py, 1009
+Summon Replete Shambles
+>>>>
+
+=== bash\bush.py, 1010
+Summon Hunger
+>>>>
+
+=== bash\bush.py, 1011
+Summon Mangled Flesh Atronach
+>>>>
+
+=== bash\bush.py, 1012
+Summon Torn Flesh Atronach
+>>>>
+
+=== bash\bush.py, 1013
+Summon Stitched Flesh Atronach
+>>>>
+
+=== bash\bush.py, 1014
+Summon Sewn Flesh Atronach
+>>>>
+
+=== bash\bush.py, 1015
+Extra Summon 20
+>>>>
+
+=== bash\bush.py, 1016
+Summon Clannfear
+>>>>
+
+=== bash\bush.py, 1017
+Summon Daedroth
+>>>>
+
+=== bash\bush.py, 1018
+Summon Dremora
+>>>>
+
+=== bash\bush.py, 1019
+Summon Dremora Lord
+>>>>
+
+=== bash\bush.py, 1020
+Summon Flame Atronach
+>>>>
+
+=== bash\bush.py, 1021
+Summon Frost Atronach
+>>>>
+
+=== bash\bush.py, 1022
+Summon Ghost
+>>>>
+
+=== bash\bush.py, 1023
+Summon Headless Zombie
+>>>>
+
+=== bash\bush.py, 1024
+Summon Lich
+>>>>
+
+=== bash\bush.py, 1025
+Summon Scamp
+>>>>
+
+=== bash\bush.py, 1026
+Summon Skeleton Guardian
+>>>>
+
+=== bash\bush.py, 1027
+Summon Skeleton Champion
+>>>>
+
+=== bash\bush.py, 1028
+Summon Skeleton
+>>>>
+
+=== bash\bush.py, 1029
+Summon Skeleton Hero
+>>>>
+
+=== bash\bush.py, 1030
+Summon Spider Daedra
+>>>>
+
+=== bash\bush.py, 1031
+Summon Storm Atronach
+>>>>
+
+=== bash\bush.py, 1032
+Summon Faded Wraith
+>>>>
+
+=== bash\bush.py, 1033
+Summon Gloom Wraith
+>>>>
+
+=== bash\bush.py, 1034
+Summon Xivilai
+>>>>
+
+=== bash\bush.py, 1035
+Summon Zombie
+>>>>
+
+=== bash\bush.py, 1100
+Strength
+>>>>
+
+=== bash\bush.py, 1101
+Intelligence
+>>>>
+
+=== bash\bush.py, 1102
+Willpower
+>>>>
+
+=== bash\bush.py, 1103
+Agility
+>>>>
+
+=== bash\bush.py, 1104
+Speed
+>>>>
+
+=== bash\bush.py, 1105
+Endurance
+>>>>
+
+=== bash\bush.py, 1106
+Personality
+>>>>
+
+=== bash\bush.py, 1107
+Luck
+>>>>
+
+=== bash\bush.py, 1108
+Health
+>>>>
+
+=== bash\bush.py, 1109
+Magicka
+>>>>
+
+=== bash\bush.py, 1111
+Fatigue
+>>>>
+
+=== bash\bush.py, 1112
+Encumbrance
+>>>>
+
+=== bash\bush.py, 1113
+Armorer
+>>>>
+
+=== bash\bush.py, 1114
+Athletics
+>>>>
+
+=== bash\bush.py, 1115
+Blade
+>>>>
+
+=== bash\bush.py, 1116
+Block
+>>>>
+
+=== bash\bush.py, 1117
+Blunt
+>>>>
+
+=== bash\bush.py, 1118
+Hand To Hand
+>>>>
+
+=== bash\bush.py, 1119
+Heavy Armor
+>>>>
+
+=== bash\bush.py, 1120
+Alchemy
+>>>>
+
+=== bash\bush.py, 1122
+Alteration
+>>>>
+
+=== bash\bush.py, 1123
+Conjuration
+>>>>
+
+=== bash\bush.py, 1124
+Destruction
+>>>>
+
+=== bash\bush.py, 1125
+Illusion
+>>>>
+
+=== bash\bush.py, 1126
+Mysticism
+>>>>
+
+=== bash\bush.py, 1127
+Restoration
+>>>>
+
+=== bash\bush.py, 1128
+Acrobatics
+>>>>
+
+=== bash\bush.py, 1129
+Light Armor
+>>>>
+
+=== bash\bush.py, 1130
+Marksman
+>>>>
+
+=== bash\bush.py, 1131
+Mercantile
+>>>>
+
+=== bash\bush.py, 1133
+Security
+>>>>
+
+=== bash\bush.py, 1134
+Sneak
+>>>>
+
+=== bash\bush.py, 1135
+Speechcraft
+>>>>
+
+=== bash\bush.py, 1216
+Faction
+>>>>
+
+=== bash\bush.py, 1217
+Apparatus
+>>>>
+
+=== bash\bush.py, 1218
+Armor
+>>>>
+
+=== bash\bush.py, 1219
+Book
+>>>>
+
+=== bash\bush.py, 1220
+Clothing
+>>>>
+
+=== bash\bush.py, 1221
+Ingredient
+>>>>
+
+=== bash\bush.py, 1223
+Misc. Item
+>>>>
+
+=== bash\bush.py, 1224
+Weapon
+>>>>
+
+=== bash\bush.py, 1225
+NPC
+>>>>
+
+=== bash\bush.py, 1226
+Creature
+>>>>
+
+=== bash\bush.py, 1227
+Key
+>>>>
+
+=== bash\bush.py, 1228
+Potion
+>>>>
+
+=== bash\bush.py, 1229
+Cell
+>>>>
+
+=== bash\bush.py, 1230
+Object Ref
+>>>>
+Object Reference
+=== bash\bush.py, 1231
+NPC Ref
+>>>>
+NPC Reference
+=== bash\bush.py, 1232
+Creature Ref
+>>>>
+Creature Reference
+=== bash\bush.py, 1233
+Dialog Entry
+>>>>
+
+=== bash\bush.py, 1234
+Quest
+>>>>
+
+=== bash\bush.py, 1235
+AI Package
+>>>>
+
+=== bash\bush.py, 1240
+Alchemical Ingredients I
+>>>>
+
+=== bash\bush.py, 1241
+Alchemical Ingredients II
+>>>>
+
+=== bash\bush.py, 1242
+Alchemical Ingredients III
+>>>>
+
+=== bash\bush.py, 1243
+Alchemical Ingredients IV
+>>>>
+
+=== bash\bush.py, 1246
+Alchemical Effects I
+>>>>
+
+=== bash\bush.py, 1247
+Alchemical Effects II
+>>>>
+
+=== bash\bush.py, 1248
+Alchemical Effects III
+>>>>
+
+=== bash\bush.py, 1249
+Alchemical Effects IV
+>>>>
+
+=== bash\bosh.py, 181
+Unknown File
+>>>>
+未知のファイル
+=== bash\bosh.py, 187
+Unable to edit file %s
+>>>>
+%sを編集できません
+=== bash\bosh.py, 450
+%s: Attempted to read before (%d) beginning of file/buffer
+>>>>
+
+=== bash\bosh.py, 453
+%s: Attempted to read past (%d) end (%d) of file/buffer
+>>>>
+
+=== bash\bosh.py, 466
+%s: Expected size == %d, but got: %d
+>>>>
+%s: サイズ == %dであるはずが、%dでした
+=== bash\bosh.py, 468
+%s: Expected size <= %d, but got: %d
+>>>>
+%s: サイズ <= %dであるはずが、%dでした
+=== bash\bosh.py, 476
+Extraneous subrecord (%s) in %s record
+>>>>
+関係のないサブレコード%sが%sレコード内に存在します
+=== bash\bosh.py, 520
+Exceeded limit of
+>>>>
+制限を越えています
+=== bash\bosh.py, 556
+Bad header type
+>>>>
+不正なヘッダタイプです
+=== bash\bosh.py, 569
+Bad Top GRUP type
+>>>>
+不正なGRUPタイプです
+=== bash\bosh.py, 584
+%s: Expected %s subrecord, but found %s instead
+>>>>
+%s: %sサブレコードが存在するはずですが、%sが発見されました
+=== bash\bosh.py, 1263
+Unexpected subrecord
+>>>>
+予期しないサブレコードです
+=== bash\bosh.py, 1273
+Unknown condition function: %d
+>>>>
+未知の条件ファンクションです: %d
+=== bash\bosh.py, 1588
+Fids not in long format
+>>>>
+FormIDがLongフォーマットではありません
+=== bash\bosh.py, 1704
+Data changed
+>>>>
+データが変更されています
+=== bash\bosh.py, 1705
+Data undefined
+>>>>
+データが定義されていません
+=== bash\bosh.py, 1789
+Mis-sized compressed data. Expected %d, got %d
+>>>>
+サイズのおかしい圧縮データです. %dのはずが%dでした
+=== bash\bosh.py, 1863
+Packing Error: %s %s: Fids in long format
+>>>>
+パッキングエラー: %s %s: FormIDがLongフォーマットではありません
+=== bash\bosh.py, 2155
+(Attribute|Skill)
+>>>>
+
+=== bash\bosh.py, 2770
+Unexpected size encountered for CSTD subrecord
+>>>>
+予期しないサイズがCSTDサブレコードで確認されました
+=== bash\bosh.py, 2837
+quests
+>>>>
+
+=== bash\bosh.py, 2886
+Unexpected %s record in %s group
+>>>>
+予期しない%sレコードが%sグループに存在します
+=== bash\bosh.py, 3375
+Unexpected size encountered for LIGH:DATA subrecord
+>>>>
+予期しないサイズがLIGH:DATAサブレコードで確認されました
+=== bash\bosh.py, 3506
+Unexpected size encountered for MGEF:DATA subrecord
+>>>>
+予期しないサイズがMGEF:DATAサブレコードで確認されました
+=== bash\bosh.py, 4226
+Unexpected size encountered for REFR:XLOC subrecord
+>>>>
+予期しないサイズがREFR:XLOCサブレコードで確認されました
+=== bash\bosh.py, 4647
+Unexpected size encountered for WATR subrecord
+>>>>
+予期しないサイズがWATRサブレコードで確認されました
+=== bash\bosh.py, 5072
+Unexpected type: %d
+>>>>
+
+=== bash\bosh.py, 5922
+outputs
+>>>>
+
+=== bash\bosh.py, 6204
+No valid mapping for mod index 0x%02X
+>>>>
+不適切なマッピングがMODインデックスで確認されました: 0x%02X
+=== bash\bosh.py, 7348
+Invalid top group type
+>>>>
+Top Groupタイプが不適切です
+=== bash\bosh.py, 7368
+Improperly grouped file
+>>>>
+適切なグルーピングがされていません
+=== bash\bosh.py, 7429
+Insufficient data to write file
+>>>>
+ファイル書き込みに不適当なデータです
+=== bash\bosh.py, 7996
+File header is corrupted
+>>>>
+ヘッダ情報が壊れています
+=== bash\bosh.py, 8003
+File does not exist
+>>>>
+ファイルが存在しません
+=== bash\bosh.py, 8154
+Reading Header
+>>>>
+ヘッダ読み込み中
+=== bash\bosh.py, 8193
+Reading created
+>>>>
+生成データを読み込み中
+=== bash\bosh.py, 8205
+Reading records
+>>>>
+レコード読み込み中
+=== bash\bosh.py, 8211
+Reading fids, worldids
+>>>>
+Form ID、World IDを読み込み中
+=== bash\bosh.py, 8227
+Finished reading
+>>>>
+読み込み完了
+=== bash\bosh.py, 8242
+Writing Header
+>>>>
+ヘッダを書き込み中
+=== bash\bosh.py, 8268
+Writing created
+>>>>
+生成データを書き込み中
+=== bash\bosh.py, 8276
+Writing records
+>>>>
+レコードを書き込み中
+=== bash\bosh.py, 8284
+Writing fids, worldids
+>>>>
+Form ID、World IDを書き込み中
+=== bash\bosh.py, 8295
+Writing complete
+>>>>
+書き込み完了
+=== bash\bosh.py, 8398
+Missing Master
+>>>>
+欠落しているマスター
+=== bash\bosh.py, 8401
+Abomb Counter
+>>>>
+遅延バグリミット
+=== bash\bosh.py, 8402
+Integer:\t0x%08X
+>>>>
+
+=== bash\bosh.py, 8403
+Float:\t%.2f
+>>>>
+
+=== bash\bosh.py, 8405
+Fbomb Counter
+>>>>
+Form IDリミット
+=== bash\bosh.py, 8406
+Next in-game object: %08X
+>>>>
+次のゲーム内オブジェクトID: %08X
+=== bash\bosh.py, 8409
+Created Items
+>>>>
+ゲーム内生成アイテム
+=== bash\bosh.py, 8410
+Records
+>>>>
+レコード
+=== bash\bosh.py, 8411
+Fids
+>>>>
+Form ID
+=== bash\bosh.py, 8478
+LostChanges
+>>>>
+
+=== bash\bosh.py, 8484
+Unknown
+>>>>
+不明
+=== bash\bosh.py, 8489
+New ObjectRef Bases
+>>>>
+
+=== bash\bosh.py, 8493
+Count IRef     BaseId
+>>>>
+
+=== bash\bosh.py, 8508
+Header
+>>>>
+ヘッダ
+=== bash\bosh.py, 8510
+Format version:  %08X
+>>>>
+
+=== bash\bosh.py, 8511
+NVSE version:    %u.%u
+>>>>
+
+=== bash\bosh.py, 8512
+Fallout version: %08X
+>>>>
+
+=== bash\bosh.py, 8516
+Plugin opcode=%08X chunkNum=%u
+>>>>
+
+=== bash\bosh.py, 8518
+Type  Ver   Size
+>>>>
+
+=== bash\bosh.py, 8535
+Mod :  %02X (%s)
+>>>>
+
+=== bash\bosh.py, 8536
+ID  :  %u
+>>>>
+
+=== bash\bosh.py, 8537
+Data:  %s
+>>>>
+
+=== bash\bosh.py, 8542
+Mod :  %02X (Save File)
+>>>>
+
+=== bash\bosh.py, 8548
+Type:  Array
+>>>>
+
+=== bash\bosh.py, 8550
+Type:  Map
+>>>>
+
+=== bash\bosh.py, 8552
+Type:  StringMap
+>>>>
+
+=== bash\bosh.py, 8554
+Type:  Unknown
+>>>>
+
+=== bash\bosh.py, 8562
+%02X (Save File)
+>>>>
+
+=== bash\bosh.py, 8566
+Size:  %u
+>>>>
+
+=== bash\bosh.py, 8595
+Pluggy ESPs
+>>>>
+
+=== bash\bosh.py, 8596
+EID   ID    Name
+>>>>
+
+=== bash\bosh.py, 8609
+Pluggy String
+>>>>
+
+=== bash\bosh.py, 8612
+StrID : %u
+>>>>
+
+=== bash\bosh.py, 8613
+ModID : %02X %s
+>>>>
+
+=== bash\bosh.py, 8614
+Flags : %u
+>>>>
+
+=== bash\bosh.py, 8615
+Data  : %s
+>>>>
+
+=== bash\bosh.py, 8618
+Pluggy Array
+>>>>
+
+=== bash\bosh.py, 8620
+ArrID : %u
+>>>>
+
+=== bash\bosh.py, 8623
+Size  : %u
+>>>>
+
+=== bash\bosh.py, 8638
+Pluggy Name
+>>>>
+
+=== bash\bosh.py, 8645
+RefID : %08X
+>>>>
+
+=== bash\bosh.py, 8646
+Name  : %s
+>>>>
+
+=== bash\bosh.py, 8649
+Pluggy ScreenSize
+>>>>
+
+=== bash\bosh.py, 8653
+Width  : %u
+>>>>
+
+=== bash\bosh.py, 8654
+Height : %u
+>>>>
+
+=== bash\bosh.py, 8657
+Pluggy HudS
+>>>>
+
+=== bash\bosh.py, 8662
+HudSID : %u
+>>>>
+
+=== bash\bosh.py, 8663
+ModID  : %02X %s
+>>>>
+
+=== bash\bosh.py, 8664
+Flags  : %02X
+>>>>
+
+=== bash\bosh.py, 8665
+RootID : %u
+>>>>
+
+=== bash\bosh.py, 8666
+Show   : %02X
+>>>>
+
+=== bash\bosh.py, 8667
+Pos    : %f,%f
+>>>>
+
+=== bash\bosh.py, 8668
+Depth  : %u
+>>>>
+
+=== bash\bosh.py, 8669
+Scale  : %f,%f
+>>>>
+
+=== bash\bosh.py, 8670
+Alpha  : %02X
+>>>>
+
+=== bash\bosh.py, 8671
+Align  : %02X
+>>>>
+
+=== bash\bosh.py, 8672
+AutoSc : %02X
+>>>>
+
+=== bash\bosh.py, 8673
+File   : %s
+>>>>
+
+=== bash\bosh.py, 8676
+Pluggy HudT
+>>>>
+
+=== bash\bosh.py, 8685
+HudTID : %u
+>>>>
+
+=== bash\bosh.py, 8697
+Format : %u
+>>>>
+
+=== bash\bosh.py, 8698
+FName  : %s
+>>>>
+
+=== bash\bosh.py, 8699
+FHght  : %u
+>>>>
+
+=== bash\bosh.py, 8700
+FWdth  : %u
+>>>>
+
+=== bash\bosh.py, 8701
+FWeigh : %u
+>>>>
+
+=== bash\bosh.py, 8702
+FItal  : %u
+>>>>
+
+=== bash\bosh.py, 8703
+FRGB   : %u,%u,%u
+>>>>
+
+=== bash\bosh.py, 8704
+FText  : %s
+>>>>
+
+=== bash\bosh.py, 8714
+Scanning created objects
+>>>>
+生成オブジェクトをスキャン中
+=== bash\bosh.py, 8731
+Scanning change records
+>>>>
+変更のあったレコードをスキャン中
+=== bash\bosh.py, 8754
+full
+>>>>
+
+=== bash\bosh.py, 8945
+Backing up BSA file. This will take a while
+>>>>
+BSAをバックアップ中. この作業は時間がかかる可能性があります
+=== bash\bosh.py, 9586
+%s\nExtracting...\n%s
+>>>>
+%s\n抽出中...\n%s
+=== bash\bosh.py, 9723
+Load list is full
+>>>>
+ロードリストが一杯です
+=== bash\bosh.py, 10026
+Can't get snapshot parameters for file outside main directory
+>>>>
+メインディレクトリ外のファイルにスナップショットパラメータは取得できません
+=== bash\bosh.py, 10239
+Expected TES4, but got
+>>>>
+TES4であるべきところで以下のものが出現しました
+=== bash\bosh.py, 10244
+Struct.error
+>>>>
+
+=== bash\bosh.py, 10702
+Getting sizes
+>>>>
+サイズ取得中
+=== bash\bosh.py, 10861
+Missing master file; Neither FalloutNV.esm or Fallout3.esm exists in an unghosted state in %s - presuming that Fallout3.esm is the correct masterfile
+>>>>
+
+=== bash\bosh.py, 10874
+245570393
+>>>>
+
+=== bash\bosh.py, 10875
+245650747
+>>>>
+
+=== bash\bosh.py, 11098
+\n.    Has 'NoMerge' tag
+>>>>
+\n.    NoMergeタグがつけられています
+=== bash\bosh.py, 11149
+Balo group header
+>>>>
+Baloグループヘッダ
+=== bash\bosh.py, 11325
+Some mods were unavailable and were skipped:\n*
+>>>>
+利用不可能なMODが存在したため、スキップされました: \n*
+=== bash\bosh.py, 11329
+Mod list is full, so some mods were skipped:\n
+>>>>
+MODリストが一杯です. スキップされるMODが存在します: \n
+=== bash\bosh.py, 11342
+----> MISSING MASTER
+>>>>
+
+=== bash\bosh.py, 11342
+* __Missing Master:__
+>>>>
+
+=== bash\bosh.py, 11343
+----> Delinquent MASTER
+>>>>
+
+=== bash\bosh.py, 11343
+* __Delinquent Master:__
+>>>>
+
+=== bash\bosh.py, 11348
+Missing Masters for
+>>>>
+欠落しているマスター
+=== bash\bosh.py, 11351
+Masters for
+>>>>
+マスター
+=== bash\bosh.py, 11357
+Active Mod Files
+>>>>
+アクティブなMOD
+=== bash\bosh.py, 11384
+%s  %s  [Version %s] [CRC: %08X]
+>>>>
+
+=== bash\bosh.py, 11452
+Circular Masters
+>>>>
+ループしているマスター
+=== bash\bosh.py, 11586
+Can't match current main ESM to known version
+>>>>
+現在のメインesmが既知のバージョンと一致しません
+=== bash\bosh.py, 11589
+Can't swap: %s already exists
+>>>>
+スワップできません: %sは既に存在しています
+=== bash\bosh.py, 11592
+Can't swap: %s doesn't exist
+>>>>
+スワップできません: %sは存在しません
+=== bash\bosh.py, 11603
+Bash encountered an error when renaming %s to %s.\n\nThe file is in use by another process such as TES4Edit.\nPlease close the other program that is accessing %s.\n\nTry again?
+>>>>
+%sを%sにリネーム中にエラーが発生しました.\n\n本ファイルはTES4Editなどの別プロセスが使用しています.\n%sを使用している別プロセスを閉じてください.\n\n再試行しますか？
+=== bash\bosh.py, 11603
+Bash Patch - Rename Error
+>>>>
+Bash Patch - リネームエラー
+=== bash\bosh.py, 11930
+ONLYONE does not support %s operators
+>>>>
+
+=== bash\bosh.py, 12118
+<font color=red>WARNING:</font>
+>>>>
+<font color=red>警告: </font>
+=== bash\bosh.py, 12121
+Check Mods
+>>>>
+
+=== bash\bosh.py, 12122
+This is a report on your currently active/merged mods
+>>>>
+現在アクティブあるいはマージされているMODについてのレポートです
+=== bash\bosh.py, 12142
+Scanning for Dirty Edits
+>>>>
+好ましくない編集をスキャン中
+=== bash\bosh.py, 12163
+Mergeable
+>>>>
+マージ可能なMOD
+=== bash\bosh.py, 12164
+Following mods are active, but could be merged into the bashed patch
+>>>>
+以下のMODはActiveになっていますがBashed Patchにマージ可能です
+=== bash\bosh.py, 12168
+NoMerge Tagged Mods
+>>>>
+NoMergeタグがつけられたMOD
+=== bash\bosh.py, 12169
+Following mods are tagged NoMerge and should be deactivated and imported into the bashed patch but are currently active
+>>>>
+以下のMODはNoMergeタグがつけられており、DeactivateしてBashed Patchにインポートすることが推奨されますが現在Activeになっています
+=== bash\bosh.py, 12173
+Deactivate Tagged Mods
+>>>>
+DeactiveタグがつけられたMOD
+=== bash\bosh.py, 12174
+Following mods are tagged Deactivate and should be deactivated and imported into the bashed patch but are currently active
+>>>>
+以下のMODはDeactivateタグがつけられており、DeactivateしてBashed Patchにインポートすることが推奨されますが現在Activeになっています
+=== bash\bosh.py, 12178
+MustBeActiveIfImported Tagged Mods
+>>>>
+MustBeActiveIfImportedタグがつけられたMOD
+=== bash\bosh.py, 12179
+Following mods to work correctly have to be active as well as imported into the bashed patch but are currently only imported
+>>>>
+以下のMODが有効に動作するためにはActiveにした上でBashed Patchにインポートされている必要がありますが、現在インポートしかされていません
+=== bash\bosh.py, 12183
+Mods that need cleaning with FNVEdit
+>>>>
+
+=== bash\bosh.py, 12184
+Following mods have identical to master (ITM) records, deleted records (UDR), or other issues that should be fixed with FNVEdit.  Visit the [[!http://cs.elderscrolls.com/constwiki/index.php/TES4Edit_Cleaning_Guide|TES4Edit Cleaning Guide]] for more information
+>>>>
+
+=== bash\bosh.py, 12188
+Mods with special cleaning instructions
+>>>>
+特殊なクリーニング手順が存在するMOD
+=== bash\bosh.py, 12189
+Following mods have special instructions for cleaning with FNVEdit
+>>>>
+
+=== bash\bosh.py, 12193
+Mods with non standard TES4 versions
+>>>>
+一般的でないTES4バージョンを有するMOD
+=== bash\bosh.py, 12194
+Following mods have a TES4 version that isn't recognized as one of the standard versions (1.32, 1.33 and 1.34).  It is untested what effect this can have on the game, but presumably Fallout New Vegas will refuse to load anything above 1.34
+>>>>
+以下のMODは一般的なTES4バージョン(1.32, 1.33 and 1.34)のいずれにも該当しないバージョンを有しています. ゲームにどのような影響を及ぼすかは不明ですが、1.34より大きい数値のものはFalloutNVがロードを拒否する可能性があります
+=== bash\bosh.py, 12201
+Missing/Delinquent Masters
+>>>>
+欠落あるいは品行方正でないマスター
+=== bash\bosh.py, 12207
+MISSING
+>>>>
+
+=== bash\bosh.py, 12209
+DELINQUENT
+>>>>
+
+=== bash\bosh.py, 12230
+Only one of these should be active/merged
+>>>>
+これらのうち、一つだけアクティブにするかマージしてください
+=== bash\bosh.py, 12238
+NOTES
+>>>>
+
+=== bash\bosh.py, 12241
+CONFIGURATION
+>>>>
+
+=== bash\bosh.py, 12251
+SUGGESTIONS
+>>>>
+
+=== bash\bosh.py, 12258
+* __%s__ -- %s
+>>>>
+
+=== bash\bosh.py, 12471
+Sent %s <b>%s</b> on %s</div>
+>>>>
+
+=== bash\bosh.py, 12529
+ModBase
+>>>>
+
+=== bash\bosh.py, 12577
+People
+>>>>
+人物
+=== bash\bosh.py, 12770
+%s: Pre-Scanning
+>>>>
+%s: プレスキャン中
+=== bash\bosh.py, 12782
+%s: Pre-Scanning...\n%s
+>>>>
+%s: プレスキャン中...\n%s
+=== bash\bosh.py, 12803
+%s: Scanning
+>>>>
+%s: スキャン中
+=== bash\bosh.py, 12841
+%s\nCalculating CRCs...\n
+>>>>
+%s: CRCを計算中...\n
+=== bash\bosh.py, 12844
+%s\nCalculating CRCs...\n%s
+>>>>
+%s: CRCを計算中...\n%s
+=== bash\bosh.py, 12852
+Failed to calculate crc for %s - please report this and or try the unicode build of Wrye Bash
+>>>>
+%sのCRC計算に失敗しました. フォーラムに報告するか、Unicode版Wrye Bashを利用してみてください
+=== bash\bosh.py, 13116
+This installer (%s) has an NVSE plugin DLL.\nThe file is %s\nSuch files can be malicious and hence you should be very sure you know what this file is and that it is legitimate.\nAre you sure you want to install this?
+>>>>
+
+=== bash\bosh.py, 13118
+You have previously chosen to install a dll by this name but with a different size, crc and or source archive name
+>>>>
+同じファイル名で異なるファイルサイズ、CRCあるいはアーカイブ名を有するDLLをインストールしたことがあります
+=== bash\bosh.py, 13120
+You have previously chosen to NOT install a dll by this name but with a different size, crc and or source archive name - make extra sure you want to install this one before saying yes
+>>>>
+同じファイル名で異なるファイルサイズ、CRCあるいはアーカイブ名を有するDLLをインストールしなかったことがあります. インストールする前にご確認ください
+=== bash\bosh.py, 13121
+NVSE DLL Warning
+>>>>
+
+=== bash\bosh.py, 13380
+\nLoading %s:\nBCF doesn't exist
+>>>>
+\n%sをロード中:\nBCFが存在しません
+=== bash\bosh.py, 13386
+\nLoading %s:\nBCF extraction failed
+>>>>
+\n%sをロード中:\nBCF展開に失敗しました
+=== bash\bosh.py, 13404
+Error creating BCF.dat:\nError Code: %s
+>>>>
+BCF.dat生成エラー:\nエラーコード: %s
+=== bash\bosh.py, 13420
+%s\nExtracting files
+>>>>
+%s\nファイルを展開中
+=== bash\bosh.py, 13434
+%s: Extraction failed:\n%s
+>>>>
+%s: 展開に失敗しました:\n%s
+=== bash\bosh.py, 13442
+\nExtracting files
+>>>>
+\nファイルを展開中
+=== bash\bosh.py, 13459
+Moving files
+>>>>
+ファイルを移動中
+=== bash\bosh.py, 13477
+%s: Missing source file:\n%s
+>>>>
+%s: ソースファイルがありません:\n%s
+=== bash\bosh.py, 13479
+%s: Unable to determine file destination for:\n%s
+>>>>
+%s: 指定先ファイルが確認できません:\n%s
+=== bash\bosh.py, 13484
+Copying file...\n%s
+>>>>
+ファイルをコピー中...\n%s
+=== bash\bosh.py, 13488
+Moving file...\n%s
+>>>>
+ファイルを移動中...\n%s
+=== bash\bosh.py, 13578
+%s\nMapping files
+>>>>
+%s\nファイルをマッピング中
+=== bash\bosh.py, 13583
+%s\nMapping files...\n%s
+>>>>
+%s\nファイルをマッピング中...\n%s
+=== bash\bosh.py, 13631
+%s\nCompressing files
+>>>>
+%s\nファイルを圧縮中
+=== bash\bosh.py, 13647
+\nCompressing files...\n%s
+>>>>
+\nファイルを圧縮中...\n%s
+=== bash\bosh.py, 13652
+%s: Compression failed:\n%s
+>>>>
+%s: 圧縮に失敗しました:\n%s
+=== bash\bosh.py, 13662
+No files to extract for %s
+>>>>
+%sに抽出できるファイルがありません
+=== bash\bosh.py, 13669
+Error creating file list for 7z:\nError Code: %s
+>>>>
+7zのファイルリスト生成エラー:\nエラーコード: %s
+=== bash\bosh.py, 13702
+%s\nExtracting files...\n%s
+>>>>
+%s\nファイルを抽出中...\n%s
+=== bash\bosh.py, 13869
+%s: Extraction failed\n%s
+>>>>
+%s: 抽出に失敗しました\n%s
+=== bash\bosh.py, 13886
+\nMoving files
+>>>>
+\nファイルを移動中
+=== bash\bosh.py, 13952
+Package Structure
+>>>>
+パッケージ構造
+=== bash\bosh.py, 14269
+Package
+>>>>
+パッケージ
+=== bash\bosh.py, 14269
+Order
+>>>>
+優先順位
+=== bash\bosh.py, 14269
+Modified
+>>>>
+タイムスタンプ
+=== bash\bosh.py, 14269
+Size
+>>>>
+サイズ
+=== bash\bosh.py, 14269
+Files
+>>>>
+ファイル数
+=== bash\bosh.py, 14270
+Installers
+>>>>
+インストーラ
+=== bash\bosh.py, 14314
+Loading Data
+>>>>
+データを読み込み中
+=== bash\bosh.py, 14525
+Scanning Packages
+>>>>
+パッケージをスキャン中
+=== bash\bosh.py, 14528
+Scanning Packages...\n
+>>>>
+パッケージをスキャン中...\n
+=== bash\bosh.py, 14690
+Scanning Converters
+>>>>
+コンバータをスキャン中
+=== bash\bosh.py, 14693
+Scanning Converter...\n
+>>>>
+コンバータをスキャン中...\n
+=== bash\bosh.py, 14998
+Lower
+>>>>
+優先順位が本アーカイブより「低」であるアーカイブとの競合
+=== bash\bosh.py, 14998
+Higher
+>>>>
+優先順位が本アーカイブより「高」であるアーカイブとの競合
+=== bash\bosh.py, 15010
+No Underrides. Mod is not completely un-installed
+>>>>
+上書きされるべきファイルはありません. MODは完全にアンインストールされていません
+=== bash\bosh.py, 15017
+Bain Packages
+>>>>
+BAINパッケージ
+=== bash\bosh.py, 15139
+Type
+>>>>
+タイプ
+=== bash\bosh.py, 15139
+Actor Eid
+>>>>
+
+=== bash\bosh.py, 15139
+Actor Mod
+>>>>
+
+=== bash\bosh.py, 15139
+Actor Object
+>>>>
+
+=== bash\bosh.py, 15139
+Faction Eid
+>>>>
+
+=== bash\bosh.py, 15139
+Faction Mod
+>>>>
+
+=== bash\bosh.py, 15139
+Faction Object
+>>>>
+
+=== bash\bosh.py, 15139
+Rank
+>>>>
+
+=== bash\bosh.py, 15368
+Source Mod
+>>>>
+
+=== bash\bosh.py, 15368
+Offset
+>>>>
+
+=== bash\bosh.py, 15368
+CalcMin
+>>>>
+
+=== bash\bosh.py, 15368
+CalcMax
+>>>>
+
+=== bash\bosh.py, 15368
+Old IsPCLevelOffset
+>>>>
+
+=== bash\bosh.py, 15368
+Old Offset
+>>>>
+
+=== bash\bosh.py, 15368
+Old CalcMin
+>>>>
+
+=== bash\bosh.py, 15368
+Old CalcMax
+>>>>
+
+=== bash\bosh.py, 15586
+Script
+>>>>
+
+=== bash\bosh.py, 15632
+Mod Name
+>>>>
+
+=== bash\bosh.py, 15632
+ObjectIndex
+>>>>
+
+=== bash\bosh.py, 15632
+Editor Id
+>>>>
+
+=== bash\bosh.py, 15881
+Main Eid
+>>>>
+
+=== bash\bosh.py, 15881
+Main Mod
+>>>>
+
+=== bash\bosh.py, 15881
+Main Object
+>>>>
+
+=== bash\bosh.py, 15881
+Other Eid
+>>>>
+
+=== bash\bosh.py, 15881
+Other Mod
+>>>>
+
+=== bash\bosh.py, 15881
+Other Object
+>>>>
+
+=== bash\bosh.py, 15881
+Disp
+>>>>
+
+=== bash\bosh.py, 15881
+GroupCombatReaction
+>>>>
+
+=== bash\bosh.py, 16247
+Name
+>>>>
+名前
+=== bash\bosh.py, 16247
+Short Name
+>>>>
+
+=== bash\bosh.py, 17056
+Weight
+>>>>
+
+=== bash\bosh.py, 17056
+Value
+>>>>
+値
+=== bash\bosh.py, 17060
+Clip Rounds
+>>>>
+
+=== bash\bosh.py, 17060
+Proj/Shot
+>>>>
+
+=== bash\bosh.py, 17064
+AR
+>>>>
+
+=== bash\bosh.py, 17064
+DT
+>>>>
+
+=== bash\bosh.py, 17084
+Duration
+>>>>
+
+=== bash\bosh.py, 17092
+Damage
+>>>>
+
+=== bash\bosh.py, 17092
+Clip Size
+>>>>
+
+=== bash\bosh.py, 17093
+Animation Multiplier
+>>>>
+
+=== bash\bosh.py, 17093
+Reach
+>>>>
+
+=== bash\bosh.py, 17093
+Ammo Use
+>>>>
+
+=== bash\bosh.py, 17093
+Min Spread
+>>>>
+
+=== bash\bosh.py, 17093
+Spread
+>>>>
+
+=== bash\bosh.py, 17093
+Sight Fov
+>>>>
+
+=== bash\bosh.py, 17093
+Base VATS To-Hit Chance
+>>>>
+
+=== bash\bosh.py, 17093
+Projectile Count
+>>>>
+
+=== bash\bosh.py, 17094
+Min Range
+>>>>
+
+=== bash\bosh.py, 17094
+Max Range
+>>>>
+
+=== bash\bosh.py, 17094
+Animation Attack Multiplier
+>>>>
+
+=== bash\bosh.py, 17094
+Fire Rate
+>>>>
+
+=== bash\bosh.py, 17094
+Override - Action Point
+>>>>
+
+=== bash\bosh.py, 17094
+Rumble - Left Motor Strength
+>>>>
+
+=== bash\bosh.py, 17095
+rRmble - Right Motor Strength
+>>>>
+
+=== bash\bosh.py, 17095
+Rumble - Duration
+>>>>
+
+=== bash\bosh.py, 17095
+Override - Damage To Weapon Mult
+>>>>
+
+=== bash\bosh.py, 17095
+Attack Shots/Sec
+>>>>
+
+=== bash\bosh.py, 17096
+Reload Time
+>>>>
+
+=== bash\bosh.py, 17096
+Jam Time
+>>>>
+
+=== bash\bosh.py, 17096
+Aim Arc
+>>>>
+
+=== bash\bosh.py, 17096
+Ramble - Wavelangth
+>>>>
+
+=== bash\bosh.py, 17096
+Limb Dmg Mult
+>>>>
+
+=== bash\bosh.py, 17096
+Sight Usage
+>>>>
+
+=== bash\bosh.py, 17097
+Semi-Automatic Fire Delay Min
+>>>>
+
+=== bash\bosh.py, 17097
+Semi-Automatic Fire Delay Max
+>>>>
+
+=== bash\bosh.py, 17098
+Strength Req
+>>>>
+
+=== bash\bosh.py, 17098
+Regen Rate
+>>>>
+
+=== bash\bosh.py, 17098
+Kill Impulse
+>>>>
+
+=== bash\bosh.py, 17098
+Impulse Dist
+>>>>
+
+=== bash\bosh.py, 17098
+Skill Req
+>>>>
+
+=== bash\bosh.py, 17099
+Critical Damage
+>>>>
+
+=== bash\bosh.py, 17099
+Crit % Mult
+>>>>
+
+=== bash\bosh.py, 17100
+VATS Skill
+>>>>
+
+=== bash\bosh.py, 17100
+VATS Dam. Mult
+>>>>
+
+=== bash\bosh.py, 17100
+VATS AP
+>>>>
+
+=== bash\bosh.py, 17703
+Large Icon Path
+>>>>
+
+=== bash\bosh.py, 17703
+Small Icon Path
+>>>>
+
+=== bash\bosh.py, 17703
+Model
+>>>>
+
+=== bash\bosh.py, 17712
+Male Large Icon Path
+>>>>
+
+=== bash\bosh.py, 17712
+Male Small Icon Path
+>>>>
+
+=== bash\bosh.py, 17712
+Female Large Icon Path
+>>>>
+
+=== bash\bosh.py, 17712
+Female Small Icon Path
+>>>>
+
+=== bash\bosh.py, 17713
+Male Model Path
+>>>>
+
+=== bash\bosh.py, 17713
+Female Model Path
+>>>>
+
+=== bash\bosh.py, 17713
+Male World Model Path
+>>>>
+
+=== bash\bosh.py, 17713
+Female World Model Path
+>>>>
+
+=== bash\bosh.py, 17727
+Icon Path
+>>>>
+
+=== bash\bosh.py, 17752
+Shell Casing Model
+>>>>
+
+=== bash\bosh.py, 17752
+Scope Model
+>>>>
+
+=== bash\bosh.py, 17752
+World Model
+>>>>
+
+=== bash\bosh.py, 17779
+modPath
+>>>>
+
+=== bash\bosh.py, 17779
+IsFood
+>>>>
+
+=== bash\bosh.py, 17779
+IsNoAutoCalc
+>>>>
+
+=== bash\bosh.py, 17779
+Effects
+>>>>
+
+=== bash\bosh.py, 17783
+Enchant Points
+>>>>
+
+=== bash\bosh.py, 17783
+Enchantment
+>>>>
+
+=== bash\bosh.py, 17783
+Normal Weapon
+>>>>
+
+=== bash\bosh.py, 17787
+Quantity
+>>>>
+
+=== bash\bosh.py, 17792
+Male Icon Path
+>>>>
+
+=== bash\bosh.py, 17792
+Female Icon Path
+>>>>
+
+=== bash\bosh.py, 17797
+EPoints
+>>>>
+
+=== bash\bosh.py, 17810
+Icon
+>>>>
+
+=== bash\bosh.py, 17810
+MODB
+>>>>
+
+=== bash\bosh.py, 17810
+MODT_P
+>>>>
+
+=== bash\bosh.py, 17823
+Uses
+>>>>
+
+=== bash\bosh.py, 18115
+Export Scripts
+>>>>
+スクリプトをエクスポート
+=== bash\bosh.py, 18121
+Reading scripts in %s
+>>>>
+%sのスクリプトを読み込み中
+=== bash\bosh.py, 18161
+Import Scripts
+>>>>
+
+=== bash\bosh.py, 18169
+Skipping file %s
+>>>>
+%sをスキップしています
+=== bash\bosh.py, 18171
+Reading file %s
+>>>>
+%sを読み込み中
+=== bash\bosh.py, 18202
+Exporting script %s
+>>>>
+%sをエクスポート中
+=== bash\bosh.py, 18213
+Exported %d scripts from %s:\n
+>>>>
+%d個のスクリプトを%sからエクスポートしました: \n
+=== bash\bosh.py, 18536
+Cost
+>>>>
+
+=== bash\bosh.py, 18536
+Level Type
+>>>>
+
+=== bash\bosh.py, 18536
+Spell Type
+>>>>
+
+=== bash\bosh.py, 18539
+Manual Cost
+>>>>
+
+=== bash\bosh.py, 18539
+Start Spell
+>>>>
+
+=== bash\bosh.py, 18539
+Immune To Silence
+>>>>
+
+=== bash\bosh.py, 18539
+Area Effect Ignores LOS
+>>>>
+
+=== bash\bosh.py, 18540
+Script Always Applies
+>>>>
+
+=== bash\bosh.py, 18540
+Disallow Absorb and Reflect
+>>>>
+
+=== bash\bosh.py, 18540
+Touch Explodes Without Target
+>>>>
+
+=== bash\bosh.py, 18541
+Effect
+>>>>
+
+=== bash\bosh.py, 18541
+Magnitude
+>>>>
+
+=== bash\bosh.py, 18541
+Area
+>>>>
+
+=== bash\bosh.py, 18541
+Range
+>>>>
+
+=== bash\bosh.py, 18541
+Actor Value
+>>>>
+
+=== bash\bosh.py, 18542
+SE Mod Name
+>>>>
+
+=== bash\bosh.py, 18542
+SE ObjectIndex
+>>>>
+
+=== bash\bosh.py, 18542
+SE school
+>>>>
+
+=== bash\bosh.py, 18542
+SE visual
+>>>>
+
+=== bash\bosh.py, 18542
+SE Is Hostile
+>>>>
+
+=== bash\bosh.py, 18542
+SE Name
+>>>>
+
+=== bash\bosh.py, 18543
+Additional Effects (Same format)
+>>>>
+
+=== bash\bosh.py, 18925
+Model Path
+>>>>
+
+=== bash\bosh.py, 18925
+Bound Radius
+>>>>
+
+=== bash\bosh.py, 18926
+Script Mod Name
+>>>>
+
+=== bash\bosh.py, 18926
+Script ObjectIndex
+>>>>
+
+=== bash\bosh.py, 19137
+Scanning
+>>>>
+スキャン中
+=== bash\bosh.py, 19204
+Mod
+>>>>
+MOD
+=== bash\bosh.py, 19204
+Group
+>>>>
+グループ
+=== bash\bosh.py, 19254
+Failed to find pcName in PC ACHR record
+>>>>
+PC ACHRレコードにpcNameを発見できませんでした
+=== bash\bosh.py, 19623
+Face dump from save game
+>>>>
+セーブから顔データをダンプしました
+=== bash\bosh.py, 19825
+Loading
+>>>>
+ロード中
+=== bash\bosh.py, 19938
+Cleaning
+>>>>
+クリーニング中
+=== bash\bosh.py, 19971
+Bash encountered an error when saving %s.\n\nThe file is in use by another process such as TES4Edit.\nPlease close the other program that is accessing %s.\n\nTry again?
+>>>>
+%sセーブ中にエラーが発生しました.\n\n本ファイルはTES4Editなどの別プロセスが使用しています.\n%sを使用している別プロセスを閉じてください.\n\n再試行しますか？
+=== bash\bosh.py, 19971
+%s - Save Error
+>>>>
+%s - セーブエラー
+=== bash\bosh.py, 20227
+\n.    Is esm
+>>>>
+\n.    これはesmファイルです
+=== bash\bosh.py, 20231
+\n.    Is Bashed Patch
+>>>>
+\n.    これはBashed Patchです
+=== bash\bosh.py, 20238
+\n.    Has BSA archive
+>>>>
+\n.    このファイルにはBSAアーカイブが関連付けられています
+=== bash\bosh.py, 20255
+\n.    Unsupported types
+>>>>
+\n.    このファイルはマージにおいてサポートされていないレコードを含んでいます
+=== bash\bosh.py, 20259
+\n.    Empty mod
+>>>>
+\n.    これは空白MODです
+=== bash\bosh.py, 20269
+\n.    New record(s) in block(s)
+>>>>
+\n.    このファイルは以下のブロックに新規レコードが存在します
+=== bash\bosh.py, 20273
+\n.    Is a master of mod(s)
+>>>>
+\n.    このMODは一つ以上のMODからマスター指定されています
+=== bash\bosh.py, 20323
+Preparing\n%s
+>>>>
+準備中\n%s
+=== bash\bosh.py, 20325
+Patchers prepared
+>>>>
+パッチの準備が完了しました
+=== bash\bosh.py, 20329
+Processing
+>>>>
+処理中
+=== bash\bosh.py, 20360
+%s\nLoading
+>>>>
+%s\nロード中
+=== bash\bosh.py, 20381
+%s\nMerging
+>>>>
+%s\nマージ中
+=== bash\bosh.py, 20384
+%s\nScanning
+>>>>
+%s\nスキャン中
+=== bash\bosh.py, 20388
+%s\n%s
+>>>>
+
+=== bash\bosh.py, 20395
+MERGE/SCAN ERROR
+>>>>
+マージ/スキャンエラー
+=== bash\bosh.py, 20397
+Load mods scanned
+>>>>
+
+=== bash\bosh.py, 20414
+Merge unsupported for type
+>>>>
+マージをサポートしていないタイプ
+=== bash\bosh.py, 20450
+Overview
+>>>>
+
+=== bash\bosh.py, 20451
+Date/Time
+>>>>
+日/時
+=== bash\bosh.py, 20453
+* Elapsed Time
+>>>>
+* 所要時間
+=== bash\bosh.py, 20455
+Skipped Imports
+>>>>
+スキップされたインポート項目
+=== bash\bosh.py, 20456
+The following import patchers skipped records because the imported record required a missing or non-active mod to work properly. If this was not intentional, rebuild the patch after either deactivating the imported mods listed below or activating the missing mod(s)
+>>>>
+以下のインポートパッチは、インポートするレコードに欠落あるいはアクティブでないMODを参照しています. 特定の意図がないのであれば以下に列挙されたインポートパッチをDeactivateするか、欠落しているMODをActivateしてください
+=== bash\bosh.py, 20462
+Unfiltered Mods
+>>>>
+フィルタリングされなかったMOD
+=== bash\bosh.py, 20466
+Load Error Mods
+>>>>
+読み込みエラーの発生したMOD
+=== bash\bosh.py, 20470
+World Orphans
+>>>>
+「World Orphan」のあるもの
+=== bash\bosh.py, 20474
+Compiled All
+>>>>
+「Compile All」されているもの
+=== bash\bosh.py, 20477
+Active Mods
+>>>>
+ロードされているMOD
+=== bash\bosh.py, 20485
+%s  [Version %s]
+>>>>
+
+=== bash\bosh.py, 20491
+Mod Aliases
+>>>>
+
+=== bash\bosh.py, 20498
+Completing\n%s
+>>>>
+
+=== bash\bosh.py, 20501
+Completing\nTrimming records
+>>>>
+
+=== bash\bosh.py, 20504
+Completing\nConverting fids
+>>>>
+
+=== bash\bosh.py, 20511
+Updated: %s\n\nRecords Changed: %d
+>>>>
+
+=== bash\bosh.py, 20580
+\n.    Masters missing: \n    *
+>>>>
+\n.    マスター欠落: \n    *
+=== bash\bosh.py, 20583
+\n.    Masters not active: \n    *
+>>>>
+\n.    マスターがアクティブではありません: \n    *
+=== bash\bosh.py, 20598
+\n.    Is a master of non-mergeable mod(s)
+>>>>
+\n.    マージ可能ではないMODのマスターです
+=== bash\bosh.py, 20878
+Patching...\n%s::%s
+>>>>
+パッチ適用中...\n%s::%s
+=== bash\bosh.py, 20928
+Final Patching...\n%s::%s
+>>>>
+最終パッチ適用中...\n%s::%s
+=== bash\bosh.py, 20943
+Patchers applied
+>>>>
+パッチが適用されました
+=== bash\bosh.py, 21167
++('|'.join(autoKey))+r
+>>>>
+
+=== bash\bosh.py, 21228
+\n\nAny non-active, non-merged mods in the following list will be IGNORED
+>>>>
+\n\nアクティブではなくかつマージもされていないMODは無視されます
+=== bash\bosh.py, 21428
+Tweakers
+>>>>
+
+=== bash\bosh.py, 21487
+General
+>>>>
+概要
+=== bash\bosh.py, 21488
+Alias Mod Names
+>>>>
+
+=== bash\bosh.py, 21489
+Specify mod aliases for reading CSV source files
+>>>>
+CSVを読み込むにあたりMODの別名を指定することができます
+=== bash\bosh.py, 21536
+Merge Patches
+>>>>
+
+=== bash\bosh.py, 21537
+Merge patch mods into Bashed Patch
+>>>>
+Bashed Patchにマージ可能なMODをマージします
+=== bash\bosh.py, 21592
+Replace Form IDs
+>>>>
+
+=== bash\bosh.py, 21593
+Imports Form Id replacers from csv files into the Bashed Patch
+>>>>
+CSVからForm ID書き換え情報をインポートします
+=== bash\bosh.py, 21793
+Source Mods
+>>>>
+読み込み元MOD
+=== bash\bosh.py, 21796
+\n=== Records Patched
+>>>>
+\n=== 以下のレコードにパッチを適用しました
+=== bash\bosh.py, 21910
+Importers
+>>>>
+
+=== bash\bosh.py, 22170
+Import Cells
+>>>>
+
+=== bash\bosh.py, 22171
+Import cells (climate, lighting, and water) from source mods
+>>>>
+Cell情報(Climate、Lighting、Waterの情報)をインポートします
+=== bash\bosh.py, 22363
+\n=== Cells/Worlds Patched
+>>>>
+\n=== Cell/Worldにパッチを適用しました
+=== bash\bosh.py, 22453
+Import Graphics
+>>>>
+
+=== bash\bosh.py, 22454
+Import graphics (models, icons, etc.) from source mods
+>>>>
+グラフィック情報(メッシュ、アイコンなど)をインポートします
+=== bash\bosh.py, 22652
+\n=== Modified Records
+>>>>
+\n=== レコードを修正しました
+=== bash\bosh.py, 22791
+Import Actors
+>>>>
+
+=== bash\bosh.py, 22792
+Import Actor components from source mods
+>>>>
+Actor情報をインポートします
+=== bash\bosh.py, 23081
+Import Actors: Animations
+>>>>
+
+=== bash\bosh.py, 23082
+Import Actor animations from source mods
+>>>>
+ActorのAnimationをインポートします
+=== bash\bosh.py, 23273
+Import Actors: AIPackages
+>>>>
+
+=== bash\bosh.py, 23274
+Import Actor AIPackage links from source mods
+>>>>
+ActorのAI Packageをインポートします
+=== bash\bosh.py, 23457
+\n=== AI Package Lists Changed: %d
+>>>>
+\n=== AI Packageリストを変更しました: %d
+=== bash\bosh.py, 23576
+Import Actors: Death Items
+>>>>
+
+=== bash\bosh.py, 23577
+Import Actor death items from source mods
+>>>>
+ActorのDeath Itemsをインポートします
+=== bash\bosh.py, 23771
+Import Factions
+>>>>
+
+=== bash\bosh.py, 23772
+Import factions from source mods/files
+>>>>
+Faction情報をインポートします
+=== bash\bosh.py, 23875
+Source Mods/Files
+>>>>
+読み込み元MODもしくはCSVファイル
+=== bash\bosh.py, 23878
+\n=== Refactioned Actors
+>>>>
+\n=== ActorのFaction情報を再設定しました
+=== bash\bosh.py, 23994
+Import Relations
+>>>>
+
+=== bash\bosh.py, 23995
+Import relations from source mods/files
+>>>>
+Relations(好感度補正)をCSVファイルからインポートします
+=== bash\bosh.py, 24098
+\n=== Modified Factions: %d
+>>>>
+\n=== Faction情報を修正しました: %d
+=== bash\bosh.py, 24195
+Import Scripts on containers, plants, misc, weapons etc. from source mods
+>>>>
+Container、Plant、Misc、WeaponなどのScript情報をインポートします
+=== bash\bosh.py, 24393
+Import Script Contents
+>>>>
+
+=== bash\bosh.py, 24394
+Import the actual contents of scripts scripts
+>>>>
+Scriptの中身をインポートします
+=== bash\bosh.py, 24543
+Import Inventory
+>>>>
+
+=== bash\bosh.py, 24544
+Merges changes to NPC, creature and container inventories
+>>>>
+ActorやContainerのInventory情報をマージします
+=== bash\bosh.py, 24666
+\n=== Inventories Changed: %d
+>>>>
+\n=== Inventoryを変更しました: %d
+=== bash\bosh.py, 24784
+Import Actors: Spells
+>>>>
+
+=== bash\bosh.py, 24785
+Merges changes to NPC and creature spell lists
+>>>>
+Actorに対するSpell Listの変更をマージします
+=== bash\bosh.py, 24957
+\n=== Spell Lists Changed: %d
+>>>>
+\n=== Spell Listを変更しました: %d
+=== bash\bosh.py, 25048
+Import Names
+>>>>
+
+=== bash\bosh.py, 25049
+Import names from source mods/files
+>>>>
+アイテム、Actorその他の名称情報をインポートします
+=== bash\bosh.py, 25151
+\n=== Renamed Items
+>>>>
+\n=== アイテムをリネームしました
+=== bash\bosh.py, 25253
+Import NPC Faces
+>>>>
+
+=== bash\bosh.py, 25254
+Import NPC face/eyes/hair from source mods. For use with Project Beauty, FaceMe and similar mods
+>>>>
+
+=== bash\bosh.py, 25370
+\n=== Faces Patched: %d
+>>>>
+\n=== 顔データにパッチを適用しました: %d
+=== bash\bosh.py, 25491
+Import Roads
+>>>>
+
+=== bash\bosh.py, 25492
+Import roads from source mods
+>>>>
+Road情報をインポートします
+=== bash\bosh.py, 25564
+\n=== Worlds Patched
+>>>>
+\n=== パッチが適用されたWorld
+=== bash\bosh.py, 25661
+Import Sounds
+>>>>
+
+=== bash\bosh.py, 25662
+Import sounds (from Magic Effects, Containers, Activators, Lights, Weathers and Doors) from source mods
+>>>>
+オブジェクトに設定されたSound情報をインポートします
+=== bash\bosh.py, 25897
+Import Stats
+>>>>
+
+=== bash\bosh.py, 25898
+Import stats from any pickupable items from source mods/files
+>>>>
+拾得可能なアイテムの情報(価格など)をインポートします
+=== bash\bosh.py, 25998
+\n=== Modified Stats
+>>>>
+\n=== アイテム情報を修正しました
+=== bash\bosh.py, 26001
+Ingestibles
+>>>>
+
+=== bash\bosh.py, 26001
+Ammo
+>>>>
+
+=== bash\bosh.py, 26001
+Armor Addon
+>>>>
+
+=== bash\bosh.py, 26001
+Ingr
+>>>>
+
+=== bash\bosh.py, 26001
+Misc
+>>>>
+
+=== bash\bosh.py, 26001
+Weapons
+>>>>
+
+=== bash\bosh.py, 26001
+Lights
+>>>>
+
+=== bash\bosh.py, 26001
+Keys
+>>>>
+
+=== bash\bosh.py, 26001
+Books
+>>>>
+
+=== bash\bosh.py, 26106
+Import Spell Stats
+>>>>
+
+=== bash\bosh.py, 26107
+Import stats from any spells from source mods/files
+>>>>
+Spellの内容情報をインポートします
+=== bash\bosh.py, 26200
+Spells
+>>>>
+
+=== bash\bosh.py, 26294
+Import Destructible
+>>>>
+
+=== bash\bosh.py, 26295
+Merges changes to destructible records.\n\nWill have to use if Destruction Environment mod is installed and active
+>>>>
+
+=== bash\bosh.py, 26456
+Import Weapon Modifications
+>>>>
+
+=== bash\bosh.py, 26457
+Merges changes to weapon modifications
+>>>>
+
+=== bash\bosh.py, 27079
+All Armor Playable
+>>>>
+
+=== bash\bosh.py, 27080
+Sets all armor to be playable
+>>>>
+全てのArmorにPlayable属性をつけ、プレイヤーが使用できるようにする
+=== bash\bosh.py, 27122
+Playable Armor
+>>>>
+
+=== bash\bosh.py, 27123
+* Armor pieces set as playable: %d
+>>>>
+* ArmorをPlayableに設定しました: %d
+=== bash\bosh.py, 27353
+Nvidia Fog Fix
+>>>>
+nVidia Fog Fix
+=== bash\bosh.py, 27354
+Fix fog related Nvidia black screen problems
+>>>>
+nVidiaのブラックスクリーンバグに関連するCellのFog Nearを修正
+=== bash\bosh.py, 27440
+No Light Flicker
+>>>>
+
+=== bash\bosh.py, 27441
+Remove flickering from lights. For use on low-end machines
+>>>>
+Lightオブジェクトから「揺らめき」を取り除きます. ローエンドマシン向けの項目です
+=== bash\bosh.py, 27482
+* Lights unflickered: %d
+>>>>
+* 光源「揺らめき」を取り除きました: %d
+=== bash\bosh.py, 28282
+Disable Wind
+>>>>
+
+=== bash\bosh.py, 28283
+Disables the wind on all weathers
+>>>>
+全てのWeatherからWind設定を無効にします
+=== bash\bosh.py, 28285
+Disable
+>>>>
+無効にする
+=== bash\bosh.py, 28321
+* Winds Disabled: %d
+>>>>
+* Wind設定を取り除きました: %d
+=== bash\bosh.py, 28810
+Set Sound Attenuation Levels
+>>>>
+
+=== bash\bosh.py, 28811
+The sound attenution levels will be set to tweak%*current level, thereby increasing (or decreasing) the sound volume
+>>>>
+サウンドのボリュームを、espで設定された値の何%%にするか、そのパーセントを設定します
+=== bash\bosh.py, 28813
+0%
+>>>>
+
+=== bash\bosh.py, 28814
+5%
+>>>>
+
+=== bash\bosh.py, 28815
+10%
+>>>>
+
+=== bash\bosh.py, 28816
+20%
+>>>>
+
+=== bash\bosh.py, 28817
+50%
+>>>>
+
+=== bash\bosh.py, 28818
+80%
+>>>>
+
+=== bash\bosh.py, 28819
+Custom
+>>>>
+カスタム
+=== bash\bosh.py, 28855
+* Sounds Modified: %d
+>>>>
+* サウンド設定を修正しました: %d
+=== bash\bosh.py, 29098
+No Light Fade Value Fix
+>>>>
+
+=== bash\bosh.py, 29099
+Sets Light's Fade values to default of 1.0 if not set
+>>>>
+フェードが設定されていない光源に1.0を設定します
+=== bash\bosh.py, 29135
+* Lights with fade values added: %d
+>>>>
+* 光源にフェード設定を追加しました: %d
+=== bash\bosh.py, 29185
+All Guns Use Ironsight Animation
+>>>>
+
+=== bash\bosh.py, 29186
+Remove "Don\'t use 1st person IS animation" flag from all guns
+>>>>
+
+=== bash\bosh.py, 29222
+Use Ironsight Animation
+>>>>
+
+=== bash\bosh.py, 29223
+* Guns set to use ironsight: %d
+>>>>
+
+=== bash\bosh.py, 29232
+Tweak Assorted
+>>>>
+
+=== bash\bosh.py, 29233
+Tweak various records in miscellaneous ways
+>>>>
+種々のレコードを書き換えます
+=== bash\bosh.py, 29377
+Globals
+>>>>
+
+=== bash\bosh.py, 29378
+Set globals to various values
+>>>>
+種々の値を設定できます
+=== bash\bosh.py, 29380
+Timescale
+>>>>
+
+=== bash\bosh.py, 29381
+Timescale will be set to
+>>>>
+Timescale(現実の時間経過×n倍)を設定します
+=== bash\bosh.py, 29383
+1
+>>>>
+
+=== bash\bosh.py, 29384
+8
+>>>>
+
+=== bash\bosh.py, 29385
+10
+>>>>
+
+=== bash\bosh.py, 29386
+12
+>>>>
+
+=== bash\bosh.py, 29387
+18
+>>>>
+
+=== bash\bosh.py, 29388
+24
+>>>>
+
+=== bash\bosh.py, 29389
+[30]
+>>>>
+
+=== bash\bosh.py, 29390
+40
+>>>>
+
+=== bash\bosh.py, 29878
+Finishing GMST Tweaks
+>>>>
+GMST書き換えを完了中
+=== bash\bosh.py, 29887
+Tweak Settings: Unable to create GMST!
+>>>>
+Tweak Settings: GMSTを生成できません！
+=== bash\bosh.py, 29909
+Tweak Settings
+>>>>
+
+=== bash\bosh.py, 29910
+Tweak game settings
+>>>>
+Gamesettingを設定します
+=== bash\bosh.py, 29912
+Camera: Chase Distance
+>>>>
+
+=== bash\bosh.py, 29913
+Distance camera can be moved away from PC using mouse wheel
+>>>>
+マウスホイールを使用した時、カメラがプレイヤーから離れる距離を設定します
+=== bash\bosh.py, 29915
+x 1.5
+>>>>
+
+=== bash\bosh.py, 29916
+x 2
+>>>>
+
+=== bash\bosh.py, 29917
+x 3
+>>>>
+
+=== bash\bosh.py, 29918
+x 5
+>>>>
+
+=== bash\bosh.py, 29919
+x 10
+>>>>
+
+=== bash\bosh.py, 29922
+Compass: POI Recognition
+>>>>
+
+=== bash\bosh.py, 29923
+Distance at which POI markers begin to show on compass
+>>>>
+地図マークがコンパスに表示され始める距離を設定します
+=== bash\bosh.py, 29925
+x 0.05
+>>>>
+
+=== bash\bosh.py, 29926
+x 0.25
+>>>>
+
+=== bash\bosh.py, 29927
+x 0.50
+>>>>
+
+=== bash\bosh.py, 29928
+x 0.75
+>>>>
+
+=== bash\bosh.py, 29929
+Custom (base 1200)
+>>>>
+
+=== bash\bosh.py, 29931
+Essential NPC Unconsciousness
+>>>>
+
+=== bash\bosh.py, 29932
+Time which essential NPCs stay unconscious
+>>>>
+EssentialなNPCの気絶状態が続く時間を設定します
+=== bash\bosh.py, 29934
+[10 Seconds]
+>>>>
+[10秒]
+=== bash\bosh.py, 29935
+20 Seconds
+>>>>
+20秒
+=== bash\bosh.py, 29936
+30 Seconds
+>>>>
+30秒
+=== bash\bosh.py, 29937
+1 Minute
+>>>>
+1分
+=== bash\bosh.py, 29938
+1 1/2 Minutes
+>>>>
+1.5分
+=== bash\bosh.py, 29939
+2 Minutes
+>>>>
+2分
+=== bash\bosh.py, 29940
+3 Minutes
+>>>>
+3分
+=== bash\bosh.py, 29941
+5 Minutes
+>>>>
+5分
+=== bash\bosh.py, 29942
+Custom (in seconds)
+>>>>
+カスタム(秒)
+=== bash\bosh.py, 29944
+Jump Higher
+>>>>
+
+=== bash\bosh.py, 29945
+Height player can jump to
+>>>>
+
+=== bash\bosh.py, 29947
+x 1.1
+>>>>
+
+=== bash\bosh.py, 29948
+x 1.2
+>>>>
+
+=== bash\bosh.py, 29949
+x 1.4
+>>>>
+
+=== bash\bosh.py, 29950
+x 1.6
+>>>>
+
+=== bash\bosh.py, 29951
+x 1.8
+>>>>
+
+=== bash\bosh.py, 29952
+x 2.0
+>>>>
+
+=== bash\bosh.py, 29953
+x 3.0
+>>>>
+
+=== bash\bosh.py, 29956
+Camera: PC Death Time
+>>>>
+
+=== bash\bosh.py, 29957
+Time after player's death before reload menu appears
+>>>>
+プレイヤー死後、リロード画面が出現するまでの時間を設定します
+=== bash\bosh.py, 29959
+15 Seconds
+>>>>
+15秒
+=== bash\bosh.py, 29962
+5 Minute
+>>>>
+5分
+=== bash\bosh.py, 29963
+Unlimited
+>>>>
+無制限
+=== bash\bosh.py, 29966
+Cell Respawn Time
+>>>>
+
+=== bash\bosh.py, 29967
+Time before unvisited cell respawns. But longer times increase save sizes
+>>>>
+訪れずにいるCellがRespawnするまでの時間. あまり長く設定すると、セーブが肥大化します
+=== bash\bosh.py, 29969
+1 Day
+>>>>
+1日
+=== bash\bosh.py, 29970
+[3 Days]
+>>>>
+[3日]
+=== bash\bosh.py, 29971
+5 Days
+>>>>
+5日
+=== bash\bosh.py, 29972
+10 Days
+>>>>
+10日
+=== bash\bosh.py, 29973
+20 Days
+>>>>
+20日
+=== bash\bosh.py, 29974
+1 Month
+>>>>
+1ヶ月
+=== bash\bosh.py, 29975
+6 Months
+>>>>
+6ヶ月
+=== bash\bosh.py, 29976
+1 Year
+>>>>
+1年
+=== bash\bosh.py, 29977
+Custom (in hours)
+>>>>
+カスタム(x時間)
+=== bash\bosh.py, 29979
+Cost Multiplier: Repair
+>>>>
+
+=== bash\bosh.py, 29980
+Cost factor for repairing items
+>>>>
+アイテム修理代金算出に使用されるファクターを設定します
+=== bash\bosh.py, 29991
+Combat: Max Actors
+>>>>
+
+=== bash\bosh.py, 29992
+Maximum number of actors that can actively be in combat with the player
+>>>>
+プレイヤーと積極的に戦闘になるActorの上限人数を設定します
+=== bash\bosh.py, 30003
+AI: Max Active Actors
+>>>>
+
+=== bash\bosh.py, 30004
+Maximum actors whose AI can be active. Must be higher than Combat: Max Actors
+>>>>
+AIが同時に活動する人数の上限です. Combat: Max Actors設定より大きな値でなくてはいけません
+=== bash\bosh.py, 30010
+MMM Default: 40
+>>>>
+
+=== bash\bosh.py, 30016
+Companions: Max Number
+>>>>
+
+=== bash\bosh.py, 30017
+Maximum number of actors following the player
+>>>>
+プレイヤーにFollowできる最大人数を設定します
+=== bash\bosh.py, 30026
+AI: Max Dead Actors
+>>>>
+
+=== bash\bosh.py, 30027
+Maximum number of dead actors allowed before they're removed
+>>>>
+一度に残留しつづけられる死体数の上限を設定します
+=== bash\bosh.py, 30030
+[x 1]
+>>>>
+
+=== bash\bosh.py, 30033
+x 2.5
+>>>>
+
+=== bash\bosh.py, 30035
+x 3.5
+>>>>
+
+=== bash\bosh.py, 30036
+x 4
+>>>>
+
+=== bash\bosh.py, 30039
+Inventory Quantity Prompt
+>>>>
+
+=== bash\bosh.py, 30040
+Number of items in a stack at which point Fallout prompts for a quantity
+>>>>
+
+=== bash\bosh.py, 30047
+No Prompt
+>>>>
+
+=== bash\bosh.py, 30050
+Gore: Combat Dismember Part Chance
+>>>>
+
+=== bash\bosh.py, 30051
+The chance that body parts will be dismembered
+>>>>
+
+=== bash\bosh.py, 30060
+Gore: Combat Explode Part Chance
+>>>>
+
+=== bash\bosh.py, 30061
+The chance that body parts will be explode
+>>>>
+
+=== bash\bosh.py, 30070
+Leveled Item Max level difference
+>>>>
+
+=== bash\bosh.py, 30071
+Maximum difference to player level for leveled items
+>>>>
+Leveled Itemの中からアイテムが出現するレベル幅(プレイヤーレベルとの差)を指定します
+=== bash\bosh.py, 30081
+Movement Base Speed
+>>>>
+
+=== bash\bosh.py, 30082
+Base Movement speed
+>>>>
+
+=== bash\bosh.py, 30088
+Movement Sneak Multiplier
+>>>>
+
+=== bash\bosh.py, 30089
+Movement speed is multiplied by this when the actor is sneaking
+>>>>
+
+=== bash\bosh.py, 30095
+Combat: Player Damage Multiplier in VATS
+>>>>
+
+=== bash\bosh.py, 30096
+Multiplier of damage that player receives in VATS
+>>>>
+
+=== bash\bosh.py, 30098
+0.10
+>>>>
+
+=== bash\bosh.py, 30099
+0.25
+>>>>
+
+=== bash\bosh.py, 30100
+0.50
+>>>>
+
+=== bash\bosh.py, 30101
+[0.75]
+>>>>
+
+=== bash\bosh.py, 30102
+1.00
+>>>>
+
+=== bash\bosh.py, 30105
+Combat: Auto Aim Fix
+>>>>
+
+=== bash\bosh.py, 30106
+Increase Auto Aim settings to a level at which Snipers can benefit from them
+>>>>
+
+=== bash\bosh.py, 30108
+Harder
+>>>>
+
+=== bash\bosh.py, 30110
+PipBoy Light Keypress-Delay
+>>>>
+
+=== bash\bosh.py, 30111
+Seconds of delay until the PipBoy Light switches on
+>>>>
+
+=== bash\bosh.py, 30113
+0.3
+>>>>
+
+=== bash\bosh.py, 30114
+0.4
+>>>>
+
+=== bash\bosh.py, 30115
+0.5
+>>>>
+
+=== bash\bosh.py, 30116
+0.6
+>>>>
+
+=== bash\bosh.py, 30117
+0.7
+>>>>
+
+=== bash\bosh.py, 30118
+[0.8]
+>>>>
+
+=== bash\bosh.py, 30119
+1.0
+>>>>
+
+=== bash\bosh.py, 30122
+VATS Playback Delay
+>>>>
+
+=== bash\bosh.py, 30123
+Seconds of delay after the VATS Camera finished playback
+>>>>
+
+=== bash\bosh.py, 30125
+0.01
+>>>>
+
+=== bash\bosh.py, 30126
+0.05
+>>>>
+
+=== bash\bosh.py, 30128
+[0.17]
+>>>>
+
+=== bash\bosh.py, 30132
+NPC-Death XP Threshold (Followers)
+>>>>
+
+=== bash\bosh.py, 30133
+Percentage of total damage you have to inflict in order to get XP
+>>>>
+
+=== bash\bosh.py, 30136
+25%
+>>>>
+
+=== bash\bosh.py, 30137
+[40%]
+>>>>
+
+=== bash\bosh.py, 30139
+75%
+>>>>
+
+=== bash\bosh.py, 30142
+Hacking: Maximum Number of words
+>>>>
+
+=== bash\bosh.py, 30143
+The maximum number of words appearing in the terminal hacking mini-game
+>>>>
+
+=== bash\bosh.py, 30146
+4
+>>>>
+
+=== bash\bosh.py, 30149
+16
+>>>>
+
+=== bash\bosh.py, 30150
+[20]
+>>>>
+
+=== bash\bosh.py, 30153
+Shell Camera Distance
+>>>>
+
+=== bash\bosh.py, 30154
+Maximum distance at which gun arisings (shell case, particle, decal) show from camera
+>>>>
+
+=== bash\bosh.py, 30163
+Shell Litter Time
+>>>>
+
+=== bash\bosh.py, 30164
+Time before shell cases fade away from cells
+>>>>
+
+=== bash\bosh.py, 30174
+Shell Litter Count
+>>>>
+
+=== bash\bosh.py, 30175
+Maximum number of debris (shell case, etc) allowed in cell
+>>>>
+
+=== bash\bosh.py, 30177
+[50]
+>>>>
+
+=== bash\bosh.py, 30178
+100
+>>>>
+
+=== bash\bosh.py, 30179
+500
+>>>>
+
+=== bash\bosh.py, 30180
+1000
+>>>>
+
+=== bash\bosh.py, 30181
+3000
+>>>>
+
+=== bash\bosh.py, 30184
+Terminal Speed Adjustment
+>>>>
+
+=== bash\bosh.py, 30185
+The display speed at the time of terminal hacking
+>>>>
+
+=== bash\bosh.py, 30189
+[x 6]
+>>>>
+
+=== bash\bosh.py, 30192
+Drag: Max Moveable Weight
+>>>>
+
+=== bash\bosh.py, 30193
+Maximum weight to be able move things with the drag key
+>>>>
+Grabキーで動かすことのできる重さの最大値を設定します
+=== bash\bosh.py, 30195
+1500
+>>>>
+
+=== bash\bosh.py, 30196
+[Default (150)]
+>>>>
+
+=== bash\bosh.py, 30542
+Body Part Codes
+>>>>
+
+=== bash\bosh.py, 30543
+Sets body part codes used by Armor/Clothes name tweaks. H: Head, A: Armor, etc
+>>>>
+
+=== bash\bosh.py, 30639
+* %s: %d
+>>>>
+
+=== bash\bosh.py, 30700
+Label ingestibles to sort by type. C: Chems, F: Food, S: Stimpack, A: Alcohol
+>>>>
+
+=== bash\bosh.py, 30702
+F Radroach Meat
+>>>>
+
+=== bash\bosh.py, 30703
+F. Radroach Meat
+>>>>
+
+=== bash\bosh.py, 30704
+F - Radroach Meat
+>>>>
+
+=== bash\bosh.py, 30705
+(F) Radroach Meat
+>>>>
+
+=== bash\bosh.py, 31153
+Label ammo and weapons to sort by type and damage
+>>>>
+Ammo(矢)とWeaponが種類とダメージでソートされるよう接頭辞をつける
+=== bash\bosh.py, 31155
+S BB Gun
+>>>>
+
+=== bash\bosh.py, 31156
+S. BB Gun
+>>>>
+
+=== bash\bosh.py, 31157
+S - BB Gun
+>>>>
+
+=== bash\bosh.py, 31158
+(S) BB Gun
+>>>>
+
+=== bash\bosh.py, 31160
+S10 BB Gun
+>>>>
+
+=== bash\bosh.py, 31161
+S10. BB Gun
+>>>>
+
+=== bash\bosh.py, 31162
+S10 - BB Gun
+>>>>
+
+=== bash\bosh.py, 31163
+(S10) BB Gun
+>>>>
+
+=== bash\bosh.py, 31603
+Sort Inventory
+>>>>
+
+=== bash\bosh.py, 31604
+Sort item by category in barter and container screens
+>>>>
+
+=== bash\bosh.py, 31607
+Chem>Ammo>Weapon>Armor>Food>Mag>Book>Misc>Card
+>>>>
+
+=== bash\bosh.py, 31608
+Ammo>Chem>Weapon>Armor>Food>Mag>Book>Misc>Card
+>>>>
+
+=== bash\bosh.py, 31609
+Weapon>Armor>Chem>Food>Mag>Book>Misc>Card>Ammo
+>>>>
+
+=== bash\bosh.py, 31678
+Tweak Names
+>>>>
+
+=== bash\bosh.py, 31679
+Tweak object names in various ways such as lore friendlyness or show type/quality
+>>>>
+様々な法則(Lore-Friendlyや質・種別の明記)でアイテム名を書き換えます
+=== bash\bosh.py, 31681
+Armor/Clothes
+>>>>
+
+=== bash\bosh.py, 31681
+Rename armor to sort by type
+>>>>
+Armorを種別でソートできるようリネームする
+=== bash\bosh.py, 31682
+A Naughty Nightwear
+>>>>
+
+=== bash\bosh.py, 31683
+A. Naughty Nightwear
+>>>>
+
+=== bash\bosh.py, 31684
+A - Naughty Nightwear
+>>>>
+
+=== bash\bosh.py, 31685
+(A) Naughty Nightwear
+>>>>
+
+=== bash\bosh.py, 31687
+A01 Naughty Nightwear
+>>>>
+
+=== bash\bosh.py, 31688
+A01. Naughty Nightwear
+>>>>
+
+=== bash\bosh.py, 31689
+A01 - Naughty Nightwear
+>>>>
+
+=== bash\bosh.py, 31690
+(A01) Naughty Nightwear
+>>>>
+
+=== bash\bosh.py, 31793
+Title
+>>>>
+
+=== bash\bosh.py, 31794
+Description
+>>>>
+説明
+=== bash\bosh.py, 33071
+Special
+>>>>
+
+=== bash\bosh.py, 33537
+Leveled Lists
+>>>>
+
+=== bash\bosh.py, 33538
+Merges changes to leveled lists from ACTIVE/MERGED MODS ONLY.\n\nAdvanced users may override Relev/Delev tags for any mod (active or inactive) using the list below
+>>>>
+アクティブあるいはマージされているMODのLeveled Listをマージします.\n\n熟練したユーザは以下のリストを上手に活用し、Relev/Delevタグの設定を 上書きしてBashed Patchに反映させることができます
+=== bash\bosh.py, 33539
+Merges changes to leveled lists from all active mods
+>>>>
+アクティブなMODのLeveled List変更をマージします
+=== bash\bosh.py, 33715
+Delevelers/Relevelers
+>>>>
+Leveled ListをDelev/Relevしました
+=== bash\bosh.py, 33719
+Item
+>>>>
+
+=== bash\bosh.py, 33719
+Spell
+>>>>
+
+=== bash\bosh.py, 33720
+Merged %s Lists
+>>>>
+マージされた%s List
+=== bash\bosh.py, 33761
+Empty %s Sublists
+>>>>
+Emptyなサブ%s List
+=== bash\bosh.py, 33764
+Empty %s Sublists Removed
+>>>>
+削除されたEmptyなサブ%s List
+=== bash\bosh.py, 34032
+FormID Lists
+>>>>
+
+=== bash\bosh.py, 34033
+Merges changes to formid lists from ACTIVE/MERGED MODS ONLY.\n\nAdvanced users may override Deflst tags for any mod (active or inactive) using the list below
+>>>>
+
+=== bash\bosh.py, 34034
+Merges changes to formid lists from all active mods
+>>>>
+
+=== bash\bosh.py, 34155
+Deflsters
+>>>>
+
+=== bash\bosh.py, 34159
+FormID
+>>>>
+
+=== bash\bosh.py, 34607
+Race Records
+>>>>
+
+=== bash\bosh.py, 34608
+Merge race eyes, hair, body, voice from ACTIVE AND/OR MERGED mods. Any non-active, non-merged mods in the following list will be IGNORED.\n\nEven if none of the below mods are checked, this will sort hairs and eyes and attempt to remove googly eyes from all active mods. It will also randomly assign hairs and eyes to npcs that are otherwise missing them
+>>>>
+種族、目、髪型、体型、声などをアクティブあるいはマージされたMODから マージします. アクティブではなくマージもされていないMODは以下の リストに表示されません.\n\nリストのMODに一つもチェックを入れなかったとしても、髪型や目をソート してグロ目を除去します. またこの機能では、髪型や目が明示的に 設定されていないNPCに対して、ビルドの度にランダムに割り当てます
+=== bash\bosh.py, 34609
+Merge race eyes, hair, body, voice from mods
+>>>>
+種族、目、髪型、体型、声などをアクティブなMODからマージします
+=== bash\bosh.py, 34665
+WARNING mod %s has both R.AddSpells and R.ChangeSpells tags - only one of those tags should be on a mod at one time
+>>>>
+警告、%sにはR.AddSpellsとR.ChangeSpellsのタグが両方とも設定されています. 一つのMODに対し、これらのタグはどちらか一つだけが設定されているべきです
+=== bash\bosh.py, 34783
+No right and/or no left eye recorded in race %s, from mod %s
+>>>>
+%s種族(%s)に対し右目あるいは左目のメッシュ（もしくは両方）が設定されていません
+=== bash\bosh.py, 34818
+Very odd race %s found - no female right eye assigned
+>>>>
+
+=== bash\bosh.py, 34824
+Very odd race %s found - no female left eye assigned
+>>>>
+
+=== bash\bosh.py, 34830
+Very odd race %s found - no male right eye assigned
+>>>>
+
+=== bash\bosh.py, 34836
+Very odd race %s found - no male left eye assigned
+>>>>
+
+=== bash\bosh.py, 34984
+\n=== Merged
+>>>>
+\n=== マージされたもの
+=== bash\bosh.py, 34986
+~~None~~
+>>>>
+
+=== bash\bosh.py, 34990
+\n=== Eyes/Hair Sorted
+>>>>
+\n=== ソートされたEyeとHair
+=== bash\bosh.py, 34996
+\n=== Eye Meshes Filtered
+>>>>
+\n=== フィルタリングされたEyeのメッシュ
+=== bash\bosh.py, 35000
+In order to prevent 'googly eyes', incompatible eyes have been removed from the following races
+>>>>
+「グロ目」を回避するため、互換性を持たないEyeは以下の種族から除去されました
+=== bash\bosh.py, 35004
+\n=== Eyes/Hair Assigned for NPCs
+>>>>
+\n=== EyeとHairが設定されていなかったため割り当てたNPC
+=== bash\bosh.py, 35744
+Contents Checker
+>>>>
+
+=== bash\bosh.py, 35745
+Checks contents of leveled lists, inventories and containers for correct types
+>>>>
+Leveled List、Inventory、Containerの中身が適切であるかチェックします
+=== bash\bosh.py, 35959
+Can't find user directories in windows registry.\n>> See \"If Bash Won't Start\" in bash docs for help
+>>>>
+レジストリにユーザーディレクトリを発見できません.\n>> \"If Bash Won't Start\"をご覧ください
+=== bash\bosh.py, 36059
+Install Error\nFailed to find FalloutNV.exe in %s.\nNote that the Mopy folder should be in the same folder as FalloutNV.exe
+>>>>
+
+=== bash\bosh.py, 36067
+Folder path specified on command line (-p)
+>>>>
+特定のディレクトリパスがコマンドライン-pで指定されました
+=== bash\bosh.py, 36070
+Folder path specified in bash.ini (%s)
+>>>>
+特定のディレクトリパスがbash.ini(%s)で指定されました
+=== bash\bosh.py, 36073
+Folder path extracted from win32com.shell
+>>>>
+特定のディレクトリパスがwin32com.shellで展開されました
+=== bash\bosh.py, 36082
+Personal folder does not exist.\nPersonal folder: %s\nAdditional info:\n%s
+>>>>
+個人フォルダが存在しません.\n個人フォルダ: %s\nAdditional info:\n%s
+=== bash\bosh.py, 36091
+Folder path specified on command line (-l)
+>>>>
+特定のディレクトリパスがコマンドライン-lで指定されました
+=== bash\bosh.py, 36094
+Folder path specified  in bash.ini (%s)
+>>>>
+特定のディレクトリパスがbash.ini(%s)で指定されました
+=== bash\bosh.py, 36106
+Local AppData folder does not exist.\nLocal AppData folder: %s\nAdditional info:\n%s
+>>>>
+
+=== bash\bosh.py, 36202
+Wrye Bash cannot access the following paths
+>>>>
+
+=== bash\bosh.py, 36204
+See: "Wrye Bash.html, Installation - Windows Vista/7" for information on how to solve this problem
+>>>>
+
+=== bash\bosh.py, 36223
+Launch
+>>>>
+
+=== bash\bosh.py, 36226
+Error initializing links
+>>>>
+
+=== bash\bosh.py, 36379
+-option(s)
+>>>>
+
+=== bash\bosh.py, 36379
+tooltip text
+>>>>
+
+=== bash\bosh.py, 36379
+default
+>>>>
+
+=== bash\bosh.py, 36396
+%s Wrye Bash ini file read, Keep Log level: %d, initialized.\r\n
+>>>>
+
+=== bash\bosh.py, 36418
+Error reading the Bash Settings database (the error is: '%s
+>>>>
+
+=== bash\bosh.py, 36418
+Settings Load Error
+>>>>
+
+=== bash\bosh.py, 36426
+Error reading the BackupBash Settings database (the error is: '%s
+>>>>
+
+=== bash\bosh.py, 36435
+Do you want to delete the corrupted settings and load Wrye Bash without your saved UI settings?. (Otherwise Wrye Bash wo't start up)
+>>>>
+
+=== bash\bosh.py, 36447
+Compiled
+>>>>
+
+=== bash\bash.py, 152
+Error Attempting to Restart Wrye Bash!
+>>>>
+
+=== bash\bash.py, 153
+cmd line
+>>>>
+
+=== bash\basher.py, 91
+Error initializing installer wizards
+>>>>
+
+=== bash\basher.py, 160
+Activation Status
+>>>>
+
+=== bash\basher.py, 161
+Author
+>>>>
+作者
+=== bash\basher.py, 163
+CRC
+>>>>
+
+=== bash\basher.py, 164
+Current LO
+>>>>
+
+=== bash\basher.py, 165
+Date
+>>>>
+日付
+=== bash\basher.py, 166
+Day
+>>>>
+日
+=== bash\basher.py, 167
+File
+>>>>
+ファイル
+=== bash\basher.py, 171
+Installer
+>>>>
+インストーラ
+=== bash\basher.py, 172
+Karma
+>>>>
+仲良し度
+=== bash\basher.py, 173
+Load Order
+>>>>
+ロード順
+=== bash\basher.py, 176
+MI
+>>>>
+
+=== bash\basher.py, 179
+Hours
+>>>>
+プレイ時間
+=== bash\basher.py, 180
+Player
+>>>>
+プレイヤー名
+=== bash\basher.py, 181
+Rating
+>>>>
+レーティング
+=== bash\basher.py, 183
+Save Order
+>>>>
+セーブオーダー
+=== bash\basher.py, 185
+Status
+>>>>
+ステータス
+=== bash\basher.py, 186
+Subject
+>>>>
+題名
+=== bash\basher.py, 813
+${count} Children deactivated
+>>>>
+このesp/esmをマスターとして参照している${count}個のファイルをDeactivateしました
+=== bash\basher.py, 813
+%s
+>>>>
+
+=== bash\basher.py, 822
+${count} Masters activated
+>>>>
+このesp/esmからマスターに指定されている${count}個のファイルをActivateしました
+=== bash\basher.py, 1101
+Unrecognized sort key
+>>>>
+認識できないソートキーです
+=== bash\basher.py, 1157
+Edit/update the masters list? Note that the update process may automatically rename some files. Be sure to review the changes before saving
+>>>>
+マスターリストを編集・更新しますか？アップデートすると、自動的にリネームされるファイルが存在する場合があります. セーブする前に変更点を確認してください
+=== bash\basher.py, 1158
+Update Masters
+>>>>
+マスターをアップデート
+=== bash\basher.py, 1180
+File "%s" does not exist
+>>>>
+ファイル%sは存在しません
+=== bash\basher.py, 1276
+Tweak is currently applied
+>>>>
+このTweakは現在適用されています
+=== bash\basher.py, 1281
+Some settings are applied.  Some are overwritten by another tweak from the same installer
+>>>>
+いくつかの設定が適用され、同じインストーラ由来のいくつかの設定が他のTweakに上書きされています
+=== bash\basher.py, 1286
+Some settings are changed
+>>>>
+設定が変更されました
+=== bash\basher.py, 1290
+Tweak is invalid
+>>>>
+Tweakは無効です
+=== bash\basher.py, 1476
+Auto-ordered files cannot be manually moved
+>>>>
+自動的にソートされたファイルを手動で動かすことはできません
+=== bash\basher.py, 1602
+Master file
+>>>>
+マスターファイルです
+=== bash\basher.py, 1606
+Technically mergeable but has NoMerge tag
+>>>>
+技術的にはマージ可能ですが、NoMergeタグがついています
+=== bash\basher.py, 1610
+Merged into Bashed Patch
+>>>>
+Bashed Patchにマージされています
+=== bash\basher.py, 1612
+Can be merged into Bashed Patch
+>>>>
+Bashed Patchにマージ可能です
+=== bash\basher.py, 1616
+One or more masters are missing
+>>>>
+1つ以上のマスターファイルが存在しません
+=== bash\basher.py, 1617
+Masters have been re-ordered
+>>>>
+ロードリストに読み込まれています
+=== bash\basher.py, 1618
+Active in load list
+>>>>
+Bashed Patchにマージされています
+=== bash\basher.py, 1619
+Imported into Bashed Patch
+>>>>
+Bashed Patchにインポートされています
+=== bash\basher.py, 1635
+WARNING: Has same load order as another mod
+>>>>
+警告: タイムスタンプが重複するファイルが存在します
+=== bash\basher.py, 1638
+Mod should be imported and deactivated
+>>>>
+インポートされ、かつDeactivateされているべきMODです
+=== bash\basher.py, 1641
+WARNING: Exclusion group is overloaded
+>>>>
+警告: 除外グループがオーバーロードしました
+=== bash\basher.py, 1644
+Has same time as another (unloaded) mod
+>>>>
+タイムスタンプが重複する非アクティブなファイルが存在します
+=== bash\basher.py, 1647
+Group header
+>>>>
+グループヘッダ
+=== bash\basher.py, 1650
+File is ghosted
+>>>>
+Ghost化されています
+=== bash\basher.py, 1868
+Masters
+>>>>
+マスターリスト
+=== bash\basher.py, 1875
+Bash Tags
+>>>>
+タグ
+=== bash\basher.py, 1956
+Incorrect file extension
+>>>>
+拡張子が不適切です
+=== bash\basher.py, 1960
+File %s already exists
+>>>>
+ファイル%sは既に存在しています
+=== bash\basher.py, 1982
+Unrecognized date
+>>>>
+日付が認識できませんでした
+=== bash\basher.py, 1986
+Bash cannot handle files dates greater than January 19, 2038.)
+>>>>
+2038年1月19日より未来の日付はBashで扱うことができません)
+=== bash\basher.py, 2015
+This mod has an associated archive (%s.bsa) and an associated voice directory (Sound\\Voices\\%s), which will become detached when the mod is renamed.\n\nNote that the BSA archive may also contain a voice directory (Sound\\Voices\\%s), which would remain detached even if the archive name is adjusted
+>>>>
+このMODはアーカイブ%s.bsa及び音声ディレクトリSound\\Voices\\%sに関連づけられており、MODがリネームされてしまうとこの関連づけが切り離されてしまいます.\n\nBSAアーカイブにも音声ディレクトリSound\\Voices\\%sが含まれている可能性はありますが、BSAのファイル名を追従させても音声ファイルの関連づけは切り離されてしまいます
+=== bash\basher.py, 2017
+This mod has an associated archive (%s.bsa), which will become detached when the mod is renamed.\n\nNote that this BSA archive may contain a voice directory (Sound\\Voices\\%s), which would remain detached even if the archive file name is adjusted
+>>>>
+このMODはアーカイブ%s.bsaに関連づけられており、MODがリネームされてしまうとこの関連づけが切り離されてしまいます.\n\nBSAアーカイブにも音声ディレクトリSound\\Voices\\%sが含まれている可能性はありますが、BSAのファイル名を追従させても音声ファイルの関連づけは切り離されてしまいます
+=== bash\basher.py, 2019
+This mod has an associated voice directory (Sound\\Voice\\%s), which will become detached when the mod is renamed
+>>>>
+このMODは音声ディレクトリSound\\Voices\\%sに関連づけられており、MODがリネームされてしまうとこの関連づけが切り離されてしまいます
+=== bash\basher.py, 2060
+File corrupted on save!
+>>>>
+保存時にファイルが破損しました！
+=== bash\basher.py, 2079
+Automatic
+>>>>
+自動判定
+=== bash\basher.py, 2082
+Copy to Description
+>>>>
+説明部分に転記する
+=== bash\basher.py, 2250
+Browse
+>>>>
+
+=== bash\basher.py, 2285
+Tweaks: %d/%d
+>>>>
+オン: %d/全: %d
+=== bash\basher.py, 2356
+Mods: %d/%d
+>>>>
+オン: %d/全: %d
+=== bash\basher.py, 2645
+%s\nLevel %d, Play Time %s\n%s
+>>>>
+
+=== bash\basher.py, 2666
+Notes
+>>>>
+メモ
+=== bash\basher.py, 2762
+Saves: %d
+>>>>
+セーブ: %d
+=== bash\basher.py, 2894
+Bad extension or file root
+>>>>
+拡張子かrootが変です
+=== bash\basher.py, 2950
+Extracting OMODs
+>>>>
+OMODを解凍中
+=== bash\basher.py, 2957
+The project '%s' already exitsts.  Overwrite with '%s'?
+>>>>
+プロジェクト%sは既に存在します. %sで上書きしますか？
+=== bash\basher.py, 2993
+The following OMOds were unpacked:\n%s\n\n
+>>>>
+以下のOMODが解凍されました: \n%s\n\n
+=== bash\basher.py, 2996
+The following OMODs were skipped:\n%s\n\n
+>>>>
+以下のOMODがスキップされました: \n%s\n\n
+=== bash\basher.py, 2998
+The following OMODs failed to extract:\n%s
+>>>>
+以下のOMODが解凍できませんでした: \n%s\n\n
+=== bash\basher.py, 2999
+OMOD Extraction Canceled
+>>>>
+OMOD解凍がキャンセルされました
+=== bash\basher.py, 3003
+The following OMODs failed to extract.  This could be a file IO error, or an unsupported OMOD format:\n\n
+>>>>
+以下のOMODの解凍に失敗しました. ファイルIDエラーか、サポートされていないOMODフォーマットだった可能性があります: \n\n
+=== bash\basher.py, 3004
+OMOD Extraction Complete
+>>>>
+OMOD解凍が完了しました
+=== bash\basher.py, 3014
+You have dragged the following files into Wrye Bash:\n
+>>>>
+以下のファイルがWrye Bash上にドラッグ＆ドロップされました: \n
+=== bash\basher.py, 3018
+What would you like to do with them?
+>>>>
+このファイルをどうしますか？
+=== bash\basher.py, 3020
+Move or Copy?
+>>>>
+移動しますか？コピーしますか？
+=== bash\basher.py, 3188
+Matched
+>>>>
+一致ファイル
+=== bash\basher.py, 3189
+Missing
+>>>>
+不足ファイル
+=== bash\basher.py, 3190
+Mismatched
+>>>>
+不一致ファイル
+=== bash\basher.py, 3191
+Conflicts
+>>>>
+競合ファイル
+=== bash\basher.py, 3192
+Underridden
+>>>>
+上書きされるべきファイル
+=== bash\basher.py, 3193
+Dirty
+>>>>
+好ましくないファイル
+=== bash\basher.py, 3194
+Skipped
+>>>>
+スキップされるファイル
+=== bash\basher.py, 3204
+Sub-Packages
+>>>>
+サブパッケージ
+=== bash\basher.py, 3210
+Esp/m Filter
+>>>>
+フィルタリング
+=== bash\basher.py, 3217
+Comments
+>>>>
+コメント
+=== bash\basher.py, 3260
+Do you want to enable Installers If you do, Bash will first need to initialize some data. If you have many mods installed, this can take on the order of five minutes.\n\nIf you prefer to not enable Installers at this time, you can always enable it later from the column header context menu
+>>>>
+インストーラタブを有効にしますか？有効にすると、Wrye Bashはまずデータを初期化します. たくさんのMODが導入されている環境では5分程度時間がかかる場合があります.\n\n今はインストーラタブを有効にしない場合、カラムヘッダのコンテキストメニュー(右クリック)から有効にすることができます
+=== bash\basher.py, 3270
+Refreshing Installers
+>>>>
+インストーラを再スキャン中
+=== bash\basher.py, 3291
+Refreshing Converters
+>>>>
+コンバータを再スキャン中
+=== bash\basher.py, 3321
+Packages: %d/%d
+>>>>
+オン: %d/全: %d
+=== bash\basher.py, 3404
+[None]
+>>>>
+[なし]
+=== bash\basher.py, 3430
+Overview\n
+>>>>
+概略\n
+=== bash\basher.py, 3433
+Project
+>>>>
+プロジェクト
+=== bash\basher.py, 3435
+Marker
+>>>>
+マーカー
+=== bash\basher.py, 3437
+Archive
+>>>>
+アーカイブ
+=== bash\basher.py, 3439
+Unrecognized
+>>>>
+認識できませんでした
+=== bash\basher.py, 3442
+Structure: N/A\n
+>>>>
+構造: なし\n
+=== bash\basher.py, 3444
+Structure: Simple\n
+>>>>
+構造: 単一ディレクトリ\n
+=== bash\basher.py, 3447
+Structure: Complex/Simple\n
+>>>>
+構造: 単一ディレクトリがサブ階層にある\n
+=== bash\basher.py, 3449
+Structure: Complex\n
+>>>>
+構造: サブ階層がある\n
+=== bash\basher.py, 3451
+Structure: Corrupt/Incomplete\n
+>>>>
+構造: 破損あるいは不完全な状態\n
+=== bash\basher.py, 3453
+Structure: Unrecognized\n
+>>>>
+構造: 認識できませんでした\n
+=== bash\basher.py, 3458
+Size: %s KB\n
+>>>>
+サイズ: %s KB\n
+=== bash\basher.py, 3460
+Size: N/A\n
+>>>>
+サイズ: ---\n
+=== bash\basher.py, 3464
+Solid, Block Size: %d MB
+>>>>
+7zソリッド圧縮、ブロックサイズ: %dMB
+=== bash\basher.py, 3466
+Solid, Block Size: Unknown
+>>>>
+7zソリッド圧縮、ブロックサイズ: 不明
+=== bash\basher.py, 3468
+Solid, Block Size: 7z Default
+>>>>
+7zソリッド圧縮、ブロックサイズ: デフォルト
+=== bash\basher.py, 3470
+Non-solid
+>>>>
+非ソリッド圧縮(7z以外の圧縮形式)
+=== bash\basher.py, 3471
+Size: %s KB (%s)\n
+>>>>
+サイズ: %sKB (%s)\n
+=== bash\basher.py, 3473
+Size: Unrecognized\n
+>>>>
+サイズ: 認識できませんでした\n
+=== bash\basher.py, 3474
+Modified: %s\n
+>>>>
+タイムスタンプ: %s\n
+=== bash\basher.py, 3476
+Data CRC: %08X\n
+>>>>
+アーカイブ内の累積CRC: %08X\n
+=== bash\basher.py, 3478
+Files: %s\n
+>>>>
+ファイル数: %s\n
+=== bash\basher.py, 3480
+Configured: %s (%s KB)\n
+>>>>
+設定済みファイル: %s個(%sKB)\n
+=== bash\basher.py, 3483
+Matched: %s\n
+>>>>
+一致ファイル: %s個\n
+=== bash\basher.py, 3485
+Missing: %s\n
+>>>>
+不足ファイル: %s個\n
+=== bash\basher.py, 3487
+Conflicts: %s\n
+>>>>
+競合ファイル: %s個\n
+=== bash\basher.py, 3492
+Configured Files
+>>>>
+設定済みファイル一覧
+=== bash\basher.py, 3508
+Skipped (Extension)
+>>>>
+スキップ(拡張機能)
+=== bash\basher.py, 3509
+Skipped (Dir)
+>>>>
+スキップ(ディレクトリ)
+=== bash\basher.py, 3693
+Automatically update Textures BSA after adding/removing a replacer
+>>>>
+
+=== bash\basher.py, 3695
+Update
+>>>>
+更新
+=== bash\basher.py, 3696
+Enable replacement textures by updating Textures archive
+>>>>
+
+=== bash\basher.py, 3697
+Restore
+>>>>
+
+=== bash\basher.py, 3698
+Restore Textures archive to its original state
+>>>>
+
+=== bash\basher.py, 3700
+Textures BSA
+>>>>
+
+=== bash\basher.py, 3715
+Reps: %d/%d
+>>>>
+
+=== bash\basher.py, 3735
+BSA editing disabled becase FOMM or BSAPatch is in use
+>>>>
+
+=== bash\basher.py, 3741
+Edit Textures BSA?\n\nThis command directly edits the Fallout - Textures.bsa file. If the file becomes corrupted (very unlikely), you will need to reinstall FalloutNV or restore it from another source
+>>>>
+
+=== bash\basher.py, 3761
+BSA Hashes reset: %d\nBSA Hashes Invalidated: %d.\nAIText entries: %d
+>>>>
+
+=== bash\basher.py, 3771
+BSA Hashes reset: %d
+>>>>
+
+=== bash\basher.py, 3983
+Screens: %d
+>>>>
+スクリーンショット: %d
+=== bash\basher.py, 4311
+BSAs: %d
+>>>>
+BSA: %d
+=== bash\basher.py, 4470
+Search
+>>>>
+検索
+=== bash\basher.py, 4471
+Clear
+>>>>
+クリア
+=== bash\basher.py, 4496
+PMs: %d/%d
+>>>>
+現在: %d/全: %d
+=== bash\basher.py, 4603
+People: %d
+>>>>
+人物: %d
+=== bash\basher.py, 4680
+Version
+>>>>
+バージョン
+=== bash\basher.py, 4682
+Tags
+>>>>
+タグ
+=== bash\basher.py, 4690
+Abstract
+>>>>
+摘要
+=== bash\basher.py, 4697
+ModBase: %d
+>>>>
+
+=== bash\basher.py, 4736
+Replacers
+>>>>
+リプレイス
+=== bash\basher.py, 4737
+Mods
+>>>>
+MOD
+=== bash\basher.py, 4740
+Saves
+>>>>
+セーブデータ
+=== bash\basher.py, 4741
+INI Edits
+>>>>
+INI編集
+=== bash\basher.py, 4742
+Screenshots
+>>>>
+スクリーンショット
+=== bash\basher.py, 4745
+PM Archive
+>>>>
+プライベートメッセージ
+=== bash\basher.py, 4748
+PM Archive panel disabled due to Import Error (most likely comtypes)
+>>>>
+インポートエラーが生じただめPM Archiveタブは無効になりました(comtypeなど)
+=== bash\basher.py, 4842
+Wrye Flash NV in %s Mode
+>>>>
+
+=== bash\basher.py, 4847
+Warning you appear to be using a non-unicode version of wxPython (%s) but have set Wrye Bash to unicode mode, this may cause problems, it is reccomended you use a unicode version of wPython instead
+>>>>
+Unicode版ではないwxPython(%s)を使用していますが、Wrye BashはUnicodeモードです. 問題が生じる場合があるので、Unicode版のwxPythonの使用を推奨します
+=== bash\basher.py, 4861
+Default
+>>>>
+
+=== bash\basher.py, 4878
+\n+ %d others
+>>>>
+
+=== bash\basher.py, 4893
+It appears that the current user doesn't have permissions for some or all of the files in Fallout New Vegas\\Data.\nSpecifically had permission denied to change the time on:\n%s
+>>>>
+現在のユーザはいくつかの、あるいは全てのファイルに対するアクセス権がないようです. Fallout New Vegas\\Data\n中でもタイムスタンプ変更が拒否されました: \n%s
+=== bash\basher.py, 4895
+Modified dates have been reset for some mod files
+>>>>
+いくつかのMODファイルで変更されたタイムスタンプを復帰しました
+=== bash\basher.py, 4902
+Some mods have been auto-grouped
+>>>>
+いくつかのMODが自動でグループに分類されました
+=== bash\basher.py, 4932
+Missing files have been removed from load list
+>>>>
+ロードリストから以下のファイルが欠落しました
+=== bash\basher.py, 4939
+Load list is overloaded. Some files have been de-activated
+>>>>
+ロードしすぎです. いくつかのファイルがDeactivateされました
+=== bash\basher.py, 4948
+The following mod files have corrupted headers
+>>>>
+以下のMODファイルはヘッダ情報が破損しています
+=== bash\basher.py, 4954
+The following save files have corrupted headers
+>>>>
+以下のセーブデータはヘッダ情報が破損しています
+=== bash\basher.py, 4960
+The following mods have unrecognized TES4 header versions
+>>>>
+
+=== bash\basher.py, 4968
+Your FALLOUT.INI should begin with a section header (e.g. "[General]
+>>>>
+
+=== bash\basher.py, 4972
+Bash cannot handle dates greater than January 19, 2038. Accordingly, the dates for the following files have been reset to an earlier date
+>>>>
+2038/01/19より未来のタイムスタンプは扱えません. このため、以下のファイルは旧タイムスタンプにリセットされました
+=== bash\basher.py, 4979
+Turn Lock Times Off?\n\nLock Times a feature which resets load order to a previously memorized state. While this feature is good for maintaining your load order, it will also undo any load order changes that you have made in FOMM
+>>>>
+
+=== bash\basher.py, 4980
+Lock Times
+>>>>
+タイムスタンプを固定
+=== bash\basher.py, 4986
+Lock Times is now %s. To change it in the future, right click on the main list header on the Mods tab and select 'Lock Times'
+>>>>
+タイムスタンプ固定は現在%sです. 変更したい場合、MODタブ内リストのカラムヘッダを右クリックして切り替えてください
+=== bash\basher.py, 4987
+off
+>>>>
+オフ
+=== bash\basher.py, 4987
+on
+>>>>
+オン
+=== bash\basher.py, 4992
+Installation appears incomplete. Please re-unzip bash to FalloutNV directory so that ALL files are installed.\n\nCorrect installation will create Fallout New Vegas\\Mopy, Fallout New Vegas\\Data\\Docs and Fallout New Vegas\\Data\\INI Tweaks directories
+>>>>
+
+=== bash\basher.py, 4993
+Incomplete Installation
+>>>>
+インストールが不完全です
+=== bash\basher.py, 4999
+Mark Mergeable
+>>>>
+マージ判定
+=== bash\basher.py, 5066
+Doc Browser
+>>>>
+ドキュメントブラウザ
+=== bash\basher.py, 5078
+Set Doc
+>>>>
+ドキュメントを設定する
+=== bash\basher.py, 5080
+Forget Doc
+>>>>
+ドキュメントを外す
+=== bash\basher.py, 5082
+Rename Doc
+>>>>
+ドキュメントをリネームする
+=== bash\basher.py, 5084
+Edit Doc
+>>>>
+ドキュメントを編集
+=== bash\basher.py, 5086
+Open Doc
+>>>>
+ドキュメントを開く
+=== bash\basher.py, 5086
+Open doc in external editor
+>>>>
+ドキュメントを外部エディタで開く
+=== bash\basher.py, 5195
+Select doc for %s
+>>>>
+%sのドキュメントを選択
+=== bash\basher.py, 5210
+Rename file to
+>>>>
+リネームするファイル名を決めてください
+=== bash\basher.py, 5229
+Filename not defined
+>>>>
+ファイル名が定義されていません
+=== bash\basher.py, 5268
+My Readme Template.txt
+>>>>
+
+=== bash\basher.py, 5269
+Bash Readme Template.txt
+>>>>
+
+=== bash\basher.py, 5348
+Mod Checker
+>>>>
+MODチェッカ
+=== bash\basher.py, 5365
+Mod List
+>>>>
+MOD一覧
+=== bash\basher.py, 5366
+Rule Sets
+>>>>
+ルールセット
+=== bash\basher.py, 5368
+Configuration
+>>>>
+設定
+=== bash\basher.py, 5369
+Suggestions
+>>>>
+改善情報
+=== bash\basher.py, 5371
+Scan for Dirty Edits
+>>>>
+好ましくない編集をスキャン
+=== bash\basher.py, 5373
+Scan for UDR's
+>>>>
+UDRをスキャンします
+=== bash\basher.py, 5374
+Copy Text
+>>>>
+クリップボードへコピー
+=== bash\basher.py, 5485
+Initializing Data
+>>>>
+データ初期化中
+=== bash\basher.py, 5488
+Initializing Version
+>>>>
+バージョン情報を初期化中
+=== bash\basher.py, 5491
+Initializing Windows
+>>>>
+ウィンドウを初期化中
+=== bash\basher.py, 5515
+Initializing ModInfos
+>>>>
+MOD情報を初期化中
+=== bash\basher.py, 5523
+Initializing SaveInfos
+>>>>
+セーブデータ情報を初期化中
+=== bash\basher.py, 5526
+Initializing IniInfos
+>>>>
+INI情報を初期化中
+=== bash\basher.py, 5538
+Generating Blank Bashed Patch
+>>>>
+新規Bashed Patchを生成中
+=== bash\basher.py, 5604
+Race
+>>>>
+種族
+=== bash\basher.py, 5605
+Gender
+>>>>
+性別
+=== bash\basher.py, 5606
+Stats
+>>>>
+ステータス
+=== bash\basher.py, 5607
+Class
+>>>>
+クラス
+=== bash\basher.py, 5621
+Import
+>>>>
+インポート
+=== bash\basher.py, 5692
+Face imported
+>>>>
+顔データをインポートしました
+=== bash\basher.py, 5744
+Build Patch
+>>>>
+パッチをビルドする
+=== bash\basher.py, 5745
+Revert To Saved
+>>>>
+直近ビルド時の設定に戻す
+=== bash\basher.py, 5746
+Select All
+>>>>
+全てを選択
+=== bash\basher.py, 5747
+Deselect All
+>>>>
+全ての選択を外す
+=== bash\basher.py, 5748
+Export Patch Configuration
+>>>>
+パッチ設定を保存する
+=== bash\basher.py, 5749
+Import Patch Configuration
+>>>>
+パッチ設定をインポート
+=== bash\basher.py, 5840
+\nSaving
+>>>>
+\nセーブ中
+=== bash\basher.py, 5845
+Bash encountered an error when saving %s.\n\nThe file is in use by another process such as FNVEdit.\nPlease close the other program that is accessing %s.\n\nTry again?
+>>>>
+
+=== bash\basher.py, 5845
+Bash Patch - Save Error
+>>>>
+Bash Patch - セーブエラー
+=== bash\basher.py, 5876
+Activate %s?
+>>>>
+%sをActivateしますか？
+=== bash\basher.py, 5883
+Masters Activated
+>>>>
+マスターファイルをActivateしました
+=== bash\basher.py, 5890
+File Edit Error
+>>>>
+ファイル編集エラー
+=== bash\basher.py, 5992
+_Configuration.dat
+>>>>
+
+=== bash\basher.py, 5996
+Export Bashed Patch configuration to
+>>>>
+Bashed Patch設定をエクスポートします
+=== bash\basher.py, 6012
+Import Bashed Patch configuration from
+>>>>
+Bashed Patch設定をインポートします
+=== bash\basher.py, 6043
+item %s not in saved configs
+>>>>
+
+=== bash\basher.py, 6380
+FalloutNV Mod Files
+>>>>
+
+=== bash\basher.py, 6382
+Get
+>>>>
+
+=== bash\basher.py, 6459
+Tweaks
+>>>>
+
+=== bash\basher.py, 6605
+Enter the desired custom tweak value.\nDue to an inability to get decimal numbers from the wxPython prompt please enter an extra zero after your choice if it is not meant to be a decimal.\nIf you are trying to enter a decimal multiply it by 10, for example for 0.3 enter 3 instead.\n%s
+>>>>
+手動で設定する値を入力してください.\nwxPythonの入力プロンプトでは小数を受け取ることができないため、小数になって欲しくないのであれば数字末尾にゼロ一つを付け足してください.\n小数を入力したい場合はあらかじめ10倍した数値を入力し、例えば0.3を入力したい場合は10倍の3を入力してください.\n%s
+=== bash\basher.py, 6606
+%s ~ Custom Tweak Value
+>>>>
+
+=== bash\basher.py, 6611
+Enter the desired custom tweak value.\n%s
+>>>>
+手動で設定する値を入力してください\n%s
+=== bash\basher.py, 6617
+Enter the desired custom tweak text.\n%s
+>>>>
+手動で設定するテキストを入力してください\n%s
+=== bash\basher.py, 6618
+%s ~ Custom Tweak Text
+>>>>
+
+=== bash\basher.py, 6633
+Mergeable Mods
+>>>>
+マージ可能なMOD一覧
+=== bash\basher.py, 6674
+Race Mods
+>>>>
+
+=== bash\basher.py, 6732
+Override Delev/Relev Tags
+>>>>
+
+=== bash\basher.py, 6737
+Override Deflst Tags
+>>>>
+
+=== bash\basher.py, 6952
+Sort by %s
+>>>>
+%sでソート
+=== bash\basher.py, 6971
+Unhide
+>>>>
+隔離ファイルを戻す
+=== bash\basher.py, 6971
+Unhides hidden %ss
+>>>>
+隔離した%sを戻す
+=== bash\basher.py, 6987
+Unhide files
+>>>>
+隔離したファイルをDataディレクトリに戻す
+=== bash\basher.py, 7002
+You can't unhide files from this directory
+>>>>
+このディレクトリから「隔離から戻す」ことはできません
+=== bash\basher.py, 7014
+File skipped: %s. File is already present
+>>>>
+スキップしました: %s. ファイルは既に存在します
+=== bash\basher.py, 7035
+Delete Files
+>>>>
+ファイルを削除します
+=== bash\basher.py, 7049
+Make a copy of '%s'
+>>>>
+%sの複製を作成します
+=== bash\basher.py, 7064
+This mod has an associated archive (%s.bsa) and an associated voice directory (Sound\\Voices\\%s), which will not be attached to the duplicate mod.\n\nNote that the BSA archive may also contain a voice directory (Sound\\Voices\\%s), which would remain detached even if a duplicate archive were also created
+>>>>
+このMODはアーカイブ%s.bsa及び音声ディレクトリSound\\Voices\\%sに関連づけられており、複製したMODとは関連づけられていません.\n\nBSAアーカイブにも音声ディレクトリSound\\Voices\\%sが含まれている可能性はありますが、BSAを複製しても音声ファイルの関連づけは関連づけられません
+=== bash\basher.py, 7066
+This mod has an associated archive (%s.bsa), which will not be attached to the duplicate mod.\n\nNote that this BSA archive may contain a voice directory (Sound\\Voices\\%s), which would remain detached even if a duplicate archive were also created
+>>>>
+このMODはアーカイブ%s.bsaに関連づけられており、複製したMODとは関連づけられていません.\n\nBSAアーカイブにも音声ディレクトリSound\\Voices\\%sが含まれている可能性はありますが、BSAを複製しても音声ファイルの関連づけは関連づけられません
+=== bash\basher.py, 7068
+This mod has an associated voice directory (Sound\\Voice\\%s), which will not be attached to the duplicate mod
+>>>>
+このMODは音声ディレクトリSound\\Voices\\%sに関連づけられており、複製したMODとは関連づけられていません
+=== bash\basher.py, 7110
+Hide
+>>>>
+隔離
+=== bash\basher.py, 7115
+Hide Files
+>>>>
+ファイルを隔離する
+=== bash\basher.py, 7133
+A file named %s already exists in the hidden files directory. Overwrite it?
+>>>>
+%sという名前のファイルは隔離ディレクトリ(Bash Mod Data\Hidden)に既に存在します. 上書きしますか？
+=== bash\basher.py, 7146
+List Masters
+>>>>
+マスター一覧を表示
+=== bash\basher.py, 7164
+Redate
+>>>>
+タイムスタンプを書き換える
+=== bash\basher.py, 7173
+Redate selected mods starting at
+>>>>
+MODのタイムスタンプを書き換えます
+=== bash\basher.py, 7174
+Redate Mods
+>>>>
+タイムスタンプを書き換えます
+=== bash\basher.py, 7183
+Bash cannot handle dates greater than January 19, 2038.)
+>>>>
+2038/01/19より未来のタイムスタンプは扱えません
+=== bash\basher.py, 7201
+Sort
+>>>>
+ソート
+=== bash\basher.py, 7206
+Reorder selected mods in alphabetical order? The first file will be given the date/time of the current earliest file in the group, with consecutive files following at 1 minute increments.\n\nNote that this operation cannot be undone. Note also that some mods need to be in a specific order to work correctly, and this sort operation may break that order
+>>>>
+選択したMODをアルファベット順にソートしますか？最初のファイルにはグループ内で一番若いタイムスタンプが与えられ、残るファイルが1分ずつ加えたタイムスタンプを与えられます.\n\nこの作業はアンドゥできません. また、特定の順でロードしないと正常に動作しないMODも存在するため、この作業によってロードオーダーが不適切なものになる可能性があります
+=== bash\basher.py, 7207
+Sort Mods
+>>>>
+MODをソートします
+=== bash\basher.py, 7234
+Snapshot
+>>>>
+スナップショット
+=== bash\basher.py, 7246
+Save snapshot as
+>>>>
+ファイル名をつけてスナップショットを保存
+=== bash\basher.py, 7274
+Revert to Snapshot
+>>>>
+スナップショットに戻す
+=== bash\basher.py, 7288
+Revert %s to snapshot
+>>>>
+%sをスナップショットに戻す
+=== bash\basher.py, 7293
+Revert %s to snapshot %s dated %s?
+>>>>
+%sをスナップショット%s(日付: %s)に戻しますか？
+=== bash\basher.py, 7303
+Snapshot file is corrupt!
+>>>>
+スナップショットは破損しています！
+=== bash\basher.py, 7312
+Backup
+>>>>
+バックアップ
+=== bash\basher.py, 7331
+Revert to Backup
+>>>>
+バックアップに戻す
+=== bash\basher.py, 7337
+Revert to First Backup
+>>>>
+最初のバックアップに戻す
+=== bash\basher.py, 7351
+Revert %s to backup dated %s?
+>>>>
+%sをバックアップ%sに戻しますか？
+=== bash\basher.py, 7363
+Old file is corrupt!
+>>>>
+古いファイルは破損しています！
+=== bash\basher.py, 7372
+Open '%s' with the system's default program
+>>>>
+%sをOSデフォルトのソフトで開く
+=== bash\basher.py, 7374
+Open the selected files
+>>>>
+選択したファイルを開く
+=== bash\basher.py, 7396
+Show/Hide '%s' column
+>>>>
+「%s」カラムを表示/非表示にする
+=== bash\basher.py, 7424
+Columns
+>>>>
+カラム
+=== bash\basher.py, 7434
+Add Marker
+>>>>
+マーカーを追加
+=== bash\basher.py, 7434
+Adds a Marker, a special type of package useful for seperating and labeling your packages
+>>>>
+特殊パッケージであることを示すマーカーを追加します. あなたのパッケージをその他から切り離したりラベル付けするのに有用です
+=== bash\basher.py, 7455
+Anneal All
+>>>>
+全てのファイルを補完
+=== bash\basher.py, 7455
+This will install any missing files (for active installers) and correct all install order and reconfiguration errors
+>>>>
+アクティブなインストーラを対象にあらゆる不足ファイルをインストールし、インストールオーダーを修復し、エラーを再構成します
+=== bash\basher.py, 7460
+Annealing
+>>>>
+ファイルを補完中
+=== bash\basher.py, 7474
+Uninstall All Packages
+>>>>
+全てのパッケージをアンインストール
+=== bash\basher.py, 7474
+This will uninstall all packages
+>>>>
+全てのパッケージをアンインストールします
+=== bash\basher.py, 7479
+Uninstalling
+>>>>
+アンインストール中
+=== bash\basher.py, 7494
+Clean Data
+>>>>
+データのクリーニング
+=== bash\basher.py, 7494
+This will move all non-bethesda files that are not linked to an active installer out of the data folder to "Fallout New Vegas Mods\uninstalled\<date>
+>>>>
+Bethesda製ではなく、現在アクティブなインストーラにも関連づけられていないファイルを以下のパスに移動させます：Fallout New Vegas Mods\uninstalled\<date>
+=== bash\basher.py, 7499
+Cleaning Data Files
+>>>>
+データファイルをクリーニング中
+=== bash\basher.py, 7512
+Auto-Anneal
+>>>>
+自動的にファイルを補完
+=== bash\basher.py, 7514
+Enable/Disable automatic annealing of packages
+>>>>
+パッケージの自動ファイル補完する
+=== bash\basher.py, 7521
+Auto-Anneal/Install Wizards
+>>>>
+ウィザード完了後、自動補完及びインストールを行う
+=== bash\basher.py, 7523
+Enable/Disable automatic installing or anneal (as applicable) of packages after running its wizard
+>>>>
+ウィザードが完了した後、自動的にインストール及び(可能であれば)補完を行う
+=== bash\basher.py, 7531
+Wizard Icon Overlay
+>>>>
+ウィザードに魔法の杖マークをつける
+=== bash\basher.py, 7533
+Enable/Disable the magic wand icon overlay for packages with Wizards
+>>>>
+ウィザード形式のパッケージである場合、魔法の杖マークをアイコン上にオーバーレイする
+=== bash\basher.py, 7545
+Auto-Refresh Projects
+>>>>
+プロジェクトを自動で再スキャン
+=== bash\basher.py, 7553
+Auto-Refresh Bethsoft Content
+>>>>
+Vanillaのbsa、esp、esmを自動で再スキャン
+=== bash\basher.py, 7559
+Enable refreshing Bethsoft Content?  This will cause data refreshing to take much longer if the timestamps on Bethsoft BSA's, ESP's, or ESM's change
+>>>>
+Bethesdaファイルの再スキャンを有効にしますか？タイムスタンプに変更があった場合、スキャン時間が大幅に伸びる可能性があります
+=== bash\basher.py, 7567
+Enabled
+>>>>
+有効化
+=== bash\basher.py, 7569
+Enable/Disable the Installers tab
+>>>>
+インストーラタブを表示する
+=== bash\basher.py, 7575
+Do you want to enable Installers? If you do, Bash will first need to initialize some data. If there are many new mods to process, then this may take on the order of five minutes
+>>>>
+インストーラタブを有効にしますか？有効にすると、Wrye Bashはまずデータを初期化します. たくさんのMODが導入されている環境では5分程度時間がかかる場合があります
+=== bash\basher.py, 7592
+BSA Redirection
+>>>>
+BSAリダイレクト
+=== bash\basher.py, 7616
+Show Inactive Conflicts
+>>>>
+非アクティブパッケージとの競合を表示
+=== bash\basher.py, 7629
+Show Lower Conflicts
+>>>>
+優先下位との競合を表示
+=== bash\basher.py, 7641
+Avoid at Startup
+>>>>
+スタートアップ時にスキャンしない
+=== bash\basher.py, 7643
+Toggles Wrye Bash to avoid the Installers tab on startup, avoiding unnecessary data scanning
+>>>>
+
+=== bash\basher.py, 7656
+Refresh Data
+>>>>
+データを再スキャン
+=== bash\basher.py, 7656
+Full Refresh
+>>>>
+全てを再スキャン(CRC再計算込み)
+=== bash\basher.py, 7658
+Perform a full refresh of all data files, recalculating all CRCs.  This can take 5-15 minutes
+>>>>
+全てのデータファイルを再スキャンし、全てのCRCを計算し直します. 5～15分ほどかかる場合があります
+=== bash\basher.py, 7660
+Rescan the Data directory and all project directories
+>>>>
+データディレクトリと全てのプロジェクトディレクトリを再スキャンします
+=== bash\basher.py, 7667
+Refresh ALL data from scratch? This may take five to ten minutes (or more) depending on the number of mods you have installed
+>>>>
+全てのデータを最初から再スキャンしますか？インストールしているMODの数によっては、5～10分以上かかる場合があります
+=== bash\basher.py, 7677
+Clean Data Directory
+>>>>
+空のサブフォルダを削除
+=== bash\basher.py, 7685
+Show Replacers Tab
+>>>>
+リプレイスタブを表示
+=== bash\basher.py, 7687
+Show/Hide the Replacers tab
+>>>>
+リプレイスタブ表示する
+=== bash\basher.py, 7692
+This option will take effect when Bash is restarted. Note that if any files are present in Data\\Replacers, then the Replacers tab will be shown regardless of this setting
+>>>>
+Wrye Bash再起動時から有効になります. Data\\Replacersに何らかのファイルがあった場合、設定に関わらずリプレイスタブは表示されます
+=== bash\basher.py, 7709
+Skip Screenshots
+>>>>
+スクリーンショットを除外
+=== bash\basher.py, 7717
+Skip Images
+>>>>
+画像ファイルを除外
+=== bash\basher.py, 7725
+Skip Docs
+>>>>
+ドキュメントを除外
+=== bash\basher.py, 7733
+Skip DistantLOD
+>>>>
+DistantLODを除外
+=== bash\basher.py, 7741
+Skip LOD Meshes
+>>>>
+LOD Meshを除外
+=== bash\basher.py, 7749
+Skip LOD Textures
+>>>>
+LOD Textureを除外
+=== bash\basher.py, 7757
+Skip LOD Normals
+>>>>
+LOD Normalを除外
+=== bash\basher.py, 7765
+Skip NVSE Plugins
+>>>>
+
+=== bash\basher.py, 7780
+Sort by Active
+>>>>
+アクティブなものからソート
+=== bash\basher.py, 7782
+If selected, active installers will be sorted to the top of the list
+>>>>
+アクティブなパッケージが先頭にソートされます
+=== bash\basher.py, 7793
+Projects First
+>>>>
+プロジェクト優先
+=== bash\basher.py, 7795
+If selected, projects will be sorted to the top of the list
+>>>>
+プロジェクトが先頭にソートされます
+=== bash\basher.py, 7806
+Sort by Structure
+>>>>
+構造でソート
+=== bash\basher.py, 7820
+Export list of allowed/disallowed NVSE plugin dlls
+>>>>
+許可・非許可のNVSE Plugin DLLリストをエクスポート
+=== bash\basher.py, 7827
+Export list of allowed/disallowed NVSE plugin dlls to
+>>>>
+許可・非許可のNVSE Plugin DLLリストをエクスポートします
+=== bash\basher.py, 7827
+NVSE dll permissions.txt
+>>>>
+
+=== bash\basher.py, 7852
+Import list of allowed/disallowed NVSE plugin dlls
+>>>>
+許可・非許可のNVSE Plugin DLLリストをインポート
+=== bash\basher.py, 7859
+Import list of allowed/disallowed NVSE plugin dlls from
+>>>>
+許可・非許可のNVSE Plugin DLLリストをインポートします
+=== bash\basher.py, 7862
+Merge permissions from file with current dll permissions?\n('No' Replaces current permissions instead.)
+>>>>
+
+=== bash\basher.py, 7863
+Merge permissions?
+>>>>
+
+=== bash\basher.py, 7951
+View Wizard
+>>>>
+ウィザードをテキストエディタで閲覧する
+=== bash\basher.py, 7953
+Edit Wizard
+>>>>
+ウィザードを編集
+=== bash\basher.py, 7990
+Wizard
+>>>>
+ウィザードを開く
+=== bash\basher.py, 7992
+Auto Wizard
+>>>>
+全てデフォルトの選択でウィザードを設定
+=== bash\basher.py, 8072
+Installing
+>>>>
+インストール中
+=== bash\basher.py, 8104
+Apply an ini tweak to Fallout.ini?\n\nWARNING: Incorrect tweaks can result in CTDs and even damage to you computer!
+>>>>
+Ini設定をFallout.iniに適用しますか？\n\n警告: 不適切な設定はCTDの原因となったり、コンピュータを破損する恐れがあります！
+=== bash\basher.py, 8105
+INI Tweaks
+>>>>
+
+=== bash\basher.py, 8121
+The following INI Tweaks were not automatically applied.  Be sure to apply them after installing the package
+>>>>
+
+=== bash\basher.py, 8131
+Anneal
+>>>>
+ファイルを補完する
+=== bash\basher.py, 8166
+Copy (%d)
+>>>>
+コピー(%d)
+=== bash\basher.py, 8168
+Duplicate %s to
+>>>>
+%sを複製
+=== bash\basher.py, 8175
+%s is not a valid name
+>>>>
+%sは有効な名前ではありません
+=== bash\basher.py, 8178
+%s already exists
+>>>>
+%sは既に存在しています
+=== bash\basher.py, 8182
+%s does not have correct extension (%s)
+>>>>
+%sは有効な拡張子を持っていません(%s)
+=== bash\basher.py, 8259
+Has Extra Directories
+>>>>
+Wrye Bashサポート外のディレクトリがある
+=== bash\basher.py, 8283
+Override Skips
+>>>>
+メインの除外設定を無視
+=== bash\basher.py, 8306
+Don't Refresh
+>>>>
+プロジェクトのみ再スキャンの時はスキャンしない
+=== bash\basher.py, 8332
+Install
+>>>>
+インストール
+=== bash\basher.py, 8332
+Install Last
+>>>>
+インストールし、パッケージ最後尾に移動
+=== bash\basher.py, 8332
+Install Missing
+>>>>
+不足ファイルのみインストール
+=== bash\basher.py, 8365
+List Packages
+>>>>
+パッケージ一覧を表示する
+=== bash\basher.py, 8365
+Displays a list of all packages.  Also copies that list to the clipboard.  Useful for posting your package order on forums
+>>>>
+パッケージリストを表示します. クリップボードにもコピーされます. フォーラムなどにロードオーダーを投稿する時に便利です
+=== bash\basher.py, 8370
+Only show Installed Packages?\n(Else shows all packages)
+>>>>
+インストール済みパッケージのみを表示しますか？また、表示されるリストは一般的フォーラムのネタバレ防止タグ[spoiler]で囲われています.\n\nはい: インストール済みパッケージのみ\nいいえ: 全てのパッケージ
+=== bash\basher.py, 8371
+Only Show Installed?
+>>>>
+インストール済みのパッケージだけを表示しますか？
+=== bash\basher.py, 8377
+BAIN Packages
+>>>>
+BAINパッケージ
+=== bash\basher.py, 8383
+List Structure
+>>>>
+構造を表示
+=== bash\basher.py, 8406
+Move To
+>>>>
+移動
+=== bash\basher.py, 8412
+Move selected archives to what position?\nEnter position number.\nLast: -1; First of Last: -2; Semi-Last: -3
+>>>>
+選択したアーカイブをどこに移動しますか？\n位置の数値を入力してください.\n最後尾: -1、「Last」の次: -2、「Last」の前: -3
+=== bash\basher.py, 8417
+Position must be an integer
+>>>>
+数値は整数で入力してください
+=== bash\basher.py, 8461
+New Vegas Nexus
+>>>>
+
+=== bash\basher.py, 8468
+Attempt to open this as a mod at New Vegas Nexus? This assumes that the trailing digits in the package's name are actually the id number of the mod at NewVegasNexus. If this assumption is wrong, you'll just get a random mod page (or error notice) at New Vegas Nexus
+>>>>
+
+=== bash\basher.py, 8469
+Open at New Vegas Nexus
+>>>>
+
+=== bash\basher.py, 8478
+Google
+>>>>
+Googleで検索
+=== bash\basher.py, 8485
+Open a search for this on Google?
+>>>>
+Googleで検索しますか？
+=== bash\basher.py, 8486
+Open a search
+>>>>
+検索エンジンで検索
+=== bash\basher.py, 8525
+Refresh
+>>>>
+再スキャン
+=== bash\basher.py, 8531
+Refreshing Packages
+>>>>
+パッケージを再スキャン中
+=== bash\basher.py, 8535
+Refreshing Packages...\n
+>>>>
+パッケージを再スキャン中...\n
+=== bash\basher.py, 8554
+Skip Voices
+>>>>
+音声を除外
+=== bash\basher.py, 8576
+Uninstall
+>>>>
+アンインストール
+=== bash\basher.py, 8598
+Copy Conflicts to Project
+>>>>
+競合しているファイルをプロジェクトに複製
+=== bash\basher.py, 8609
+Copying Conflicts
+>>>>
+競合しているファイルをプロジェクトに複製中
+=== bash\basher.py, 8638
+%s\nCopying files...\n%s
+>>>>
+%s\nファイルをコピー中...\n%s
+=== bash\basher.py, 8725
+Enter new name (without the extension)
+>>>>
+
+=== bash\basher.py, 8726
+Rename Esp/m
+>>>>
+esp、esmをリネーム
+=== bash\basher.py, 8736
+Reset Name
+>>>>
+
+=== bash\basher.py, 8760
+Reset All Names
+>>>>
+
+=== bash\basher.py, 8775
+List Esp/ms
+>>>>
+
+=== bash\basher.py, 8782
+Esp/m List for "%s":\n[spoiler]
+>>>>
+
+=== bash\basher.py, 8789
+Esp/m List
+>>>>
+
+=== bash\basher.py, 8831
+Toggle Selection
+>>>>
+
+=== bash\basher.py, 8849
+List Sub-packages
+>>>>
+
+=== bash\basher.py, 8856
+Sub-Packages List for "%s":\n[spoiler]
+>>>>
+
+=== bash\basher.py, 8863
+Sub-Package List
+>>>>
+
+=== bash\basher.py, 8872
+Unpack to Project(s)
+>>>>
+プロジェクトに解凍する
+=== bash\basher.py, 8881
+Unpack %s to Project
+>>>>
+%sをプロジェクトに解凍します
+=== bash\basher.py, 8888
+%s is not a valid project name
+>>>>
+%sは有効なプロジェクト名ではありません
+=== bash\basher.py, 8891
+%s is a file
+>>>>
+%sはファイルです
+=== bash\basher.py, 8894
+%s already exists. Overwrite it?
+>>>>
+%sは既に存在します. 上書きしますか？
+=== bash\basher.py, 8897
+Unpacking to Project
+>>>>
+プロジェクトに解凍中
+=== bash\basher.py, 8940
+Fomod Config
+>>>>
+
+=== bash\basher.py, 8965
+Website
+>>>>
+ウェブサイト
+=== bash\basher.py, 8967
+Email
+>>>>
+メールアドレス
+=== bash\basher.py, 9009
+Fomod Info
+>>>>
+
+=== bash\basher.py, 9024
+Sync from Data
+>>>>
+Dataディレクトリのファイルに同期する
+=== bash\basher.py, 9039
+Update %s according to data directory?\nFiles to delete: %d\nFiles to update: %d
+>>>>
+Dataディレクトリに従って%sをアップデートしますか？\n削除ファイル: %d\nアップデートファイル: %d
+=== bash\basher.py, 9044
+Updating files
+>>>>
+ファイルをアップデートしています
+=== bash\basher.py, 9057
+Sync and Pack
+>>>>
+同期とパッケージ
+=== bash\basher.py, 9071
+Pack to Archive
+>>>>
+アーカイブに圧縮する
+=== bash\basher.py, 9081
+Pack %s to Archive
+>>>>
+%sをアーカイブに圧縮します
+=== bash\basher.py, 9088
+%s is not a valid archive name
+>>>>
+%sは有効なアーカイブ名ではりません
+=== bash\basher.py, 9091
+%s is a directory
+>>>>
+%sはディレクトリです
+=== bash\basher.py, 9094
+The %s extension is unsupported. Using %s instead
+>>>>
+拡張子%sはサポートされていません. 代わりに%sを使用します
+=== bash\basher.py, 9104
+Use solid compression for %s?
+>>>>
+%sの圧縮にソリッド圧縮を使用しますか？
+=== bash\basher.py, 9106
+Use what maximum size for each solid block?\nEnter '0' to use 7z's default size
+>>>>
+ソリッドブロックの最大サイズを設定してください.\n「0」を入力すると7zのデフォルトサイズを使用します
+=== bash\basher.py, 9108
+Packing to Archive
+>>>>
+アーカイブに圧縮中
+=== bash\basher.py, 9131
+Package for Release
+>>>>
+配布用パッケージ
+=== bash\basher.py, 9198
+Apply BCF
+>>>>
+BCFを適用
+=== bash\basher.py, 9206
+Using:\n*
+>>>>
+
+=== bash\basher.py, 9222
+Converting to Archive
+>>>>
+アーカイブに変換
+=== bash\basher.py, 9283
+Create BCF
+>>>>
+BCFを生成
+=== bash\basher.py, 9284
+Create
+>>>>
+生成
+=== bash\basher.py, 9291
+Select the BAIN\'ed Archive
+>>>>
+BAIN化アーカイブを選択してください
+=== bash\basher.py, 9299
+%s must be in the Bash Installers directory
+>>>>
+%sはBash Installersディレクトリに存在しなくてはいけません
+=== bash\basher.py, 9301
+-bcf
+>>>>
+
+=== bash\basher.py, 9302
+-BCF
+>>>>
+
+=== bash\basher.py, 9304
+Convert
+>>>>
+コンバート
+=== bash\basher.py, 9306
+\n\nTo:\n* (%08X) - %s
+>>>>
+
+=== bash\basher.py, 9319
+BCF's only support %s. The %s extension will be discarded
+>>>>
+
+=== bash\basher.py, 9330
+Creating %s
+>>>>
+
+=== bash\basher.py, 9343
+Name: %s
+>>>>
+
+=== bash\basher.py, 9344
+Size: %s KB
+>>>>
+
+=== bash\basher.py, 9345
+Remapped: %s file
+>>>>
+
+=== bash\basher.py, 9345
+s
+>>>>
+
+=== bash\basher.py, 9346
+Requires: %s file
+>>>>
+
+=== bash\basher.py, 9348
+Options
+>>>>
+オプション
+=== bash\basher.py, 9349
+*  Skip Voices   = %s
+>>>>
+
+=== bash\basher.py, 9350
+*  Solid Archive = %s
+>>>>
+
+=== bash\basher.py, 9353
+*  Solid Block Size = %d
+>>>>
+
+=== bash\basher.py, 9355
+*  Solid Block Size = 7z default
+>>>>
+
+=== bash\basher.py, 9356
+*  Has Comments  = %s
+>>>>
+
+=== bash\basher.py, 9357
+*  Has Extra Directories = %s
+>>>>
+
+=== bash\basher.py, 9358
+*  Has Esps Unselected   = %s
+>>>>
+
+=== bash\basher.py, 9359
+*  Has Packages Selected = %s
+>>>>
+
+=== bash\basher.py, 9360
+Contains: %s file
+>>>>
+
+=== bash\basher.py, 9365
+BCF Information
+>>>>
+
+=== bash\basher.py, 9414
+Name must be between 1 and 64 characters long
+>>>>
+
+=== bash\basher.py, 9444
+None
+>>>>
+なし
+=== bash\basher.py, 9445
+Save List
+>>>>
+ロードリストを保存
+=== bash\basher.py, 9446
+Edit Lists
+>>>>
+ロードリストを編集
+=== bash\basher.py, 9476
+All load list slots are full. Please delete an existing load list before adding another
+>>>>
+ロードリスト用スロットが一杯です. 既存のロードリストを削除してから新規作成してください
+=== bash\basher.py, 9479
+Save current load list as
+>>>>
+現在のロードリストに名前をつけて保存
+=== bash\basher.py, 9482
+Load list name must be between 1 and 64 characters long
+>>>>
+ロードリストの名称は1～64文字でなくてはいけません
+=== bash\basher.py, 9489
+Load Lists
+>>>>
+ロードリスト
+=== bash\basher.py, 9497
+Valid Tweaks First
+>>>>
+有効な設定からソート
+=== bash\basher.py, 9499
+Valid tweak files will be shown first
+>>>>
+有効な設定ファイルが先頭にソートされます
+=== bash\basher.py, 9511
+List Errors
+>>>>
+エラー一覧
+=== bash\basher.py, 9511
+Lists any errors in the tweak file causing it to be invalid
+>>>>
+
+=== bash\basher.py, 9530
+INI Tweak Errors
+>>>>
+INI Tweak エラー
+=== bash\basher.py, 9538
+Apply
+>>>>
+適用する
+=== bash\basher.py, 9538
+Applies '%s' to '%s'
+>>>>
+
+=== bash\basher.py, 9577
+Copy to new Tweak
+>>>>
+新しいTweakにコピーする
+=== bash\basher.py, 9577
+Creates a new tweak based on '%s' but with values from '%s'
+>>>>
+
+=== bash\basher.py, 9585
+INI Tweak File (*.ini)|*.ini
+>>>>
+
+=== bash\basher.py, 9608
+Sort masters by type
+>>>>
+
+=== bash\basher.py, 9625
+Selection
+>>>>
+アクティブなもののみソート
+=== bash\basher.py, 9637
+Check mods against BOSS's dirty mod list
+>>>>
+BOSSのDirty Modリストでチェックする
+=== bash\basher.py, 9649
+Auto-Ghost
+>>>>
+非アクティブなファイルを自動でGhost化
+=== bash\basher.py, 9662
+Auto Group
+>>>>
+自動でグループに追加
+=== bash\basher.py, 9675
+Debug Mode
+>>>>
+デバッグモード
+=== bash\basher.py, 9680
+Debug Printing: Off
+>>>>
+デバッグ出力をオフにしました
+=== bash\basher.py, 9682
+Debug Printing: On
+>>>>
+デバッグ出力をオンにしました
+=== bash\basher.py, 9688
+Full Balo
+>>>>
+
+=== bash\basher.py, 9694
+Activate Full Balo?\n\nFull Balo segregates mods by groups, and then autosorts mods within those groups by alphabetical order. Full Balo is still in development and may have some rough edges
+>>>>
+Full Baloを有効にしますか？\n\nFull BaloはMODをグループごとに分離し、グループ内でアルファベット順にソートする機能です. Full Baloはまだ開発段階の機能であり、いささか荒削りです
+=== bash\basher.py, 9695
+Balo Groups
+>>>>
+Baloグループ
+=== bash\basher.py, 9710
+Dump Translator
+>>>>
+翻訳用ファイルをダンプ
+=== bash\basher.py, 9714
+Generate Bash program translator file?\n\nThis function is for translating Bash itself (NOT mods) into non-English languages. For more info, see Internationalization section of Bash readme
+>>>>
+Wrye Bashの翻訳用ファイルを生成しますか？\n\nこの機能は(MODではなく)WryeBash自体を英語以外の言語に翻訳するためのものです. 詳しくはドキュメントのInternationalizationセクションをご覧ください
+=== bash\basher.py, 9745
+%d translation keys written to Mopy\\Data\\%s
+>>>>
+%d 個の翻訳テキストをMopy\\Data\\%sに出力しました
+=== bash\basher.py, 9753
+List Mods
+>>>>
+アクティブなMOD一覧を表示する
+=== bash\basher.py, 9769
+List Bash Tags
+>>>>
+タグを表示する
+=== bash\basher.py, 9825
+FNVEdit Expert
+>>>>
+
+=== bash\basher.py, 9833
+BOSS Disable Lock Times
+>>>>
+BOSS起動時はタイムスタンプ固定をオフにする
+=== bash\basher.py, 9835
+If selected, will temporarilly disable Bash's Lock Times when running BOSS through Bash
+>>>>
+選択すると、BOSS実行時にBashのLock Times機構を一時的に無効にします
+=== bash\basher.py, 9843
+Always Update BOSS Masterlist prior to running BOSS
+>>>>
+BOSS起動時にまずMasterlistを更新する
+=== bash\basher.py, 9845
+If selected, will tell BOSS to update the masterlist before sorting the mods
+>>>>
+選択すると、BOSSはModのソート前にMasterlistを更新します
+=== bash\basher.py, 9860
+Backup Settings
+>>>>
+設定をバックアップ
+=== bash\basher.py, 9869
+Do you want to backup your Bash settings now?
+>>>>
+現在のWrye Bash設定をバックアップしますか？
+=== bash\basher.py, 9870
+Backup Bash Settings?
+>>>>
+Wrye Bash設定をバックアップしますか？
+=== bash\basher.py, 9876
+Backup Images?
+>>>>
+イメージをバックアップしますか？
+=== bash\basher.py, 9881
+Do you want to backup any images?
+>>>>
+全てのイメージをバックアップしますか？
+=== bash\basher.py, 9905
+Restore Settings
+>>>>
+設定を復帰
+=== bash\basher.py, 9912
+Do you want to restore saved images as well as settings?
+>>>>
+保存してあるイメージを復帰させますか？
+=== bash\basher.py, 9924
+Save Settings
+>>>>
+設定を保存
+=== bash\basher.py, 9936
+Update Archive Invalidator
+>>>>
+ArchiveInvalidation.txtを更新
+=== bash\basher.py, 9940
+Update ArchiveInvalidation.txt? This updates the file that forces the game engine to recognize replaced textures. Note that this feature is experimental and most probably somewhat incomplete. You may prefer to use another program to do AI.txt file updating
+>>>>
+ArchiveInvalidation.txtを更新しますか？更新することにより、ゲームエンジンにリプレイスしたTextureを強制的に認識させます. 実験段階の機能であり、多少不完全です. 別のプログラムからAI.txtを更新した方がいいかもしれません
+=== bash\basher.py, 9941
+ArchiveInvalidation.txt
+>>>>
+
+=== bash\basher.py, 9952
+NPC Levels
+>>>>
+NPCのレベル
+=== bash\basher.py, 9957
+This command will export the level info for NPCs whose level is offset with respect to the PC. The exported file can be edited with most spreadsheet programs and then reimported.\n\nSee the Bash help file for more info
+>>>>
+このコマンドでは、PCのレベルに比例して掛かるNPCのレベル補正情報をエクスポートします. エクスポートしたファイルはスプレッドシートを扱うソフトウェアで編集し、再度インポートすることが可能です.\n\n詳しくはヘルプファイルをご覧ください
+=== bash\basher.py, 9958
+Export NPC Levels
+>>>>
+NPCレベルをエクスポート
+=== bash\basher.py, 9962
+_NPC_Levels.csv
+>>>>
+
+=== bash\basher.py, 9966
+Export NPC levels to
+>>>>
+NPCレベルをCSVファイルにエクスポートします
+=== bash\basher.py, 9970
+Export Factions
+>>>>
+Factionをエクスポート
+=== bash\basher.py, 9979
+Reading %s
+>>>>
+%sを読み込み中
+=== bash\basher.py, 9981
+Exporting to %s
+>>>>
+%sにエクスポートしています
+=== bash\basher.py, 9983
+Done
+>>>>
+完了しました
+=== bash\basher.py, 9995
+This command will import NPC level info from a previously exported file.\n\nSee the Bash help file for more info
+>>>>
+このコマンドは以前エクスポートしたファイルからNPCレベル情報をインポートします.\n\n詳しくはヘルプファイルをご覧ください
+=== bash\basher.py, 9996
+Import NPC Levels
+>>>>
+NPCレベルをインポート
+=== bash\basher.py, 10003
+Import NPC levels from
+>>>>
+NPCレベルをCSVファイルからインポートします
+=== bash\basher.py, 10010
+Source file must be a _NPC_Levels.csv file
+>>>>
+インポート元のデータはxxx_NPC_Levels.csvというファイル名である必要があります
+=== bash\basher.py, 10021
+Applying to %s
+>>>>
+%sに適用中
+=== bash\basher.py, 10026
+No relevant NPC levels to import
+>>>>
+インポートできるNPCレベル情報がありません
+=== bash\basher.py, 10036
+Add Master
+>>>>
+マスターを追加
+=== bash\basher.py, 10041
+WARNING! For advanced modders only! Adds specified master to list of masters, thus ceding ownership of new content of this mod to the new master. Useful for splitting mods into esm/esp pairs
+>>>>
+警告！熟練Modderのみご利用ください！特定のマスターファイルをマスターリストに追加します. このMODの新規コンテンツ所有権は新たなマスターに移譲されることになります. MODをesmとespのペアに分割する際に有用です
+=== bash\basher.py, 10046
+FalloutNV Masters
+>>>>
+
+=== bash\basher.py, 10047
+Add master
+>>>>
+追加するマスターファイルを選択してください
+=== bash\basher.py, 10052
+File must be selected from FalloutNV Data Files directory
+>>>>
+
+=== bash\basher.py, 10054
+%s is already a master!
+>>>>
+%sは既にマスターに入っています！
+=== bash\basher.py, 10087
+Move Up
+>>>>
+上に移動
+=== bash\basher.py, 10088
+Move Down
+>>>>
+下に移動
+=== bash\basher.py, 10099
+Offsets
+>>>>
+
+=== bash\basher.py, 10126
+Group name must be letters, spaces, underscores only!
+>>>>
+グループ名は英数字、半角スペース、アンダースコアのみで構成されていなければいけません！
+=== bash\basher.py, 10129
+group %s already exists
+>>>>
+グループ%sは既に存在します
+=== bash\basher.py, 10132
+Group names must be less than forty characters
+>>>>
+グループ名は40文字未満でなければいけません
+=== bash\basher.py, 10185
+Add Balo Group
+>>>>
+Baloグループを追加
+=== bash\basher.py, 10190
+Name of new group (spaces and letters only)
+>>>>
+新規グループ名(半角スペースと英数字のみ)
+=== bash\basher.py, 10214
+Rename Balo Group
+>>>>
+Baloグループをリネーム
+=== bash\basher.py, 10219
+Rename %s to (spaces, letters and underscores only)
+>>>>
+
+=== bash\basher.py, 10332
+Allow Ghosting
+>>>>
+Ghost化させる
+=== bash\basher.py, 10352
+Create BOSS Report
+>>>>
+BOSSレポートを生成
+=== bash\basher.py, 10367
+Dirty Edits
+>>>>
+好ましくない編集
+=== bash\basher.py, 10416
+BOSS Report
+>>>>
+
+=== bash\basher.py, 10441
+Disallow Ghosting
+>>>>
+Ghost化させない
+=== bash\basher.py, 10460
+Invert Ghosting
+>>>>
+Ghost化状態を逆転させる
+=== bash\basher.py, 10482
+Don't Ghost
+>>>>
+Ghost化させない
+=== bash\basher.py, 10512
+Don't check against BOSS's dirty mod list
+>>>>
+BOSSのDirty Modリストでチェックしない
+=== bash\basher.py, 10514
+Check against BOSS's dirty mod list
+>>>>
+BOSSのDirty Modリストでチェックする
+=== bash\basher.py, 10527
+Invert checking against BOSS's dirty mod list
+>>>>
+BOSSのDirty Modリストでのチェックを逆転する
+=== bash\basher.py, 10550
+Dirty edit scanning
+>>>>
+好ましくない編集のスキャン
+=== bash\basher.py, 10572
+Apply Nvidia fog fix. This modify fog values in interior cells to avoid the Nvidia black screen bug
+>>>>
+nVidiaのFog Nearを修正します. これを適用すると、nVidia GPUで発生するブラックスクリーンバグを回避するため、Interior CellのFog Nearの値が設定し直されます
+=== bash\basher.py, 10581
+Scanning %s
+>>>>
+スキャン中 %s
+=== bash\basher.py, 10589
+Cells Fixed:\n
+>>>>
+Cellを修正しました:\n
+=== bash\basher.py, 10592
+No changes required
+>>>>
+変更の必要はありませんでした
+=== bash\basher.py, 10600
+New Mod
+>>>>
+espを新規作成
+=== bash\basher.py, 10630
+Relations
+>>>>
+好感度補正
+=== bash\basher.py, 10637
+_Relations.csv
+>>>>
+
+=== bash\basher.py, 10641
+Export faction relations to
+>>>>
+Faction間の好感度補正をCSVファイルにエクスポートします
+=== bash\basher.py, 10645
+Export Relations
+>>>>
+Faction間の好感度補正をエクスポート
+=== bash\basher.py, 10670
+This command will import faction relation info from a previously exported file.\n\nSee the Bash help file for more info
+>>>>
+このコマンドは以前エクスポートしたファイルからFaction間の好感度補正をインポートします.\n\n詳しくはヘルプファイルをご覧ください
+=== bash\basher.py, 10678
+Import faction relations from
+>>>>
+Faction間の好感度補正をCSVファイルからインポートします
+=== bash\basher.py, 10685
+Source file must be a _Relations.csv file
+>>>>
+インポート元のデータはxxx_Relations.csvというファイル名である必要があります
+=== bash\basher.py, 10701
+No relevant faction relations to import
+>>>>
+インポートできるFaction間の好感度補正情報がありません
+=== bash\basher.py, 10711
+Factions
+>>>>
+所属Faction
+=== bash\basher.py, 10718
+_Factions.csv
+>>>>
+
+=== bash\basher.py, 10722
+Export factions to
+>>>>
+所属FactionをCSVファイルにエクスポートします
+=== bash\basher.py, 10751
+This command will import faction ranks from a previously exported file.\n\nSee the Bash help file for more info
+>>>>
+このコマンドは以前エクスポートしたファイルから所属Factionをインポートします.\n\n詳しくはヘルプファイルをご覧ください
+=== bash\basher.py, 10759
+Import Factions from
+>>>>
+所属FactionをCSVファイルからインポートします
+=== bash\basher.py, 10766
+Source file must be a _Factions.csv file
+>>>>
+インポート元のデータはxxx_Factions.csvというファイル名である必要があります
+=== bash\basher.py, 10782
+No relevant faction ranks to import
+>>>>
+インポートできる所属Faction情報がありません
+=== bash\basher.py, 10793
+Mark Levelers
+>>>>
+
+=== bash\basher.py, 10798
+Obsolete. Mods are now automatically tagged when possible
+>>>>
+
+=== bash\basher.py, 10811
+Mark Mergeable (CBash)
+>>>>
+マージ判定(CBash)
+=== bash\basher.py, 10837
+Mergeability
+>>>>
+
+=== bash\basher.py, 10839
+Mergeable\n*
+>>>>
+マージ可能なファイル\n*
+=== bash\basher.py, 10843
+Not Mergeable\n*
+>>>>
+マージ可能ではないファイル\n*
+=== bash\basher.py, 10856
+Copy to Esm
+>>>>
+esmにして複製
+=== bash\basher.py, 10856
+Copy to Esp
+>>>>
+espにして複製
+=== bash\basher.py, 10874
+Replace existing %s?
+>>>>
+
+=== bash\basher.py, 10895
+Face
+>>>>
+顔データ
+=== bash\basher.py, 10902
+FalloutNV Files
+>>>>
+
+=== bash\basher.py, 10924
+Imported face to: %s
+>>>>
+
+=== bash\basher.py, 10931
+Esmify Masters
+>>>>
+マスターをesmとして認識させる
+=== bash\basher.py, 10943
+Espify Masters
+>>>>
+マスターをespとして認識させる
+=== bash\basher.py, 10951
+WARNING! For advanced modders only! Flips esp/esm bit of esp masters to convert them to/from esm state. Useful for building/analyzing esp mastered mods
+>>>>
+警告！上級Modder向け機能です！\n\nこのespがマスター指定しているespにおけるesp/esm判定を切り替えます. espをマスター指定しているespの構築/分析に利用できます
+=== bash\basher.py, 10974
+Esmify Self
+>>>>
+esmとして認識させる
+=== bash\basher.py, 10974
+Espify Self
+>>>>
+espとして認識させる
+=== bash\basher.py, 10984
+WARNING! For advanced modders only!\n\nThis command flips an internal bit in the mod, converting an esp to an esm and vice versa. Note that it is this bit and NOT the file extension that determines the esp/esm state of the mod
+>>>>
+警告！上級Modder向け機能です！\n\nこのespにおけるesp/esm判定を切り替えます. 切り替えるのはファイルの扱いを決定するビットのみで、拡張子はそのままとなります
+=== bash\basher.py, 10985
+Flip to Esm
+>>>>
+esmとして認識させる
+=== bash\basher.py, 11132
+Edit Groups
+>>>>
+グループ情報を編集
+=== bash\basher.py, 11133
+Groups
+>>>>
+グループ
+=== bash\basher.py, 11134
+Add group
+>>>>
+グループを追加
+=== bash\basher.py, 11161
+Export groups to
+>>>>
+グループ情報をCSVファイルにエクスポートします
+=== bash\basher.py, 11169
+Exported %d mod/groups
+>>>>
+
+=== bash\basher.py, 11170
+Export Groups
+>>>>
+グループ情報をエクスポート
+=== bash\basher.py, 11183
+Import groups from a text file. Any mods that are moved into new auto-sorted groups will be immediately reordered
+>>>>
+テキストファイルからグループをインポートします. 自動的にソートされる新規グループに追加されているMODは即時ソートし直されます
+=== bash\basher.py, 11185
+Import Groups
+>>>>
+グループをインポート
+=== bash\basher.py, 11189
+Import names from
+>>>>
+CSVファイルからNameをインポートします
+=== bash\basher.py, 11195
+Source file must be a csv file
+>>>>
+インポート元のデータはCSVファイルでなくてはいけません
+=== bash\basher.py, 11204
+Imported %d mod/groups (%d changed)
+>>>>
+%d MOD/グループをインポートしました(変更: %d)
+=== bash\basher.py, 11212
+Editor Ids
+>>>>
+Editor ID
+=== bash\basher.py, 11219
+_Eids.csv
+>>>>
+
+=== bash\basher.py, 11223
+Export eids to
+>>>>
+Editor IDをCSVファイルにエクスポートします
+=== bash\basher.py, 11227
+Export Editor Ids
+>>>>
+Editor IDをエクスポート
+=== bash\basher.py, 11252
+Import editor ids from a text file. This will replace existing ids and is not reversible!
+>>>>
+Editor IDをテキストファイルからインポートします. この動作はesp内のEditor IDを書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 11254
+Import Editor Ids
+>>>>
+Editor IDをインポート
+=== bash\basher.py, 11289
+Objects Changed
+>>>>
+
+=== bash\basher.py, 11298
+Decompile All
+>>>>
+全てをデコンパイル
+=== bash\basher.py, 11304
+This command will remove the effects of a 'compile all' by removing all scripts whose texts appear to be identical to the version that they override
+>>>>
+このコマンドは、「Compile All」によって追加されてしまった、上書き元と比較して差異が一切存在しない全てのスクリプトを削除します
+=== bash\basher.py, 11310
+Skipping %s
+>>>>
+%sをスキップ中
+=== bash\basher.py, 11344
+Scripts removed: %d.\nScripts remaining: %d
+>>>>
+%d個のスクリプトが削除されました\n%dのスクリプトが維持されています
+=== bash\basher.py, 11346
+Only %d scripts were identical. This is probably intentional, so no changes have been made
+>>>>
+%d個のスクリプトのみが「差異なし」でした. おそらく意図的なものであるため、変更はしませんでした
+=== bash\basher.py, 11355
+Form IDs
+>>>>
+Form ID
+=== bash\basher.py, 11360
+For advanced modders only! Systematically replaces one set of Form Ids with another in npcs, creatures, containers and leveled lists according to a Replacers.csv file
+>>>>
+熟練Modderのみご使用ください！Replacers.csvに基づいて、NPC、Creature、ContainerとLeveled ListのForm IDセットを書き換えます
+=== bash\basher.py, 11362
+Import Form IDs
+>>>>
+Form IDをインポート
+=== bash\basher.py, 11368
+Form ID mapper file
+>>>>
+
+=== bash\basher.py, 11399
+Names
+>>>>
+
+=== bash\basher.py, 11406
+_Names.csv
+>>>>
+
+=== bash\basher.py, 11410
+Export names to
+>>>>
+NameをCSVファイルにエクスポートします
+=== bash\basher.py, 11415
+Export Names
+>>>>
+Nameをエクスポート
+=== bash\basher.py, 11440
+Import record names from a text file. This will replace existing names and is not reversible!
+>>>>
+Nameをテキストファイルからインポートします. この動作はesp内のName情報を書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 11456
+Source file must be mod (.esp or .esm) or csv file
+>>>>
+インポート元のデータはcsvファイルかMODでなくてはいけません
+=== bash\basher.py, 11484
+Objects Renamed
+>>>>
+
+=== bash\basher.py, 11498
+Rebuild Patch (CBash *BETA*)
+>>>>
+パッチをビルドする(CBash *BETA注意*)
+=== bash\basher.py, 11500
+Rebuild Patch
+>>>>
+パッチをビルドする
+=== bash\basher.py, 11522
+That which does not exist cannot be patched.\nLoad some mods and try again
+>>>>
+
+=== bash\basher.py, 11522
+Existential Error
+>>>>
+
+=== bash\basher.py, 11526
+Building with CBash is cool.  It's faster and allows more things to be handled, but it is still in BETA.  If you have problems, post them in the official thread, then use the non-CBash build function
+>>>>
+
+=== bash\basher.py, 11531
+The patch you are rebuilding (%s) was created in %s mode.  You are trying to rebuild it using %s mode.  Wrye Bash will attempt to import your settings over, however some may not be copied correctly
+>>>>
+
+=== bash\basher.py, 11554
+The following mods are tagged 'Deactivate'. These should be deactivated before building the patch, and then imported into the patch during build.\n*%s
+>>>>
+以下のMODは「Deactive」タグがつけられています. Patchをビルドする前にDeactivateしてください. Deactivateしてビルドすれば、Bashed Patchにインポートされます.\n*%s
+=== bash\basher.py, 11555
+The following mods are tagged 'Filter'. These should be deactivated before building the patch, and then merged into the patch during build.\n*%s
+>>>>
+以下のMODは「Filter」タグがつけられています. Patchをビルドする前にDeactivateしてください. Deactivateしてビルドすれば、Bashed Patchにマージされます.\n*%s
+=== bash\basher.py, 11556
+The following mods are mergeable. While it is not important to Wrye Bash functionality or the end contents of the bashed patch, it is suggest that they be deactivated and merged into the patch; this (helps) avoid the  Fallout maximum esp/m limit.\n*%s
+>>>>
+以下のMODはマージ可能です. Wrye Bashの機能上あるいは最終的なBashed Patchの中身に変化はありませんが、Deactivateしてマージすることにより、esp/esm数を削減することができます.\n*%s
+=== bash\basher.py, 11557
+The following mods are tagged 'NoMerge'. These should be deactivated before building the patch and imported according to tag(s), and preferences.\n*%s
+>>>>
+
+=== bash\basher.py, 11560
+Deactivate Suggested Mods?
+>>>>
+
+=== bash\basher.py, 11583
+MISSING MASTER
+>>>>
+
+=== bash\basher.py, 11585
+DELINQUENT MASTER
+>>>>
+
+=== bash\basher.py, 11593
+WARNING!\nThe following mod(s) have master file error(s):\n%sPlease adjust your load order to rectify those probem(s) before continuing. However you can still proceed if you want to. Proceed?
+>>>>
+
+=== bash\basher.py, 11593
+Missing or Delinquent Master Errors
+>>>>
+
+=== bash\basher.py, 11611
+List Patch Config
+>>>>
+パッチ設定を表示
+=== bash\basher.py, 11635
+Config
+>>>>
+
+=== bash\basher.py, 11636
+This is the current configuration of this Bashed Patch.  This report has also been copied into your clipboard.\n
+>>>>
+現在のBashed Patchの設定です. このレポートの内容は、クリップボードにもコピーされています
+=== bash\basher.py, 11641
+Patch Mode
+>>>>
+
+=== bash\basher.py, 11710
+Bashed Patch Configuration
+>>>>
+Bashed Patchの設定情報
+=== bash\basher.py, 11719
+Edit Ratings
+>>>>
+レーティングを編集
+=== bash\basher.py, 11720
+Ratings
+>>>>
+レーティング
+=== bash\basher.py, 11721
+Add rating
+>>>>
+レーティングを追加
+=== bash\basher.py, 11731
+Version 1.32
+>>>>
+Version 1.32化
+=== bash\basher.py, 11737
+WARNING! For advanced modders only! This feature allows you to edit newer official mods in the GECK by resetting the internal file version number back to 1.32. While this will make the mod editable, it may also break the mod in some way
+>>>>
+警告！上級Modder向け機能です！\n\nこの機能ではファイルの内部バージョンを1.32にリセットすることにより、古いGECKで編集できるようになります. MODが破損する可能性があります
+=== bash\basher.py, 11738
+Set File Version
+>>>>
+バージョンをセットする
+=== bash\basher.py, 11752
+Details
+>>>>
+詳細表示
+=== bash\basher.py, 11763
+Sorting records
+>>>>
+レコードをソート中
+=== bash\basher.py, 11767
+(Details not provided for this record type.)\n\n
+>>>>
+(このレコードタイプは詳細表示できません)\n\n
+=== bash\basher.py, 11785
+Remove World Orphans
+>>>>
+World Orphansを削除
+=== bash\basher.py, 11790
+In some circumstances, editing a mod will leave orphaned cell records in the world group. This command will remove such orphans
+>>>>
+MOD編集によりWorld Groupに属するCellがParentを喪失した状態になってしまうことがあります. このコマンドでは、そうした「孤児」化したものを削除します
+=== bash\basher.py, 11808
+Saving %s
+>>>>
+
+=== bash\basher.py, 11813
+Orphan cell blocks removed: %d
+>>>>
+World Groupに属さないCellブロックを削除しました: %d
+=== bash\basher.py, 11822
+Readme
+>>>>
+Readmeを開く
+=== bash\basher.py, 11841
+Scripts
+>>>>
+スクリプト
+=== bash\basher.py, 11849
+Skip prefix (leave blank to not skip any), non-case sensitive)
+>>>>
+除外したいスクリプトがある場合、そのプレフィックス(接頭辞)となる文字列を入力してください(必要ない場合は空欄のままにしてください)、大文字小文字は区別しません
+=== bash\basher.py, 11850
+Skip Prefix?
+>>>>
+除外するプレフィックスはありますか？
+=== bash\basher.py, 11852
+Remove prefix from file names f.e. enter cob to save script cobDenockInit\nas DenockInit.ext rather than as cobDenockInit.ext  (leave blank to not cut any prefix, non-case sensitive)
+>>>>
+スクリプト名からプレフィックスを削除し、それをファイル名として使用します. たとえばcobと入力すれば、cobDenockInitというスクリプトは、「cobDenockInit+拡張子」ではなく「DenockInit+拡張子」となります(必要ない場合は空欄のままにしてください)、大文字小文字は区別しません
+=== bash\basher.py, 11853
+Remove Prefix from file names?
+>>>>
+ファイル名からプレフィックスを削除しますか？
+=== bash\basher.py, 11858
+Choose directory to export scripts to
+>>>>
+スクリプトをエクスポートするディレクトリを選択してください
+=== bash\basher.py, 11885
+Import script from a text file. This will replace existing scripts and is not reversible (except by restoring from backup)!
+>>>>
+Scriptをテキストファイルからインポートします. この動作はesp内のScriptを書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 11895
+Choose directory to import scripts from
+>>>>
+スクリプトをインポートするディレクトリを選択してください
+=== bash\basher.py, 11899
+Import scripts that don't exist in the esp as new scripts?\n(If not they will just be skipped)
+>>>>
+espに該当するスクリプトが存在しない場合、新しいスクリプトとしてインポートしますか？\n(いいえを選択すると、該当するスクリプトがないスクリプトをスキップします)
+=== bash\basher.py, 11909
+No changed or new scripts to import
+>>>>
+インポートすべき差異のある、もしくは新しいスクリプトはありませんでした
+=== bash\basher.py, 11912
+Imported %d changed scripts from %s:\n%s
+>>>>
+%d個のスクリプトを%sからインポートしました: \n%s
+=== bash\basher.py, 11916
+Imported %d new scripts from %s:\n%s
+>>>>
+新しいスクリプトとして、%d個を%sからインポートしました: \n%s
+=== bash\basher.py, 11939
+_Stats.csv
+>>>>
+
+=== bash\basher.py, 11943
+Export stats to
+>>>>
+アイテム性能情報をCSVファイルにエクスポートします
+=== bash\basher.py, 11948
+Export Stats
+>>>>
+アイテム性能情報をエクスポート
+=== bash\basher.py, 11973
+Import item stats from a text file. This will replace existing stats and is not reversible!
+>>>>
+アイテム性能情報をテキストファイルからインポートします. この動作はesp内のアイテム性能情報を書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 11982
+Import stats from
+>>>>
+
+=== bash\basher.py, 11989
+Source file must be a Stats.csv file
+>>>>
+インポート元のデータはStats.csvというファイル名である必要があります
+=== bash\basher.py, 12005
+No relevant stats to import
+>>>>
+インポートできるアイテム性能情報がありません
+=== bash\basher.py, 12008
+No changed stats to import
+>>>>
+
+=== bash\basher.py, 12020
+Item Data
+>>>>
+アイテム情報
+=== bash\basher.py, 12027
+_ItemData.csv
+>>>>
+
+=== bash\basher.py, 12031
+Export item data to
+>>>>
+アイテム情報ををCSVファイルにエクスポートします
+=== bash\basher.py, 12036
+Export Item Data
+>>>>
+アイテム情報ををエクスポート
+=== bash\basher.py, 12061
+Import pretty much complete item data from a text file. This will replace existing data and is not reversible!
+>>>>
+
+=== bash\basher.py, 12063
+Import Item Data
+>>>>
+
+=== bash\basher.py, 12070
+Import item data from
+>>>>
+
+=== bash\basher.py, 12077
+Source file must be a ItemData.csv file
+>>>>
+インポート元のデータはItemData.csvというファイル名である必要があります
+=== bash\basher.py, 12094
+No relevant data to import
+>>>>
+インポートできるデータがありません
+=== bash\basher.py, 12098
+Imported Item Data:\n* %03d  %s:\n
+>>>>
+
+=== bash\basher.py, 12106
+Prices
+>>>>
+アイテムの価格
+=== bash\basher.py, 12113
+_Prices.csv
+>>>>
+
+=== bash\basher.py, 12117
+Export prices to
+>>>>
+アイテムの価格情報をCSVファイルにエクスポートします
+=== bash\basher.py, 12122
+Export Prices
+>>>>
+アイテムの価格情報をエクスポート
+=== bash\basher.py, 12147
+Import item prices from a text file. This will replace existing prices and is not reversible!
+>>>>
+アイテムの価格情報をテキストファイルからインポートします. この動作はesp内のアイテムの価格情報を書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 12149
+Import prices
+>>>>
+アイテムの価格情報をインポート
+=== bash\basher.py, 12156
+Import prices from
+>>>>
+アイテムの価格情報をCSVファイルからインポートします
+=== bash\basher.py, 12163
+Source file must be a Prices.csv file or esp/m
+>>>>
+インポート元のデータはPrices.csvというファイル名である必要があります
+=== bash\basher.py, 12167
+Import Prices
+>>>>
+アイテムの価格情報をインポート
+=== bash\basher.py, 12183
+No relevant prices to import
+>>>>
+インポートできるアイテムの価格情報がありません
+=== bash\basher.py, 12187
+Imported Prices:\n* %s: %d\n
+>>>>
+アイテムの価格情報をインポートしました:\n* %s: %d\n
+=== bash\basher.py, 12195
+Map Markers
+>>>>
+
+=== bash\basher.py, 12202
+_MapMarkers.csv
+>>>>
+
+=== bash\basher.py, 12206
+Export Map Markers to
+>>>>
+Map MarkerをCSVファイルにエクスポートします
+=== bash\basher.py, 12211
+Export Map Markers
+>>>>
+Map Markerをエクスポート
+=== bash\basher.py, 12233
+Import Map Markers data from a text file. This will replace existing the data on map markers with the same editor ids and is not reversible!
+>>>>
+Map Marker情報をテキストファイルからインポートします. この動作はesp内のMap Marker情報を書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 12235
+Import Map Markers
+>>>>
+Map Markerをインポート
+=== bash\basher.py, 12242
+Import Map Markers from
+>>>>
+Map MarkerををCSVファイルからインポートします
+=== bash\basher.py, 12249
+Source file must be a MapMarkers.csv file
+>>>>
+インポート元のデータはMapMarkers.csvというファイル名である必要があります
+=== bash\basher.py, 12262
+No relevant Map Markers to import
+>>>>
+インポートできるMap Marker情報がありません
+=== bash\basher.py, 12276
+Cell Block Info
+>>>>
+Cellブロック情報
+=== bash\basher.py, 12283
+CellBlockInfo.csv
+>>>>
+
+=== bash\basher.py, 12287
+Export Cell Block Info to
+>>>>
+Cellブロック情報をCSVファイルにエクスポートします
+=== bash\basher.py, 12292
+Export Cell Block Info
+>>>>
+Cellブロック情報をエクスポート
+=== bash\basher.py, 12309
+Sigil Stones
+>>>>
+
+=== bash\basher.py, 12316
+_SigilStones.csv
+>>>>
+
+=== bash\basher.py, 12320
+Export Sigil Stone details to
+>>>>
+Sigil Stone詳細情報をCSVファイルにエクスポートします
+=== bash\basher.py, 12324
+Export Sigil Stone details
+>>>>
+Sigil Stone詳細情報をエクスポート
+=== bash\basher.py, 12348
+Import Sigil Stone details from a text file. This will replace existing the data on sigil stones with the same form ids and is not reversible!
+>>>>
+Sigil Stoneの詳細情報をテキストファイルからインポートします. この動作はesp内のSigil Stoneの詳細情報を書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 12350
+Import Sigil Stones details
+>>>>
+Sigil Stone詳細情報をインポート
+=== bash\basher.py, 12357
+Import Sigil Stone details from
+>>>>
+Sigil Stone詳細情報をCSVファイルからインポートします
+=== bash\basher.py, 12364
+Source file must be a _SigilStones.csv file
+>>>>
+インポート元のデータはxxx_SigilStones.csvというファイル名である必要があります
+=== bash\basher.py, 12368
+Import Sigil Stone details
+>>>>
+Sigil Stone詳細情報をインポート
+=== bash\basher.py, 12380
+No relevant Sigil Stone details to import
+>>>>
+インポートできるSigil Stone詳細情報がありません
+=== bash\basher.py, 12399
+_Spells.csv
+>>>>
+
+=== bash\basher.py, 12403
+Export Spell details to
+>>>>
+Spell詳細情報をCSVファイルにエクスポートします
+=== bash\basher.py, 12405
+Export flags and effects?\n(If not they will just be skipped)
+>>>>
+フラグとエフェクトもエクスポートしますか？(しない場合はスキップされます)
+=== bash\basher.py, 12406
+Export Spells
+>>>>
+Spellをエクスポート
+=== bash\basher.py, 12409
+Export Spell details
+>>>>
+Spell詳細情報をエクスポート
+=== bash\basher.py, 12433
+Import Spell details from a text file. This will replace existing the data on spells with the same form ids and is not reversible!
+>>>>
+Spellの詳細情報をテキストファイルからインポートします. この動作はesp内のSpellの詳細情報を書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 12435
+Import Spell details
+>>>>
+Spellの詳細情報をインポート
+=== bash\basher.py, 12442
+Import Spell details from
+>>>>
+Spellの詳細情報をファイルからインポートします
+=== bash\basher.py, 12445
+Import flags and effects?\n(If not they will just be skipped)
+>>>>
+フラグとエフェクトをインポートしますか？\n(インポートしない場合はスキップされます)
+=== bash\basher.py, 12451
+Source file must be a _Spells.csv file
+>>>>
+インポート元のデータはxxx_Spells.csvというファイル名である必要があります
+=== bash\basher.py, 12467
+No relevant Spell details to import
+>>>>
+インポートできるSpellの詳細情報がありません
+=== bash\basher.py, 12480
+Ingredients
+>>>>
+
+=== bash\basher.py, 12487
+_Ingredients.csv
+>>>>
+
+=== bash\basher.py, 12491
+Export Ingredient details to
+>>>>
+Ingredient詳細情報をCSVファイルにエクスポートします
+=== bash\basher.py, 12495
+Export Ingredient details
+>>>>
+Ingredient詳細情報をエクスポート
+=== bash\basher.py, 12519
+Import Ingredient details from a text file. This will replace existing the data on Ingredients with the same form ids and is not reversible!
+>>>>
+Ingredient情報をテキストファイルからインポートします. この動作はesp内のIngredient情報を書き換えてしまい、またインポートによる変化の巻き戻しもできません！
+=== bash\basher.py, 12521
+Import Ingredients details
+>>>>
+Ingredient情報をインポート
+=== bash\basher.py, 12528
+Import Ingredient details from
+>>>>
+Ingredient情報をインポートします
+=== bash\basher.py, 12535
+Source file must be a _Ingredients.csv file
+>>>>
+インポート元のデータはxxx_Ingredients.csvというファイル名である必要があります
+=== bash\basher.py, 12539
+Import Ingredient details
+>>>>
+Ingredient情報をインポート
+=== bash\basher.py, 12551
+No relevant Ingredient details to import
+>>>>
+インポートできるIngredient情報がありません
+=== bash\basher.py, 12563
+Undelete Refs
+>>>>
+削除したレファレンスを復帰
+=== bash\basher.py, 12568
+Changes deleted refs to ignored. This is a very advanced feature and should only be used by modders who know exactly what they're doing
+>>>>
+レファレンスの削除を無効化します. 極めて上級向け機能ですので、この作業が何を意味するのかよく理解しているModderのみ使用してください
+=== bash\basher.py, 12616
+Scan Mods
+>>>>
+MODをスキャン
+=== bash\basher.py, 12617
+This is a report of records that where detected as either Identical To Master (ITM) or a deleted reference (UDR).\n
+>>>>
+マスターと差異のないレコード(ITM)、もしくはレファレンスが削除されている(UDR)状態が検知されたレコードに関するレポートです.\n
+=== bash\basher.py, 12642
+* UDR: %i
+>>>>
+
+=== bash\basher.py, 12644
+* %s
+>>>>
+
+=== bash\basher.py, 12647
+* ITM: %i
+>>>>
+
+=== bash\basher.py, 12653
+Dirty Edit Scan Results
+>>>>
+好ましくない編集スキャンの結果
+=== bash\basher.py, 12682
+About %s
+>>>>
+%sについて
+=== bash\basher.py, 12690
+Enter profile name
+>>>>
+プロファイル名を入力してください
+=== bash\basher.py, 12732
+Active profile cannot be removed
+>>>>
+アクティブなプロファイルは削除できません
+=== bash\basher.py, 12738
+Delete profile %s and the %d save files it contains?
+>>>>
+プロファイル%sには%d個のセーブデータが含まれています. 削除しますか？
+=== bash\basher.py, 12739
+Delete Profile
+>>>>
+プロファイルを削除
+=== bash\basher.py, 12743
+Sanity check failed: No "FalloutNV\\Saves" in %s
+>>>>
+
+=== bash\basher.py, 12762
+Edit Profiles
+>>>>
+プロファイルを編集
+=== bash\basher.py, 12781
+Save Profiles
+>>>>
+プロファイルを保存
+=== bash\basher.py, 12831
+Load Masters
+>>>>
+このセーブのマスターを現在のロードリストにする
+=== bash\basher.py, 12850
+Import Face
+>>>>
+顔データのインポート
+=== bash\basher.py, 12892
+No player (PC) faces found in %s
+>>>>
+%sにプレイヤーの顔データがありません
+=== bash\basher.py, 12904
+Rename Player
+>>>>
+プレイヤー名を変更
+=== bash\basher.py, 12910
+Enter new player name. E.g. Conan the Bold
+>>>>
+新しいプレイヤー名を入力してください
+=== bash\basher.py, 12911
+Rename player
+>>>>
+プレイヤー名を変更します
+=== bash\basher.py, 12923
+Export Screenshot
+>>>>
+スクリーンショットをエクスポート
+=== bash\basher.py, 12929
+Save Screenshot as
+>>>>
+ファイル名をつけてスクリーンショットを保存
+=== bash\basher.py, 12940
+Diff Masters
+>>>>
+現在のロードとの差分を表示
+=== bash\basher.py, 12951
+Active Masters
+>>>>
+アクティブなマスター
+=== bash\basher.py, 12960
+Masters are the same
+>>>>
+現在のロードリストと一致しています
+=== bash\basher.py, 12965
+Removed Masters (%s):\n*
+>>>>
+現在のロードリストに欠けているMOD(%s):\n*
+=== bash\basher.py, 12969
+Added Masters (%s):\n*
+>>>>
+セーブデータから増えているMOD(%s):\n*
+=== bash\basher.py, 12992
+Re-number Save(s)
+>>>>
+セーブ番号を再ナンバリング
+=== bash\basher.py, 12998
+Enter new number to start numbering the selected saves at
+>>>>
+選択したセーブのナンバリング開始番号を入力してください
+=== bash\basher.py, 12999
+Save Number
+>>>>
+セーブ番号
+=== bash\basher.py, 12999
+Re-number Saves
+>>>>
+セーブ番号を再ナンバリング
+=== bash\basher.py, 13059
+Armor\nFlags
+>>>>
+
+=== bash\basher.py, 13064
+Clothing\nFlags
+>>>>
+
+=== bash\basher.py, 13086
+Name is too long
+>>>>
+その名前では長すぎます
+=== bash\basher.py, 13089
+Name is already used
+>>>>
+その名前は既に使用されています
+=== bash\basher.py, 13099
+No changes made
+>>>>
+何も変更されませんでした
+=== bash\basher.py, 13111
+Names modified: %d
+>>>>
+名前を変更しました: %d
+=== bash\basher.py, 13116
+Rename Enchanted
+>>>>
+Enchantアイテムをリネームする
+=== bash\basher.py, 13116
+Rename Spells
+>>>>
+Spellをリネームする
+=== bash\basher.py, 13116
+Rename Potions
+>>>>
+Potionをリネームする
+=== bash\basher.py, 13145
+No items to edit
+>>>>
+編集する項目がありません
+=== bash\basher.py, 13159
+Loading Masters
+>>>>
+マスターをロード中
+=== bash\basher.py, 13197
+Delete Spells
+>>>>
+Spellを削除
+=== bash\basher.py, 13205
+Player Spells
+>>>>
+プレイヤーが所持しているSpell
+=== bash\basher.py, 13215
+Set Number of Uses for Weapon Enchantments
+>>>>
+Enchant武器の使用回数を設定
+=== bash\basher.py, 13222
+Enter the number of uses you desire per recharge for all custom made enchantements.\n(Enter 0 for unlimited uses)
+>>>>
+全ての自作Enchant武器について、設定したい使用回数を入力してください.\n(ゼロを入力すると無制限で使用できるようになります)
+=== bash\basher.py, 13222
+Number of Uses
+>>>>
+使用回数
+=== bash\basher.py, 13274
+You can't move saves to the current profile!
+>>>>
+現在のプロファイルにセーブデータを移動することはできません！
+=== bash\basher.py, 13283
+A file named %s already exists in %s. Overwrite it?
+>>>>
+%sというファイルは%sに既に存在します. 上書きしますか？
+=== bash\basher.py, 13285
+Move File
+>>>>
+ファイルを移動しました
+=== bash\basher.py, 13299
+%d files copied to %s
+>>>>
+%d個のファイルを「%s」にコピーしました
+=== bash\basher.py, 13299
+Copy File
+>>>>
+ファイルを複製しました
+=== bash\basher.py, 13306
+Repair Abomb
+>>>>
+遅延バグの修正
+=== bash\basher.py, 13322
+Abomb counter is too low to reset
+>>>>
+リセットするには値が低すぎます
+=== bash\basher.py, 13324
+Reset Abomb counter? (Current progress: %.0f%%.)\n\nNote: Abomb animation slowing won't occur until progress is near 100%%
+>>>>
+遅延バグをリセットしますか？(進行度: %.0f%%)\n\n注意: アニメーション遅延は、進行度が100%%に近くなるまで発生しません
+=== bash\basher.py, 13328
+Abomb counter reset
+>>>>
+遅延バグをリセットしますか？
+=== bash\basher.py, 13335
+Repair Factions
+>>>>
+Factionの修正
+=== bash\basher.py, 13341
+This will (mostly) repair faction membership errors due to Wrye Bash v 105 bug and/or faction changes in underlying mods.\n\nWARNING! This repair is NOT perfect! Do not use it unless you have to!
+>>>>
+本機能でWrye Bash v105のバグなどによるFaction情報のエラーが(おおむね)修正されます.\n\n警告！この修正は * 不完全 * です！どうしてもの場合以外は実行しないでください！
+=== bash\basher.py, 13342
+Update NPC Levels
+>>>>
+NPCのレベルをアップデートする
+=== bash\basher.py, 13344
+Restore dropped factions too? WARNING: This may involve clicking through a LOT of yes/no dialogs
+>>>>
+欠落したFaction情報もリストアしますか？警告: はい/いいえのクリック地獄に陥る可能性があります
+=== bash\basher.py, 13381
+NPC Factions Restored/UnNulled
+>>>>
+NPCのFactionを書き換えました
+=== bash\basher.py, 13384
+Updating
+>>>>
+アップデート中
+=== bash\basher.py, 13441
+Restore %s to %s faction?
+>>>>
+%sをFaction %sに復帰させますか？
+=== bash\basher.py, 13468
+Repair Hair
+>>>>
+髪型の修正
+=== bash\basher.py, 13477
+Hair repaired
+>>>>
+髪型を修正しました
+=== bash\basher.py, 13479
+No repair necessary
+>>>>
+修正は必要ありません
+=== bash\basher.py, 13486
+Reweigh Potions
+>>>>
+Potionの重量を変更する
+=== bash\basher.py, 13493
+Set weight of all player potions to
+>>>>
+自作ポーションの重量を変更します
+=== bash\basher.py, 13499
+Invalid weight: %f
+>>>>
+無効な重量です: %f
+=== bash\basher.py, 13520
+Potions reweighed: %d
+>>>>
+Potionの重量を変更しました: %s
+=== bash\basher.py, 13523
+No potions to reweigh!
+>>>>
+重量を変更できる項目がありません
+=== bash\basher.py, 13530
+Statistics
+>>>>
+統計情報
+=== bash\basher.py, 13541
+Calculating statistics
+>>>>
+統計情報を算出中
+=== bash\basher.py, 13552
+nvse Statistics
+>>>>
+
+=== bash\basher.py, 13566
+nvse
+>>>>
+
+=== bash\basher.py, 13581
+Remove Bloat
+>>>>
+Bloatデータを削除する
+=== bash\basher.py, 13590
+Scanning for Bloat
+>>>>
+Bloatをスキャン中
+=== bash\basher.py, 13598
+No bloating found
+>>>>
+Bloatデータはありません
+=== bash\basher.py, 13606
+Null Ref Objects: %s\n
+>>>>
+
+=== bash\basher.py, 13607
+Remove savegame bloating?\n%s\nWARNING: This is a risky procedure that may corrupt your savegame! Use only if necessary!
+>>>>
+セーブのBloatデータを削除しますか？\n%s\n警告: セーブデータが破損する危険性があります！どうしても必要な時のみ実行してください！
+=== bash\basher.py, 13608
+Remove bloating?
+>>>>
+Bloatデータを削除しますか？
+=== bash\basher.py, 13611
+Removing Bloat
+>>>>
+Bloatデータを削除中
+=== bash\basher.py, 13613
+Saving
+>>>>
+保存中
+=== bash\basher.py, 13617
+Uncreated Objects: %d\nUncreated Refs: %d\nUnNulled Refs: %d
+>>>>
+
+=== bash\basher.py, 13632
+This will relevel the NPCs in the selected save game(s) according to the npc levels in the currently active mods. This supercedes the older "Import NPC Levels" command
+>>>>
+現在アクティブなMODからNPCレベルを反映し、選択したセーブのNPCを現在の環境にレベルを再調整します. これは旧「Import NPC Levels」コマンドの後継機能です
+=== bash\basher.py, 13661
+NPCs Releveled
+>>>>
+NPCのレベルを再調整しました
+=== bash\basher.py, 13702
+\n\nSome mods had load errors and were skipped:\n*
+>>>>
+\n\n読み込みエラーの発生したMODをスキップしました:\n*
+=== bash\basher.py, 13712
+Next Shot
+>>>>
+次のスクリーンショット
+=== bash\basher.py, 13720
+Screenshot base name, optionally with next screenshot number.\nE.g. ScreenShot or ScreenShot_101 or Subdir\\ScreenShot_201
+>>>>
+スクリーンショットのベース名を入力してください. オプションとして、連番で次に作成される数値を付け足すことも可能です.\n例: ScreenShot、ScreenShot_101、Subdir\\ScreenShot_201
+=== bash\basher.py, 13747
+Convert to %s
+>>>>
+%sに変換
+=== bash\basher.py, 13754
+Converting to %s
+>>>>
+%sに変換中
+=== bash\basher.py, 13796
+Custom [%i]
+>>>>
+カスタム [%i]
+=== bash\basher.py, 13799
+JPEG Quality
+>>>>
+JPEG品質
+=== bash\basher.py, 13826
+Import Archives
+>>>>
+アーカイブをインポート
+=== bash\basher.py, 13832
+Import message archive(s)
+>>>>
+メッセージアーカイブをインポートします
+=== bash\basher.py, 13849
+Delete Messages
+>>>>
+メッセージを削除
+=== bash\basher.py, 13865
+Add New Person
+>>>>
+新しい人物を追加
+=== bash\basher.py, 13868
+Add new person
+>>>>
+新しい人物を追加
+=== bash\basher.py, 13871
+already exists
+>>>>
+既に存在しています
+=== bash\basher.py, 13882
+Export
+>>>>
+エクスポート
+=== bash\basher.py, 13884
+Export People
+>>>>
+人物をエクスポート
+=== bash\basher.py, 13889
+Export people to text file
+>>>>
+ファイル名をつけて人物を保存します
+=== bash\basher.py, 13894
+Records exported: %d
+>>>>
+人物をエクスポートしました: %d
+=== bash\basher.py, 13903
+Import People
+>>>>
+人物をインポート
+=== bash\basher.py, 13908
+Import people from text file
+>>>>
+テキストファイルから人物をインポートします
+=== bash\basher.py, 13913
+People imported: %d
+>>>>
+人物をインポートしました: %d
+=== bash\basher.py, 13947
+Change to
+>>>>
+変更
+=== bash\basher.py, 13957
+Change master name to
+>>>>
+マスターファイルを変更します
+=== bash\basher.py, 14088
+Used Path: %s
+>>>>
+
+=== bash\basher.py, 14089
+Used Arguments
+>>>>
+
+=== bash\basher.py, 14247
+Executing BOSS
+>>>>
+BOSSを実行中
+=== bash\basher.py, 14250
+Processing... deghosting mods
+>>>>
+処理中...MODを非Ghost化しています
+=== bash\basher.py, 14271
+Processing... launching BOSS
+>>>>
+処理中...BOSSを起動しています
+=== bash\basher.py, 14314
+NVSE Disabled
+>>>>
+
+=== bash\basher.py, 14314
+NVSE Enabled
+>>>>
+
+=== bash\basher.py, 14352
+Auto-Quit Disabled
+>>>>
+ゲーム起動時の自動Wrye Bash終了が無効になっています
+=== bash\basher.py, 14352
+Auto-Quit Enabled
+>>>>
+ゲーム起動時の自動Wrye Bash終了が有効になっています
+=== bash\basher.py, 14372
+Help File
+>>>>
+ヘルプファイル
+=== bash\basher.py, 14521
+Launch FalloutNV
+>>>>
+
+=== bash\basher.py, 14522
+Launch FalloutNV + NVSE
+>>>>
+
+=== bash\basher.py, 14528
+Launch GECK
+>>>>
+
+=== bash\basher.py, 14529
+Launch GECK + NVSE
+>>>>
+
+=== bash\basher.py, 14535
+Launch FNV4GB
+>>>>
+
+=== bash\basher.py, 14540
+Launch FOMM
+>>>>
+
+=== bash\basher.py, 14545
+Launch InsanitySorrow's Oblivion Launcher
+>>>>
+InsanitySorrow's Oblivion Launcherを起動
+=== bash\basher.py, 14550
+Launch InsanitySorrow's Readme Generator
+>>>>
+InsanitySorrow's Readme Generatorを起動
+=== bash\basher.py, 14555
+Launch InsanitySorrow's Random Name Generator
+>>>>
+InsanitySorrow's Random Name Generatorを起動
+=== bash\basher.py, 14560
+Launch InsanitySorrow's Random NPC Generator
+>>>>
+InsanitySorrow's Random NPC Generatorを起動
+=== bash\basher.py, 14565
+Oblivion Face Exchange Lite
+>>>>
+
+=== bash\basher.py, 14570
+Oblivion Mod List Generator
+>>>>
+
+=== bash\basher.py, 14580
+Launch BSA Commander
+>>>>
+BSA Commanderを起動
+=== bash\basher.py, 14585
+Launch Tabula
+>>>>
+Tabulaを起動
+=== bash\basher.py, 14620
+Launch FNVEdit
+>>>>
+
+=== bash\basher.py, 14625
+Launch MasterUpdate
+>>>>
+
+=== bash\basher.py, 14630
+Launch MasterRestore
+>>>>
+
+=== bash\basher.py, 14641
+Launch BOSS
+>>>>
+BOSSを起動
+=== bash\basher.py, 14647
+Launch AutoCad
+>>>>
+AutoCadを起動
+=== bash\basher.py, 14652
+Launch Blender
+>>>>
+Blenderを起動
+=== bash\basher.py, 14657
+Launch Dogwaffle
+>>>>
+Dogwaffleを起動
+=== bash\basher.py, 14662
+Launch Gmax
+>>>>
+Gmaxを起動
+=== bash\basher.py, 14667
+Launch Maya
+>>>>
+Mayaを起動
+=== bash\basher.py, 14672
+Launch 3dsMax
+>>>>
+3dsMaxを起動
+=== bash\basher.py, 14677
+Launch Milkshape 3D
+>>>>
+Milkshape 3Dを起動
+=== bash\basher.py, 14682
+Launch Mudbox
+>>>>
+Mudboxを起動
+=== bash\basher.py, 14687
+Launch Sculptris
+>>>>
+Sculptrisを起動
+=== bash\basher.py, 14692
+Launch Softimage Mod Tool
+>>>>
+Softimage Mod Toolを起動
+=== bash\basher.py, 14697
+Launch SpeedTree
+>>>>
+SpeedTreeを起動
+=== bash\basher.py, 14702
+Launch Tree\[d\]
+>>>>
+Tree\[d\]を起動
+=== bash\basher.py, 14707
+Launch Wings 3D
+>>>>
+Wings 3Dを起動
+=== bash\basher.py, 14713
+Launch Nifskope
+>>>>
+Nifskopeを起動
+=== bash\basher.py, 14719
+Launch AniFX
+>>>>
+AniFXを起動
+=== bash\basher.py, 14724
+Launch Art Of Illusion
+>>>>
+Art Of Illusionを起動
+=== bash\basher.py, 14729
+Launch Artweaver
+>>>>
+Artweaverを起動
+=== bash\basher.py, 14734
+Launch CrazyBump
+>>>>
+CrazyBumpを起動
+=== bash\basher.py, 14739
+Launch DDSConverter
+>>>>
+DDSConverterを起動
+=== bash\basher.py, 14744
+Launch DeepPaint
+>>>>
+DeepPaintを起動
+=== bash\basher.py, 14749
+Launch FastStone Image Viewer
+>>>>
+FastStone Image Viewerを起動
+=== bash\basher.py, 14754
+Launch Genetica
+>>>>
+Geneticaを起動
+=== bash\basher.py, 14759
+Launch Genetica Viewer
+>>>>
+Genetica Viewerを起動
+=== bash\basher.py, 14764
+Launch GIMP
+>>>>
+GIMPを起動
+=== bash\basher.py, 14769
+Launch GIMP Shop
+>>>>
+GIMP Shopを起動
+=== bash\basher.py, 14774
+Launch IcoFX
+>>>>
+IcoFXを起動
+=== bash\basher.py, 14779
+Launch Inkscape
+>>>>
+Inkscapeを起動
+=== bash\basher.py, 14784
+Launch IrfanView
+>>>>
+IrfanViewを起動
+=== bash\basher.py, 14789
+Launch MaPZone
+>>>>
+MaPZoneを起動
+=== bash\basher.py, 14794
+Launch MyPaint
+>>>>
+MyPaintを起動
+=== bash\basher.py, 14799
+Launch Nvidia Melody
+>>>>
+Nvidia Melodyを起動
+=== bash\basher.py, 14804
+Launch Paint.NET
+>>>>
+Paint.NETを起動
+=== bash\basher.py, 14809
+Launch PaintShop Photo Pro
+>>>>
+PaintShop Photo Proを起動
+=== bash\basher.py, 14814
+Launch Photoshop
+>>>>
+Photoshopを起動
+=== bash\basher.py, 14819
+Launch PhotoScape
+>>>>
+PhotoScapeを起動
+=== bash\basher.py, 14824
+Launch PhotoSEAM
+>>>>
+PhotoSEAMを起動
+=== bash\basher.py, 14829
+Launch Photobie
+>>>>
+Photobieを起動
+=== bash\basher.py, 14834
+Launch PhotoFiltre
+>>>>
+PhotoFiltreを起動
+=== bash\basher.py, 14839
+Launch Pixel Studio Pro
+>>>>
+Pixel Studio Proを起動
+=== bash\basher.py, 14844
+Launch Pixia
+>>>>
+Pixiaを起動
+=== bash\basher.py, 14849
+Launch TextureMaker
+>>>>
+TextureMakerを起動
+=== bash\basher.py, 14854
+Launch TwistedBrush
+>>>>
+TwistedBrushを起動
+=== bash\basher.py, 14859
+Launch Windows Texture Viewer
+>>>>
+Windows Texture Viewerを起動
+=== bash\basher.py, 14864
+Launch xNormal
+>>>>
+xNormalを起動
+=== bash\basher.py, 14869
+Launch XnView
+>>>>
+XnViewを起動
+=== bash\basher.py, 14875
+Launch Audacity
+>>>>
+Audacityを起動
+=== bash\basher.py, 14880
+Launch ABC Amber Audio Converter
+>>>>
+ABC Amber Audio Converterを起動
+=== bash\basher.py, 14885
+Launch Switch
+>>>>
+Switchを起動
+=== bash\basher.py, 14890
+Launch Fraps
+>>>>
+Frapsを起動
+=== bash\basher.py, 14895
+Interactive Map of Cyrodiil and Shivering Isles
+>>>>
+
+=== bash\basher.py, 14900
+Launch LogitechKeyboard
+>>>>
+LogitechKeyboardを起動
+=== bash\basher.py, 14905
+Launch MediaMonkey
+>>>>
+MediaMonkeyを起動
+=== bash\basher.py, 14910
+Launch Notepad++
+>>>>
+Notepad++を起動
+=== bash\basher.py, 14915
+Launch Steam
+>>>>
+Steamを起動
+=== bash\basher.py, 14920
+Launch EVGA Precision
+>>>>
+EVGA Precisionを起動
+=== bash\basher.py, 14925
+Launch WinMerge
+>>>>
+WinMergeを起動
+=== bash\basher.py, 14930
+Launch FreeMind
+>>>>
+FreeMindを起動
+=== bash\basher.py, 14935
+Launch Freeplane
+>>>>
+Freeplaneを起動
+=== bash\basher.py, 14940
+Launch FileZilla
+>>>>
+FileZillaを起動
+=== bash\basher.py, 14945
+Launch Egg Translator
+>>>>
+Egg Translatorを起動
+=== bash\basher.py, 14950
+Launch RAD Video Tools
+>>>>
+RAD Video Toolsを起動
+=== bash\basher.py, 14955
+Launch WinSnap
+>>>>
+WinSnapを起動
+=== bash\basher.py, 15015
+Launch BashMon
+>>>>
+BashMonを起動
+=== bash\basher.py, 15024
+Sort by
+>>>>
+ソート
+=== bash\basher.py, 15110
+Open at
+>>>>
+ブラウザで開く
+=== bash\basher.py, 15141
+Conversions
+>>>>
+コンバート
+=== bash\basher.py, 15211
+Load
+>>>>
+ロードリスト
+=== bash\basher.py, 15351
+Mod Cleaning
+>>>>
+MODクリーニング
+=== bash\basher.py, 15388
+Profile
+>>>>
+プロファイル
+=== bash\basher.py, 15422
+Copy To
+>>>>
+コピー
+=== bash\basher.py, 15567
+Settings
+>>>>
+設定情報
+=== bash\bashmon.py, 255
+exists and is not a save file
+>>>>
+は存在しますがセーブファイルではありません
+=== bash\bashmon.py, 257
+is not a save file
+>>>>
+はセーブファイルではありません
+=== bash\bashmon.py, 287
+Bashmon stopped
+>>>>
+Bashmonが停止しました
+=== bash\bashmon.py, 291
+Fallout.ini is busy
+>>>>
+
+=== bash\belt.py, 41
+Extra arguments to '%s'
+>>>>
+
+=== bash\belt.py, 42
+Missing arguments to '%s'
+>>>>
+
+=== bash\belt.py, 43
+Unexpected '%s'
+>>>>
+
+=== bash\belt.py, 81
+Installer Wizard
+>>>>
+インストールウィザードを開始
+=== bash\belt.py, 406
+The installer script has finished, and will apply the following settings
+>>>>
+インストーラスクリプトが完了しました. 以下の設定を適用します
+=== bash\belt.py, 414
+Esp/ms
+>>>>
+esp/esm
+=== bash\belt.py, 438
+Ini Tweaks
+>>>>
+INI Tweaks
+=== bash\belt.py, 461
+Apply these selections
+>>>>
+この選択を適用する
+=== bash\belt.py, 467
+Install this package
+>>>>
+このパッケージをインストールする
+=== bash\belt.py, 543
+WARNING: The following version requirements are not met for using this installer
+>>>>
+警告: 以下のファイルのバージョンが一致しません
+=== bash\belt.py, 547
+Version Requirements
+>>>>
+要求バージョン
+=== bash\belt.py, 552
+Need
+>>>>
+必要なバージョン
+=== bash\belt.py, 553
+Have
+>>>>
+現在のバージョン
+=== bash\belt.py, 597
+Install anyway
+>>>>
+気にせずインストールする
+=== bash\belt.py, 914
+Could not open wizard file
+>>>>
+ウィザードファイルを開けませんでした
+=== bash\belt.py, 924
+An error occured in the wizard script:\n Line:\t%s\n Error:\t%s
+>>>>
+ウィザードスクリプトにエラーが発生しました:\n 行:\t%s\n エラー:\t%s
+=== bash\belt.py, 927
+An unhandled error occured while parsing the wizard:\n Line(%s):\t%s\n\n
+>>>>
+ウィザード展開中にエラーが発生しました:\n 行(%s):\t%s\n\n
+=== bash\belt.py, 1333
+Invalid syntax for 'For' statement.  Expected format:\n For var_name in Subpackages\n For var_name in subpackage_name
+>>>>
+「For」行のシンタックスが無効です. 以下の書式でなくてはいけません: \nFor var_name in Subpackages\nFor var_name in subpackage_name
+=== bash\belt.py, 1340
+Subpackage '%s' does not exist
+>>>>
+サブパッケージ「%s」が存在しません
+=== bash\belt.py, 1342
+SubPackage '%s' does not exist
+>>>>
+サブパッケージ「%s」が存在しません
+=== bash\belt.py, 1503
+Sub-package '%s' is not a part of the installer
+>>>>
+サブパッケージ「%s」はインストーラの一部ではありません
+=== bash\belt.py, 1518
+Espm '%s' is not a part of the installer
+>>>>
+ファイル「%s」はインストーラの一部ではありません
+=== bash\belt.py, 1530
+Cannot rename %s to %s: the extensions must match
+>>>>
+%sを%sにリネームできません: 拡張子を一致させてください
+=== bash\belt.py, 1594
+Version '%s' expected in format 'x.x.x.x'
+>>>>
+バージョン「%s」は「x.x.x.x」形式であることが望まれます
+=== bash\belt.py, 1610
+No reason given
+>>>>
+理由不明
+=== bash\belt.py, 1611
+The installer wizard was canceled
+>>>>
+インストールウィザードを中止しました
