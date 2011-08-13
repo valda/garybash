@@ -19312,12 +19312,12 @@ class ModCleaner:
                     ins = ModReader(modInfo.name,path.open('rb'))
                     while not ins.atEnd():
                         subprogress(ins.tell())
-                        (type,size,flags,fid,uint2) = ins.unpackRecHeader()
+                        (type,size,flags,fid,uint2,uint3) = ins.unpackRecHeader()
                         if type == 'GRUP':
                             if fid != 0: #--Ignore sub-groups
                                 pass
                             elif flags not in ('CELL','WRLD'):
-                                ins.read(size-20)
+                                ins.read(size-recHeaderSize)
                         else:
                             if doUDR and flags & 0x20 and type in ('ACHR','ACRE','REFR'):
                                 udr.add(fid)
@@ -19421,7 +19421,7 @@ class ModCleaner:
                 changed = False
                 while not ins.atEnd():
                     subprogress(ins.tell())
-                    (type,size,flags,fid,uint2) = ins.unpackRecHeader()
+                    (type,size,flags,fid,uint2,uint3) = ins.unpackRecHeader()
                     if type == 'GRUP':
                         if fid != 0:
                             pass
