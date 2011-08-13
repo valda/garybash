@@ -1,8 +1,8 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 2746.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 3187.
 \ % A Bashed Patch suggestion for the mod above.
 
 BrokenSteel.esm
-% {{BASH: Actors.AIPackages}}
+% {{BASH: Actors.ACBS, Actors.AIPackages, Relev}}
 Lings.esm
 % {{BASH: Hair}}
 Unofficial Fallout 3 Patch.esm
@@ -30,13 +30,15 @@ CFWRv4.esm
 RoadWardens.esm
 % {{BASH: Actors.ACBS, Actors.AIData, Actors.AIPackages, Actors.CombatStyle, Actors.Stats, Factions, Invent, Scripts, ScriptContents}}
 EVE.esm
-% {{BASH: Graphics, Sound, Scripts}}
+% {{BASH: Graphics, Invent, Sound, Scripts}}
 FOOK2 - Main.esm
 % {{BASH: Invent, Stats, Relations, Factions}}
 FO3 Wanderers Edition - Main File.esm
 % {{BASH: Actors.ACBS, Actors.Stats, Deflst, Delev, Invent, Names, Relations, Relev, Stats}}
 Mart's Mutant Mod.esm
 % {{BASH: Delev, Invent, Names, Relations, Scripts}}
+Arwen_Core.esm
+% {{BASH: Actors.Animations}}
 Xepha's Dynamic Weather.esm
 % {{BASH: C.Climate, Sound}}
 Shojo Race.esm
@@ -66,8 +68,12 @@ FireLightFix.esp
 % {{BASH: C.Light}}
 BlackWidowBurkeFix.esp
 % {{BASH: Scripts}}
+MS11fix.esp
+% {{BASH: Actors.AIPackages, C.Light, Invent, Scripts}}
 BetterGamePerformance.esp
 % {{BASH: Deflst, Delev}}
+Stop Insulting Me Outcasts.esp
+% {{BASH: Factions}}
 
 Project Beauty- Broken Steel.esp
 % {{BASH: NpcFaces, NoMerge, Deactivate}}
@@ -109,6 +115,8 @@ PLweightadjust.esp
 % {{BASH: Scripts, Stats}}
 The Mantis Imperative - Mantis.esp
 % {{BASH: Relev}}
+Lawbringer Boutnies Ver1.1.esp
+% {{BASH: Invent}}
 
 FF_DestructibleRadios.esp
 % {{BASH: Destructable}}
@@ -122,10 +130,12 @@ ScrapMetal_Q.esp
 % {{BASH: Invent}}
 CreateScrapMetal.esp
 % {{BASH: Invent}}
-LittleLamplightDogs.esp
-% {{BASH: Graphics}}
 MrLabTechnician - FWE.esp
 % {{BASH: Deflst, Delev}}
+Placeable Lights Basic Edition v2.1.esp
+% {{BASH: Actors.AIData, Relev}}
+Placable Lights v2.1.esp
+% {{BASH: Actors.AIData, Relev}}
 SelfSurgeryKit.esp
 % {{BASH: Relev}}
 Chems and Meds Re-Textures Pack.esp
@@ -134,6 +144,8 @@ MAXdog.esp
 % {{BASH: Graphics}}
 ShadySands.esp
 % {{BASH: Factions, Relations}}
+SuperSledgeBeatdown.esp
+% {{BASH: Scripts}}
 BA_InventorySorterVanilla.esp
 % {{BASH: Names}
 BA_InventorySorterAnchorage.esp
@@ -169,6 +181,8 @@ Clothed American Soldiers.esp
 % {{BASH: Invent}}
 Confessor Cromwell has a Break_EV.esp
 % {{BASH: Actors.AIPackages}}
+Clothed Sarah Lyons.esp
+% {{BASH: Invent}}
 Clothed Sarah Lyons - Sleepwear.esp
 % {{BASH: Invent}}
 Named Wasteland.esp
@@ -197,9 +211,15 @@ FOOK2 - [DESTRUCTION] DIK.esp
 % {{BASH: Destructable, Scripts}}
 FOOK2 - [DESTRUCTION] Mothership Zeta.esp
 % {{BASH: Destructable, Scripts}}
+Apocalypse Armory.esp
+% {{BASH: Delev, Graphics, Invent, Names, Sounds, Stats, Relev}}
+Apocalypse Armory - CALIBR.esp
+% {{BASH: Delev, Relev}}
+Apocalypse Armory - xCALIBR.esp
+% {{BASH: Deflst, Names, Stats}}
 
 FO3 Wanderers Edition - Main File.esp
-% {{BASH: Deflst, Delev, Destructable, Names, Relev}}
+% {{BASH: Actors.ACBS, Actors.AIData, Actors.AIPackages, Actors.CombatStyle, Actors.Stats, Deflst, Delev, Destructable, Graphics, Invent, Names, Relev, Scripts, Stats}}
 FO3 Wanderers Edition - DLC Anchorage.esp
 % {{BASH: Deflst}}
 FO3 Wanderers Edition - DLC Point Lookout.esp
@@ -214,13 +234,49 @@ FO3 Wanderers Edition - Talon Loot Crash Fix.esp
 % {{BASH: Delev, Relev}}
 
 WeaponModKits.esp
-% {{BASH: Delev, Relev, Names, Actors.AIData}}
+% {{BASH: Actors.AIData, Delev, Invent, Names, Relev}}
 WeaponModKits - FWE Master Release.esp
 % {{BASH: Deflst, Relev, Names}}
 WeaponModKits - FWE Optional Worn Weapons.esp
 % {{BASH: Delev}}
+CRAFTable_WMKs_skill_requirements_lead_pipe_no_assault_rifle_and_laser_pistol_.esp
+% {{BASH: Invent}}
+CRAFTable_WMKs_skill_requirements_no_assault_rifle_and_laser_pistol.esp
+% {{BASH: Invent}}
+CRAFTable_WMKs_skill_requirements_lead_pipe.esp
+% {{BASH: Invent}}
+CRAFTable_WMKs.esp
+% {{BASH: Invent}}
+CRAFTable_WMKs_no_assault_rifle_and_laser_pistol.esp
+% {{BASH: Invent}}
+CRAFTable_WMKs_lead_pipe_no_assault_rifle_and laser_pistol.esp
+% {{BASH: Invent}}
+CRAFTable_WMKs_lead_pipe.esp
+% {{BASH: Invent}}
+CRAFTable_WMKs_skill_req_Amodeus.esp
+% {{BASH: Invent}}
+T3T_WMK1.esp
+% {{BASH: Deflst, Stats}}
 
+AddWanda_v2_blk_eot.esp
+% {{BASH: Invent}}
+AlexScorpion's  and Weijiesen's Smoking Fun.esp
+% {{BASH: Invent}}
+AlexScorpion's and Weijiesen's Smoking Fun.esp
+% {{BASH: Invent}}
 WMKAA12Shotgun.esp
+% {{BASH: Graphics}}
+Tactical Weapons by gRs Frederyck.esp
+% {{BASH: Invent}}
+xCALIBRmunitions.esp
+% {{BASH: Delev, Relev}}
+ColtM4Carbines_RHIronSights.esp
+% {{BASH: Graphics}}
+laserPistolRetextured-IronSightsPatch.esp
+% {{BASH: Graphics}}
+laserRifleRetextured-IronSightsPatch.esp
+% {{BASH: Graphics}}
+laserScatterGunRetextured.esp
 % {{BASH: Graphics}}
 
 BBBackpacks-v1-1.esp
@@ -247,6 +303,10 @@ COL Enclave VER2.esp
 % {{BASH: Graphics}}
 COL Enclave Hell.esp
 % {{BASH: Graphics}}
+K2_ArmorsRedone_Raiders.esp
+% {{BASH: Graphics}}
+K2_GirlieGirlVaultBabe.esp
+% {{BASH: Invent}}
 Test-Weapon_additional armor.esp
 % {{BASH: Invent}}
 WasteWearGloves.esp
@@ -254,15 +314,35 @@ WasteWearGloves.esp
 
 AutoGates.esp
 % {{BASH: Scripts}}
+Bobbleheads Begone.esp
+% {{BASH: Scripts}}
+bittercup_6.esp
+% {{BASH: Delev, Relev, ScriptContents}}
+cyber_meat.esp
+% {{BASH: Graphics}}
 SimpleSmokeo.esp
 % {{BASH: Actors.AIPackages, Actors.Animations, Delev, Invent, Names, Relev}}
+Start_Energy_Weapon.esp
+% {{BASH: Invent}}
 ZORTS - Custom HP.esp
 % {{BASH: Scripts}}
 ZORTS - Custom HP - FOOK2.esp
 % {{BASH: Scripts}}
 ZORTS - Custom HP - FWE.esp
 % {{BASH: Scripts}}
+More Ammo.esp
+% {{BASH: Relev}}
+More Ammo (Explosive).esp
+% {{BASH: Relev}}
+Slightly More Ammo.esp
+% {{BASH: Relev}}
+Slightly More Ammo (Explosive).esp
+% {{BASH: Relev}}
+Everso Slightly More Ammo.esp
+% {{BASH: Relev}}
 
+Replenishment.esp
+% {{BASH: Scripts}}
 UWWUT.esp
 % {{BASH: Graphics}}
 UWWUT - The Pitt Addon.esp
@@ -293,6 +373,12 @@ Less Useless Karma Gifts.esp
 % {{BASH: Relev, Delev}}
 Less Useless Karma Gifts 2.0.esp
 % {{BASH: Relev, Delev}}
+AfrosNukaCola.esp
+% {{BASH: Graphics, Stats}}
+Bottle That Water Alternative.esp
+% {{BASH: Scripts, Stats}}
+Bottle That Water Alternative - Broken Steel.esp
+% {{BASH: Scripts, Stats}}
 PlasmaWeaponsRedesignRebalance.esp
 % {{BASH: Graphics, Sound}}
 PlasmaRifleRedesign.esp
@@ -329,7 +415,7 @@ Trucker Holotapes.esp
 % {{BASH: Names}}
 
 EVE.esp
-% {{BASH: Graphics, Sound, Scripts}}
+% {{BASH: Delev, Graphics, Relev, Stats, Sound, Scripts}}
 EVE Operation Anchorage.esp
 % {{BASH: Graphics, Sound}}
 EVE - FWE Master Release.esp
@@ -342,9 +428,11 @@ EVE Anchorage - FWE DLC Anchorage.esp
 % {{BASH: Graphics, Sound}}
 EVE - FWE with WeaponModKits.esp
 % {{BASH: Graphics, Sound}}
+Apocalypse Armory + EVE.esp
+% {{BASH: Delev, Relev}}
 
 Mart's Mutant Mod.esp
-% {{BASH: Delev}}
+% {{BASH: Delev, Relev}}
 Mart's Mutant Mod - UF3P.esp
 % {{BASH: Invent}}
 Mart's Mutant Mod - DLC Anchorage.esp
@@ -361,11 +449,17 @@ Mart's Mutant Mod - DLC Zeta.esp
 % {{BASH: Scripts}}
 DangerousRadroaches_MMM.esp
 % {{BASH: Actors.CombatStyle}}
+Mart's Mutant Mod - No Abominable Mutants.esp
+% {{BASH: Relev}}
 Mart's Mutant Mod - No Corpse Flies.esp
 % {{BASH: Relev}}
 Mart's Mutant Mod - No Floaters.esp
 % {{BASH: Relev}}
 Mart's Mutant Mod - No Geckos.esp
+% {{BASH: Relev}}
+Mart's Mutant Mod - No Iguanas.esp
+% {{BASH: Relev}}
+Mart's Mutant Mod - No Stalker Creatures.esp
 % {{BASH: Relev}}
 Mart's Mutant Mod - No Wanamingos.esp
 % {{BASH: Relev}}
@@ -403,19 +497,17 @@ Mart's Mutant Mod - FWE Master Release + Project Beauty.esp
 % {{BASH: NpcFaces, NoMerge}}
 Mart's Mutant Mod - FWE with EVE.esp
 % {{BASH: Invent, Relations}}
-Mart's Mutant Mod - Project Beauty + FWE.esp
-% {{BASH: NpcFaces, NoMerge}}
-Mart's Mutant Mod - Project Beauty (HD Addition).esp
-% {{BASH: NpcFaces, NoMerge}}
 
 LingsPrettyThings.esp
 % {{BASH: Eyes, Hair, Invent, Names, NpcFaces, R.Attributes-F, R.Attributes-M, R.Description, R.Head, R.Mouth, R.Teeth}}
+MTC RealWildnessLife.esp
+% {{BASH: Relations}}
+slaveraider_newlook.esp
+% {{BASH: Graphics}}
 moirared.esp
 % {{BASH: Invent}}
 Reclothing For LPT and Flash.esp
 % {{BASH: Invent}}
-MTC RealWildnessLife.esp
-% {{BASH: Relations}}
 
 Imp's More Complex Needs.esp
 % {{BASH: Delev, Relev, Stats}}
@@ -442,6 +534,22 @@ IMCN - RiPnO Compatibility and Ingestibles.esp
 IMCN - MMM Meats, Bloods, and Eyeballs.esp
 % {{BASH: Delev, Relev, Stats}}
 
+Arwen_Realism_Core.esp
+% {{BASH: Actors.CombatStyle, Actors.Stats, Destructable, Names, Relev, Sounds, Stats}}
+Arwen_Hard-Core.esp
+% {{BASH: Actors.CombatStyle, Actors.Stats, Destructable, Names, Relev, Stats}}
+Arwen_Encumbrance.esp
+% {{BASH: Stats}}
+Arwen_Med-Tec.esp
+% {{BASH: Actors.ACBS, Actors.AIData, Invent, Relev, Scripts, Stats}}
+Arwen_GOTY_Med-Tec.esp
+% {{BASH: Relev}}
+Arwen_MMM_Med-Tec_Patch.esp
+% {{BASH: Relev, Scripts}}
+Arwen_MMM_Patch.esp
+% {{BASH: Scripts}}
+Arwen_EVE_Patch.esp
+% {{BASH: Graphics, Sounds, Stats}}
 MiscWeightFix.esp
 % {{BASH: Stats}}
 LightweightFoodSanitizer.esp
@@ -460,9 +568,14 @@ AMPUTATE!.esp
 % {{BASH: Scripts}}
 Weapon Repair Kits.esp
 % {{BASH: Relev}}
+CarvanTrader.esp
+% {{BASH: Actors.ACBS, Actors.Stats, Invent, Names, R. Attributes-F, R. Attributes-M, R.Skills, Scripts}}
 
 Phalanx-MainFollowerModule.esp
 % {{BASH: Actors.AIPackages, Actors.ACBS}}
+
+GH-HealingRebalanceMod_Infirmary+Lab.esp
+% {{BASH: Scripts}}
 
 FelloutWithLightingOverhual-1.0.esp
 % {{BASH: C.Light}}
@@ -494,6 +607,8 @@ URWL.esp
 % {{BASH: C.Light}}
 URWL-Normal Color Saturation.esp
 % {{BASH: C.Light}}
+URWLRain.esp
+% {{BASH: C.Climate, C.Light}}
 NColorDCInteriors.esp
 % {{BASH: C.Light}}
 Xepha's Dynamic Weather - Main.esp
@@ -551,24 +666,12 @@ FWE-20thCent Ammo Weight in Names.esp
 % {{BASH: Names}}
 FWE Realistic Ammo Weight in Names inc. 20th Cent.esp
 % {{BASH: Names}}
-CarvanTrader.esp
-% {{BASH: Actors.ACBS, Actors.Stats, Invent, Names, R. Attributes-F, R. Attributes-M, R.Skills, Scripts}}
 DUIF3Extras.esp
 % {{BASH: Deflst, Delev}}
 Dog lover's mod NO ANCHORAGE.esp
 % {{BASH: Deflst, Delev}}
 MMM dog lover's mod.esp
 % {{BASH: Deflst, Delev}}
-More Ammo.esp
-% {{BASH: Relev}}
-More Ammo (Explosive).esp
-% {{BASH: Relev}}
-Slightly More Ammo.esp
-% {{BASH: Relev}}
-Slightly More Ammo (Explosive).esp
-% {{BASH: Relev}}
-Everso Slightly More Ammo.esp
-% {{BASH: Relev}}
 
 EwwGhoulyBody.esp
 % {{BASH: Body-F}}
@@ -581,6 +684,7 @@ HairPack_2chPlus+EYE.esp
 % {{BASH: Hair, eyes}}
 VB_Hair_Shojo+CotW_15.esp
 % {{BASH: Hair}}
+
 Shojo Race.esp
 % {{BASH: Hair, Eyes}}
 XENH.esp
@@ -589,13 +693,15 @@ XENH.esp
 % {{BASH: Hair, Eyes}}
 EZCompanion_Type-N.esp
 % {{BASH: Hair, Eyes}}
+AAAAlbino_LingsBOG.esp
+% {{BASH: Hair, Eyes}}
 
 Mez's Merged Patch 5-0 - DLC-FWE-WMK-MMM.esp
 % {{BASH: Deflst, Delev, Factions, Invent, Relations, Relev, Scripts}}
 FNNsys - FWE.esp
 % {{BASH: Scripts}}
 xCALIBRuniverse.esp
-% {{BASH: Names, Graphics, Invent, Sound, Stats}}
+% {{BASH: Actors.DeathItems, Delev, Names, Graphics, Invent, Relev, Sound, Stats}}
 xCALIBRUniverse - WMK.esp
 % {{BASH: Names, Graphics, Sound, Stats}}
 xCALIBRUniverse_FWE_FPS.esp
@@ -634,4 +740,10 @@ Compatibility_Plugin_TalonExtraArmor_FWE_BrokenSteel.esp
 % {{BASH: Delev, Relev}}
 Choose your own hairstyle (load this last on FOMM).esp
 % {{BASH: NpcFaces, Hair, Eyes}}
+Merged.esp
+% {{BASH: NoMerge}}
+Merged Patch.esp
+% {{BASH: NoMerge}}
+xCALIBRammo_override.esp
+% {{BASH: Names, Graphics}}
 
