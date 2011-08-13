@@ -232,7 +232,7 @@ def convertFace(fileName,eid,fromEid,toEid):
 def importRacialEyesHair(srcMod,srcRaceEid,dstMod,dstRaceEid):
     """Copies eyes and hair from one race to another."""
     init(3)
-    if dstMod.lower() == 'oblivion.esm':
+    if dstMod.lower() == 'falloutnv.esm':
         raise "You don't REALLY want to overwrite Oblvion.esm, do you?"
     srcFactory = bosh.LoadFactory(False,bosh.MreRace)
     dstFactory = bosh.LoadFactory(True,bosh.MreRace)
@@ -476,7 +476,7 @@ def perfTest():
     total = 0.0
     from timeit import Timer
     for testClasses in ['bosh.MreClmt','bosh.MreCsty','bosh.MreIdle','bosh.MreLtex','bosh.MreRegn','bosh.MreSbsp']:
-        test = Timer('testClasses = (%s,);loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("Oblivion.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)' % testClasses, "import bosh;from bolt import GPath").timeit(1)
+        test = Timer('testClasses = (%s,);loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("FalloutNV.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)' % testClasses, "import bosh;from bolt import GPath").timeit(1)
         print testClasses, ":", test
         total += test
     print "total:", total
@@ -484,11 +484,11 @@ def perfTest():
     test = 0.0
     total = 0.0
     for testClasses in ['bosh.MreAchr,bosh.MreCell,bosh.MreWrld','bosh.MreAcre,bosh.MreCell,bosh.MreWrld','bosh.MreActi','bosh.MreAlch','bosh.MreAmmo','bosh.MreAnio','bosh.MreAppa','bosh.MreArmo','bosh.MreBook','bosh.MreBsgn','bosh.MreCell,bosh.MreWrld','bosh.MreClas','bosh.MreClot','bosh.MreCont','bosh.MreCrea','bosh.MreDial,bosh.MreInfo','bosh.MreDoor','bosh.MreEfsh','bosh.MreEnch','bosh.MreEyes','bosh.MreFact','bosh.MreFlor','bosh.MreFurn','bosh.MreGlob','bosh.MreGmst','bosh.MreGras','bosh.MreHair','bosh.MreIngr','bosh.MreKeym','bosh.MreLigh','bosh.MreLscr','bosh.MreLvlc','bosh.MreLvli','bosh.MreLvsp','bosh.MreMgef','bosh.MreMisc','bosh.MreNpc','bosh.MrePack','bosh.MreQust','bosh.MreRace','bosh.MreRefr,bosh.MreCell,bosh.MreWrld','bosh.MreRoad,bosh.MreCell,bosh.MreWrld','bosh.MreScpt','bosh.MreSgst','bosh.MreSkil','bosh.MreSlgm','bosh.MreSoun','bosh.MreSpel','bosh.MreStat','bosh.MreTes4','bosh.MreTree','bosh.MreWatr','bosh.MreWeap','bosh.MreWthr']:#,'"LAND"', '"PGRD"']:
-        test = Timer('testClasses = (%s,);loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("Oblivion.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)' % testClasses, "import bosh;from bolt import GPath").timeit(1)
+        test = Timer('testClasses = (%s,);loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("FalloutNV.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)' % testClasses, "import bosh;from bolt import GPath").timeit(1)
         print testClasses, ":", test
         total += test
     print "total:", total
-    ##print Timer('testClasses = (bosh.MreAchr,bosh.MreAcre,bosh.MreActi,bosh.MreAlch,bosh.MreAmmo,bosh.MreAnio,bosh.MreAppa,bosh.MreArmo,bosh.MreBook,bosh.MreBsgn,bosh.MreCell,bosh.MreClas,bosh.MreClmt,bosh.MreClot,bosh.MreCont,bosh.MreCrea,bosh.MreCsty,bosh.MreDial,bosh.MreDoor,bosh.MreEfsh,bosh.MreEnch,bosh.MreEyes,bosh.MreFact,bosh.MreFlor,bosh.MreFurn,bosh.MreGlob,bosh.MreGmst,bosh.MreGras,bosh.MreHair,bosh.MreIdle,bosh.MreInfo,bosh.MreIngr,bosh.MreKeym,bosh.MreLigh,bosh.MreLscr,bosh.MreLtex,bosh.MreLvlc,bosh.MreLvli,bosh.MreLvsp,bosh.MreMgef,bosh.MreMisc,bosh.MreNpc ,bosh.MrePack,bosh.MreQust,bosh.MreRace,bosh.MreRefr,bosh.MreRegn,bosh.MreRoad,bosh.MreSbsp,bosh.MreScpt,bosh.MreSgst,bosh.MreSkil,bosh.MreSlgm,bosh.MreSoun,bosh.MreSpel,bosh.MreStat,bosh.MreTes4,bosh.MreTree,bosh.MreWatr,bosh.MreWeap,bosh.MreWrld,bosh.MreWthr,"LAND", "PGRD");loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("Oblivion.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)', "import bosh;from bolt import GPath").timeit(1)
+    ##print Timer('testClasses = (bosh.MreAchr,bosh.MreAcre,bosh.MreActi,bosh.MreAlch,bosh.MreAmmo,bosh.MreAnio,bosh.MreAppa,bosh.MreArmo,bosh.MreBook,bosh.MreBsgn,bosh.MreCell,bosh.MreClas,bosh.MreClmt,bosh.MreClot,bosh.MreCont,bosh.MreCrea,bosh.MreCsty,bosh.MreDial,bosh.MreDoor,bosh.MreEfsh,bosh.MreEnch,bosh.MreEyes,bosh.MreFact,bosh.MreFlor,bosh.MreFurn,bosh.MreGlob,bosh.MreGmst,bosh.MreGras,bosh.MreHair,bosh.MreIdle,bosh.MreInfo,bosh.MreIngr,bosh.MreKeym,bosh.MreLigh,bosh.MreLscr,bosh.MreLtex,bosh.MreLvlc,bosh.MreLvli,bosh.MreLvsp,bosh.MreMgef,bosh.MreMisc,bosh.MreNpc ,bosh.MrePack,bosh.MreQust,bosh.MreRace,bosh.MreRefr,bosh.MreRegn,bosh.MreRoad,bosh.MreSbsp,bosh.MreScpt,bosh.MreSgst,bosh.MreSkil,bosh.MreSlgm,bosh.MreSoun,bosh.MreSpel,bosh.MreStat,bosh.MreTes4,bosh.MreTree,bosh.MreWatr,bosh.MreWeap,bosh.MreWrld,bosh.MreWthr,"LAND", "PGRD");loadFactory = bosh.LoadFactory(False,*testClasses);modInfo = bosh.modInfos[GPath("FalloutNV.esm")];modFile = bosh.ModFile(modInfo,loadFactory);modFile.load(True)', "import bosh;from bolt import GPath").timeit(1)
     sys.exit()
 
 #------------------------------------------------------------------------------
@@ -593,16 +593,16 @@ def csFunctions(fileName="CS Functions.txt"):
         out.close()
         print 'Wrote', fileName
     #--Dump pages
-    dumpPage('CS All.txt',records,None,
+    dumpPage('GECK All.txt',records,None,
         "[[Category:Scripting]]\nThis page lists all scripting functions including FOSE and FOSE plugin functions.")
-    dumpPage('CS GECK.txt',records,'GECK',
+    dumpPage('GECK GECK.txt',records,'GECK',
         "[[Category:Scripting]]\nThis page lists all native GECK scripting functions. For a more comprehensive list (including FOSE and FOSE plugin functions), see [[List of Functions]].")
-    dumpPage('CS FOSE.txt',records,'FOSE',
-        "[[Category:Scripting]][[Category:New Vegas Script Extender]]\nThis page lists all functions for [[:Category:Fallout3_Script_Extender|]]. For a more comprehensive list (including native CS and OBSE plugin functions), see [[List of Functions]].")
-    dumpPage('CS Pluggy.txt',records,'Pluggy',
-        "[[Category:Scripting]][[Category:Pluggy]]\nThis page lists all functions for [[:Category:Pluggy|]]. For a more comprehesive list of functions (including native CS and other OBSE related functions), see [[List of Functions]].")
-    dumpPage('CS TSFC.txt',records,'TSFC',
-        "[[Category:Scripting]][[Category:TSFC]]\nThis page lists all functions for [[:Category:TSFC|]]. For a more comprehesive list of functions (including native CS and other OBSE related functions), see [[List of Functions]].")
+    dumpPage('GECK FOSE.txt',records,'FOSE',
+        "[[Category:Scripting]][[Category:Fallout 3 Script Extender]]\nThis page lists all functions for [[:Category:Fallout3_Script_Extender|]]. For a more comprehensive list (including native GECK and FOSE plugin functions), see [[List of Functions]].")
+    dumpPage('GECK Pluggy.txt',records,'Pluggy',
+        "[[Category:Scripting]][[Category:Pluggy]]\nThis page lists all functions for [[:Category:Pluggy|]]. For a more comprehesive list of functions (including native GECK and other FOSE related functions), see [[List of Functions]].")
+    dumpPage('GECK TSFC.txt',records,'TSFC',
+        "[[Category:Scripting]][[Category:TSFC]]\nThis page lists all functions for [[:Category:TSFC|]]. For a more comprehesive list of functions (including native GECK and other FOSE related functions), see [[List of Functions]].")
 
 #------------------------------------------------------------------------------
 @mainfunc
@@ -670,7 +670,7 @@ def gmstIds(fileName=None):
     maxOld = maxId
     print 'maxId',hex(maxId)
     #--Eid list? - if the GMST has a 00000000 eid when looking at it in the cs with nothing 
-	# but oblivion.esm loaded you need to add the gmst to this list, rebuild the pickle and overwrite the old one.
+	# but falloutnv.esm loaded you need to add the gmst to this list, rebuild the pickle and overwrite the old one.
     for eid in ['fPlayerDeathReloadTime','iMapMarkerVisibleDistance','fVanityModeWheelMax','fChase3rdPersonZUnitsPerSecond',
                 'fAutoAimMaxDegreesMiss','iHoursToRespawnCell','fEssentialDeathTime','fJumpHeightMin','fPlayerPipBoyLightTimer',
                 'iAINumberActorsComplexScene','iHackingMaxWords','fGunShellLifetime','fGunShellCameraDistance','fGunDecalCameraDistance',

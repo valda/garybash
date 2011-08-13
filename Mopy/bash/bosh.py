@@ -8669,14 +8669,14 @@ def BestIniFile(path):
     ini_settings = ini.getSettings()
     if len(ini_settings) > 0:
         return ini
-    obse = OBSEIniFile(path)
-    ini_settings = obse.getSettings()
+    nvse = NVSEIniFile(path)
+    ini_settings = nvse.getSettings()
     if len(ini_settings) > 0:
-        return obse
+        return nvse
     return ini
 
-class OBSEIniFile(IniFile):
-    """OBSE Configuration ini file.  Minimal support provided, only can
+class NVSEIniFile(IniFile):
+    """NVSE Configuration ini file.  Minimal support provided, only can
     handle 'set' and 'setGS' statements."""
     reSet     = re.compile(r'\s*set\s+(.+?)\s+to\s+(.*)', re.I)
     reSetGS   = re.compile(r'\s*setGS\s+(.+?)\s+(.*)', re.I)
@@ -8856,13 +8856,13 @@ class FalloutIni(IniFile):
 
     def __init__(self):
         """Initialize."""
-        # Use local copy of the oblivion.ini if present
+        # Use local copy of the fallout.ini if present
         if dirs['app'].join('FALLOUT.INI').exists():
             IniFile.__init__(self,dirs['app'].join('FALLOUT.INI'),'General')
             # is bUseMyGamesDirectory set to 0?
             if self.getSetting('General','bUseMyGamesDirectory','1') == '0':
                 return
-        # oblivion.ini was not found in the game directory or bUseMyGamesDirectory was not set."""
+        # fallout.ini was not found in the game directory or bUseMyGamesDirectory was not set."""
         # default to user profile directory"""
         IniFile.__init__(self,dirs['saveBase'].join('FALLOUT.INI'),'General')
 
@@ -10520,7 +10520,7 @@ class ModInfos(FileInfos):
             except Exception, e:
                 deprint (_("Error scanning mod %s (%s)" %(fileName, str(e))))
                 canMerge = False #presume non-mergeable.
-            if fileName == "Oscuro's_Oblivion_Overhaul.esp": canMerge = False #can't be above because otherwise if the mergeability had already been set true this wouldn't unset it.
+            #if fileName == "Oscuro's_Oblivion_Overhaul.esp": canMerge = False #can't be above because otherwise if the mergeability had already been set true this wouldn't unset it.
             if canMerge == True:
                 self.mergeable.add(fileName)
                 mod_mergeInfo[fileName] = (fileInfo.size,True)
@@ -14795,7 +14795,7 @@ class ActorLevels:
         #Sorted based on mod, then editor ID
         obId_levels = mod_id_levels[GPath('Fallout3.esm')]
         for mod in sorted(mod_id_levels):
-            if mod.s.lower() == 'oblivion.esm': continue
+            if mod.s.lower() == 'falloutnv.esm': continue
             id_levels = mod_id_levels[mod]
             for id in sorted(id_levels,key=lambda k: (k[0].s,id_levels[k][0])):
                 eid, isOffset, offset, calcMin, calcMax = id_levels[id]
@@ -20391,7 +20391,7 @@ class CBash_PatchFile(ObModFile):
             for mod in self.worldOrphanMods: log ('* '+mod.s)
         if self.compiledAllMods:
             log.setHeader(_("=== Compiled All"))
-            log(_("The following mods have an empty compiled version of genericLoreScript. This is usually a sign that the mod author did a __compile all__ while editing scripts. This may interfere with the behavior of other mods that intentionally modify scripts from Fallout3.esm. (E.g. Cobl and Unofficial Oblivion Patch.) You can use Bash's [[http://wrye.ufrealms.net/Wrye%20Bash.html#DecompileAll|Decompile All]] command to repair the mods."))
+            log(_("The following mods have an empty compiled version of genericLoreScript. This is usually a sign that the mod author did a __compile all__ while editing scripts. This may interfere with the behavior of other mods that intentionally modify scripts from Fallout3.esm. (E.g. Unofficial Patch.) You can use Bash's [[http://wrye.ufrealms.net/Wrye%20Bash.html#DecompileAll|Decompile All]] command to repair the mods."))
             for mod in self.compiledAllMods: log ('* '+mod.s)
         log.setHeader(_("=== Active Mods"),True)
         for name in self.allMods:

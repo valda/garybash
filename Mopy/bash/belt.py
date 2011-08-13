@@ -1565,8 +1565,8 @@ class WryeParser(ScriptParser.Parser):
         if not bFoOk or not bFOSEOk or not bOBGEOk or not bWBOk:
             self.page = PageVersions(self.parent, bFoOk, foHave, ob, bFOSEOk, foseHave, fose, bOBGEOk, obgeHave, obge, bWBOk, wbHave, wbWant)
     def _TestVersion_OBGE(self, want):
-        retOBGEOld = self._TestVersion(want, bosh.dirs['mods'].join('obse', 'plugins', 'obge.dll'))
-        retOBGENew = self._TestVersion(want, bosh.dirs['mods'].join('obse', 'plugins', 'obgev2.dll'))
+        retOBGEOld = self._TestVersion(want, bosh.dirs['mods'].join('nvse', 'plugins', 'obge.dll'))
+        retOBGENew = self._TestVersion(want, bosh.dirs['mods'].join('nvse', 'plugins', 'obgev2.dll'))
         haveNew = retOBGENew[1]
         haveOld = retOBGEOld[1]
         if haveNew != 'None':

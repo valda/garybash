@@ -278,94 +278,149 @@ cobl = getIdFunc('Cobl Main.esm')
 
 # Race Info -------------------------------------------------------------------
 raceNames = {
-    0x23fe9 : _('Argonian'),
-    0x224fc : _('Breton'),
-    0x191c1 : _('Dark Elf'),
-    0x19204 : _('High Elf'),
-    0x00907 : _('Imperial'),
-    0x22c37 : _('Khajiit'),
-    0x224fd : _('Nord'),
-    0x191c0 : _('Orc'),
-    0x00d43 : _('Redguard'),
-    0x00019 : _('Vampire'),
-    0x223c8 : _('Wood Elf'),
+    0x000019 : _('Caucasian'),
+    0x0038e5 : _('Hispanic'),
+    0x0038e6 : _('Asian'),
+    0x003b3e : _('Ghoul'),
+    0x00424a : _('AfricanAmerican'),
+    0x0042be : _('AfricanAmerican Child'),
+    0x0042bf : _('AfricanAmerican Old'),
+    0x0042c0 : _('Asian Child'),
+    0x0042c1 : _('Asian Old'),
+    0x0042c2 : _('Caucasian Child'),
+    0x0042c3 : _('Caucasian Old'),
+    0x0042c4 : _('Hispanic Child'),
+    0x0042c5 : _('Hispanic Old'),
+    0x04bb8d : _('Caucasian Raider'),
+    0x04bf70 : _('Hispanic Raider'),
+    0x04bf71 : _('Asian Raider'),
+    0x04bf72 : _('AfricanAmerican Raider'),
+    0x0987dc : _('Hispanic Old Aged'),
+    0x0987dd : _('Asian Old Aged'),
+    0x0987de : _('AfricanAmerican Old Aged'),
+    0x0987df : _('Caucasian Old Aged'),
     }
 
 raceShortNames = {
-    0x23fe9 : 'Arg',
-    0x224fc : 'Bre',
-    0x191c1 : 'Dun',
-    0x19204 : 'Alt',
-    0x00907 : 'Imp',
-    0x22c37 : 'Kha',
-    0x224fd : 'Nor',
-    0x191c0 : 'Orc',
-    0x00d43 : 'Red',
-    0x223c8 : 'Bos',
+    0x000019 : 'Cau',
+    0x0038e5 : 'His',
+    0x0038e6 : 'Asi',
+    0x003b3e : 'Gho',
+    0x00424a : 'Afr',
+    0x0042be : 'AfC',
+    0x0042bf : 'AfO',
+    0x0042c0 : 'AsC',
+    0x0042c1 : 'AsO',
+    0x0042c2 : 'CaC',
+    0x0042c3 : 'CaO',
+    0x0042c4 : 'HiC',
+    0x0042c5 : 'HiO',
+    0x04bb8d : 'CaR',
+    0x04bf70 : 'HiR',
+    0x04bf71 : 'AsR',
+    0x04bf72 : 'AfR',
+    0x0987dc : 'HOA',
+    0x0987dd : 'AOA',
+    0x0987de : 'FOA',
+    0x0987df : 'COA',
     }
 
 raceHairMale = {
-    0x23fe9 : 0x64f32, #--Arg
-    0x224fc : 0x90475, #--Bre
-    0x191c1 : 0x64214, #--Dun
-    0x19204 : 0x7b792, #--Alt
-    0x00907 : 0x90475, #--Imp
-    0x22c37 : 0x653d4, #--Kha
-    0x224fd : 0x1da82, #--Nor
-    0x191c0 : 0x66a27, #--Orc
-    0x00d43 : 0x64215, #--Red
-    0x223c8 : 0x690bc, #--Bos
+    0x000019 : 0x014b90, #--Cau
+    0x0038e5 : 0x0a9d6f, #--His
+    0x0038e6 : 0x014b90, #--Asi
+    0x003b3e : None, #--Gho
+    0x00424a : 0x0306be, #--Afr
+    0x0042be : 0x060232, #--AfC
+    0x0042bf : 0x0306be, #--AfO
+    0x0042c0 : 0x060232, #--AsC
+    0x0042c1 : 0x014b90, #--AsO
+    0x0042c2 : 0x060232, #--CaC
+    0x0042c3 : 0x02bfdb, #--CaO
+    0x0042c4 : 0x060232, #--HiC
+    0x0042c5 : 0x02ddee, #--HiO
+    0x04bb8d : 0x02bfdb, #--CaR
+    0x04bf70 : 0x02bfdb, #--HiR
+    0x04bf71 : 0x02bfdb, #--AsR
+    0x04bf72 : 0x0306be, #--AfR
+    0x0987dc : 0x0987da, #--HOA
+    0x0987dd : 0x0987da, #--AOA
+    0x0987de : 0x0987d9, #--FOA
+    0x0987df : 0x0987da, #--COA
     }
 
 raceHairFemale = {
-    0x23fe9 : 0x64f33, #--Arg
-    0x224fc : 0x1da83, #--Bre
-    0x191c1 : 0x1da83, #--Dun
-    0x19204 : 0x690c2, #--Alt
-    0x00907 : 0x1da83, #--Imp
-    0x22c37 : 0x653d0, #--Kha
-    0x224fd : 0x1da83, #--Nor
-    0x191c0 : 0x64218, #--Orc
-    0x00d43 : 0x64210, #--Red
-    0x223c8 : 0x69473, #--Bos
+    0x000019 : 0x05dc6b, #--Cau
+    0x0038e5 : 0x05dc76, #--His
+    0x0038e6 : 0x022e50, #--Asi
+    0x003b3e : None, #--Gho
+    0x00424a : 0x05dc78, #--Afr
+    0x0042be : 0x05a59e, #--AfC
+    0x0042bf : 0x072e39, #--AfO
+    0x0042c0 : 0x05a5a3, #--AsC
+    0x0042c1 : 0x072e39, #--AsO
+    0x0042c2 : 0x05a59e, #--CaC
+    0x0042c3 : 0x072e39, #--CaO
+    0x0042c4 : 0x05a59e, #--HiC
+    0x0042c5 : 0x072e39, #--HiO
+    0x04bb8d : 0x072e39, #--CaR
+    0x04bf70 : 0x072e39, #--HiR
+    0x04bf71 : 0x072e39, #--AsR
+    0x04bf72 : 0x072e39, #--AfR
+    0x0987dc : 0x044529, #--HOA
+    0x0987dd : 0x044529, #--AOA
+    0x0987de : 0x044529, #--FOA
+    0x0987df : 0x044529, #--COA
     }
 
 # Default Eyes/Hair -----------------------------------------------------------
-standardEyes = [ob(x) for x in (0x27306,0x27308,0x27309)] + [cobl(x) for x in (0x000821, 0x000823, 0x000825, 0x000828, 0x000834, 0x000837, 0x000839, 0x00084F, )]
+#standardEyes = [ob(x) for x in (0x27306,0x27308,0x27309)] + [cobl(x) for x in (0x000821, 0x000823, 0x000825, 0x000828, 0x000834, 0x000837, 0x000839, 0x00084F, )]
+standardEyes = [ob(x) for x in (0x4252,0x4253,0x4254,0x4255,0x4256)]
 
 defaultEyes = {
     #--fallout3.esm
-    ob(0x23FE9): #--Argonian
-        [ob(0x3E91E)] + [cobl(x) for x in (0x01F407, 0x01F408, 0x01F40B, 0x01F40C, 0x01F410, 0x01F411, 0x01F414, 0x01F416, 0x01F417, 0x01F41A, 0x01F41B, 0x01F41E, 0x01F41F, 0x01F422, 0x01F424, )],
-    ob(0x0224FC): #--Breton
+    ob(0x000019): #--Caucasian
         standardEyes,
-    ob(0x0191C1): #--Dark Elf
-        [ob(0x27307)] + [cobl(x) for x in (0x000861,0x000864,0x000851)],
-    ob(0x019204): #--High Elf
+    ob(0x0038e5): #--Hispanic
         standardEyes,
-    ob(0x000907): #--Imperial
+    ob(0x0038e6): #--Asian
         standardEyes,
-    ob(0x022C37): #--Khajiit
-        [ob(0x375c8)] + [cobl(x) for x in (0x00083B, 0x00083E, 0x000843, 0x000846, 0x000849, 0x00084C, )],
-    ob(0x0224FD): #--Nord
+    ob(0x003b3e): #--Ghoul
+        [ob(0x35e4f)],
+    ob(0x00424a): #--AfricanAmerican
         standardEyes,
-    ob(0x0191C0): #--Orc
-        [ob(0x2730A)]+[cobl(x) for x in (0x000853, 0x000855, 0x000858, 0x00085A, 0x00085C, 0x00085E, )],
-    ob(0x000D43): #--Redguard
+    ob(0x0042be): #--AfricanAmerican Child
         standardEyes,
-    ob(0x0223C8): #--Wood Elf
+    ob(0x0042bf): #--AfricanAmerican Old
         standardEyes,
-    #--Cobl
-    cobl(0x07948): #--cobRaceAureal
-        [ob(0x54BBA)],
-    cobl(0x02B60): #--cobRaceHidden
-        [cobl(x) for x in (0x01F43A, 0x01F438, 0x01F439, 0x0015A7, 0x01792C, 0x0015AC, 0x0015A8, 0x0015AB, 0x0015AA,)],
-    cobl(0x07947): #--cobRaceMazken
-        [ob(0x54BB9)],
-    cobl(0x1791B): #--cobRaceOhmes
-        [cobl(x) for x in (0x017901, 0x017902, 0x017903, 0x017904, 0x017905, 0x017906, 0x017907, 0x017908, 0x017909, 0x01790A, 0x01790B, 0x01790C, 0x01790D, 0x01790E, 0x01790F, 0x017910, 0x017911, 0x017912, 0x017913, 0x017914, 0x017915, 0x017916, 0x017917, 0x017918, 0x017919, 0x01791A, 0x017900,)],
-    cobl(0x1F43C): #--cobRaceXivilai
-        [cobl(x) for x in (0x01F437, 0x00531B, 0x00531C, 0x00531D, 0x00531E, 0x00531F, 0x005320, 0x005321, 0x01F43B, 0x00DBE1, )],
+    ob(0x0042c0): #--Asian Child
+        standardEyes,
+    ob(0x0042c1): #--Asian Old
+        standardEyes,
+    ob(0x0042c2): #--Caucasian Child
+        standardEyes,
+    ob(0x0042c3): #--Caucasian Old
+        standardEyes,
+    ob(0x0042c4): #--Hispanic Child
+        standardEyes,
+    ob(0x0042c5): #--Hispanic Old
+        standardEyes,
+    ob(0x04bb8d): #--Caucasian Raider
+        [ob(0x4cb10)],
+    ob(0x04bf70): #--Hispanic Raider
+        [ob(0x4cb10)],
+    ob(0x04bf71): #--Asian Raider
+        [ob(0x4cb10)],
+    ob(0x04bf72): #--AfricanAmerican Raider
+        [ob(0x4cb10)],
+    ob(0x0987dc): #--Hispanic Old Aged
+        standardEyes,
+    ob(0x0987dd): #--Asian Old Aged
+        standardEyes,
+    ob(0x0987de): #--AfricanAmerican Old Aged
+        standardEyes,
+    ob(0x0987df): #--Caucasian Old Aged
+        standardEyes,
     }
 
 # Function Info ---------------------------------------------------------------
@@ -616,12 +671,13 @@ fid4Conditions = set(entry[0] for entry in conditionFunctionData if entry[5] == 
 
 # Magic Info ------------------------------------------------------------------
 weaponTypes = (
-    _('Blade (1 Handed)'),
-    _('Blade (2 Handed)'),
-    _('Blunt (1 Handed)'),
-    _('Blunt (2 Handed)'),
-    _('Staff'),
-    _('Bow'),
+    _('Big gun'),
+    _('Energy'),
+    _('Small gun'),
+    _('Melee'),
+    _('Unarmed'),
+    _('Thrown'),
+    _('Mine'),
     )
 
 magicEffects = {
