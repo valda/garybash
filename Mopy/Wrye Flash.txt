@@ -17,9 +17,10 @@ Wrye Flash is released under Version 2 of the GNU General Public License. See en
 {{CONTENTS=0}}
 **All versions by Wrye team and or Valda unless otherwise noted.**
 
-=== 14.3 [08/19/2011]
+=== 14.3 [08/20/2011]
 * Bugfixes from Wrye Bash 295(svn).
 * TES4 version 1.30 is treated as valid now.
+* Fixed an error in the list patch config.
 
 === 14.2 [08/14/2011]
 * Fixed a bug that cannot run scan UDR.

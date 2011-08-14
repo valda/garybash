@@ -11685,12 +11685,12 @@ class Mod_ListPatchConfig(Link):
                         else:
                             log('. ~~%s~~' % label)
                             clip.write('    %s\n' % label)
-            elif isinstance(patcher, bosh.CBash_ListsMerger) or isinstance(patcher, bosh.ListsMerger):
-                # Leveled Lists
-                patcher.configChoices = conf.get('configChoices',{})
-                for item in conf.get('configItems',[]):
-                    log('. __%s__' % patcher.getItemLabel(item))
-                    clip.write('    %s\n' % patcher.getItemLabel(item))
+            # elif isinstance(patcher, bosh.CBash_ListsMerger) or isinstance(patcher, bosh.ListsMerger):
+            #     # Leveled Lists
+            #     patcher.configChoices = conf.get('configChoices',{})
+            #     for item in conf.get('configItems',[]):
+            #         log('. __%s__' % patcher.getItemLabel(item))
+            #         clip.write('    %s\n' % patcher.getItemLabel(item))
             elif isinstance(patcher, (bosh.CBash_AliasesPatcher,bosh.AliasesPatcher)):
                 # Alias mod names
                 aliases = conf.get('aliases',{})
