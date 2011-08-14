@@ -14012,9 +14012,8 @@ class App_Button(Link):
         # Pathlist with args (for GeMM).
         if isinstance(self.exePath, list):
             for path in self.exePath:
-                if path.exists():
-                    self.exePath = path
-                    break
+                self.exePath = path
+                if path.exists(): break
         self.image = image
         self.tip = tip
         if workingDir:
