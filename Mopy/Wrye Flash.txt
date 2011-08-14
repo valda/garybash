@@ -17,7 +17,11 @@ Wrye Flash is released under Version 2 of the GNU General Public License. See en
 {{CONTENTS=0}}
 **All versions by Wrye team and or Valda unless otherwise noted.**
 
-=== 14 [08/13/2011] [175175,Valda]
+=== 14.2 [08/14/2011]
+* Fixed a bug that cannot run scan UDR.
+* Fixed a bug that throwing error from fomm path correction.
+
+=== 14.1 [08/13/2011] [175175,Valda]
 * Rebase to Wrye Bash 294.2.
 * Program-wide Changes:
   * Wrye Bash has a new directory layout!  Now the Mopy directory just contains important files that you can run.  All other files have been moved into subdirectories.
