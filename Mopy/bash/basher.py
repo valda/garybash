@@ -7503,7 +7503,7 @@ class Installers_UninstallAllUnknownFiles(Link):
         """Handle selection."""
         fullMessage = _("Clean Data directory?") + "  " + self._helpMessage + "  " + _('This includes files that were installed manually or by another program.  Files will be moved to the "%s" directory instead of being deleted so you can retrieve them later if necessary.') % r'Fallout New Vegas Mods\Bash Installers\Bash\Data Folder Contents <date>'
 #        fullMessage = _("Clean Data directory?") + "  " + self._helpMessage + "  " + _('This includes files that were installed manually or by another program.  Files will be moved to the "%s" directory instead of being deleted so you can retrieve them later if necessary.  Note that if you use TES4LODGen, this will also clean out the DistantLOD folder, so on completion please run TES4LodGen again.') % r'Fallout New Vegas Mods\Bash Installers\Bash\Data Folder Contents <date>'
-        if not balt.askYes(self.gTank,fill(fullMessage,70),self.title):
+        if not balt.askYes(self.gTank,fill(fullMessage,120),self.title):
             return
         progress = balt.Progress(_("Cleaning Data Files..."),'\n'+' '*65)
         try:
