@@ -6508,6 +6508,7 @@ class TweakPatcher(Patcher):
 
     def OnListCheck(self,event=None):
         """One of list items was checked. Update all check states."""
+        ensureEnabled = False
         for index, tweak in enumerate(self.tweaks):
             tweak.isEnabled = self.gList.IsChecked(index)
 
@@ -6616,11 +6617,11 @@ class TweakPatcher(Patcher):
                 value.append(new)
         if not value: value = tweak.choiceValues[index]
         tweak.choiceValues[index] = tuple(value)
+        tweak.chosen = index
         if isinstance(tweak.choiceValues[index][0],(str,unicode)):
             menulabel = tweak.getListLabel() + ' %s' % tweak.choiceValues[index][0]
         else:
             menulabel = tweak.getListLabel() + ' %4.2f ' % tweak.choiceValues[index][0]
-        tweak.chosen = index
         self.gList.SetString(tweakIndex,(menulabel))
 
 # Patchers 10 ------------------------------------------------------------------
@@ -7480,14 +7481,22 @@ class Installers_UninstallAllPackages(Link):
 class Installers_UninstallAllUnknownFiles(Link):
     """Uninstall all files that do not come from a current package/bethesda files.
        For safety just moved to Fallout New Vegas Mods\Bash Installers\Bash\Data Folder Contents (date/time)\."""
+    def __init__(self):
+        Link.__init__(self)
+        self._helpMessage = _('This will remove all mod files that are not linked to an active installer out of the Data folder.')
+
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
-        menuItem = wx.MenuItem(menu,self.id,_('Clean Data'),_('This will move all non-bethesda files that are not linked to an active installer out of the data folder to "Fallout New Vegas Mods\uninstalled\<date>.'))
+        menuItem = wx.MenuItem(menu,self.id,_('Clean Data'),self._helpMessage)
         menu.AppendItem(menuItem)
 
     def Execute(self,event):
         """Handle selection."""
-        progress = balt.Progress(_("Cleaning Data Files..."),'\n'+' '*60)
+        fullMessage = _("Clean Data directory?") + "  " + self._helpMessage + "  " + _('This includes files that were installed manually or by another program.  Files will be moved to the "%s" directory instead of being deleted so you can retrieve them later if necessary.') % r'Fallout New Vegas Mods\Bash Installers\Bash\Data Folder Contents <date>'
+#        fullMessage = _("Clean Data directory?") + "  " + self._helpMessage + "  " + _('This includes files that were installed manually or by another program.  Files will be moved to the "%s" directory instead of being deleted so you can retrieve them later if necessary.  Note that if you use TES4LODGen, this will also clean out the DistantLOD folder, so on completion please run TES4LodGen again.') % r'Fallout New Vegas Mods\Bash Installers\Bash\Data Folder Contents <date>'
+        if not balt.askYes(self.gTank,fill(fullMessage,70),self.title):
+            return
+        progress = balt.Progress(_("Cleaning Data Files..."),'\n'+' '*65)
         try:
             self.data.clean(progress=progress)
         finally:
@@ -8977,13 +8986,13 @@ class InstallerProject_FomodConfigDialog(wx.Frame):
         """Handle save button."""
         config = self.config
         #--Text fields
-        config.name = self.gName.GetValue().strip()
-        config.website = self.gWebsite.GetValue().strip()
-        config.author = self.gAuthor.GetValue().strip()
-        config.email = self.gEmail.GetValue().strip()
-        config.description = self.gDescription.GetValue().strip()
+        config.name = Unicode(self.gName.GetValue().strip(),'mbcs')
+        config.website = Unicode(self.gWebsite.GetValue().strip())
+        config.author = Unicode(self.gAuthor.GetValue().strip(),'mbcs')
+        config.email = Unicode(self.gEmail.GetValue().strip())
+        config.description = Unicode(self.gDescription.GetValue().strip(),'mbcs')
         #--Version
-        config.version = self.gVersion.GetValue().strip()
+        config.version = Unicode(self.gVersion.GetValue().strip())
         #--Done
         self.data[self.project].writeFomodConfig(self.project,self.config)
         self.Destroy()

@@ -32,6 +32,42 @@ import ctypes
 from bolt import _,GPath
 
 # Installer -------------------------------------------------------------------
+# ensure all path strings are prefixed with 'r' to avoid interpretation of
+#   accidental escape sequences
+wryeBashDataFiles = set((
+    r'Bashed Patch.esp',
+    r'Bashed Patch, 0.esp',
+    r'Bashed Patch, 1.esp',
+    r'Bashed Patch, 2.esp',
+    r'Bashed Patch, 3.esp',
+    r'Bashed Patch, 4.esp',
+    r'Bashed Patch, 5.esp',
+    r'Bashed Patch, 6.esp',
+    r'Bashed Patch, 7.esp',
+    r'Bashed Patch, 8.esp',
+    r'Bashed Patch, 9.esp',
+    r'Bashed Patch, CBash.esp',
+    r'Bashed Patch, Python.esp',
+    r'Bashed Patch, FCOM.esp',
+    r'Bashed Patch, Warrior.esp',
+    r'Bashed Patch, Thief.esp',
+    r'Bashed Patch, Mage.esp',
+    r'Bashed Patch, Test.esp',
+    r'ArchiveInvalidationInvalidated!.bsa'
+    r'Fallout - AI!.bsa'
+    ))
+wryeBashDataDirs = set((
+    r'Bash Patches',
+    r'INI Tweaks'
+    ))
+ignoreDataFiles = set((
+#    r'NVSE\Plugins\Construction Set Extender.dll',
+#    r'NVSE\Plugins\Construction Set Extender.ini'
+    ))
+ignoreDataDirs = set((
+#    r'NVSE\Plugins\ComponentDLLs\CSE',
+    r'LSData'
+    ))
 bethDataFiles = set((
     #--Vanilla
     r'fallout3.esm',

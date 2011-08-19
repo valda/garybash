@@ -635,6 +635,7 @@ The following commands are available from context menu of packages.
 * __Archive Info__
   * __Refresh:__ Refreshes all info for selected packages. Useful for updating info when package has been modified outside of Bash.
   * __Move To...__ Moves selected packages(s) to specified position. If multiple packages are active, they'll retain their relative order, but move as a block to the selected position.
+  * __Open readme:__ opens the readme if one is detected in the package.
 * __Configuration__
   * __Has Extra Directories:__ Ordinarily, Bain will only recognize a limited set of subdirectories of the Data directory -- and files that come from other directories will be skipped over. However if a package has special directories (usually restricted to OBSE scripts), checking this option will cause Bain to recognize these special directories as valid subdirectories (and thus allow them to be installed).
   * __Override Skips:__ If this is checked, Bain will not skip over files that would normally be skipped due to the __Skip XX__ options.
@@ -643,7 +644,7 @@ The following commands are available from context menu of packages.
 * __Wizard Install Options:__ Only Available if Wizard Install system is active (see the wizards [[wizards.html|documentation]] for more info on the wizard install system)
   * __Wizard:__ Runs the Wizard for the package and sets up the package options as selected in the wizard (only available if wizard.txt exists in the archive).
   * __Auto Wizard:__ Runs the wizard but selects the default options (only available if wizard.txt exists in the archive).
-  * __Edit Wizard:__ Opens the wizard.txt for editing (only available for projects and if wizard.txt exists in the project).
+  * __Edit/View Wizard:__ Opens the wizard.txt for viewing o  for projects with a wizard.txt opens it for editing.
 * __Install__
   * __Anneal:__ Will "anneal" the selected file(s). This will install any missing files and correct any install order errors (aka "underrides").
   * __Install:__ Will do an "in-order" install. I.e. it will fully install the package except for files that are masked by higher order packages.
@@ -675,7 +676,13 @@ The following commands are available by right clicking on the column header of t
   * __Add Marker:__ Creates a marker for organizing your packages.  The "==" will be added for you.
   * __List Packages:__ Displays list of projects and archives and copies that same list to the clipboard. Useful for posting your package order to forums for install debugging help.
   * __Uninstall All:__ Uninstalls all packages that are managed by BAIN (or at least in the BAIN directory).
-  * __Clean Data:__ cleans any files from the oblivion data dir that are not from active installers or Bethesda files or Wrye Bash Files. (ie it'll basically give you a clean install state of Oblivion/Data). For safety's sake the files are moved to Oblivion Mods\Bash Installers\Bash\Data Folder Contents (date/time)\
+  * __Clean Data:__ Removes files from the Oblivion Data dir that are not from one of the following sources:
+    * Vanilla Bethesda content (Oblivion.esm, Oblivion - Meshes.bsa, etc.)
+    * DLC content (Knights.esp, DLCShiveringIsles.esp, etc.)
+    * Wrye Bash (Bashed Patch, 0.esp, INI Tweaks/, etc.)
+    * Active BAIN installers
+  * Note that this will remove manually installed files or files installed from other programs (like OBMM)
+  * For safety's sake the files are not deleted, but rather moved to Oblivion Mods\Bash Installers\Bash\Data Folder Contents (date/time)\
   * __Anneal All:__ This will install any missing files (for active installers) and correct all install order and reconfiguration errors.
   * __Unhide:__ Unhides hidden packages.
     * The Unhide dialog now works like WinMerge's open dialog
@@ -706,10 +713,8 @@ The following commands are available by right clicking on the column header of t
   * __Skip LOD Normals:__ If checked, landscape LOD normals will be skipped.
 
 == Replacers Tab ==============================================================
-**The Replacers Tab has now largely been replaced by the new [[#|Installers Tab]].** If you're currently using Replacers, you should move them to the Packages directory (preferably after converting them to archives).
-__As of version 292:__ The Replacers tab is now only available if you enable it through bash.ini.  In future versions, the Replacers Tab may be removed entirely.
-
-__Note:__ By default, the Replacers tab will not appear if there are there are no files in the Replacers directory. You can get it to appear by using the "Show Replacers" option (see [[#|Package Header Commands]]).
+**The Replacers Tab has now been replaced by the [[#|Installers Tab]].** If you're currently using Replacers, you should move them to the Packages directory (preferably after converting them to archives).
+__As of version 295:__ The Replacers tab has been removed entirely.
 
 === Textures BSA
 If you're currently using the Textures BSA facility, you should switch to using the newer BSA Redirection method instead.
@@ -832,6 +837,7 @@ These are the commands for the context menu for the mods list. (You'll get this 
 === List Mods
 * Displays list of currently active mods and copies that same list to the clipboard. Useful for posting your list of mods to forums for load debugging help.
 * Note: Merged, imported and group header mods will also be shown.
+* Displays mod version and if 'c' is pressed displays mod crcs.
 
 === Debug Mode
 * This feature will activate debug printout. Note that there are few commands for which this will have an effect. (E.g. Update Save Levels... will be affected.)
@@ -842,7 +848,8 @@ These are the commands found on context menu for mods...
 
 === File Commands
 * __File Operations__
-  * **New Mod:**
+  * **New Mod:** Create an empty plugin.
+  * **{{A:Create Dummy Masters}}:** Creates an empty plugin for each missing master a mod has.  This is useful for allowing TES4Edit to open a 'Filter' patch without having all of the required masters.  These dummy plugins can later be removed using the [[#|Clean Dummy Masters]] command.
   * **{{A:Backup}}** Create a backup of the file (saved with the same name and modification time in %oblivion mods%/bash mod data/backups. Note that backups are also automatically created (see "Revert to Backup" below). If you want to be sure that you can later restore from a specific point, use Duplicate or Snapshot instead. The first time this is run (or if not yet run and Bash is doing changes to an esp for the first time) the backup file will instead be named %filename%.espf/esmf.
     * If multiple files are selected, this is done without any user input.
   * **{{A:Duplicate}}** Creates a duplicate of the file in the mods directory.
@@ -1066,6 +1073,9 @@ These are the commands found on context menu for mods...
 === Create BOSS Report
 * Generates a report on the selected mods, for posting in the latest BOSS thread.  The report includes the plugin name, a link to the download (if it can be determined from the installer), the plugin version, plugin CRC, and ITM and UDR counts (as determined by Wrye Bash, so the ITM count may be less than what TES4Edit reports).
 
+=== Copy Mod Info
+* Generates a report on the selected mod(s) with the info from the currently displayed columns (ie size, author etc.).
+
 === Mark Levelers
 * Obsolete. Replaced by automatic tagging (see [[#|Bash Tags]]).
 
@@ -1091,6 +1101,9 @@ These are the commands found on context menu for mods...
 * Displays a summary of how you have configured your Bashed Patch.
 * This summary will also be copied to your clipboard, so all you have to do to post it on a forum for help is paste it into a post.
 
+=== Export Patch Config...
+* Exports the Wrye Bash readable patch configuration for your Bashed Patch to a file without loading mergeability and stuff that takes a bit of processing.
+
 === Remove World Orphans
 * This command is for modders and advanced players only. Less experienced players will generally **not** need to use this.
 * Techie Explanation
@@ -1111,6 +1124,9 @@ These are the commands found on context menu for mods...
 === Version 0.8
 * Resets the file version number of a mod file back to an older version (0.8) so that the older construction set can edit it. The feature is somewhat dated now that the updated construction set is available, but is still useful for modders who prefer to work with the older CS. (Note that the newer CS has some bugs that the older CS does not.)
 * **Warning:** It's possible that using this command on mods built under newer versions of the CS may result in loss of some data. Use with caution.
+
+=== Clean Dummy Masters
+* Removes any empty plugin files that were generated via the [[#|Create Dummy Masters]] command.
 
 == Balo =======================================================================
 Bash Auto Load Ordering (aka Balo) will semi-automatically sort your mods into a few predefined groups. Currently it's still necessary to specify for each mod which group it belongs to, but future versions of Balo may provide additional automation in this area.
@@ -1655,7 +1671,9 @@ __Tweakers__ tweak records in the currently active set of mods in specified ways
 * __Set Sound Attenuation Levels:__
   * The sound attenution levels will be set to tweak%*current level, thereby increasing (or decreasing) the sound volume (lower attenuation = higher volume).
 * __Set Sound Attenuation Levels: Nirnroots Only__
-  * The sound attenution levels will be set to tweak%*current level, thereby increasing (or decreasing) the sound volume (lower attenuation = higher volume). This one only affects Nirnroots.
+  * The sound attenuation levels will be set to tweak%*current level, thereby increasing (or decreasing) the sound volume (lower attenuation = higher volume). This one only affects Nirnroots.
+* __Skyrim-style Weapons:__
+  * Sets all one handed weapons as blades, two handed weapons as blunt.
 
 === Tweak Clothes
 * __Overview:__ This allows you tweak clothes in several ways. Note that some of these have are not recommended for reasons stated -- however your tastes may vary.
@@ -1677,6 +1695,8 @@ __Tweakers__ tweak records in the currently active set of mods in specified ways
 * __Lore Friendly Names: Dwarven->Dwemer:__ Changes nearly any usage of the word Dwarven to use Dwemer instead in order to better follow lore.
 * __Notes and Scrolls:__ Choose format and whether you want enchanted scrolls at top (~) or bottom (.) of list. (Note that "~" will not display in inventory.)
 * __Potions:__ Choose format.
+* __Proper English Names: Staffs -> Staves:__ renames any instances of staffs to staves.
+* __Proper English Names: Dwarfs -> Dwarves:__ renames any instances of dwaffs totaves
 * __Spells:__ Chose format. You can choose whether you wish the school (e.g. D) and spell level (e.g. D2) to show.
   * If you're already using Supreme Magicka or similar spell namer, their label will be overwritten.
   * If you only want to remove existing labels, then use the No Label option ("Fire Ball").
@@ -1917,6 +1937,8 @@ The rest of the report is divided into mod groups, where "mod groups" are sets o
 * __Notes:__ Toggles inclusion of mod group notes.
 * __Configuration:__ Toggles inclusion of mod group configuration info.
 * __Suggestions:__ Toggles inclusion of mod group suggestions.
+* __Version Numbers:__ Toggles inclusion of version numbers for the mods in the mod list.
+* __CRCs:__ Toggles inclusion of CRCs for the mods in the mod list.
 * __Scan for UDR's / Scan for Dirty Edits:__ Toggles scanning mod files for deleted references and Identical to Master records.  With CBash disabled, this can take quite some time.  ITM scanning will only occur if CBash is enabled, UDR scanning works in both CBash and non-CBash mode.
   * The number of ITM records reported by Wrye Bash will usually be a little less than when cleaned in TES4Edit, due to not checking GRUP records.
 * __Copy Text:__ Copies text of report to clipboard. (Useful for forum postings.)
@@ -2335,13 +2357,47 @@ DELETE PROFILE %s AND THE %d SAVE FILES IT CONTAINS?
 {{CONTENTS=0}}
 **All versions by Wrye unless otherwise noted.**
 
-
-=== 295 [12/12/2011] [valda,Lojack]
+=== 295 [12/12/2011] [bluesky404,Lojack,myk002,PacificMorrowind,valda]
+* [[#BashedPatches|Bashed Patch]]:
+  * Assorted tweakers:
+    * New tweak: Skyrim-style Weapons.
+    * CBash 'Magic: Script Effect Silencer' tweak fixed.
+    * VORB tweak now assigns special skeletons correctly
+    * Fixed type mismatch that was preventing custom values for float GMST tweaks from being applied correctly in CBash
+  * Names tweaker:
+    * New tweak: Proper English Names: Staffs -> Staves
+    * New tweak: Proper English Names: Dwarfs -> Dwarves
+* [[#InstallersTab|BAIN]]:
+  * BAIN Wizards: Updated the [[wizards.html#EditINI|[color=purple]EditINI[/color]]] function to allow comments.
+  * Installer->open readme command added.
+  * Modified [[#PackageHeaderCommands|Clean Data]] command so that it doesn't remove DLC content or Wrye Bash-related files
 * Unicode Mode:
-  * More bugfixes from valda
+  * More bugfixes from valda.
+  * bugfixes from bluesky404.
 * Added activation status as a new mods column/sort option.
-* New mod command [[#|Create BOSS Report]] will automatically gather the information you need to report a mod to the BOSS thread.
-* BAIN Wizards: Updated the [[wizards.html#EditINI|[color=purple]EditINI[/color]]] function to allow comments.
+* New mod commands:
+  * [[#|Create BOSS Report]] will automatically gather the information you need to report a mod to the BOSS thread.
+  * [[#|Copy Mod Info]] will automatically gather the displayed info on a mod.
+  * Ghost will ghost just the selected mod(s) 
+  * [[#|Export Patch Config...]] exports the selcted patch's configuration to a file.
+  * File->[[#|Create Dummy Masters]] will generate empty plugins for each missing master a plugin has.  This is useful for loading a Filter patch in TES4Edit.
+  * Mods Tab->[[#|Clean Dummy Masters]] will delete any empty plugins created using the [[#|Create Dummy Masters]] command.
+* Add Master command can now add multiple masters in one go
+* Select patcher when selecting a patcher option/tweak
+* Fixed Settings backup files should have WB version in their names.
+* Ghosting fixed to remove the ugly chance of having both .ghost and .esp versions of the same mod.
+* Replacers tab and associated code totally removed.
+* Fixed CBash crash while scanning for dirty edits on some plugins
+* Startup:
+  * Fixed startup processing so you can in one startup both backup and restore settings.
+  * Added -L/--Language as cmdline options to set Wrye Bash's language.
+* Added warning if user has more than 325 esp/ms/bsa in the data folder and aren't using ghosting (and more strongly worded warning if more than 400).
+* Ini Panel -> list active ini's command added.
+* [[#ModChecker|ModChecker]]:
+  * Fixed default size to be wide enough to display all buttons.
+  * Added option to toggle display of CRCs for mods in the mod list.
+  * Added option to toggle display of version numbers for mods in the mod list.
+* [[#|List Mods]]: crc dispaly is off by default and added code to enable crc display if 'c' is pressed.
 
 === 294.2 [1/8/2011] [Lojack,myk002,PacificMorrowind]
 * Small fix to the Python race patcher for dremora records
