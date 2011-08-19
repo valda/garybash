@@ -448,10 +448,10 @@ def askContinueShortTerm(parent,message,title=_('Warning')):
         return True
     return False
 #------------------------------------------------------------------------------
-def askOpen(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.OPEN,mustExist=False):
+def askOpen(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.FD_OPEN,mustExist=False):
     """Show as file dialog and return selected path(s)."""
     defaultDir,defaultFile = [GPath(x).s for x in (defaultDir,defaultFile)]
-    dialog = wx.FileDialog(parent,title,defaultDir,defaultFile,wildcard, style )
+    dialog = wx.FileDialog(parent,title,defaultDir,defaultFile,wildcard, style)
     if dialog.ShowModal() != wx.ID_OK:
         result = False
     elif style & wx.MULTIPLE:
@@ -468,9 +468,9 @@ def askOpen(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.OP
     dialog.Destroy()
     return result
 
-def askOpenMulti(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.OPEN|wx.MULTIPLE):
-    """Show as save dialog and return selected path(s)."""
-    return askOpen(parent,title,defaultDir,defaultFile,wildcard,style )
+def askOpenMulti(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.FD_FILE_MUST_EXIST):
+    """Show as open dialog and return selected path(s)."""
+    return askOpen(parent,title,defaultDir,defaultFile,wildcard,wx.FD_OPEN|wx.FD_MULTIPLE|style)
 
 def askSave(parent,title='',defaultDir='',defaultFile='',wildcard='',style=wx.OVERWRITE_PROMPT):
     """Show as save dialog and return selected path(s)."""

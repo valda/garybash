@@ -8962,7 +8962,7 @@ class BsaFile:
             ('Fallout - Meshes.bsa',1138575220),
             ('Fallout - Misc.bsa',1139433736),
             ('Fallout - Sound.bsa',1138660560),
-            (inisettings['FalloutTexturesBSAName'],1138162634),
+            (inisettings['FalloutTexturesBSAName'].stail,1138162634),
             ('Fallout - Textures.bsa',1138162634),
             ('Fallout - Textures2.bsa',1138162934),
             ('Fallout - Voices1.bsa',1138166742),
@@ -9775,9 +9775,9 @@ class Plugins:
         """Write data to Plugins.txt file."""
         self.selected.sort()
         out = self.path.open('w')
-        out.write('# This file is used to tell FalloutNV which data files to load.\n\n')
+        out.write(r'# This file is used to tell FalloutNV which data files to load.\n\n')
         for modName in self.selected:
-            out.write(modName.s+'\n')
+            out.write(Encode(modName.s+'\n','mbcs'))
         out.close()
         self.mtime = self.path.mtime
         self.size = self.path.size
@@ -12126,7 +12126,7 @@ class ConfigHelpers:
         shouldDeactivateB = [x for x in active if 'NoMerge' in modInfos[x].getBashTags()]
         shouldActivateA = [x for x in imported if 'MustBeActiveIfImported' in modInfos[x].getBashTags() and x not in active]
         #--Mods with invalid TES4 version
-        invalidVersion = [(x,str(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in (1.32,1.33,1.34)]
+        invalidVersion = [(x,str(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in (1.30,1.32,1.33,1.34)]
         if True:
             #--Look for dirty edits
             shouldClean = {}
@@ -12191,7 +12191,7 @@ class ConfigHelpers:
                 log('* __'+mod[0].s+':__  '+mod[1])
         if invalidVersion:
             log.setHeader(_("=== Mods with non standard TES4 versions"))
-            log(_("Following mods have a TES4 version that isn't recognized as one of the standard versions (1.32, 1.33 and 1.34).  It is untested what effect this can have on the game, but presumably Fallout New Vegas will refuse to load anything above 1.34"))
+            log(_("Following mods have a TES4 version that isn't recognized as one of the standard versions (1.30, 1.32, 1.33 and 1.34).  It is untested what effect this can have on the game, but presumably Fallout New Vegas will refuse to load anything above 1.34"))
             for mod in sorted(invalidVersion):
                 log('* __'+mod[0].s+':__  '+mod[1])
         #--Missing/Delinquent Masters
@@ -14939,19 +14939,30 @@ class InstallersData(bolt.TankData, DataDict):
 
     def clean(self,progress):
         data = self.data
-        getArchiveOrder =  lambda x: data[x].order
+        getArchiveOrder = lambda x: data[x].order
         installed = []
         for package in sorted(data,key=getArchiveOrder,reverse=True):
             installer = data[package]
             if installer.isActive:
                 installed += installer.data_sizeCrc
-        bethFiles = [GPath(f) for f in bush.allBethFiles]
-        keepFiles = set(installed + bethFiles)
+        keepFiles = set(installed)
+        keepFiles.update((GPath(f) for f in bush.allBethFiles))
+        keepFiles.update((GPath(f) for f in bush.wryeBashDataFiles))
+        keepFiles.update((GPath(f) for f in bush.ignoreDataFiles))
         data_sizeCrcDate = self.data_sizeCrcDate
         removes = set(data_sizeCrcDate) - keepFiles
         destDir = dirs['bainData'].join('Data Folder Contents (%s)' %(datetime.datetime.now().strftime('%d-%m-%Y %H%M.%S')))
         emptyDirs = set()
+        skipDirs = [skipDir+os.sep for skipDir in bush.wryeBashDataDirs]
+        skipDirs.extend([skipDir+os.sep for skipDir in bush.ignoreDataDirs])
         for file in removes:
+            # don't remove files in Wyre Bash-related directories
+            skip = False
+            for skipDir in skipDirs:
+                if file.s.startswith(skipDir):
+                    skip = True
+                    break
+            if skip: continue
             path = dirs['mods'].join(file)
             try:
                 path.moveTo(destDir.join(file))
@@ -19620,7 +19631,7 @@ class PCFaces:
         if not tes4.author:
             tes4.author = '[wb]'
         if not tes4.description:
-            tes4.description = _('Face dump from save game.')
+            tes4.description = Encode(_('Face dump from save game.'),'mbcs')
         if modInfos.masterName not in tes4.masters:
             tes4.masters.append(modInfos.masterName)
         masterMap = MasterMap(face.masters,tes4.masters+[modInfo.name])
@@ -20240,7 +20251,7 @@ class PatchFile(ModFile):
         #-- Check to make sure NoMerge tag not in tags - if in tags don't show up as mergeable.
         if 'NoMerge' in modInfos[GPath(modInfo.name.s)].getBashTags():
             if not verbose: return False
-            reasons += "\n.    Has 'NoMerge' tag."
+            reasons += _("\n.    Has 'NoMerge' tag.")
         #--Load test
         mergeTypes = set([recClass.classType for recClass in PatchFile.mergeClasses])
         modFile = ModFile(modInfo,LoadFactory(False,*mergeTypes))
@@ -20508,7 +20519,7 @@ class PatchFile(ModFile):
         progress(1.0,"Compiled.")
         #--Description
         numRecords = sum([x.getNumRecords(False) for x in self.tops.values()])
-        self.tes4.description = _("Updated: %s\n\nRecords Changed: %d") % (formatDate(time.time()),numRecords)
+        self.tes4.description = Encode(_("Updated: %s\n\nRecords Changed: %d") % (formatDate(time.time()),numRecords),'mbcs')
 
 class CBash_PatchFile(ObModFile):
     """Defines and executes patcher configuration."""
@@ -21002,7 +21013,7 @@ class CBash_PatchFile(ObModFile):
         progress(1.0,"Compiled.")
         #--Description
         numRecords = sum([len(x) for x in self.aggregates.values()])
-        self.TES4.description = _("Updated: %s\n\nRecords Changed: %d") % (formatDate(time.time()),numRecords)
+        self.TES4.description = Encode(_("Updated: %s\n\nRecords Changed: %d") % (formatDate(time.time()),numRecords),'mbcs')
 #------------------------------------------------------------------------------
 class Patcher:
     """Abstract base class for patcher elements."""
@@ -29815,7 +29826,7 @@ class GmstTweak(MultiTweakItem):
         eids = ((self.key,),self.key)[isinstance(self.key,tuple)]
         for eid,value in zip(eids,self.choiceValues[self.chosen]):
             if value < 0:
-                deprint("GMST float value can't be a negative number - currently %f - skipping setting GMST." % value)
+                deprint("GMST float value can't be a negative number - currently %s - skipping setting GMST." % value)
                 return
             for record in patchFile.GMST.records:
                 if record.eid.lower() == eid.lower():
@@ -29857,10 +29868,13 @@ class CBash_GmstTweak(CBash_MultiTweakItem):
                 break
         else:
             return
+        if recEid.startswith("f") and type(newValue) != float:
+            deprint("converting custom value to float for GMST %s: %s" % (recEid, newValue))
+            newValue = float(newValue)
         if record.value != newValue:
             self.eid_count[eid] = 1
             if newValue < 0:
-                deprint("GMST float value can't be a negative number - currently %f - skipping settingGMST" % newValue)
+                deprint("GMST float value can't be a negative number - currently %s - skipping setting GMST" % newValue)
                 return
             override = record.CopyAsOverride(self.patchFile)
             if override:
@@ -29885,6 +29899,9 @@ class CBash_GmstTweak(CBash_MultiTweakItem):
                     for conflict in patchFile.ObCollection.LookupRecords(eid, False):
                         print conflict.ModName
                     raise StateError(_("Tweak Settings: Unable to create GMST!"))
+                if eid.startswith("f") and type(value) != float:
+                    deprint("converting custom value to float for GMST %s: %s" % (eid, value))
+                    value = float(value)
                 record.value = value
             pstate += 1
 
@@ -36321,7 +36338,7 @@ def initDefaultSettings():
     inisettings['EnableReplacers'] = False
     inisettings['EnableBalo'] = False
     inisettings['ResetBSATimestamps'] = True
-    inisettings['FalloutTexturesBSAName'] = 'Fallout - Textures.bsa'
+    inisettings['FalloutTexturesBSAName'] = GPath('Fallout - Textures.bsa')
     inisettings['ClearRO'] = True
     inisettings['Tes4GeckoJavaArg'] = '-Xmx1024m'
     inisettings['OblivionBookCreatorJavaArg'] = '-Xmx1024m'
