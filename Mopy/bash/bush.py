@@ -73,7 +73,7 @@ bethDataFiles = set((
     'falloutnv.esm',
     r'fallout - meshes.bsa',
     r'fallout - misc.bsa',
-    r'fallout - sounds.bsa',
+    r'fallout - sound.bsa',
     r'fallout - textures.bsa',
     r'fallout - textures2.bsa',
     r'fallout - voices1.bsa',
