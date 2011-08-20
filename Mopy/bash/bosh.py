@@ -9775,7 +9775,7 @@ class Plugins:
         """Write data to Plugins.txt file."""
         self.selected.sort()
         out = self.path.open('w')
-        out.write(r'# This file is used to tell FalloutNV which data files to load.\n\n')
+        out.write('# This file is used to tell FalloutNV which data files to load.\n\n')
         for modName in self.selected:
             out.write(Encode(modName.s+'\n','mbcs'))
         out.close()
