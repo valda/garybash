@@ -166,7 +166,7 @@ def main():
                         type='string',
                         default='',
                         dest='falloutPath',
-                        help='Specifies the FalloutNV directory (the one containing FalloutNV.exe). Use this argument if Bash is located outside of the FalloutNV directory.')
+                        help='Specifies the Fallout3 directory (the one containing Fallout3.exe). Use this argument if Bash is located outside of the Fallout3 directory.')
     userPathGroup = optparse.OptionGroup(parser, "'User Directory Arguments",
                         'These arguments allow you to specify your user directories in several ways.'
                         ' These are only useful if the regular procedure for getting the user directory fails.'

@@ -561,7 +561,7 @@ class PageVersions(PageInstaller):
         sizerVersions.Add(wx.StaticText(self, -1, foHave))
         sizerVersions.Add(wx.StaticBitmap(self, -1, bmp[bFoOk]))
 
-        linkFOSE = wx.HyperlinkCtrl(self, -1, 'Fallout Script Extender', 'http://fose.silverlock.org/')
+        linkFOSE = wx.HyperlinkCtrl(self, -1, 'Fallout 3 Script Extender', 'http://fose.silverlock.org/')
         linkFOSE.SetVisitedColour(linkFOSE.GetNormalColour())
         linkFOSE.SetToolTip(wx.ToolTip('http://fose.silverlock.org/'))
         sizerVersions.Add(linkFOSE)
@@ -1565,8 +1565,8 @@ class WryeParser(ScriptParser.Parser):
         if not bFoOk or not bFOSEOk or not bOBGEOk or not bWBOk:
             self.page = PageVersions(self.parent, bFoOk, foHave, ob, bFOSEOk, foseHave, fose, bOBGEOk, obgeHave, obge, bWBOk, wbHave, wbWant)
     def _TestVersion_OBGE(self, want):
-        retOBGEOld = self._TestVersion(want, bosh.dirs['mods'].join('nvse', 'plugins', 'obge.dll'))
-        retOBGENew = self._TestVersion(want, bosh.dirs['mods'].join('nvse', 'plugins', 'obgev2.dll'))
+        retOBGEOld = self._TestVersion(want, bosh.dirs['mods'].join('fose', 'plugins', 'obge.dll'))
+        retOBGENew = self._TestVersion(want, bosh.dirs['mods'].join('fose', 'plugins', 'obgev2.dll'))
         haveNew = retOBGENew[1]
         haveOld = retOBGEOld[1]
         if haveNew != 'None':

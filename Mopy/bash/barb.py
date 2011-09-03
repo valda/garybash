@@ -109,23 +109,23 @@ class BackupSettings(BaseBackupSettings):
     def __init__(self, parent=None, path=None, quit=False, backup_images=None):
         BaseBackupSettings.__init__(self,parent,path,quit)
         for path, name, tmpdir in (
-              (dirs['mopy'],                      'Bash.ini',             'Fallout New Vegas\\Mopy'),
-              (dirs['mods'].join('Bash'),         'Table',                'Fallout New Vegas\\Data\\Bash'),
-              (dirs['mods'].join('Docs'),         'Bash Readme Template', 'Fallout New Vegas\\Data\\Docs'),
-              (dirs['mods'].join('Docs'),         'Bashed Lists',         'Fallout New Vegas\\Data\\Docs'),
-              (dirs['mods'].join('Docs'),         'wtxt_sand_small.css',  'Fallout New Vegas\\Data\\Docs'),
-              (dirs['mods'].join('Docs'),         'wtxt_teal.css',        'Fallout New Vegas\\Data\\Docs'),
-              (dirs['modsBash'],                  'Table',                'Fallout New Vegas Mods\\Bash Mod Data'),
-              (dirs['modsBash'].join('INI Data'), 'Table',                'Fallout New Vegas Mods\\Bash Mod Data\\INI Data'),
-              (dirs['installers'].join('Bash'),   'Converters',           'Fallout New Vegas Mods\\Bash Installers\\Bash'),
-              (dirs['installers'].join('Bash'),   'Installers',           'Fallout New Vegas Mods\\Bash Installers\\Bash'),
-              (dirs['userApp'],                   'Profiles',             'LocalAppData\\FalloutNV'),
-              (dirs['userApp'],                   'bash config',          'LocalAppData\\FalloutNV'),
-              (dirs['saveBase'],                  'BashProfiles',         'My Games\\FalloutNV'),
-              (dirs['saveBase'],                  'BashSettings',         'My Games\\FalloutNV'),
-              (dirs['saveBase'],                  'Messages',             'My Games\\FalloutNV'),
-              (dirs['saveBase'],                  'ModeBase',             'My Games\\FalloutNV'),
-              (dirs['saveBase'],                  'People',               'My Games\\FalloutNV'),
+              (dirs['mopy'],                      'Bash.ini',             'Fallout 3\\Mopy'),
+              (dirs['mods'].join('Bash'),         'Table',                'Fallout 3\\Data\\Bash'),
+              (dirs['mods'].join('Docs'),         'Bash Readme Template', 'Fallout 3\\Data\\Docs'),
+              (dirs['mods'].join('Docs'),         'Bashed Lists',         'Fallout 3\\Data\\Docs'),
+              (dirs['mods'].join('Docs'),         'wtxt_sand_small.css',  'Fallout 3\\Data\\Docs'),
+              (dirs['mods'].join('Docs'),         'wtxt_teal.css',        'Fallout 3\\Data\\Docs'),
+              (dirs['modsBash'],                  'Table',                'Fallout 3 Mods\\Bash Mod Data'),
+              (dirs['modsBash'].join('INI Data'), 'Table',                'Fallout 3 Mods\\Bash Mod Data\\INI Data'),
+              (dirs['installers'].join('Bash'),   'Converters',           'Fallout 3 Mods\\Bash Installers\\Bash'),
+              (dirs['installers'].join('Bash'),   'Installers',           'Fallout 3 Mods\\Bash Installers\\Bash'),
+              (dirs['userApp'],                   'Profiles',             'LocalAppData\\Fallout3'),
+              (dirs['userApp'],                   'bash config',          'LocalAppData\\Fallout3'),
+              (dirs['saveBase'],                  'BashProfiles',         'My Games\\Fallout3'),
+              (dirs['saveBase'],                  'BashSettings',         'My Games\\Fallout3'),
+              (dirs['saveBase'],                  'Messages',             'My Games\\Fallout3'),
+              (dirs['saveBase'],                  'ModeBase',             'My Games\\Fallout3'),
+              (dirs['saveBase'],                  'People',               'My Games\\Fallout3'),
                 ):
             tmpdir = GPath(tmpdir)
             for ext in ('','.dat','.pkl','.html','.txt'): # hack so the above file list can be shorter, could include rogue files but not very likely
@@ -138,9 +138,9 @@ class BackupSettings(BaseBackupSettings):
 
         #backup all files in Mopy\Data, Data\Bash Patches and Data\INI Tweaks
         for path, tmpdir in (
-              (dirs['l10n'],                              'Fallout New Vegas\\Mopy\\bash\\l10n'),
-              (dirs['mods'].join('Bash Patches'),         'Fallout New Vegas\\Data\\Bash Patches'),
-              (dirs['mods'].join('INI Tweaks'),           'Fallout New Vegas\\Data\\INI Tweaks'),
+              (dirs['l10n'],                              'Fallout 3\\Mopy\\bash\\l10n'),
+              (dirs['mods'].join('Bash Patches'),         'Fallout 3\\Data\\Bash Patches'),
+              (dirs['mods'].join('INI Tweaks'),           'Fallout 3\\Data\\INI Tweaks'),
                 ):
             tmpdir = GPath(tmpdir)
             for name in path.list():
@@ -149,7 +149,7 @@ class BackupSettings(BaseBackupSettings):
         
         #backup image files if told to
         if backup_images == 1: #changed images only
-            tmpdir = GPath('Fallout New Vegas\\Mopy\\bash\\images')
+            tmpdir = GPath('Fallout 3\\Mopy\\bash\\images')
             path = dirs['images']
             for name in path.list():
                 fullname = path.join(name)
@@ -161,14 +161,14 @@ class BackupSettings(BaseBackupSettings):
                     if changed and not name.s.lower() == 'thumbs.db':
                         self.files[tmpdir.join(name)] = fullname
         elif backup_images == 2: #all images
-            tmpdir = GPath('Fallout New Vegas\\Mopy\\bash\\images')
+            tmpdir = GPath('Fallout 3\\Mopy\\bash\\images')
             path = dirs['images']
             for name in path.list():
                 if path.join(name).isfile() and not name.s.lower() == 'thumbs.db':
                     self.files[tmpdir.join(name)] = path.join(name)
                     
         #backup save profile settings
-        savedir = GPath('My Games\\FalloutNV')
+        savedir = GPath('My Games\\Fallout3')
         profiles = [''] + [x for x in dirs['saveBase'].join('Saves').list() if dirs['saveBase'].join('Saves',x).isdir() and str(x).lower() != 'bash']
         for profile in profiles:
             tpath = savedir.join('Saves',profile,'plugins.txt')
@@ -303,7 +303,7 @@ class RestoreSettings(BaseBackupSettings):
         deprint('RESTORE BASH SETTINGS: ' + self.dir.join(self.archive).s)
 
         # reinitialize bosh.dirs using the backup copy of bash.ini if it exists
-        tmpBash = self.tmp.join('Fallout New Vegas\\Mopy\\bash.ini')
+        tmpBash = self.tmp.join('Fallout 3\\Mopy\\bash.ini')
         opts, args = bash.opts, bash.extra
 
         bash.SetUserPath(tmpBash.s,opts.userPath)
@@ -313,30 +313,30 @@ class RestoreSettings(BaseBackupSettings):
 
         # restore all the settings files
         restore_paths = (
-                (dirs['mopy'],                              'Fallout New Vegas\\Mopy'),
-                (dirs['mods'].join('Bash'),                 'Fallout New Vegas\\Data\\Bash'),
-                (dirs['mods'].join('Bash Patches'),         'Fallout New Vegas\\Data\\Bash Patches'),
-                (dirs['mods'].join('Docs'),                 'Fallout New Vegas\\Data\\Docs'),
-                (dirs['mods'].join('INI Tweaks'),           'Fallout New Vegas\\Data\\INI Tweaks'),
-                (dirs['modsBash'],                          'Fallout New Vegas Mods\\Bash Mod Data'),
-                (dirs['modsBash'].join('INI Data'),         'Fallout New Vegas Mods\\Bash Mod Data\\INI Data'),
-                (dirs['installers'].join('Bash'),           'Fallout New Vegas Mods\\Bash Installers\\Bash'),
-                (dirs['userApp'],                           'LocalAppData\\FalloutNV'),
-                (dirs['saveBase'],                          'My Games\\FalloutNV'),
+                (dirs['mopy'],                              'Fallout 3\\Mopy'),
+                (dirs['mods'].join('Bash'),                 'Fallout 3\\Data\\Bash'),
+                (dirs['mods'].join('Bash Patches'),         'Fallout 3\\Data\\Bash Patches'),
+                (dirs['mods'].join('Docs'),                 'Fallout 3\\Data\\Docs'),
+                (dirs['mods'].join('INI Tweaks'),           'Fallout 3\\Data\\INI Tweaks'),
+                (dirs['modsBash'],                          'Fallout 3 Mods\\Bash Mod Data'),
+                (dirs['modsBash'].join('INI Data'),         'Fallout 3 Mods\\Bash Mod Data\\INI Data'),
+                (dirs['installers'].join('Bash'),           'Fallout 3 Mods\\Bash Installers\\Bash'),
+                (dirs['userApp'],                           'LocalAppData\\Fallout3'),
+                (dirs['saveBase'],                          'My Games\\Fallout3'),
                 )
         if 14 >= self.verApp:
             # restore from old data paths
             restore_paths += (
-                (dirs['l10n'],                              'Fallout New Vegas\\Data'),)
+                (dirs['l10n'],                              'Fallout 3\\Data'),)
             if self.restore_images:
                 restore_paths += (
-                    (dirs['images'],                        'Fallout New Vegas\\Mopy\\images'),)
+                    (dirs['images'],                        'Fallout 3\\Mopy\\images'),)
         else:
             restore_paths += (
-                (dirs['l10n'],                              'Fallout New Vegas\\bash\\l10n'),)
+                (dirs['l10n'],                              'Fallout 3\\bash\\l10n'),)
             if self.restore_images:
                 restore_paths += (
-                    (dirs['images'],                        'Fallout New Vegas\\Mopy\\bash\\images'),)
+                    (dirs['images'],                        'Fallout 3\\Mopy\\bash\\images'),)
         for fpath, tpath in restore_paths:
             path = self.tmp.join(tpath)
             if path.exists():
@@ -346,7 +346,7 @@ class RestoreSettings(BaseBackupSettings):
                         path.join(name).copyTo(fpath.join(name))
 
         #restore savegame profile settings
-        tpath = GPath('My Games\\FalloutNV\\Saves')
+        tpath = GPath('My Games\\Fallout3\\Saves')
         fpath = dirs['saveBase'].join('Saves')
         path = self.tmp.join(tpath)
         if path.exists():

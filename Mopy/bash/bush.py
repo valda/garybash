@@ -61,11 +61,11 @@ wryeBashDataDirs = set((
     r'INI Tweaks'
     ))
 ignoreDataFiles = set((
-#    r'NVSE\Plugins\Construction Set Extender.dll',
-#    r'NVSE\Plugins\Construction Set Extender.ini'
+#    r'FOSE\Plugins\Construction Set Extender.dll',
+#    r'FOSE\Plugins\Construction Set Extender.ini'
     ))
 ignoreDataDirs = set((
-#    r'NVSE\Plugins\ComponentDLLs\CSE',
+#    r'FOSE\Plugins\ComponentDLLs\CSE',
     r'LSData'
     ))
 bethDataFiles = set((
@@ -462,7 +462,6 @@ defaultEyes = {
 # Function Info ---------------------------------------------------------------
 conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (153, 'CanHaveFlames', 0, 0, 0, 0),
-    #(127, 'CanPayCrimeGold', 0, 0, 0, 0),
     (127, 'HasBeenEatan', 0, 0, 0, 0),
     ( 14, 'GetActorValue', 1, 0, 0, 0),
     ( 61, 'GetAlarmed', 0, 0, 0, 0),
@@ -476,7 +475,6 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (229, 'GetClassDefaultMatch', 0, 0, 0, 0),
     ( 41, 'GetClothingValue', 0, 0, 0, 0),
     (122, 'GetCrime', 2, 1, 0, 0),
-    #(116, 'GetCrimeGold', 0, 0, 0, 0),
     (116, 'GetMinorCrimeCount', 0, 0, 0, 0),
     (110, 'GetCurrentAIPackage', 0, 0, 0, 0),
     (143, 'GetCurrentAIProcedure', 0, 0, 0, 0),
@@ -492,7 +490,6 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     ( 39, 'GetDisease', 0, 0, 0, 0),
     ( 76, 'GetDisposition', 2, 0, 0, 0),
     (  1, 'GetDistance', 2, 0, 0, 0),
-    #(215, 'GetDoorDefaultOpen', 0, 0, 0, 0),
     (215, 'GetDefaultOpen', 0, 0, 0, 0),
     (182, 'GetEquipped', 2, 0, 0, 0),
     ( 73, 'GetFactionRank', 2, 0, 0, 0),
@@ -509,7 +506,6 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (230, 'GetInCellParam', 2, 2, 0, 0),
     ( 71, 'GetInFaction', 2, 0, 0, 0),
     ( 32, 'GetInSameCell', 2, 0, 0, 0),
-    #(305, 'GetInvestmentGold', 0, 0, 0, 0),
     (310, 'GetInWorldspace', 2, 0, 0, 0),
     ( 91, 'GetIsAlerted', 0, 0, 0, 0),
     ( 68, 'GetIsClass', 2, 0, 0, 0),
@@ -520,7 +516,6 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (237, 'GetIsGhost', 0, 0, 0, 0),
     ( 72, 'GetIsID', 2, 0, 0, 0),
     (254, 'GetIsPlayableRace', 0, 0, 0, 0),
-    #(224, 'GetIsPlayerBirthsign', 2, 0, 0, 0),
     (224, 'GetVATSMode', 0, 0, 0, 0),
     ( 69, 'GetIsRace', 2, 0, 0, 0),
     (136, 'GetIsReference', 2, 0, 0, 0),
@@ -539,19 +534,14 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (193, 'GetPCExpelled', 2, 0, 0, 0),
     (199, 'GetPCFactionAttack', 2, 0, 0, 0),
     (195, 'GetPCFactionMurder', 2, 0, 0, 0),
-    #(197, 'GetPCFactionSteal', 2, 0, 0, 0),
     (197, 'GetPCEnemyofFaction', 2, 0, 0, 0),
-    #(201, 'GetPCFactionSubmitAuthority', 2, 0, 0, 0),
-    #(249, 'GetPCFame', 0, 0, 0, 0),
     (132, 'GetPCInFaction', 2, 0, 0, 0),
-    #(251, 'GetPCInfamy', 0, 0, 0, 0),
     (129, 'GetPCIsClass', 2, 0, 0, 0),
     (130, 'GetPCIsRace', 2, 0, 0, 0),
     (131, 'GetPCIsSex', 1, 0, 0, 0),
     (312, 'GetPCMiscStat', 1, 0, 0, 0),
     (225, 'GetPersuasionNumber', 0, 0, 0, 0),
     ( 98, 'GetPlayerControlsDisabled', 0, 0, 0, 0),
-    #(365, 'GetPlayerInSEWorld', 0, 0, 0, 0),
     (365, 'IsChild', 0, 0, 0, 0),
     (362, 'GetPlayerHasLastRiddenHorse', 0, 0, 0, 0),
     (  6, 'GetPos', 1, 0, 0, 0),
@@ -580,12 +570,10 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     ( 40, 'GetVampire', 0, 0, 0, 0),
     (142, 'GetWalkSpeed', 0, 0, 0, 0),
     (108, 'GetWeaponAnimType', 0, 0, 0, 0),
-    #(109, 'GetWeaponSkillType', 0, 0, 0, 0),
     (109, 'IsWeaponSkillType', 1, 0, 0, 0),
     (147, 'GetWindSpeed', 0, 0, 0, 0),
     (154, 'HasFlames', 0, 0, 0, 0),
     (214, 'HasMagicEffect', 2, 0, 0, 0),
-    #(227, 'HasVampireFed', 0, 0, 0, 0),
     (227, 'HasCannibal', 0, 0, 0, 0),
     (353, 'IsActor', 0, 0, 0, 0),
     (314, 'IsActorAVictim', 0, 0, 0, 0),
@@ -609,7 +597,6 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (278, 'IsOwner', 2, 0, 0, 0),
     (176, 'IsPCAMurderer', 0, 0, 0, 0),
     (175, 'IsPCSleeping', 0, 0, 0, 0),
-    #(171, 'IsPlayerInJail', 0, 0, 0, 0),
     (358, 'IsPlayerMovingIntoNewSpace', 0, 0, 0, 0),
     (339, 'IsPlayersLastRiddenHorse', 0, 0, 0, 0),
     (266, 'IsPleasant', 0, 0, 0, 0),
@@ -625,11 +612,9 @@ conditionFunctionData = ( #--0: no param; 1: int param; 2: formid param
     (265, 'IsTimePassing', 0, 0, 0, 0),
     (102, 'IsTorchOut', 0, 0, 0, 0),
     (145, 'IsTrespassing', 0, 0, 0, 0),
-    #(329, 'IsTurnArrest', 0, 0, 0, 0),
     (111, 'IsWaiting', 0, 0, 0, 0),
     (101, 'IsWeaponOut', 0, 0, 0, 0),
     (309, 'IsXBox', 0, 0, 0, 0),
-    #(104, 'IsYielding', 0, 0, 0, 0),
     ( 36, 'MenuMode', 1, 0, 0, 0),
     ( 42, 'SameFaction', 2, 0, 0, 0),
     (133, 'SameFactionAsPC', 0, 0, 0, 0),

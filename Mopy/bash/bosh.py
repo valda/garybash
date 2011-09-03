@@ -145,7 +145,7 @@ allTags = sorted(('Body-F', 'Body-M', 'Body-Size-M', 'Body-Size-F', 'C.Climate',
                   'Actors.AIData', 'Actors.DeathItem', 'Actors.AIPackages', 'Actors.AIPackagesForceAdd', 'Actors.Stats',
                   'Actors.ACBS', 'NPC.Class', 'Actors.CombatStyle', 'Creatures.Blood',
                   'NPC.Race','Actors.Skeleton', 'NpcFacesForceFullImport', 'MustBeActiveIfImported',
-                  'Deflst', 'Destructible', 'WeaponMods'))
+                  'Deflst', 'Destructible'))
 
 allTagsSet = set(allTags)
 oldTags = sorted(('Merge',))
@@ -2302,23 +2302,6 @@ class MreArmo(MelRecord):
         'alcohol','bigGuns','bodyWear','chems','energyWeapons','food','handWear','headWear',
         'meleeWeapons','mine','none','smallGuns','stimpack','thrownWeapons','unarmedWeapon'
     ))
-
-    # class MelArmoModel(MelGroup):
-    #     """Represents a model record."""
-    #     typeSets = (
-    #         ('MODL','MODT','MODS','MODD'),
-    #         ('MOD2','MO2T','MO2S','MO2D'),
-    #         ('MOD3','MO3T','MO3S','MOSD'),
-    #         ('MOD4','MO4T','MO4S','MO4D'),)
-    #     def __init__(self,attr='model',index=0):
-    #         """Initialize. Index is 0,2,3,4 for corresponding type id."""
-    #         types = self.typeSets[(0,index-1)[index>0]]
-    #         MelGroup.__init__(self,attr,
-    #                           MelString(types[0],'modPath'),
-    #                           MelBase(types[1],'modt_p'), ###Texture Files Hashes, Byte Array
-    #                           MelAlternateTextures(types[2],'alternateTextures'),
-    #                           MelOptStruct(types[3],'B','facegenModelFlags'),)
-
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -2830,7 +2813,7 @@ class MreDial(MelRecord):
 class MreDoor(MelRecord):
     """Container record."""
     classType = 'DOOR'
-    _flags = Flags(0,Flags.getNames('fallout3Gate','automatic','hidden','minimalUse'))
+    _flags = Flags(0,Flags.getNames('oblivionGate','automatic','hidden','minimalUse'))
     melSet = MelSet(
         MelString('EDID','eid'),
         MelStruct('OBND','=6h',
@@ -3031,7 +3014,7 @@ class MreGlob(MelRecord):
 #------------------------------------------------------------------------------
 class MreGmst(MelRecord):
     """Gmst record"""
-    fallout3Ids = None
+    falloutIds = None
     classType = 'GMST'
     class MelGmstValue(MelBase):
         def loadData(self,record,ins,type,size,readId):
@@ -4751,23 +4734,6 @@ class MreWthr(MelRecord):
         MelModel(),
         MelBase('LNAM','unknown1'),
         MelStruct('ONAM','4B','cloudSpeed0','cloudSpeed1','cloudSpeed3','cloudSpeed4'),
-        # 0006A076..MegatonFalloutDecay..WTHR.PNAM..64..
-        # \xb5\xb1\x84\x00
-        # \xd1\xec\xdd\x00
-        # tws\x00
-        # \x16 !\x00
-        # \x9e\xa5\x81\x00
-        # \xa3\xbd\xaa\x00
-        # v\x83w\x00
-        # \x1b,)\x00
-        # \x00\x00\x00\x00
-        # \x00\x00\x00\x00
-        # \x95wY\x00
-        # \x00\x00\x00\x00
-        # \x9b\x9by\x00
-        # \xc7\xda\xcf\x00
-        # tvv\x00
-        # \x14\x1d\x1d\x00
         MelBase('PNAM','_pnam'), #--RGB(3Bs) * 16?
         MelStructA('NAM0','3Bs3Bs3Bs3Bs','colors',
                    'riseRed','riseGreen','riseBlue',('unused1',null1),
@@ -4776,13 +4742,6 @@ class MreWthr(MelRecord):
                    'nightRed','nightGreen','nightBlue',('unused4',null1),
                    ),
         MelStruct('FNAM','6f','fogDayNear','fogDayFar','fogNightNear','fogNightFar','fogDayPower','fogNightPower'),
-        # MelStruct('HNAM','14f',
-        #     'eyeAdaptSpeed', 'blurRadius', 'blurPasses', 'emissiveMult',
-        #     'targetLum', 'upperLumClamp', 'brightScale', 'brightClamp',
-        #     'lumRampNoTex', 'lumRampMin', 'lumRampMax', 'sunlightDimmer',
-        #     'grassDimmer', 'treeDimmer'),
-        # 0006A076..MegatonFalloutDecay..WTHR.INAM..304..
-        # \x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
         MelBase('INAM','_inam'), #--Should be a struct. Maybe later.
         MelStruct('DATA','15B',
             'windSpeed','lowerCloudSpeed','upperCloudSpeed','transDelta',
@@ -6020,6 +5979,16 @@ class MobObjects(MobBase):
                 self.setRecord(record)
                 mergeIds.discard(record.fid)
 
+    def mergeRecords(self,rhs):
+        if self.data:
+            self.load(None,True)
+        if rhs.data:
+            rhs.load(None,True)
+        self.records.extend(rhs.records)
+        self.id_records.update(rhs.id_records)
+        self.numRecords = -1
+        self.setChanged()
+
 #------------------------------------------------------------------------------
 class MobDials(MobObjects):
     """DIAL top block of mod file."""
@@ -6394,6 +6363,16 @@ class MobCells(MobBase):
         for cellBlock in self.cellBlocks:
             cellBlock.updateMasters(masters)
 
+    def mergeRecords(self,rhs):
+        if self.data:
+            self.load(None,True)
+        if rhs.data:
+            rhs.load(None,True)
+        self.cellBlocks.extend(rhs.cellBlocks)
+        self.id_cellBlock.update(rhs.id_cellBlock)
+        self.numRecords = -1
+        self.setChanged()
+
 #-------------------------------------------------------------------------------
 class MobICells(MobCells):
     """Tes4 top block for interior cell records."""
@@ -6759,6 +6738,16 @@ class MobWorlds(MobBase):
         for worldBlock in self.worldBlocks: worldBlock.keepRecords(keepIds)
         self.worldBlocks = [x for x in self.worldBlocks if x.world.fid in keepIds]
         self.id_worldBlocks.clear()
+        self.setChanged()
+
+    def mergeRecords(self,rhs):
+        if self.data:
+            self.load(None,True)
+        if rhs.data:
+            rhs.load(None,True)
+        self.worldBlocks.extend(rhs.worldBlocks)
+        self.id_worldBlocks.update(rhs.id_worldBlocks)
+        self.numRecords = -1
         self.setChanged()
 
 #------------------------------------------------------------------------------
@@ -8669,14 +8658,14 @@ def BestIniFile(path):
     ini_settings = ini.getSettings()
     if len(ini_settings) > 0:
         return ini
-    nvse = NVSEIniFile(path)
-    ini_settings = nvse.getSettings()
+    fose = FOSEIniFile(path)
+    ini_settings = fose.getSettings()
     if len(ini_settings) > 0:
-        return nvse
+        return fose
     return ini
 
-class NVSEIniFile(IniFile):
-    """NVSE Configuration ini file.  Minimal support provided, only can
+class FOSEIniFile(IniFile):
+    """FOSE Configuration ini file.  Minimal support provided, only can
     handle 'set' and 'setGS' statements."""
     reSet     = re.compile(r'\s*set\s+(.+?)\s+to\s+(.*)', re.I)
     reSetGS   = re.compile(r'\s*setGS\s+(.+?)\s+(.*)', re.I)
@@ -8917,7 +8906,6 @@ class FalloutIni(IniFile):
 #--------------------------------------------------------------------------------
 class FalloutPrefsIni(FalloutIni):
     """FalloutPrefs.ini file."""
-
     def __init__(self):
         """Initialize."""
         IniFile.__init__(self,dirs['saveBase'].join('FalloutPrefs.ini'),'General')
@@ -14806,7 +14794,7 @@ class ActorLevels:
         #Sorted based on mod, then editor ID
         obId_levels = mod_id_levels[GPath('Fallout3.esm')]
         for mod in sorted(mod_id_levels):
-            if mod.s.lower() == 'falloutnv.esm': continue
+            if mod.s.lower() == 'fallout3.esm': continue
             id_levels = mod_id_levels[mod]
             for id in sorted(id_levels,key=lambda k: (k[0].s,id_levels[k][0])):
                 eid, isOffset, offset, calcMin, calcMax = id_levels[id]
@@ -15574,8 +15562,7 @@ class FullNames:
     defaultTypes = set((
         'ALCH', 'AMMO', 'APPA', 'ARMO', 'BOOK', 'CLAS', 'CLOT', 'CONT', 'CREA', 'DOOR',
         'EYES', 'FACT', 'FLOR', 'HAIR', 'INGR', 'KEYM', 'LIGH', 'MISC', 'NOTE', 'NPC_',
-        'RACE', 'SPEL', 'TERM', 'WEAP', 'ACTI', 'TACT',
-        'CMNY', 'CCRD', 'IMOD', 'REPU', 'RCPE', 'RCCT', 'CHIP', 'CSNO'))
+        'RACE', 'SPEL', 'TERM', 'WEAP', 'ACTI', 'TACT'))
     hasShortNameTypes = set((
         'AMMO', 'AVIF', ))
 
@@ -16311,9 +16298,9 @@ class ItemStats:
     """Statistics for armor and weapons, with functions for importing/exporting from/to mod/text file."""
     class_attrs = {
         'ALCH':('eid', 'weight', 'value'),
-        'AMMO':('eid', 'weight', 'value', 'speed', 'clipRounds','projPerShot'),
-        'ARMO':('eid', 'weight', 'value', 'health', 'ar','dt'),
-        'ARMA':('eid', 'weight', 'value', 'health', 'ar','dt'),
+        'AMMO':('eid', 'speed',  'value', 'clipRounds'),
+        'ARMO':('eid', 'weight', 'value', 'health', 'ar'),
+        'ARMA':('eid', 'weight', 'value', 'health', 'ar'),
         'BOOK':('eid', 'weight', 'value'),
         'INGR':('eid', 'weight', 'value'),
         'KEYM':('eid', 'weight', 'value'),
@@ -16324,10 +16311,7 @@ class ItemStats:
                 'minRange','maxRange','animationAttackMultiplier','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
                 'rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult','attackShotsPerSec',
                 'reloadTime','jamTime','aimArc','rambleWavelangth','limbDmgMult','sightUsage',
-                'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
-                'strengthReq','regenRate','killImpulse','impulseDist','skillReq',
-                'criticalDamage','criticalMultiplier',
-                'vatsSkill','vatsDamMult','vatsAp'),
+                'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax','criticalDamage','criticalMultiplier'),
         }
 
     @staticmethod
@@ -16494,15 +16478,15 @@ class ItemStats:
             #Ammo
             ('AMMO',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('Speed'),_('Clip Rounds'),_('Proj/Shot'))) + '"\n')),
+                _('Editor Id'),_('Speed'),_('Value'),_('Clip Rounds'))) + '"\n')),
             #--Armor
             ('ARMO',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'),_('DT'))) + '"\n')),
+                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'))) + '"\n')),
             #--Armor Addon
             ('ARMA',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'),_('DT'))) + '"\n')),
+                _('Editor Id'),_('Weight'),_('Value'),_('Health'),_('AR'))) + '"\n')),
             #Books
             ('BOOK',
                 ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
@@ -16532,9 +16516,7 @@ class ItemStats:
                 _('rRmble - Right Motor Strength'), _('Rumble - Duration'), _('Override - Damage To Weapon Mult'), _('Attack Shots/Sec'),
                 _('Reload Time'), _('Jam Time'), _('Aim Arc'), _('Ramble - Wavelangth'), _('Limb Dmg Mult'), _('Sight Usage'),
                 _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'),
-                _('Strength Req'), _('Regen Rate'), _('Kill Impulse'), _('Impulse Dist'), _('Skill Req'),
-                _('Critical Damage'), _('Crit % Mult'),
-                _('VATS Skill'), _('VATS Dam. Mult'), _('VATS AP'))) + '"\n')),
+                _('Critical Damage'), _('Crit % Mult'))) + '"\n')),
             ):
             fid_attr_value = class_fid_attr_value[group]
             if not fid_attr_value: continue
@@ -16928,9 +16910,9 @@ class CompleteItemData:
         self.type_stats = {'ALCH':{},'AMMO':{},'ARMO':{},'ARMA':{},'BOOK':{},'INGR':{},'KEYM':{},'LIGH':{},'MISC':{},'WEAP':{}}
         self.type_attrs = {
             'ALCH':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
-            'AMMO':('eid', 'full', 'weight', 'value', 'speed', 'clipRounds', 'projPerShot', 'largeIconPath', 'smallIconPath'),
-            'ARMO':('eid', 'full', 'weight', 'value', 'health', 'ar', 'dt', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
-            'ARMA':('eid', 'full', 'weight', 'value', 'health', 'ar', 'dt', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
+            'AMMO':('eid', 'full', 'speed',  'value', 'clipRounds', 'largeIconPath', 'smallIconPath'),
+            'ARMO':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
+            'ARMA':('eid', 'full', 'weight', 'value', 'health', 'ar', 'maleLargeIconPath', 'maleSmallIconPath', 'femaleLargeIconPath', 'femaleSmallIconPath'),
             'BOOK':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
             'INGR':('eid', 'full', 'weight', 'value', 'iconPath'),
             'KEYM':('eid', 'full', 'weight', 'value', 'largeIconPath', 'smallIconPath'),
@@ -16941,10 +16923,7 @@ class CompleteItemData:
                     'minRange','maxRange','animationAttackMultiplier','fireRate','overrideActionPoint','rumbleLeftMotorStrength',
                     'rumbleRightMotorStrength','rumbleDuration','overrideDamageToWeaponMult','attackShotsPerSec',
                     'reloadTime','jamTime','aimArc','rambleWavelangth','limbDmgMult','sightUsage',
-                    'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax',
-                    'strengthReq','regenRate','killImpulse','impulseDist','skillReq',
-                    'criticalDamage','criticalMultiplier',
-                    'vatsSkill','vatsDamMult','vatsAp',
+                    'semiAutomaticFireDelayMin','semiAutomaticFireDelayMax','criticalDamage','criticalMultiplier',
                     'largeIconPath', 'smallIconPath'),
             }
         self.aliases = aliases or {} #--For aliasing mod fulls
@@ -17132,19 +17111,19 @@ class CompleteItemData:
                     ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                     _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
                 #Ammo
-                ('AMMO', bolt.csvFormat('ssfifiisss')+'\n',
+                ('AMMO', bolt.csvFormat('ssfiisss')+'\n',
                     ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                    _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Speed'),_('Clip Rounds'),_('Proj/Shot'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
+                    _('Editor Id'),_('Name'),_('Speed'),_('Value'),_('Clip Rounds'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
                 #--Armor
-                ('ARMO', bolt.csvFormat('ssfiiiissssssss')+'\n',
+                ('ARMO', bolt.csvFormat('ssfiiissssssss')+'\n',
                     ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                    _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),_('DT'),
+                    _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),
                     _('Male Large Icon Path'),_('Male Small Icon Path'),_('Female Large Icon Path'),_('Female Small Icon Path'),
                     _('Male Model Path'),_('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
                 #--Armor Addon
-                ('ARMA', bolt.csvFormat('ssfiiiissssssss')+'\n',
+                ('ARMA', bolt.csvFormat('ssfiiissssssss')+'\n',
                     ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
-                    _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),_('DT'),
+                    _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('AR'),
                     _('Male Large Icon Path'),_('Male Small Icon Path'),_('Female Large Icon Path'),_('Female Small Icon Path'),
                     _('Male Model Path'),_('Female Model Path'),_('Male World Model Path'),_('Female World Model Path'))) + '"\n')),
                 #Books
@@ -17168,7 +17147,7 @@ class CompleteItemData:
                     ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                     _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Large Icon Path'),_('Small Icon Path'),_('Model'))) + '"\n')),
                 #--Weapons
-                ('WEAP', bolt.csvFormat('ssfiiiiffifffiiffffffffffffffffffifffiiffffssssss')+'\n',
+                ('WEAP', bolt.csvFormat('ssfiiiiffifffiiffffffffffffffffffifssssss')+'\n',
                     ('"' + '","'.join((_('Type'),_('Mod Name'),_('ObjectIndex'),
                     _('Editor Id'),_('Name'),_('Weight'),_('Value'),_('Health'),_('Damage'),_('Clip Size'),
                     _('Animation Multiplier'), _('Reach'), _('Ammo Use'), _('Min Spread'), _('Spread'), _('Sight Fov'), _('Base VATS To-Hit Chance'), _('Projectile Count'),
@@ -17176,9 +17155,7 @@ class CompleteItemData:
                     _('rRmble - Right Motor Strength'), _('Rumble - Duration'), _('Override - Damage To Weapon Mult'), _('Attack Shots/Sec'),
                     _('Reload Time'), _('Jam Time'), _('Aim Arc'), _('Ramble - Wavelangth'), _('Limb Dmg Mult'), _('Sight Usage'),
                     _('Semi-Automatic Fire Delay Min'), _('Semi-Automatic Fire Delay Max'),
-                    _('Strength Req'), _('Regen Rate'), _('Kill Impulse'), _('Impulse Dist'), _('Skill Req'),
                     _('Critical Damage'), _('Crit % Mult'),
-                    _('VATS Skill'), _('VATS Dam. Mult'), _('VATS AP'),
                     _('Large Icon Path'),_('Small Icon Path'),_('Model'),_('Shell Casing Model'),_('Scope Model'),_('World Model'))) + '"\n')),
                 ):
                 stats = self.type_stats[type]
@@ -21878,7 +21855,7 @@ class CellImporter(ImportPatcher):
 class GraphicsPatcher(ImportPatcher):
     """Merges changes to graphics (models and icons)."""
     name = _('Import Graphics')
-    text = _("Import graphics (models, icons, etc.) from source mods.")
+    text = _("Imjmport graphics (models, icons, etc.) from source mods.")
     tip = text
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = 'Graphics'
@@ -25118,8 +25095,7 @@ class SoundPatcher(ImportPatcher):
         for recClass in (MreAspc,):
             recAttrs_class[recClass] = ('soundLooping','useSoundFromRegion','environmentType')
         for recClass in (MreWeap,):
-            recAttrs_class[recClass] = ('soundGunShot3D','soundGunShot2D','soundGunShot3DLooping','soundMeleeSwingGunNoAmmo',
-                                        'soundBlock','soundMod1Shoot3Ds','soundMod1Shoot2D','soundLevel')
+            recAttrs_class[recClass] = ('soundGunShot3D','soundGunShot2D','soundGunShot3DLooping','soundLevel')
         #--Needs Longs
         self.longTypes = set(('MGEF','ACTI','TACT','LIGH','WTHR','CONT','DOOR','EXPL','IPCT','PROJ','ASPC','WEAP','REGN'))
 
@@ -25730,10 +25706,9 @@ class DestructiblePatcher(ImportPatcher):
         #--Type Fields
         recAttrs_class = self.recAttrs_class = {}
         recFidAttrs_class = self.recFidAttrs_class = {}
-        for recClass in (MreActi,MreAlch,MreAmmo,MreBook,MreCont,MreCrea,MreDoor,MreFurn,MreKeym,MreMisc,MreNpc,MreWeap,MreProj,MreMstt,MreTerm,MreTact,MreImod):
+        for recClass in (MreActi,MreAlch,MreAmmo,MreBook,MreCont,MreCrea,MreDoor,MreFurn,MreKeym,MreMisc,MreNpc,MreWeap,MreProj,MreMstt,MreTerm,MreTact):
             recAttrs_class[recClass] = ('destructible',)
-        self.longTypes = set(('ACTI','ALCH','AMMO','BOOK','CONT','CREA','DOOR','FURN','KEYM','MISC','NPC','WEAP','PROJ','MSTT','TERM','TACT','IMOD'))
-        #self.longTypes = set(('ACTI','ALCH','AMMO','ARMO','BOOK','CONT','CREA','DEBR','DIAL','DOOR','ENCH','EXPL','FACT','FLOR','FLST','FURN','INFO','INGR','IPDS','KEYM','LIGH','MGEF','MISC','MSTT','NOTE','NPC_','PROJ','QUST','REFR','SCPT','SOUN','SPEL','STAT','TERM','TXST','WATR','WEAP','TACT','IMOD','CHIP'))
+        self.longTypes = set(('ACTI','ALCH','AMMO','BOOK','CONT','CREA','DOOR','FURN','KEYM','MISC','NPC','WEAP','PROJ','MSTT','TERM','TACT'))
 
     def initData(self,progress):
         """Get graphics from source files."""
@@ -25868,183 +25843,6 @@ class DestructiblePatcher(ImportPatcher):
             if count: log("* %s: %d" % (type,count))
 
 ##class CBash_DestructiblePatcher(CBash_ImportPatcher):
-##    raise NotImplementedError
-#------------------------------------------------------------------------------
-class WeaponModsPatcher(ImportPatcher):
-    """Merge changes to weapon modifications."""
-    scanOrder = 27
-    editOrder = 27
-    name = _("Import Weapon Modifications")
-    text = _("Merges changes to weapon modifications.")
-    tip = text
-    autoRe = re.compile(r"^UNDEFINED$",re.I)
-    autoKey = 'WeaponMods'
-
-    #--Patch Phase ------------------------------------------------------------
-    def initPatchFile(self,patchFile,loadMods):
-        """Prepare to handle specified patch mod. All functions are called after this."""
-        Patcher.initPatchFile(self,patchFile,loadMods)
-        self.id_data = {} #--Names keyed by long fid.
-        self.srcClasses = set() #--Record classes actually provided by src mods/files.
-        self.sourceMods = self.getConfigChecked()
-        self.isActive = len(self.sourceMods) != 0
-        self.classestemp = set()
-        #--Type Fields
-        recAttrs_class = self.recAttrs_class = {}
-        recFidAttrs_class = self.recFidAttrs_class = {}
-        for recClass in (MreWeap,):
-            recAttrs_class[recClass] = ('modelWithMods','firstPersonModelWithMods','weaponMods','soundMod1Shoot3Ds','soundMod1Shoot2D',
-                                        'effectMod1','effectMod2','effectMod3','valueAMod1','valueAMod2','valueAMod3',
-                                        'valueBMod1','valueBMod2','valueBMod3','reloadAnimationMod','vatsModReqiured','scopeModel',
-                                        'dnamFlags1.hasScope','dnamFlags2.scopeFromMod')
-        self.longTypes = set(('WEAP',))
-        #self.longTypes = set(('WEAP','STAT','IMOD','SOUN'))
-
-    def initData(self,progress):
-        """Get graphics from source files."""
-        if not self.isActive: return
-        id_data = self.id_data
-        recAttrs_class = self.recAttrs_class
-        loadFactory = LoadFactory(False,*recAttrs_class.keys())
-        longTypes = self.longTypes & set(x.classType for x in recAttrs_class)
-        progress.setFull(len(self.sourceMods))
-        cachedMasters = {}
-        for index,srcMod in enumerate(self.sourceMods):
-            temp_id_data = {}
-            if srcMod not in modInfos: continue
-            srcInfo = modInfos[srcMod]
-            srcFile = ModFile(srcInfo,loadFactory)
-            masters = srcInfo.header.masters
-            srcFile.load(True)
-            srcFile.convertToLongFids(longTypes)
-            mapper = srcFile.getLongMapper()
-            for recClass,recAttrs in recAttrs_class.iteritems():
-                if recClass.classType not in srcFile.tops: continue
-                self.srcClasses.add(recClass)
-                self.classestemp.add(recClass)
-                recFidAttrs = self.recFidAttrs_class.get(recClass, None)
-                for record in srcFile.tops[recClass.classType].getActiveRecords():
-                    fid = mapper(record.fid)
-                    if recFidAttrs:
-                        #attr_fidvalue = dict((attr,record.__getattribute__(attr)) for attr in recFidAttrs)
-                        attr_fidvalue = dict((attr,reduce(getattr, attr.split('.'), record)) for attr in recFidAttrs)
-                        for fidvalue in attr_fidvalue.values():
-                            if fidvalue and (fidvalue[0] is None or fidvalue[0] not in self.patchFile.loadSet):
-                                #Ignore the record. Another option would be to just ignore the attr_fidvalue result
-                                mod_skipcount = self.patchFile.patcher_mod_skipcount.setdefault(self.name,{})
-                                mod_skipcount[srcMod] = mod_skipcount.setdefault(srcMod, 0) + 1
-                                break
-                        else:
-                            #temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
-                            temp_id_data[fid] = dict((attr,reduce(getattr, attr.split('.'), record)) for attr in recAttrs)
-                            temp_id_data[fid].update(attr_fidvalue)
-                    else:
-                        #temp_id_data[fid] = dict((attr,record.__getattribute__(attr)) for attr in recAttrs)
-                        temp_id_data[fid] = dict((attr,reduce(getattr, attr.split('.'), record)) for attr in recAttrs)
-            for master in masters:
-                if not master in modInfos: continue # or break filter mods
-                if master in cachedMasters:
-                    masterFile = cachedMasters[master]
-                else:
-                    masterInfo = modInfos[master]
-                    masterFile = ModFile(masterInfo,loadFactory)
-                    masterFile.load(True)
-                    masterFile.convertToLongFids(longTypes)
-                    cachedMasters[master] = masterFile
-                mapper = masterFile.getLongMapper()
-                for recClass,recAttrs in recAttrs_class.iteritems():
-                    if recClass.classType not in masterFile.tops: continue
-                    if recClass not in self.classestemp: continue
-                    for record in masterFile.tops[recClass.classType].getActiveRecords():
-                        fid = mapper(record.fid)
-                        if fid not in temp_id_data: continue
-                        for attr, value in temp_id_data[fid].iteritems():
-                            #if value == record.__getattribute__(attr): continue
-                            if value == reduce(getattr, attr.split('.'), record): continue
-                            else:
-                                if fid not in id_data: id_data[fid] = dict()
-                                try:
-                                    id_data[fid][attr] = temp_id_data[fid][attr]
-                                except KeyError:
-                                    id_data[fid].setdefault(attr,value)
-            progress.plus()
-        temp_id_data = None
-        self.longTypes = self.longTypes & set(x.classType for x in self.srcClasses)
-        self.isActive = bool(self.srcClasses)
-
-    def scanModFile(self, modFile, progress):
-        """Scan mod file against source data."""
-        if not self.isActive: return
-        id_data = self.id_data
-        modName = modFile.fileInfo.name
-        mapper = modFile.getLongMapper()
-        if self.longTypes:
-            modFile.convertToLongFids(self.longTypes)
-        for recClass in self.srcClasses:
-            type = recClass.classType
-            if type not in modFile.tops: continue
-            patchBlock = getattr(self.patchFile,type)
-            for record in modFile.tops[type].getActiveRecords():
-                fid = record.fid
-                if not record.longFids: fid = mapper(fid)
-                if fid not in id_data: continue
-                for attr,value in id_data[fid].iteritems():
-                    #if record.__getattribute__(attr) != value:
-                    if reduce(getattr, attr.split('.'), record) != value:
-                        patchBlock.setRecord(record.getTypeCopy(mapper))
-                        break
-
-    def buildPatch(self,log,progress):
-        """Merge last version of record with patched destructible data as needed."""
-        if not self.isActive: return
-        modFile = self.patchFile
-        keep = self.patchFile.getKeeper()
-        id_data = self.id_data
-        type_count = {}
-        for recClass in self.srcClasses:
-            type = recClass.classType
-            if type not in modFile.tops: continue
-            type_count[type] = 0
-            for record in modFile.tops[type].records:
-                fid = record.fid
-                if fid not in id_data: continue
-                for attr,value in id_data[fid].iteritems():
-                    #if isinstance(record.__getattribute__(attr),str) and isinstance(value, str):
-                    if isinstance(reduce(getattr, attr.split('.'), record),str) and isinstance(value, str):
-                        #if record.__getattribute__(attr).lower() != value.lower():
-                        if reduce(getattr, attr.split('.'), record).lower() != value.lower():
-                            break
-                        continue
-                    elif attr == 'model':
-                        try:
-                            #if record.__getattribute__(attr).modPath.lower() != value.modPath.lower():
-                            if reduce(getattr, attr.split('.'), record).modPath.lower() != value.modPath.lower():
-                                break
-                            continue
-                        except:
-                            break #assume they are not equal (ie they aren't __both__ NONE)
-                    #if record.__getattribute__(attr) != value:
-                    if reduce(getattr, attr.split('.'), record) != value:
-                        break
-                else:
-                    continue
-                for attr,value in id_data[fid].iteritems():
-                    #record.__setattr__(attr,value)
-                    sattr = attr.split('.')
-                    lastattr = sattr.pop()
-                    reduce(getattr, sattr, record).__setattr__(lastattr, value)
-                keep(fid)
-                type_count[type] += 1
-        id_data = None
-        log.setHeader('= '+self.__class__.name)
-        log(_("=== Source Mods"))
-        for mod in self.sourceMods:
-            log("* " +mod.s)
-        log(_("\n=== Modified Records"))
-        for type,count in sorted(type_count.iteritems()):
-            if count: log("* %s: %d" % (type,count))
-
-##class CBash_WeaponModsPatcher(CBash_ImportPatcher):
 ##    raise NotImplementedError
 # Patchers: 30 ----------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -31030,27 +30828,26 @@ class NamesTweak_SortInventory(MultiTweakItem):
         MultiTweakItem.__init__(self,_("Sort Inventory"),
             _('Sort item by category in barter and container screens.'),
             'sortInventory',
-            # weapon,armor,stimpak,chem,food/drink,mag,book,misc,card,ammo
-            (_('Chem>Ammo>Weapon>Armor>Food>Mag>Book>Misc>Card'),6,5,9,8,4,3,2,1,0,7),
-            (_('Ammo>Chem>Weapon>Armor>Food>Mag>Book>Misc>Card'),6,5,8,7,4,3,2,1,0,9),
-            (_('Weapon>Armor>Chem>Food>Mag>Book>Misc>Card>Ammo'),9,8,7,6,5,4,3,2,1,0),
+            # weapon,armor,stimpak,chem,food/drink,ammo
+            (_('Chem>Ammo>Weapon>Armor>Food>Misc'),3,2,6,5,1,4),
+            (_('Ammo>Chem>Weapon>Armor>Food>Misc'),3,2,5,4,1,6),
             )
 
     #--Config Phase -----------------------------------------------------------
     #--Patch Phase ------------------------------------------------------------
     def getReadClasses(self):
         """Returns load factory classes needed for reading."""
-        return (MreAmmo,MreWeap,MreArmo,MreAlch,MreBook,MreMisc,MreCcrd)
+        return (MreAmmo,MreWeap,MreArmo,MreAlch)
 
     def getWriteClasses(self):
         """Returns load factory classes needed for writing."""
-        return (MreAmmo,MreWeap,MreArmo,MreAlch,MreBook,MreMisc,MreCcrd)
+        return (MreAmmo,MreWeap,MreArmo,MreAlch)
 
     def scanModFile(self,modFile,progress,patchFile):
         """Scans specified mod file to extract info. May add record to patch mod,
         but won't alter it."""
         mapper = modFile.getLongMapper()
-        for blockType in ('AMMO','WEAP','ARMO','ALCH','BOOK','MISC','CCRD'):
+        for blockType in ('AMMO','WEAP','ARMO','ALCH'):
             modBlock = getattr(modFile,blockType)
             patchBlock = getattr(patchFile,blockType)
             id_records = patchBlock.id_records
@@ -31062,11 +30859,10 @@ class NamesTweak_SortInventory(MultiTweakItem):
     def buildPatch(self,log,progress,patchFile):
         """Edits patch file as desired. Will write to log."""
         count = {}
-        cntWeap,cntArmo,cntStim,cntChem,cntFood,cntMag,cntBook,cntMisc,cntCard,cntAmmo = self.choiceValues[self.chosen]
+        cntWeap,cntArmo,cntStim,cntChem,cntFood,cntAmmo = self.choiceValues[self.chosen]
         keep = patchFile.getKeeper()
         reHead = re.compile(r"^\x07*")
-        for cnt,type in ((cntWeap,'WEAP'),(cntArmo,'ARMO'),(cntBook,'BOOK'),(cntMisc,'MISC'),(cntCard,'CCRD'),(cntAmmo,'AMMO')):
-            if cnt == 0: continue
+        for cnt,type in ((cntWeap,'WEAP'),(cntArmo,'ARMO'),(cntAmmo,'AMMO')):
             for record in getattr(patchFile,type).records:
                 if not record.full: continue
                 if record.full[0] in '+-=[]<>': continue
@@ -31082,16 +30878,75 @@ class NamesTweak_SortInventory(MultiTweakItem):
                 record.full = reHead.sub('\x07' * cntChem, record.full)
             elif record.etype == 11: # stimpak
                 record.full = reHead.sub('\x07' * cntStim, record.full)
-            elif record.etype == 13: # alcohol
+            else:                    # food/alcohol
                 record.full = reHead.sub('\x07' * cntFood, record.full)
-            else:
-                if record.soundConsume == (GPath('Fallout3.esm'),0x07b73b): # magazine
-                    record.full = reHead.sub('\x07' * cntMag, record.full)
-                else: # food
-                    record.full = reHead.sub('\x07' * cntFood, record.full)
             keep(record.fid)
             srcMod = record.fid[0]
             count[srcMod] = count.get(srcMod,0) + 1
+        #--Log
+        log(_('* %s: %d') % (self.label,sum(count.values())))
+        for srcMod in modInfos.getOrdered(count.keys()):
+            log('  * %s: %d' % (srcMod.s,count[srcMod]))
+
+class NamesTweak_AmmoWeight(MultiTweakItem):
+    #--Config Phase -----------------------------------------------------------
+    def __init__(self):
+        MultiTweakItem.__init__(self,False,_("Append Ammo Weight"),
+            _("Append ammo weight of FWE to tail of the ammo name."),
+            'AmmoWeight',
+            (_('BB (WG 0.01)'), ' (WG %s.%s)'),
+            (_('BB (0.01)'), ' (%s.%s)'),
+            )
+
+    #--Config Phase -----------------------------------------------------------
+    #--Patch Phase ------------------------------------------------------------
+    def getReadClasses(self):
+        """Returns load factory classes needed for reading."""
+        return (MreAmmo,MreFlst)
+
+    def getWriteClasses(self):
+        """Returns load factory classes needed for writing."""
+        return (MreAmmo,MreFlst)
+
+    def scanModFile(self,modFile,progress,patchFile):
+        """Scans specified mod file to extract info. May add record to patch mod,
+        but won't alter it."""
+        mapper = modFile.getLongMapper()
+        for blockType in ('AMMO','FLST'):
+            modBlock = getattr(modFile,blockType)
+            patchBlock = getattr(patchFile,blockType)
+            id_records = patchBlock.id_records
+            for record in modBlock.getActiveRecords():
+                if mapper(record.fid) not in id_records:
+                    record = record.getTypeCopy(mapper)
+                    patchBlock.setRecord(record)
+
+    def buildPatch(self,log,progress,patchFile):
+        """Edits patch file as desired. Will write to log."""
+        count = {}
+        format = self.choiceValues[self.chosen][0]
+        keep = patchFile.getKeeper()
+        weights = {}
+        weightRe = re.compile(r"^(.*)( \(WG \d+\.\d+\))$")
+        listEidRe = re.compile(r"^AmmoWeight(\d)(\d{2})List$")
+        for record in patchFile.FLST.records:
+            m = listEidRe.match(record.eid)
+            if m:
+                weight = format % (m.group(1), m.group(2))
+                for fid in record.fids:
+                    weights[fid] = weight
+        for record in patchFile.AMMO.records:
+            if not record.full: continue
+            weight = weights.get(record.fid)
+            if weight:
+                m = weightRe.match(record.full)
+                if m:
+                    record.full = m.group(1) + weight
+                else:
+                    record.full = record.full + weight
+                keep(record.fid)
+                srcMod = record.fid[0]
+                count[srcMod] = count.get(srcMod,0) + 1
         #--Log
         log(_('* %s: %d') % (self.label,sum(count.values())))
         for srcMod in modInfos.getOrdered(count.keys()):
@@ -31118,6 +30973,7 @@ class NamesTweaker(MultiTweaker):
             ),
         NamesTweak_Potions(),
         NamesTweak_Weapons(),
+        NamesTweak_AmmoWeight(),
         ],key=lambda a: a.label.lower())
     tweaks.insert(0,NamesTweak_BodyTags())
     tweaks.append(NamesTweak_SortInventory())
@@ -34291,8 +34147,8 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                 keep(race.fid)
         #--Eye Mesh filtering
         # eye_mesh = self.eye_mesh
-        # ghoulEyeMesh = eye_mesh[(GPath('FalloutNV.esm'),0x35e4f)]
-        # hazelEyeMesh = eye_mesh[(GPath('FalloutNV.esm'),0x4255)]
+        # ghoulEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x35e4f)]
+        # hazelEyeMesh = eye_mesh[(GPath('Fallout3.esm'),0x4255)]
         # if debug:
         #     print '== Eye Mesh Filtering'
         #     print 'hazelEyeMesh',hazelEyeMesh
