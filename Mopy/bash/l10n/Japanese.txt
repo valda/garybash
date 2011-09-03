@@ -1687,7 +1687,7 @@ Getting sizes
 >>>>
 サイズ取得中
 === bash\bosh.py, 10278
-Missing master file; Neither FalloutNV.esm or Fallout3.esm exists in an unghosted state in %s - presuming that Fallout3.esm is the correct masterfile
+Missing master file; Neither Fallout3.esm exists in an unghosted state in %s - presuming that Fallout3.esm is the correct masterfile
 >>>>
 
 === bash\bosh.py, 10291
@@ -6029,7 +6029,7 @@ List Bash Tags
 === bash\basher.py, 9822
 FO3Edit Expert
 >>>>
-
+FO3Edit起動時に「確認画面スキップ」引数を渡す
 === bash\basher.py, 9830
 BOSS Disable Lock Times
 >>>>

@@ -10275,7 +10275,7 @@ class ModInfos(FileInfos):
         #    self.masterName = GPath('Fallout3.esm')
         else:
             self.masterName = GPath('Fallout3.esm')
-            deprint(_('Missing master file; Neither FalloutNV.esm or Fallout3.esm exists in an unghosted state in %s - presuming that Fallout3.esm is the correct masterfile.') % (dirs['mods'].s))
+            deprint(_('Missing master file; Neither Fallout3.esm exists in an unghosted state in %s - presuming that Fallout3.esm is the correct masterfile.') % (dirs['mods'].s))
         self.mtime_mods = {}
         self.mtime_selected = {}
         self.exGroup_mods = {}
@@ -10286,7 +10286,7 @@ class ModInfos(FileInfos):
         self.autoHeaders = set() #--Full balo headers
         self.autoGroups = {} #--Auto groups as read from group files.
         self.group_header = {}
-        #--Fallout3 version
+        #--Fallout version
         self.version_voSize = {
             '1.0':int(_("288769595")),
             '1.1':int(_("288771181")),
@@ -25077,10 +25077,8 @@ class SoundPatcher(ImportPatcher):
         for recClass in (MreMgef,):
             recAttrs_class[recClass] = ('castingSound','boltSound','hitSound','areaSound')
         for recClass in (MreActi,):
-            recAttrs_class[recClass] = ('soundLooping','soundActivation','radioTemplate')
-        for recClass in (MreTact,):
-            recAttrs_class[recClass] = ('sound','radioTemplate')
-        for recClass in (MreLigh,):
+            recAttrs_class[recClass] = ('soundLooping','soundActivation')
+        for recClass in (MreLigh,MreTact):
             recAttrs_class[recClass] = ('sound',)
         for recClass in (MreWthr,):
             recAttrs_class[recClass] = ('sounds',)

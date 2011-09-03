@@ -9791,8 +9791,8 @@ class Mods_LockTimes(Link):
         modList.RefreshUI()
 
 #------------------------------------------------------------------------------
-class Mods_Fallout3Version(Link):
-    """Specify/set Fallout 3 version."""
+class Mods_FalloutVersion(Link):
+    """Specify/set Fallout version."""
     def __init__(self,key,setProfile=False):
         Link.__init__(self)
         self.key = key
@@ -9808,7 +9808,7 @@ class Mods_Fallout3Version(Link):
     def Execute(self,event):
         """Handle selection."""
         if bosh.modInfos.voCurrent == self.key: return
-        bosh.modInfos.setFallout3Version(self.key)
+        bosh.modInfos.setFalloutVersion(self.key)
         bosh.modInfos.refresh()
         modList.RefreshUI()
         if self.setProfile:
@@ -12784,7 +12784,7 @@ class Saves_Profiles:
         arcSaves,newSaves = bosh.saveInfos.localSave,'Saves\\'
         bosh.saveInfos.setLocalSave(newSaves)
         self.swapPlugins(arcSaves,newSaves)
-        self.swapFallout3Version(newSaves)
+        self.swapFalloutVersion(newSaves)
         bashFrame.SetTitle()
         self.window.details.SetFile(None)
         modList.RefreshUI()
@@ -12797,7 +12797,7 @@ class Saves_Profiles:
         newSaves = 'Saves\\%s\\' % (profile,)
         bosh.saveInfos.setLocalSave(newSaves)
         self.swapPlugins(arcSaves,newSaves)
-        self.swapFallout3Version(newSaves)
+        self.swapFalloutVersion(newSaves)
         bashFrame.SetTitle()
         self.window.details.SetFile(None)
         bashFrame.RefreshData()
@@ -12814,11 +12814,11 @@ class Saves_Profiles:
         if newPath.exists():
             newPath.copyTo(bosh.modInfos.plugins.path)
 
-    def swapFallout3Version(self,newSaves):
-        """Swaps Fallout3 version to memorized version."""
+    def swapFalloutVersion(self,newSaves):
+        """Swaps Fallout version to memorized version."""
         voNew = bosh.saveInfos.profiles.setItemDefault(newSaves,'vFallout3',bosh.modInfos.voCurrent)
         if voNew in bosh.modInfos.voAvailable:
-            bosh.modInfos.setFallout3Version(voNew)
+            bosh.modInfos.setFalloutVersion(voNew)
 
 #------------------------------------------------------------------------------
 class Save_LoadMasters(Link):
@@ -15222,9 +15222,9 @@ def InitModLinks():
         ModList.mainMenu.append(sortMenu)
     if True: #--Versions
         versionsMenu = MenuLink("Fallout3.esm")
-        versionsMenu.links.append(Mods_Fallout3Version('1.0'))
-        versionsMenu.links.append(Mods_Fallout3Version('1.1'))
-        versionsMenu.links.append(Mods_Fallout3Version('1.4'))
+        versionsMenu.links.append(Mods_FalloutVersion('1.0'))
+        versionsMenu.links.append(Mods_FalloutVersion('1.1'))
+        versionsMenu.links.append(Mods_FalloutVersion('1.4'))
         ModList.mainMenu.append(versionsMenu)
     #--Columns ----------------------------------
     ModList.mainMenu.append(SeparatorLink())
@@ -15374,9 +15374,9 @@ def InitSaveLinks():
         SaveList.mainMenu.append(sortMenu)
     if True: #--Versions
         versionsMenu = MenuLink("Fallout3.esm")
-        versionsMenu.links.append(Mods_Fallout3Version('1.0',True))
-        versionsMenu.links.append(Mods_Fallout3Version('1.1',True))
-        versionsMenu.links.append(Mods_Fallout3Version('1.4',True))
+        versionsMenu.links.append(Mods_FalloutVersion('1.0',True))
+        versionsMenu.links.append(Mods_FalloutVersion('1.1',True))
+        versionsMenu.links.append(Mods_FalloutVersion('1.4',True))
         SaveList.mainMenu.append(versionsMenu)
     if True: #--Save Profiles
         subDirMenu = MenuLink(_("Profile"))
