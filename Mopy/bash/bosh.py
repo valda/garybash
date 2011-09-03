@@ -10869,7 +10869,7 @@ class ModInfos(FileInfos):
         self.autoHeaders = set() #--Full balo headers
         self.autoGroups = {} #--Auto groups as read from group files.
         self.group_header = {}
-        #--FalloutNV version
+        #--Fallout version
         self.version_voSize = {
             '1.0':int(_("245570393")),
             '1.4':int(_("245650747")),

@@ -9803,8 +9803,8 @@ class Mods_LockTimes(Link):
         modList.RefreshUI()
 
 #------------------------------------------------------------------------------
-class Mods_FalloutNVVersion(Link):
-    """Specify/set FalloutNV version."""
+class Mods_FalloutVersion(Link):
+    """Specify/set Fallout version."""
     def __init__(self,key,setProfile=False):
         Link.__init__(self)
         self.key = key
@@ -9820,7 +9820,7 @@ class Mods_FalloutNVVersion(Link):
     def Execute(self,event):
         """Handle selection."""
         if bosh.modInfos.voCurrent == self.key: return
-        bosh.modInfos.setFalloutNVVersion(self.key)
+        bosh.modInfos.setFalloutVersion(self.key)
         bosh.modInfos.refresh()
         modList.RefreshUI()
         if self.setProfile:
@@ -12796,7 +12796,7 @@ class Saves_Profiles:
         arcSaves,newSaves = bosh.saveInfos.localSave,'Saves\\'
         bosh.saveInfos.setLocalSave(newSaves)
         self.swapPlugins(arcSaves,newSaves)
-        self.swapFalloutNVVersion(newSaves)
+        self.swapFalloutVersion(newSaves)
         bashFrame.SetTitle()
         self.window.details.SetFile(None)
         modList.RefreshUI()
@@ -12809,7 +12809,7 @@ class Saves_Profiles:
         newSaves = 'Saves\\%s\\' % (profile,)
         bosh.saveInfos.setLocalSave(newSaves)
         self.swapPlugins(arcSaves,newSaves)
-        self.swapFalloutNVVersion(newSaves)
+        self.swapFalloutVersion(newSaves)
         bashFrame.SetTitle()
         self.window.details.SetFile(None)
         bashFrame.RefreshData()
@@ -12826,11 +12826,11 @@ class Saves_Profiles:
         if newPath.exists():
             newPath.copyTo(bosh.modInfos.plugins.path)
 
-    def swapFalloutNVVersion(self,newSaves):
-        """Swaps FalloutNV version to memorized version."""
+    def swapFalloutVersion(self,newSaves):
+        """Swaps Fallout version to memorized version."""
         voNew = bosh.saveInfos.profiles.setItemDefault(newSaves,'vFalloutNV',bosh.modInfos.voCurrent)
         if voNew in bosh.modInfos.voAvailable:
-            bosh.modInfos.setFalloutNVVersion(voNew)
+            bosh.modInfos.setFalloutVersion(voNew)
 
 #------------------------------------------------------------------------------
 class Save_LoadMasters(Link):
@@ -15238,8 +15238,8 @@ def InitModLinks():
         ModList.mainMenu.append(sortMenu)
     if True: #--Versions
         versionsMenu = MenuLink("FalloutNV.esm")
-        versionsMenu.links.append(Mods_FalloutNVVersion('1.0'))
-        versionsMenu.links.append(Mods_FalloutNVVersion('1.4'))
+        versionsMenu.links.append(Mods_FalloutVersion('1.0'))
+        versionsMenu.links.append(Mods_FalloutVersion('1.4'))
         ModList.mainMenu.append(versionsMenu)
     #--Columns ----------------------------------
     ModList.mainMenu.append(SeparatorLink())
@@ -15389,8 +15389,8 @@ def InitSaveLinks():
         SaveList.mainMenu.append(sortMenu)
     if True: #--Versions
         versionsMenu = MenuLink("FalloutNV.esm")
-        versionsMenu.links.append(Mods_FalloutNVVersion('1.0',True))
-        versionsMenu.links.append(Mods_FalloutNVVersion('1.4',True))
+        versionsMenu.links.append(Mods_FalloutVersion('1.0',True))
+        versionsMenu.links.append(Mods_FalloutVersion('1.4',True))
         SaveList.mainMenu.append(versionsMenu)
     if True: #--Save Profiles
         subDirMenu = MenuLink(_("Profile"))
