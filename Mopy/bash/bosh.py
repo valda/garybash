@@ -21855,7 +21855,7 @@ class CellImporter(ImportPatcher):
 class GraphicsPatcher(ImportPatcher):
     """Merges changes to graphics (models and icons)."""
     name = _('Import Graphics')
-    text = _("Imjmport graphics (models, icons, etc.) from source mods.")
+    text = _("Import graphics (models, icons, etc.) from source mods.")
     tip = text
     autoRe = re.compile(r"^UNDEFINED$",re.I)
     autoKey = 'Graphics'
@@ -30891,7 +30891,7 @@ class NamesTweak_SortInventory(MultiTweakItem):
 class NamesTweak_AmmoWeight(MultiTweakItem):
     #--Config Phase -----------------------------------------------------------
     def __init__(self):
-        MultiTweakItem.__init__(self,False,_("Append Ammo Weight"),
+        MultiTweakItem.__init__(self,_("Append Ammo Weight"),
             _("Append ammo weight of FWE to tail of the ammo name."),
             'AmmoWeight',
             (_('BB (WG 0.01)'), ' (WG %s.%s)'),

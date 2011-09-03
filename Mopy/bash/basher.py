@@ -11725,16 +11725,16 @@ class Mod_SetVersion(Link):
     def AppendToMenu(self,menu,window,data):
         Link.AppendToMenu(self,menu,window,data)
         self.fileInfo = window.data[data[0]]
-        menuItem = wx.MenuItem(menu,self.id,_('Version 1.32'))
+        menuItem = wx.MenuItem(menu,self.id,_('Version 0.85'))
         menu.AppendItem(menuItem)
         #print self.fileInfo.header.version
         menuItem.Enable((len(data) == 1) and (int(100*self.fileInfo.header.version) != 132))
 
     def Execute(self,event):
-        message = _("WARNING! For advanced modders only! This feature allows you to edit newer official mods in the GECK by resetting the internal file version number back to 1.32. While this will make the mod editable, it may also break the mod in some way.")
+        message = _("WARNING! For advanced modders only! This feature allows you to edit newer official mods in the GECK by resetting the internal file version number back to 0.85. While this will make the mod editable, it may also break the mod in some way.")
         if not balt.askContinue(self.window,message,'bash.setModVersion.continue',_('Set File Version')):
             return
-        self.fileInfo.header.version = 1.32
+        self.fileInfo.header.version = 0.85
         self.fileInfo.header.setChanged()
         self.fileInfo.writeHeader()
         #--Repopulate
