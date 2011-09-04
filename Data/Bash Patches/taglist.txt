@@ -1,4 +1,4 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 3090.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 3187.
 \ % A Bashed Patch suggestion for the mod above.
 
 DeadMoney.esm
@@ -11,18 +11,26 @@ Machienzo - NPC Cosmetic Fixes - Ver 1.57.esm
 % {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
 Machienzo - NPC Cosmetic Fixes.esm
 % {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+NVCE Main.esm
+% {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
 IWS-Core.esm
 % {{BASH: Delev}}
-AWorldOfPain(Preview).esm
-% {{BASH: Invent, Deflst}}
 Caliber.esm
 % {{BASH: Invent}}
+Fiends, With Style.esm
+% {{BASH: Delev}}
 FOOK - New Vegas.esm
 % {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
 Moddable Unique Weps.esm
 % {{BASH: WeaponMods}}
+AWorldOfPain(Preview).esm
+% {{BASH: Invent, Deflst}}
 MoMod.esm
 % {{BASH: Relev}}
+NSkies - Vanilla Edition.esm
+% {{BASH: C.Climate, C.Light}}
+NSkies URWLified.esm
+% {{BASH: C.Climate, C.Light}}
 Project Nevada - Equipment.esm
 % {{BASH: Delev, Invent}}
 Weapon Mod Expansion.esm
@@ -40,6 +48,10 @@ Community Bugfix Compilation Patch.esp
 % {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts, Invent}}
 Compiled Patch.esp
 % {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts}}
+JacknDianeFix.esp
+% {{BASH: Invent}}
+MarcusInvFix.esp
+% {{BASH: Invent}}
 
 BIS - Brumbek's Inventory Sorting.esp
 % {{BASH: Names}}
@@ -84,6 +96,14 @@ NVORganizedItems.esp
 
 188 Trading Post Revisited.esp
 % {{BASH: NpcFaces}}
+A Better Arcade.esp
+% {{BASH: NpcFaces, Invent}}
+A Better Boone.esp
+% {{BASH: NpcFaces, Invent}}
+A Better Cass.esp
+% {{BASH: NpcFaces, Invent}}
+A Better Veronica.esp
+% {{BASH: NpcFaces, Invent}}
 Bitter Springs Revisited.esp
 % {{BASH: NpcFaces}}
 Cuter Boone.esp
@@ -137,8 +157,12 @@ VyntageCass02.esp
 VyntageVeronica02.esp
 % {{BASH: NpcFaces}}
 
+1st Recon Revised.esp
+% {{BASH: Invent}}
 monsterranch.esp
 % {{BASH: Relev}}
+Project13 - Populated Wasteland.esp
+% {{BASH: Actors.AIPackages, Delev, Relev}}
 
 NVHarderCore.esp
 % {{BASH: Names, Stats}}
@@ -284,8 +308,6 @@ Improved Sound FX - OWB Sharing Fix.esp
 LouderGuns.esp
 % {{BASH: Sound}}
 
-Project13 - Populated Wasteland.esp
-% {{BASH: Actors.AIPackages, Delev, Relev}}
 BIS - Sprint Mod.esp
 % {{BASH: Names}}
 
@@ -296,6 +318,12 @@ Better Ammo Crafting.esp
 BetterCraftingSorting.esp
 % {{BASH: Names}}
 
+AG Shell Casing Fixes-All Five.esp
+% {{BASH: Graphics}}
+AG Shell Casing Fixes Repeater-Service-ThatGun.esp
+% {{BASH: Graphics}}
+AG Shell Casing Fixes - OWB.esp
+% {{BASH: Graphics}}
 Ahzteks Weapon Overhaul.esp
 % {{BASH: Deflst, Delev, Invent}}
 Ahzteks Pistol and SMG Replacements.esp
@@ -330,6 +358,8 @@ Moddable Anti-Materiel Rifle 2.esp
 % {{BASH: WeaponMods}}
 Moddable Unique Weps.esp
 % {{BASH: WeaponMods}}
+OWB HQ Textures Fix.esp
+% {{BASH: Graphics}}
 PlasmaRifleAwesomefied.esp
 % {{BASH: Sound, Stats}}
 Shotgun Commando.esp
@@ -432,6 +462,10 @@ BIS - Weight_Balance_v10.esp
 
 WeaponModsExpanded.esp
 % {{BASH: Invent, Delev, WeaponMods}}
+WMX-AWOP Patch.esp
+% {{BASH: WeaponMods}}
+Frequency - WMX Patch.esp
+% {{BASH: Graphics}}
 Project Nevada - WMX.esp
 % {{BASH: Graphics, Invent, Names, WeaponMods}}
 Real Weapon Names - WMX.esp
@@ -519,9 +553,17 @@ Nevada Skies - URWLified.esp
 % {{BASH: C.Climate, C.Light}}
 Nevada Skies - URWLHH.esp
 % {{BASH: C.Climate, C.Light}}
+NSkies URWLifiedOWB.esp
+% {{BASH: C.Climate, C.Light}}
+NSkies URWLifiedHH.esp
+% {{BASH: C.Climate, C.Light}}
+NSkies URWLifiedDM.esp
+% {{BASH: C.Climate, C.Light}}
 Project Westland vision.esp
 % {{BASH: C.Climate, C.Light}}
 Project Westland vision-ZionHH.esp
+% {{BASH: C.Climate, C.Light}}
+F3NVProjectRealityMkIv3.esp
 % {{BASH: C.Climate, C.Light}}
 Interior Lighting Overhaul.esp
 % {{BASH: C.Light}}
@@ -534,5 +576,7 @@ ILO-RI-Original Lucky38 Suite.esp
 ILO-RI-Dead Money.esp
 % {{BASH: C.Light}}
 ILO-RI-Honest Hearts.esp
+% {{BASH: C.Light}}
+ILO-RI-Rust Town.esp
 % {{BASH: C.Light}}
 
