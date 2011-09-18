@@ -3935,6 +3935,14 @@ class MrePack(MelRecord):
 ##        MelPgrl('PGRL','','pgrl',(FID,'reference'),'points'),
 ##    )
 ##    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+###------------------------------------------------------------------------------
+## class MrePgre(MelRecord):
+##     classType = 'PGRE'
+##     melSet = MelSet(
+##         MelBase('DATA','data_p'),
+##     )
+##     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
 #------------------------------------------------------------------------------
 class MreQust(MelRecord):
     """Quest record."""
@@ -4213,16 +4221,20 @@ class MreRefr(MelRecord):
     _parentFlags = Flags(0L,Flags.getNames('oppositeParent'))
     _actFlags = Flags(0L,Flags.getNames('useDefault', 'activate','open','openByDefault'))
     _lockFlags = Flags(0L,Flags.getNames(None, None, 'leveledLock'))
+    _destinationFlags = Flags(0L,Flags.getNames('noAlarm'))
+    _variableFlags = Flags(0L,Flags.getNames('isLongOrShort'))
     class MelRefrXloc(MelOptStruct):
         """Handle older trucated XLOC for REFR subrecord."""
         def loadData(self,record,ins,type,size,readId):
-            if size == 16:
+            if size == 20:
                 MelStruct.loadData(self,record,ins,type,size,readId)
                 return
+            #elif size == 16:
+            #    unpacked = ins.unpack('B3sIB3s',size,readId)
             elif size == 12:
-                #--Else is skipping unused2
-                unpacked = ins.unpack('B3sIB3s',size,readId)
+                unpacked = ins.unpack('B3sI4s',size,readId)
             else:
+                print ins.unpack(('%dB' % size),size)
                 raise ModError(ins.inName,_('Unexpected size encountered for REFR:XLOC subrecord: ')+str(size))
             unpacked = unpacked[:-2] + self.defaults[len(unpacked)-2:-2] + unpacked[-2:]
             setter = record.__setattr__
@@ -4241,7 +4253,7 @@ class MreRefr(MelRecord):
             insUnpack = ins.unpack
             pos = insTell()
             (type,size) = insUnpack('4sH',6,readId+'.FULL')
-            while type in ['FNAM','FULL','TNAM']:
+            while type in ['FNAM','FULL','TNAM','WMI1']:
                 if type == 'FNAM':
                     value = insUnpack('B',size,readId)
                     record.flags = MreRefr._flags(*value)
@@ -4249,13 +4261,14 @@ class MreRefr(MelRecord):
                     record.full = ins.readString(size,readId)
                 elif type == 'TNAM':
                     record.markerType, record.unused5 = insUnpack('Bs',size,readId)
+                elif type == 'WMI1':
+                    record.reputation = insUnpack('I',size,readId)
                 pos = insTell()
                 (type,size) = insUnpack('4sH',6,readId+'.FULL')
             ins.seek(pos)
             if self._debug: print ' ',record.flags,record.full,record.markerType
-
         def dumpData(self,record,out):
-            if (record.flags,record.full,record.markerType,record.unused5) != self.defaults[1:]:
+            if (record.flags,record.full,record.markerType,record.unused5,record.reputation) != self.defaults[1:]:
                 record.hasXmrk = True
             if record.hasXmrk:
                 try:
@@ -4265,35 +4278,104 @@ class MreRefr(MelRecord):
                     if value != None:
                         out.packSub0('FULL',value)
                     out.packSub('TNAM','Bs',record.markerType, record.unused5)
+                    out.packRef('WMI1',record.reputation)
                 except struct.error:
                     print self.subType,self.format,record.flags,record.full,record.markerType
                     raise
 
     melSet = MelSet(
         MelString('EDID','eid'),
+        MelOptStruct('RCLR','8B','referenceStartColorRed','referenceStartColorGreen','referenceStartColorBlue',('referenceColorUnused1',null1),
+                     'referenceEndColorRed','referenceEndColorGreen','referenceEndColorBlue',('referenceColorUnused2',null1)),
         MelFid('NAME','base'),
-        MelOptStruct('XTEL','I6f',(FID,'destinationFid'),'destinationPosX','destinationPosY',
-            'destinationPosZ','destinationRotX','destinationRotY','destinationRotZ'),
-        MelRefrXloc('XLOC','B3sI4sB3s','lockLevel',('unused1',null3),(FID,'lockKey'),('unused2',null4),(_lockFlags,'lockFlags'),('unused3',null3)),
-        MelOwnership(),
-        MelOptStruct('XESP','IB3s',(FID,'parent'),(_parentFlags,'parentFlags'),('unused4',null3)),
+        MelFid('XEZN','encounterZone'),
+        MelBase('XRGD','ragdollData'),
+        MelBase('XRGB','ragdollBipedData'),
+        MelOptStruct('XPRM','3f3IfI','primitiveBoundX','primitiveBoundY','primitiveBoundX',
+                     'primitiveColorRed','primitiveColorGreen','primitiveColorBlue','primitiveUnknown','primitiveType'),
+        MelOptStruct('XTRI','I','collisionLayer'),
+        MelBase('XMBP','multiboundPrimitiveMarker'),
+        MelOptStruct('XMBO','3f','boundHalfExtentsX','boundHalfExtentsY','boundHalfExtentsZ'),
+        MelOptStruct('XTEL','I6fI',(FID,'destinationFid'),'destinationPosX','destinationPosY',
+            'destinationPosZ','destinationRotX','destinationRotY','destinationRotZ',(_destinationFlags,'destinationFlags')),
+        MelRefrXmrk('XMRK','',('hasXmrk',False),(_flags,'flags',0L),'full','markerType',('unused5',null1),(FID,'reputation')), ####Map Marker Start Marker, wbEmpty
+        MelGroup('audioData',
+            MelBase('MMRK','audioMarker'),
+            MelBase('FULL','full_p'),
+            MelFid('CNAM','audioLocation'),
+            MelBase('BNAM','bnam_p'),
+            MelBase('MNAM','mnam_p'),
+            MelBase('NNAM','nnam_p'),
+            ),
+        MelBase('XSRF','xsrf_p'),
+        MelBase('XSRD','xsrd_p'),
         MelFid('XTRG','targetId'),
-        MelBase('XSED','seed_p'),
+        MelOptStruct('XLCM','i',('levelMod',None)),
+        MelGroup('patrolData',
+            MelStruct('XPRD','f','idleTime'),
+            MelBase('XPPA','patrolScriptMarker'),
+            MelFid('INAM', 'idle'),
+            MelStruct('SCHR','4s4I',('unused1',null4),'numRefs','compiledSize','lastIndex','scriptType'),
+            MelBase('SCDA','compiled_p'),
+            MelString('SCTX','scriptText'),
+            MelGroups('vars',
+                MelStruct('SLSD','I12sB7s','index',('unused1',null4+null4+null4),(_variableFlags,'flags',0L),('unused2',null4+null3)),
+                MelString('SCVR','name')),
+            MelScrxen('SCRV/SCRO','references'),
+            MelFid('TNAM','topic'),
+            ),
+        MelOptStruct('XRDO','fIfI','rangeRadius','broadcastRangeType','staticPercentage',(FID,'positionReference')),
+        MelOwnership(),
+        MelRefrXloc('XLOC','B3sI4sB3s4s','lockLevel',('unused1',null3),(FID,'lockKey'),('unused2',null4),(_lockFlags,'lockFlags'),('unused3',null3),('unused4',null4)),
+        MelOptStruct('XCNT','i','count'),
+        MelOptStruct('XRDS','f','radius'),
+        MelOptStruct('XHLP','f','health'),
+        MelOptStruct('XRAD','f','radiation'),
+        MelOptStruct('XCHG','f',('charge',None)),
+        MelGroup('ammo',
+            MelFid('XAMT','type'),
+            MelStruct('XAMC','I','count'),
+            ),
+        MelStructs('XPWR','II','reflectedByWaters',(FID,'reference'),'type'),
+        MelFids('XLTW','litWaters'),
+        MelStructs('XDCR','II','linkedDecals',(FID,'reference'),'unknown'), # ??
+        MelFid('XLKR','linkedReference'),
+        MelOptStruct('XCLP','8B','linkStartColorRed','linkStartColorGreen','linkStartColorBlue',('linkColorUnused1',null1),
+                     'linkEndColorRed','linkEndColorGreen','linkEndColorBlue',('linkColorUnused2',null1)),
+        MelGroup('activateParents',
+            MelStruct('XAPD','B','flags'),
+            MelStructs('XAPR','If','activateParentRefs',(FID,'reference'),'delay')
+            ),
+        MelString('XATO','activationPrompt'),
+        MelOptStruct('XESP','IB3s',(FID,'parent'),(_parentFlags,'parentFlags'),('unused6',null3)),
+        MelOptStruct('XEMI','I',(FID,'emitance')),
+        MelFid('XMBR','multiboundReference'),
+        MelOptStruct('XACT','I',(_actFlags,'actFlags',0L)), ####Action Flag
+        MelBase('ONAM','onam_p'), ####Open by Default, wbEmpty
+        MelBase('XIBS','ignoredBySandbox'),
+        MelOptStruct('XNDP','2I',(FID,'navMesh'),'unknown'),
+        MelOptStruct('XPOD','II',(FID,'portalDataRoom0'),(FID,'portalDataRoom1')),
+        MelOptStruct('XPTL','9f','portalWidth','portalHeight','portalPosX','portalPosY','portalPosZ',
+                     'portalRot1','portalRot2','portalRot3','portalRot4'),
+        MelBase('XSED','speedTreeSeed'),
         ####SpeedTree Seed, if it's a single byte then it's an offset into the list of seed values in the TREE record
         ####if it's 4 byte it's the seed value directly.
+        MelGroup('roomData',
+            MelStruct('XRMR','H2s','linkedRoomsCount','unknown'),
+            MelFids('XLRM','linkedRoom'),
+            ),
+        MelOptStruct('XOCP','9f','occlusionPlaneWidth','occlusionPlaneHeight','occlusionPlanePosX','occlusionPlanePosY','occlusionPlanePosZ',
+                     'occlusionPlaneRot1','occlusionPlaneRot2','occlusionPlaneRot3','occlusionPlaneRot4'),
+        MelOptStruct('XORD','4I',(FID,'linkedOcclusionPlane0'),(FID,'linkedOcclusionPlane1'),(FID,'linkedOcclusionPlane2'),(FID,'linkedOcclusionPlane3')),
         MelOptStruct('XLOD','3f',('lod1',None),('lod2',None),('lod3',None)), ####Distant LOD Data, unknown
-        MelOptStruct('XCHG','f',('charge',None)),
-        MelOptStruct('XHLT','i',('health',None)),
-        MelXpci('XPCI'), ####fid, unknown
-        MelOptStruct('XLCM','i',('levelMod',None)),
-        MelFid('XRTM','xrtm'), ####unknown
-        MelOptStruct('XACT','I',(_actFlags,'actFlags',0L)), ####Action Flag
-        MelOptStruct('XCNT','i','count'),
-        MelRefrXmrk('XMRK','',('hasXmrk',False),(_flags,'flags',0L),'full','markerType',('unused5',null1)), ####Map Marker Start Marker, wbEmpty
-        MelBase('ONAM','onam_p'), ####Open by Default, wbEmpty
         MelOptStruct('XSCL','f',('scale',1.0)),
-        MelOptStruct('XSOL','B',('soul',None)), ####Was entirely missing. Confirmed by creating a test mod...it isn't present in any of the official esps
         MelOptStruct('DATA','=6f',('posX',None),('posY',None),('posZ',None),('rotX',None),('rotY',None),('rotZ',None)),
+
+        ##Oblivion subrecords
+        #MelOptStruct('XHLT','i',('health',None)),
+        #MelXpci('XPCI'), ####fid, unknown
+        #MelFid('XRTM','xrtm'), ####unknown
+        #MelOptStruct('XSOL','B',('soul',None)), ####Was entirely missing. Confirmed by creating a test mod...it isn't present in any of the official esps
     )
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
@@ -6180,6 +6262,23 @@ class MreSlpd(MelRecord):
     __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
 
 #------------------------------------------------------------------------------
+class MreNavm(MelRecord):
+    """Navigation Mesh."""
+    classType = 'NAVM'
+    melSet = MelSet(
+        MelString('EDID','eid'),
+        MelStruct('NVER','I',('version',11)),
+        MelStruct('DATA','I5I',(FID,'cell'),'vertexCount','triangleCount','enternalConnectionsCount','nvcaCount','doorsCount'),
+        MelStructA('NVVX','3f','vertices','vertexX','vertexY','vertexZ'),
+        MelStructA('NVTR','6hI','triangles','vertex0','vertex1','vertex2','triangle0','triangle1','triangle2','flags'),
+        MelOptStruct('NVCA','h','nvca_p'),
+        MelStructA('NVDP','II','doors',(FID,'doorReference'),'doorUnknown'),
+        MelBase('NVGD','nvgd_p'),
+        MelStructA('NVEX','=IIH','externalConnections','nvexUnknown',(FID,'navigationMesh'),'triangle'),
+       )
+    __slots__ = MelRecord.__slots__ + melSet.getSlotsUsed()
+
+#------------------------------------------------------------------------------
 # MreRecord.type_class
 MreRecord.type_class = dict((x.classType,x) for x in (
     MreAchr, MreAcre, MreActi, MreAlch, MreAmmo, MreAnio, MreAppa, MreArmo, MreBook, MreBsgn,
@@ -6190,11 +6289,11 @@ MreRecord.type_class = dict((x.classType,x) for x in (
     MreWatr, MreWeap, MreWrld, MreWthr, MreClmt, MreCsty, MreIdle, MreLtex, MreRegn, MreSbsp,
     MreDial, MreInfo, MreTxst, MreMicn, MreFlst, MrePerk, MreExpl, MreIpct, MreIpds, MreProj,
     MreLvln, MreDebr, MreImad, MreMstt, MreNote, MreTerm, MreAvif, MreEczn, MreBptd, MreVtyp,
-    MreMusc, MrePwat, MreAspc, MreHdpt, MreDobj, MreIdlm, MreArma, MreTact,
+    MreMusc, MrePwat, MreAspc, MreHdpt, MreDobj, MreIdlm, MreArma, MreTact, MreNavm,
     MreImod, MreRepu, MreRcpe, MreRcct, MreChip, MreCsno, MreLsct, MreMset, MreAloc, MreChal,
     MreAmef, MreCcrd, MreCmny, MreCdck, MreDehy, MreHung, MreSlpd))
 MreRecord.simpleTypes = (set(MreRecord.type_class) -
-    set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL')))
+    set(('TES4','ACHR','ACRE','REFR','CELL','PGRD','ROAD','LAND','WRLD','INFO','DIAL','PGRE','NAVM')))
 
 # Mod Blocks, File ------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -6261,7 +6360,7 @@ class LoadFactory:
 
     def addClass(self,recClass):
         """Adds specified class."""
-        cellTypes = ('WRLD','ROAD','CELL','REFR','ACHR','ACRE','PGRD','LAND')
+        cellTypes = ('WRLD','ROAD','CELL','REFR','ACHR','ACRE','PGRD','LAND','PGRE','NAVM')
         if isinstance(recClass,str):
             recType = recClass
             recClass = MreRecord
@@ -6294,7 +6393,7 @@ class LoadFactory:
     def getCellTypeClass(self):
         """Returns type_class dictionary for cell objects."""
         if not self.cellType_class:
-            types = ('REFR','ACHR','ACRE','PGRD','LAND','CELL','ROAD')
+            types = ('REFR','ACHR','ACRE','PGRD','LAND','CELL','ROAD','PGRE','NAVM')
             getterRecClass = self.getRecClass
             self.cellType_class.update((x,getterRecClass(x)) for x in types)
         return self.cellType_class
@@ -6304,7 +6403,7 @@ class LoadFactory:
         if CELL and WRLD top types are expanded."""
         return (
             self.keepAll or
-            (self.recTypes & set(('REFR','ACHR','ACRE','PGRD','LAND'))) or
+            (self.recTypes & set(('REFR','ACHR','ACRE','PGRD','LAND','PGRE','NAVM'))) or
             (topType == 'WRLD' and 'LAND' in self.recTypes))
 
     def getTopClass(self,type):
@@ -6613,7 +6712,7 @@ class MobDials(MobObjects):
 class MobCell(MobBase):
     """Represents cell block structure -- including the cell and all subrecords."""
 
-    __slots__ = MobBase.__slots__ + ['cell','persistent','distant','temp','land','pgrd']
+    __slots__ = MobBase.__slots__ + ['cell','persistent','distant','temp','land','pgrd','pgre','navm']
 
     def __init__(self,header,loadFactory,cell,ins=None,unpack=False):
         """Initialize."""
@@ -6623,6 +6722,8 @@ class MobCell(MobBase):
         self.temp=[]
         self.land=None
         self.pgrd=None
+        self.pgre=None
+        self.navm=None
         MobBase.__init__(self,header,loadFactory,ins,unpack)
 
     def loadData(self,ins,endPos):
@@ -6658,10 +6759,16 @@ class MobCell(MobBase):
                 if   groupType ==  8: persistentAppend(record)
                 elif groupType ==  9: tempAppend(record)
                 elif groupType == 10: distantAppend(record)
+                else:
+                    raise ModError(self.inName,'Extra subgroup %d in cell children group.' % groupType)
             elif recType == 'LAND':
                 self.land=recClass(header,ins,False)
             elif recType == 'PGRD':
                 self.pgrd=recClass(header,ins,False)
+            elif recType == 'PGRE':
+                self.pgre=recClass(header,ins,False)
+            elif recType == 'NAVM':
+                self.navm=recClass(header,ins,False)
         self.setChanged()
 
     def getSize(self):
@@ -6683,6 +6790,8 @@ class MobCell(MobBase):
         size = sum(recHeaderSize + x.getSize() for x in self.temp)
         if self.pgrd: size += recHeaderSize + self.pgrd.getSize()
         if self.land: size += recHeaderSize + self.land.getSize()
+        if self.pgre: size += recHeaderSize + self.pgre.getSize()
+        if self.navm: size += recHeaderSize + self.navm.getSize()
         return size + recHeaderSize*bool(size)
 
     def getDistantSize(self):
@@ -6695,9 +6804,9 @@ class MobCell(MobBase):
         count = 1 + includeGroups # Cell GRUP and CELL record
         if self.persistent:
             count += len(self.persistent) + includeGroups
-        if self.temp or self.pgrd or self.land:
+        if self.temp or self.pgrd or self.land or self.pgre or self.navm:
             count += len(self.temp) + includeGroups
-            count += bool(self.pgrd) + bool(self.land)
+            count += bool(self.pgrd) + bool(self.land) + bool(self.pgre) + bool(self.navm)
         if self.distant:
             count += len(self.distant) + includeGroups
         return count
@@ -6729,12 +6838,16 @@ class MobCell(MobBase):
             out.writeGroup(self.getPersistentSize(),self.cell.fid,8,self.stamp,self.stamp2)
             for record in self.persistent:
                 record.dump(out)
-        if self.temp or self.pgrd or self.land:
+        if self.temp or self.pgrd or self.land or self.pgre or self.navm:
             out.writeGroup(self.getTempSize(),self.cell.fid,9,self.stamp,self.stamp2)
             if self.pgrd:
                 self.pgrd.dump(out)
             if self.land:
                 self.land.dump(out)
+            if self.pgre:
+                self.pgre.dump(out)
+            if self.navm:
+                self.navm.dump(out)
             for record in self.temp:
                 record.dump(out)
         if self.distant:
@@ -6757,6 +6870,10 @@ class MobCell(MobBase):
             self.land.convertFids(mapper,toLong)
         if self.pgrd:
             self.pgrd.convertFids(mapper,toLong)
+        if self.pgre:
+            self.pgre.convertFids(mapper,toLong)
+        if self.navm:
+            self.navm.convertFids(mapper,toLong)
 
     def updateMasters(self,masters):
         """Updates set of master names according to masters actually used."""
@@ -6771,6 +6888,10 @@ class MobCell(MobBase):
             self.land.updateMasters(masters)
         if self.pgrd:
             self.pgrd.updateMasters(masters)
+        if self.pgre:
+            self.pgre.updateMasters(masters)
+        if self.navm:
+            self.navm.updateMasters(masters)
 
     def updateRecords(self,srcBlock,mapper,mergeIds):
         """Updates any records in 'self' that exist in 'srcBlock'."""
@@ -6778,7 +6899,7 @@ class MobCell(MobBase):
         selfGetter = self.__getattribute__
         srcGetter = srcBlock.__getattribute__
         selfSetter = self.__setattr__
-        for attr in ('cell','pgrd','land'):
+        for attr in ('cell','pgrd','land','pgre','navm'):
             myRecord = selfGetter(attr)
             record = srcGetter(attr)
             if myRecord and record:
@@ -6803,10 +6924,14 @@ class MobCell(MobBase):
             self.pgrd = None
         if self.land and self.land.fid not in keepIds:
             self.land = None
+        if self.pgre and self.pgre.fid not in keepIds:
+            self.pgre = None
+        if self.navm and self.navm.fid not in keepIds:
+            self.navm = None
         self.temp       = [x for x in self.temp if x.fid in keepIds]
         self.persistent = [x for x in self.persistent if x.fid in keepIds]
         self.distant    = [x for x in self.distant if x.fid in keepIds]
-        if self.pgrd or self.land or self.persistent or self.temp or self.distant:
+        if self.pgrd or self.land or self.pgre or self.navm or self.persistent or self.temp or self.distant:
             keepIds.add(self.cell.fid)
         self.setChanged()
 

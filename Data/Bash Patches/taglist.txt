@@ -1,4 +1,4 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 3187.
+\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 3255.
 \ % A Bashed Patch suggestion for the mod above.
 
 DeadMoney.esm
@@ -12,7 +12,9 @@ Machienzo - NPC Cosmetic Fixes - Ver 1.57.esm
 Machienzo - NPC Cosmetic Fixes.esm
 % {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
 NVCE Main.esm
-% {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+% {{BASH: Actors.ACBS, Actors.AIPackages, Invent, NPC.Race, NpcFaces}}
+NVCE Main (Faces Only).esm
+% {{BASH: Actors.ACBS, Deactivate, Filter, NPC.Race, NpcFaces}}
 IWS-Core.esm
 % {{BASH: Delev}}
 Caliber.esm
@@ -247,7 +249,7 @@ PMT - Reduced Caps and Item Value.esp
 PMT - More Demanding Hardcore.esp
 % {{BASH: Stats}}
 PMT - Destructible Ordnance.esp
-% {{BASH: Destructable}}
+% {{BASH: Destructible}}
 PMT - Deadlier Combat.esp
 % {{BASH: Stats}}
 PMT - Deadlier Combat Mk II.esp
@@ -375,10 +377,14 @@ DragonskinNCRPersonnelWearingOutfits.esp
 % {{BASH: Relev}}
 Hereticus Faction Armors Fading.esp
 % {{BASH: Names}}
+HHType3tribalhands.esp
+% {{BASH:Body-F}}
 JillBSAA Multicolor.esp
 % {{BASH: Invent}}
 Powered Power Armor.esp
 % {{BASH: Deflst}}
+Seeker Veronica.esp
+% {{BASH: Invent}}
 
 AWOP-AhztekWeaponPatch.esp
 % {{BASH: Invent}}
