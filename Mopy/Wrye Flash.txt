@@ -11,16 +11,38 @@
 * Please **NEVER** post a question about Wrye Flash in the topic of original Wrye Bash.
 
 == License ===================================================================
-Wrye Flash is released under Version 2 of the GNU General Public License. See enclosed gpl.txt file for license00 details.
+Wrye Bash and Wrye Flash are released under Version 2 of the GNU General Public License. See enclosed [[license.txt]] file for license details, or visit the [[http://www.gnu.org/copyleft/gpl.html|GNU Website]] for information on all of their licenses.
+
+=== Packaged Programs
+Additionally, Wrye Bash comes packaged with the following programs:
+* BOSS API (Better Oblivion Sorting Software API)
+  * Website: [[http://code.google.com/p/better-oblivion-sorting-software/|Googlecode]]
+  * License: API - [[http://www.gnu.org/licenses/gpl.html|GPL 3.0]], Documentation - [[http://www.gnu.org/licenses/fdl.html|GNU FDL 1.3]].
+  * Usage: Wrye Bash uses this libarary to modify Load Order, and retrieve Bash Tag suggestions and Dirty mod information from BOSS's plugin databases.
+* CBash
+  * Website: [[http://sourceforge.net/projects/cbash/|SourceForge]]
+  * License: Triple-license [[http://www.mozilla.org/MPL/|MPL 1.1]]/[[http://www.gnu.org/copyleft/gpl.html|GPL 2.0]]/[[http://www.gnu.org/licenses/lgpl.html|LGPL 2.1]]
+  * Modifications:
+    * cint.py - some changes made that have not yet been merged into the CBash SVN repository.  These are committed to the Wrye Bash SVN repository.
+    * C/C++ Source Code: Version 0.5.1 - 0.5.3 of CBash are built off modified source code, which can be found in the Wrye Bash SVN repository, [[http://oblivionworks.svn.sourceforge.net/viewvc/oblivionworks/Programs/CBash/|here]].
+* 7zip:
+  * Website: [[http://www.7-zip.org/|7zip.org]]
+  * License: [[http://www.gnu.org/licenses/lgpl.html|LGPL]]
+  * Usage: Wrye Bash uses 7z to pack and unpack archives.
+* LZMA SDK:
+  * Website: [[http://www.7-zip.org/sdk.html|7zip.org]]
+  * License: Plublic Domain
+  * Usage: Wrye Bash uses lzma.exe from the SDK to unpack OBMM compressed data streams.
 
 == Versions ===================================================================
 {{CONTENTS=0}}
 **All versions by Wrye team and or Valda unless otherwise noted.**
 
-=== 15.1 [09/20/2011]
+=== 15.1 [04/02/2012]
 * Added a NAVM (Navi-mesh) record support.
 * Fixed a REFR record structure.
 * Fixed a bug in the FalloutNV.esm version swapping.
+* Support for BOSS 2.0 (from WryeBash 296svn).
 
 === 14.4 [08/20/2011]
 * Fixed a bug that doesn't newline in the first line of plugins.txt.
