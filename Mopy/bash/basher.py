@@ -14000,6 +14000,7 @@ class App_Button(Link):
         exePathArgs (tuple): (exePath,*exeArgs)
         exePathArgs (list):  [exePathArgs,altExePathArgs,...]"""
         Link.__init__(self)
+        self.mainMenu = Links()
         self.gButton = None
         if isinstance(exePathArgs, list):
             use = exePathArgs[0]
@@ -14240,31 +14241,20 @@ class App_BOSS(App_Button):
             statusBar.SetStatusText(' '.join(exeArgs),1)
             cwd = bolt.Path.getcwd()
             exePath.head.setcwd()
-            with balt.Progress(_("Executing BOSS")) as progress:
-                version = bosh.configHelpers.bossVersion
-                if settings.get('bash.mods.autoGhost') and not version:
-                    progress(0.05,_("Processing... deghosting mods"))
-                    for fileName in bosh.modInfos:
-                        bosh.modInfos[fileName].setGhost(False)
-                if version >= 1:
-                    if version <= 2 and (settings['BOSS.AlwaysUpdate'] or wx.GetKeyState(85)):
-                        # Disable for BOSS 1.8+ (specified in the BOSS.ini now)
-                        exeArgs += ('-u',) # Update - BOSS version 1.6+
-                    if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
-                        exeArgs += ('-r 2',) # Revert level 2 - BOSS version 1.6+
-                    elif wx.GetKeyState(82):
-                        exeArgs += ('-r 1',) # Revert level 1 - BOSS version 1.6+
-                    if wx.GetKeyState(83):
-                        exeArgs += ('-s',) # Silent Mode - BOSS version 1.6+
-                    if wx.GetKeyState(67): #c - print crc calculations in BOSS log.
-                        exeArgs += ('-c',)
-                if version in [1, 393217]:
-                    if wx.GetKeyState(86):
-                        exeArgs += ('-V-',) # Disable version parsing - syntax BOSS version 1.6 - 1.6.1
-                elif version >= 393218:
-                    if wx.GetKeyState(86) or wx.GetKeyState(78):
-                        exeArgs += ('-n',) # Disable version parsing - syntax BOSS version 1.6.2+
-                progress(0.05,_("Processing... launching BOSS."))
+            with balt.Progress(_(u"Executing BOSS")) as progress:
+                if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
+                    exeArgs += (u'-r 2',) # Revert level 2 - BOSS version 1.6+
+                elif wx.GetKeyState(82):
+                    exeArgs += (u'-r 1',) # Revert level 1 - BOSS version 1.6+
+                if wx.GetKeyState(83):
+                    exeArgs += (u'-s',) # Silent Mode - BOSS version 1.6+
+                if wx.GetKeyState(67): #c - print crc calculations in BOSS log.
+                    exeArgs += (u'-c',)
+                if bosh.dirs['boss'].join('BOSS.exe').version >= (2,0,0,0):
+                    # After version 2.0, need to pass in the -g argument
+                    #exeArgs += (u'-g%s' % bush.game.name,)
+                    exeArgs += (u'-g%s' % u'Fallout3',)
+                progress(0.05,_(u"Processing... launching BOSS."))
                 try:
                     subprocess.call((exePath.s,) + exeArgs[1:], startupinfo=bosh.startupinfo, close_fds=bolt.close_fds)
                     if settings['BOSS.ClearLockTimes']:
@@ -14273,15 +14263,16 @@ class App_BOSS(App_Button):
                         # And refresh to get the new times so WB will keep the order that BOSS specifies
                         bosh.modInfos.refresh(doInfos=False)
                 except Exception, error:
-                    print error
-                    print _("Used Path: %s") % exePath.s
-                    print _("Used Arguments: "), exeArgs
-                    print
-                    raise
+                    balt.showError(bashFrame,
+                                   (_(u"Used Path: %s") % exePath.s + u'\n' +
+                                    _(u"Used Arguments: %s") % exeArgs),
+                                   _(u'Could not launch BOSS'))
                 finally:
                     cwd.setcwd()
         else:
-            raise StateError('Application missing: %s' % self.exePath.s)
+            bolt.showError(bashFrame,
+                           _(u'Application missing: %s') % self.exePath.s,
+                           _(u'Could not launch BOSS'))
 
 #------------------------------------------------------------------------------
 class Fallout3_Button(App_Button):
@@ -14628,7 +14619,7 @@ def InitStatusBar():
     elif version < 0: version = 0
     BashStatusBar.buttons.append( #BOSS --
         App_BOSS(
-            (bosh.dirs['app'].join('Data','BOSS-F.bat'),bosh.dirs['app'].join('Data','BOSS.exe'),bosh.dirs['app'].join('BOSS','BOSS.exe'))[version],
+            (bosh.dirs['boss'].join(u'BOSS.exe')),
             Image(GPath(bosh.dirs['images'].join('Boss'+bosh.inisettings['IconSize']+'.png'))),
             _("Launch BOSS")))
     if bosh.inisettings['ShowModelingToolLaunchers']:
