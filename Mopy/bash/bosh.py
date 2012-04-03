@@ -85,7 +85,7 @@ import balt
 import bolt
 import bush
 from bolt import BoltError, AbstractError, ArgumentError, StateError, UncodedError, PermissionError
-from bolt import _, LString, Unicode, Encode, GPath, Flags, DataDict, SubProgress, cstrip, deprint, delist
+from bolt import _, LString, Unicode, Encode, GPath, Flags, DataDict, SubProgress, cstrip, deprint, delist, sio
 from cint import *
 import bapi
 
@@ -10398,8 +10398,7 @@ class ModInfo(FileInfo):
         """Returns a dirty message from BOSS."""
         if modInfos.table.getItem(self.name,'ignoreDirty',False):
             return (False,'')
-        crc = self.cachedCrc()
-        return configHelpers.getDirtyMessage(crc)
+        return configHelpers.getDirtyMessage(self.name)
 
     #--Header Editing ---------------------------------------------------------
     def getHeader(self):
@@ -11504,66 +11503,76 @@ class ModInfos(FileInfos):
         else:
             return None
 
-    def getModList(self,fileInfo=None,wtxt=False):
+    def getModList(self,showCRC=False,showVersion=True,fileInfo=None,wtxt=False):
         """Returns mod list as text. If fileInfo is provided will show mod list
         for its masters. Otherwise will show currently loaded mods."""
         #--Setup
-        log = bolt.LogFile(stringBuffer())
-        head = ('','=== ')[wtxt]
-        bul = ('','* ')[wtxt]
-        sMissing = (_('----> MISSING MASTER: '),_('  * __Missing Master:__ '))[wtxt]
-        sDelinquent = (_('----> Delinquent MASTER: '),_('  * __Delinquent Master:__ '))[wtxt]
-        sImported = ('**','&bull; &bull;')[wtxt]
-        if fileInfo:
-            masters = set(fileInfo.header.masters)
-            missing = sorted([x for x in masters if x not in self])
-            log.setHeader(head+_('Missing Masters for: ')+fileInfo.name.s)
-            for mod in missing:
-                log(bul+'xx '+mod.s)
-            log.setHeader(head+_('Masters for: ')+fileInfo.name.s)
-            present = set(x for x in masters if x in self)
-            if fileInfo.name in self: #--In case is bashed patch
-                present.add(fileInfo.name)
-            merged,imported = self.getSemiActive(present)
-        else:
-            log.setHeader(head+_('Active Mod Files:'))
-            masters = set(self.ordered)
-            merged,imported = self.merged,self.imported
-        headers = set(mod for mod in self.data if mod.s[0] in '.=+')
-        allMods = masters | merged | imported | headers
-        allMods = self.getOrdered([x for x in allMods if x in self])
-        #--List
-        modIndex,header = 0, None
-        if not wtxt: log('[spoiler][xml]', False)
-        for name in allMods:
-            if name in masters:
-                prefix = bul+'%02X' % (modIndex)
-                modIndex += 1
-            elif name in headers:
-                match = re.match('^[\.+= ]*(.*?)\.es[pm]',name.s)
-                if match: name = GPath(match.group(1))
-                header = bul+'==  ' +name.s
-                continue
-            elif name in merged:
-                prefix = bul+'++'
+        with sio() as out:
+            log = bolt.LogFile(out)
+            head,bul,sMissing,sDelinquent,sImported = (
+                u'=== ',
+                u'* ',
+                _(u'  * __Missing Master:__ '),
+                _(u'  * __Delinquent Master:__ '),
+                u'&bull; &bull;'
+                ) if wtxt else (
+                u'',
+                u'',
+                _(u'----> MISSING MASTER: '),
+                _(u'----> Delinquent MASTER: '),
+                u'**')
+            if fileInfo:
+                masters = set(fileInfo.header.masters)
+                missing = sorted([x for x in masters if x not in self])
+                log.setHeader(head+_(u'Missing Masters for: ')+fileInfo.name.s)
+                for mod in missing:
+                    log(bul+u'xx '+mod.s)
+                log.setHeader(head+_(u'Masters for: ')+fileInfo.name.s)
+                present = set(x for x in masters if x in self)
+                if fileInfo.name in self: #--In case is bashed patch
+                    present.add(fileInfo.name)
+                merged,imported = self.getSemiActive(present)
             else:
-                prefix = bul+sImported
-            version = self.getVersion(name)
-            if header:
-                log(header)
-                header = None
-            if version:
-                log(_('%s  %s  [Version %s] [CRC: %08X]') % (prefix,name.s,version,self[name].cachedCrc()))
-            else:
-                log('%s  %s [CRC: %08X]' % (prefix,name.s,self[name].cachedCrc()))
-            if name in masters:
-                for master2 in self[name].header.masters:
-                    if master2 not in self:
-                        log(sMissing+master2.s)
-                    elif self.getOrdered((name,master2))[1] == master2:
-                        log(sDelinquent+master2.s)
-        if not wtxt: log('[/xml][/spoiler]')
-        return bolt.winNewLines(log.out.getvalue())
+                log.setHeader(head+_(u'Active Mod Files:'))
+                masters = set(self.ordered)
+                merged,imported = self.merged,self.imported
+            headers = set(mod for mod in self.data if mod.s[0] in u'.=+')
+            allMods = masters | merged | imported | headers
+            allMods = self.getOrdered([x for x in allMods if x in self])
+            #--List
+            modIndex,header = 0, None
+            if not wtxt: log(u'[spoiler][xml]', False)
+            for name in allMods:
+                if name in masters:
+                    prefix = bul+u'%02X' % (modIndex)
+                    modIndex += 1
+                elif name in headers:
+                    match = re.match(u'^[\.+= ]*(.*?)\.es[pm]',name.s,flags=re.U)
+                    if match: name = GPath(match.group(1))
+                    header = bul+u'==  ' +name.s
+                    continue
+                elif name in merged:
+                    prefix = bul+u'++'
+                else:
+                    prefix = bul+sImported
+                if header:
+                    log(header)
+                    header = None
+                text = u'%s  %s' % (prefix,name.s,)
+                if showVersion:
+                    version = self.getVersion(name)
+                    if version: text += _(u'  [Version %s]') % (version)
+                if showCRC:
+                    text +=_(u'  [CRC: %08X]') % (self[name].cachedCrc())
+                log(text)
+                if name in masters:
+                    for master2 in self[name].header.masters:
+                        if master2 not in self:
+                            log(sMissing+master2.s)
+                        elif self.getOrdered((name,master2))[1] == master2:
+                            log(sDelinquent+master2.s)
+            if not wtxt: log(u'[/xml][/spoiler]')
+            return bolt.winNewLines(log.out.getvalue())
 
     def getTagList(self,modList=None):
         """Returns the list as wtxt of current bash tags (but doesn't say what ones are applied via a patch).
@@ -12191,8 +12200,8 @@ class ConfigHelpers:
             # BOSS 2.0+ stores the masterlist/userlist in a subdirectory
             #self.bossMasterPath = dirs['boss'].join(bush.game.name,u'masterlist.txt')
             #self.bossUserPath = dirs['boss'].join(bush.game.name,u'userlist.txt')
-            self.bossMasterPath = dirs['boss'].join(u'Fallout: New Vegas'.replace(u':',''),u'masterlist.txt')
-            self.bossUserPath = dirs['boss'].join(u'Fallout: New Vegas'.replace(u':',''),u'userlist.txt')
+            self.bossMasterPath = dirs['boss'].join(u'Fallout New Vegas',u'masterlist.txt')
+            self.bossUserPath = dirs['boss'].join(u'Fallout New Vegas',u'userlist.txt')
         else:
             self.bossMasterPath = dirs['boss'].join(u'masterlist.txt')
             self.bossUserPath = dirs['boss'].join(u'userlist.txt')
@@ -12297,7 +12306,8 @@ class ConfigHelpers:
             shouldDeactivateB = [x for x in active if u'NoMerge' in modInfos[x].getBashTags() and x in modInfos.mergeable]
             shouldActivateA = [x for x in imported if u'MustBeActiveIfImported' in modInfos[x].getBashTags() and x not in active]
             #--Mods with invalid TES4 version
-            invalidVersion = [(x,unicode(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in bush.game.esp.validHeaderVersions]
+            #invalidVersion = [(x,unicode(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in bush.game.esp.validHeaderVersions]
+            invalidVersion = [(x,unicode(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in (1.32,1.33,1.34)]
             if True:
                 #--Look for dirty edits
                 shouldClean = {}
