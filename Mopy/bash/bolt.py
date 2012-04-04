@@ -174,7 +174,8 @@ if os.path.exists(languagePkl):
     _translator = cPickle.load(pklFile)
     pklFile.close()
     def _(text,encode=True):
-        text = Encode(text,'mbcs')
+        #text = Encode(text,'mbcs')
+        if isinstance(text,unicode): text = text.encode('mbcs')
         if encode: text = reEscQuote.sub("'",text.encode('string_escape'))
         head,core,tail = reTrans.match(text).groups()
         if core and core in _translator:

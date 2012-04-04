@@ -14241,20 +14241,20 @@ class App_BOSS(App_Button):
             statusBar.SetStatusText(' '.join(exeArgs),1)
             cwd = bolt.Path.getcwd()
             exePath.head.setcwd()
-            with balt.Progress(_(u"Executing BOSS")) as progress:
+            with balt.Progress(_("Executing BOSS")) as progress:
                 if wx.GetKeyState(82) and wx.GetKeyState(wx.WXK_SHIFT):
-                    exeArgs += (u'-r 2',) # Revert level 2 - BOSS version 1.6+
+                    exeArgs += ('-r 2',) # Revert level 2 - BOSS version 1.6+
                 elif wx.GetKeyState(82):
-                    exeArgs += (u'-r 1',) # Revert level 1 - BOSS version 1.6+
+                    exeArgs += ('-r 1',) # Revert level 1 - BOSS version 1.6+
                 if wx.GetKeyState(83):
-                    exeArgs += (u'-s',) # Silent Mode - BOSS version 1.6+
+                    exeArgs += ('-s',) # Silent Mode - BOSS version 1.6+
                 if wx.GetKeyState(67): #c - print crc calculations in BOSS log.
-                    exeArgs += (u'-c',)
+                    exeArgs += ('-c',)
                 if bosh.dirs['boss'].join('BOSS.exe').version >= (2,0,0,0):
                     # After version 2.0, need to pass in the -g argument
-                    #exeArgs += (u'-g%s' % bush.game.name,)
-                    exeArgs += (u'-g%s' % u'Fallout3',)
-                progress(0.05,_(u"Processing... launching BOSS."))
+                    #exeArgs += ('-g%s' % bush.game.name,)
+                    exeArgs += ('-g%s' % u'Fallout3',)
+                progress(0.05,_("Processing... launching BOSS."))
                 try:
                     subprocess.call((exePath.s,) + exeArgs[1:], startupinfo=bosh.startupinfo, close_fds=bolt.close_fds)
                     if settings['BOSS.ClearLockTimes']:
@@ -14264,15 +14264,15 @@ class App_BOSS(App_Button):
                         bosh.modInfos.refresh(doInfos=False)
                 except Exception, error:
                     balt.showError(bashFrame,
-                                   (_(u"Used Path: %s") % exePath.s + u'\n' +
-                                    _(u"Used Arguments: %s") % exeArgs),
-                                   _(u'Could not launch BOSS'))
+                                   (_("Used Path: %s") % exePath.s + '\n' +
+                                    _("Used Arguments: %s") % exeArgs),
+                                   _('Could not launch BOSS'))
                 finally:
                     cwd.setcwd()
         else:
             bolt.showError(bashFrame,
-                           _(u'Application missing: %s') % self.exePath.s,
-                           _(u'Could not launch BOSS'))
+                           _('Application missing: %s') % self.exePath.s,
+                           _('Could not launch BOSS'))
 
 #------------------------------------------------------------------------------
 class Fallout3_Button(App_Button):
