@@ -39,7 +39,8 @@ Additionally, Wrye Bash comes packaged with the following programs:
 **All versions by Wrye team and or Valda unless otherwise noted.**
 
 === 15.2 [04/04/2012]
-* Fixed the problem that could not start Mod Checker.
+* Fixed a bug that could not start Mod Checker.
+* Fixed a bug that fails in starting of BOSS in non-unicode mode.
 
 === 15.1 [04/02/2012]
 * Added a NAVM (Navi-mesh) record support.

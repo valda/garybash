@@ -11510,68 +11510,74 @@ class ModInfos(FileInfos):
         with sio() as out:
             log = bolt.LogFile(out)
             head,bul,sMissing,sDelinquent,sImported = (
-                u'=== ',
-                u'* ',
-                _(u'  * __Missing Master:__ '),
-                _(u'  * __Delinquent Master:__ '),
-                u'&bull; &bull;'
+                '=== ',
+                '* ',
+                _('  * __Missing Master:__ '),
+                _('  * __Delinquent Master:__ '),
+                '&bull; &bull;'
                 ) if wtxt else (
-                u'',
-                u'',
-                _(u'----> MISSING MASTER: '),
-                _(u'----> Delinquent MASTER: '),
-                u'**')
+                '',
+                '',
+                _('----> MISSING MASTER: '),
+                _('----> Delinquent MASTER: '),
+                '**')
             if fileInfo:
                 masters = set(fileInfo.header.masters)
                 missing = sorted([x for x in masters if x not in self])
-                log.setHeader(head+_(u'Missing Masters for: ')+fileInfo.name.s)
+                log.setHeader(head+Unicode(_('Missing Masters for: '))+fileInfo.name.s)
                 for mod in missing:
-                    log(bul+u'xx '+mod.s)
-                log.setHeader(head+_(u'Masters for: ')+fileInfo.name.s)
+                    log(bul+'xx '+mod.s)
+                log.setHeader(head+_('Masters for: ')+fileInfo.name.s)
                 present = set(x for x in masters if x in self)
                 if fileInfo.name in self: #--In case is bashed patch
                     present.add(fileInfo.name)
                 merged,imported = self.getSemiActive(present)
             else:
-                log.setHeader(head+_(u'Active Mod Files:'))
+                log.setHeader(head+_('Active Mod Files:'))
                 masters = set(self.ordered)
                 merged,imported = self.merged,self.imported
-            headers = set(mod for mod in self.data if mod.s[0] in u'.=+')
+            headers = set(mod for mod in self.data if mod.s[0] in '.=+')
             allMods = masters | merged | imported | headers
             allMods = self.getOrdered([x for x in allMods if x in self])
             #--List
             modIndex,header = 0, None
-            if not wtxt: log(u'[spoiler][xml]', False)
+            bUseUnicode = inisettings['EnableUnicode']
+            if not wtxt: log('[spoiler][xml]', False)
             for name in allMods:
                 if name in masters:
-                    prefix = bul+u'%02X' % (modIndex)
+                    prefix = bul+'%02X' % (modIndex)
                     modIndex += 1
                 elif name in headers:
-                    match = re.match(u'^[\.+= ]*(.*?)\.es[pm]',name.s,flags=re.U)
+                    match = re.match('^[\.+= ]*(.*?)\.es[pm]',name.s,flags=re.U)
                     if match: name = GPath(match.group(1))
-                    header = bul+u'==  ' +name.s
+                    header = bul+'==  ' +name.s
                     continue
                 elif name in merged:
-                    prefix = bul+u'++'
+                    prefix = bul+'++'
                 else:
                     prefix = bul+sImported
                 if header:
                     log(header)
                     header = None
-                text = u'%s  %s' % (prefix,name.s,)
+                text = '%s  %s' % (prefix,name.s,)
                 if showVersion:
                     version = self.getVersion(name)
-                    if version: text += _(u'  [Version %s]') % (version)
+                    if version: text += _('  [Version %s]') % (version)
                 if showCRC:
-                    text +=_(u'  [CRC: %08X]') % (self[name].cachedCrc())
+                    text +=_('  [CRC: %08X]') % (self[name].cachedCrc())
+                if not bUseUnicode and isinstance(text,unicode): text = text.encode('mbcs')
                 log(text)
                 if name in masters:
                     for master2 in self[name].header.masters:
                         if master2 not in self:
-                            log(sMissing+master2.s)
+                            text = sMissing+master2.s
+                            if not bUseUnicode and isinstance(text,unicode): text = text.encode('mbcs')
+                            log(text)
                         elif self.getOrdered((name,master2))[1] == master2:
-                            log(sDelinquent+master2.s)
-            if not wtxt: log(u'[/xml][/spoiler]')
+                            text = sDelinquent+master2.s
+                            if not bUseUnicode and isinstance(text,unicode): text = text.encode('mbcs')
+                            log(text)
+            if not wtxt: log('[/xml][/spoiler]')
             return bolt.winNewLines(log.out.getvalue())
 
     def getTagList(self,modList=None):
@@ -12147,18 +12153,18 @@ class ConfigHelpers:
         #  Wrye Bash will use the higher version.
 
         # Detect locally installed (into game folder) BOSS
-        if dirs['app'].join(u'BOSS',u'BOSS.exe').exists():
-            dirs['boss'] = dirs['app'].join(u'BOSS')
+        if dirs['app'].join('BOSS','BOSS.exe').exists():
+            dirs['boss'] = dirs['app'].join('BOSS')
         else:
-            dirs['boss'] = GPath(u'C:\\**DNE**')
+            dirs['boss'] = GPath('C:\\**DNE**')
         # Detect globally installed (into Program Files) BOSS
         try:
             import _winreg
             for hkey in (_winreg.HKEY_CURRENT_USER, _winreg.HKEY_LOCAL_MACHINE):
-                for wow6432 in (u'',u'Wow6432Node\\'):
+                for wow6432 in ('','Wow6432Node\\'):
                     try:
-                        key = _winreg.OpenKey(hkey,u'Software\\%sBoss' % wow6432)
-                        value = _winreg.QueryValueEx(key,u'Installed Path')
+                        key = _winreg.OpenKey(hkey,'Software\\%sBoss' % wow6432)
+                        value = _winreg.QueryValueEx(key,'Installed Path')
                     except:
                         continue
                     if value[1] != _winreg.REG_SZ: continue
@@ -12174,37 +12180,37 @@ class ConfigHelpers:
 
         # Load up the API from the BOSS directory first
         try:
-            bapi.Init(dirs['boss'].join(u'API').s)
+            bapi.Init(dirs['boss'].join('API').s)
             if bapi.BAPI:
-                deprint(u'Loaded the BOSS API from:',dirs['boss'].join(u'API').s)
+                deprint('Loaded the BOSS API from:',dirs['boss'].join('API').s)
         except bapi.BossVersionError:
             deprint(u"The BOSS API found in BOSS's installation directory (%s) is not compatible with Wrye Bash's usage." % dirs['boss'].s)
         # Load up the API from the compiled directory if that failed
         if not bapi.BAPI:
             deprint(u"The BOSS API in BOSS's installation directory (%s) either does not exist, or could not be loaded." % dirs['boss'].s)
-            deprint(u'Loading the BOSS API shipped with Wrye Bash.')
+            deprint('Loading the BOSS API shipped with Wrye Bash.')
             bapi.Init(dirs['compiled'].s)
             # That didn't work either - Wrye Bash isn't installed correctly
         if not bapi.BAPI:
-            raise bolt.BoltError(u'A compatible BOSS API could not be loaded.')
+            raise bolt.BoltError('A compatible BOSS API could not be loaded.')
 
         global boss
         #boss = bapi.BossDb(GPath(dirs['mods'].s).s,bush.game.name)
-        boss = bapi.BossDb(GPath(dirs['mods'].s).s,u'Fallout: New Vegas')
-        deprint(u'Using BOSS API version:', bapi.version)
+        boss = bapi.BossDb(GPath(dirs['mods'].s).s,'Fallout: New Vegas')
+        deprint('Using BOSS API version:', bapi.version)
         bapi.RegisterCallback(bapi.BOSS_API_WARN_LO_MISMATCH,
                               ConfigHelpers.bossLOMismatchCallback)
 
-        self.bossVersion = dirs['boss'].join(u'BOSS.exe').version
+        self.bossVersion = dirs['boss'].join('BOSS.exe').version
         if self.bossVersion >= (2,0,0,0):
             # BOSS 2.0+ stores the masterlist/userlist in a subdirectory
-            #self.bossMasterPath = dirs['boss'].join(bush.game.name,u'masterlist.txt')
-            #self.bossUserPath = dirs['boss'].join(bush.game.name,u'userlist.txt')
-            self.bossMasterPath = dirs['boss'].join(u'Fallout New Vegas',u'masterlist.txt')
-            self.bossUserPath = dirs['boss'].join(u'Fallout New Vegas',u'userlist.txt')
+            #self.bossMasterPath = dirs['boss'].join(bush.game.name,'masterlist.txt')
+            #self.bossUserPath = dirs['boss'].join(bush.game.name,'userlist.txt')
+            self.bossMasterPath = dirs['boss'].join('Fallout New Vegas','masterlist.txt')
+            self.bossUserPath = dirs['boss'].join('Fallout New Vegas','userlist.txt')
         else:
-            self.bossMasterPath = dirs['boss'].join(u'masterlist.txt')
-            self.bossUserPath = dirs['boss'].join(u'userlist.txt')
+            self.bossMasterPath = dirs['boss'].join('masterlist.txt')
+            self.bossUserPath = dirs['boss'].join('userlist.txt')
         self.bossMasterTime = None
         self.bossUserTime = None
         #--Bash Tags
@@ -12235,18 +12241,18 @@ class ConfigHelpers:
                     self.bossUserTime = path.mtime
                     return
                 except bapi.BossError:
-                    deprint(u'An error occured while using the BOSS API:',traceback=True)
+                    deprint('An error occured while using the BOSS API:',traceback=True)
             if not firstTime: return
         #--No masterlist, use the taglist
-        taglist = dirs['mods'].join(u'Bash Patches',u'taglist.txt')
+        taglist = dirs['mods'].join('Bash Patches','taglist.txt')
         if not taglist.exists():
-            raise bolt.BoltError(u'Data\\Bash Patches\\taglist.txt could not be found.  Please ensure Wrye Bash is installed correctly.')
+            raise bolt.BoltError('Data\\Bash Patches\\taglist.txt could not be found.  Please ensure Wrye Bash is installed correctly.')
         try:
             self.tagCache = {}
             boss.Load(taglist.s)
         except bapi.BossError:
-            deprint(u'An error occure while parsing taglist.txt with the BOSS API.', traceback=True)
-            raise bolt.BoltError(u'An error occured while parsing taglist.txt with the BOSS API.')
+            deprint('An error occure while parsing taglist.txt with the BOSS API.', traceback=True)
+            raise bolt.BoltError('An error occured while parsing taglist.txt with the BOSS API.')
 
     def getBashTags(self,modName):
         """Retrieves bash tags for given file."""
@@ -12275,7 +12281,7 @@ class ConfigHelpers:
     def refreshRuleSets(self):
         """Reloads ruleSets if file dates have changed."""
         name_ruleSet = self.name_ruleSet
-        reRulesFile = re.compile(u'Rules.txt$',re.I|re.U)
+        reRulesFile = re.compile('Rules.txt$',re.I|re.U)
         ruleFiles = set(x for x in dirs['patches'].list() if reRulesFile.search(x.s))
         for name in name_ruleSet.keys():
             if name not in ruleFiles: del name_ruleSet[name]
@@ -12294,17 +12300,17 @@ class ConfigHelpers:
         merged = modInfos.merged
         imported = modInfos.imported
         activeMerged = active | merged
-        warning = u'=== <font color=red>'+_(u'WARNING:')+u'</font> '
+        warning = '=== <font color=red>'+_('WARNING:')+'</font> '
         #--Header
         with sio() as out:
             log = bolt.LogFile(out)
-            log.setHeader(u'= '+_(u'Check Mods'),True)
-            log(_(u'This is a report on your currently active/merged mods.'))
+            log.setHeader('= '+_('Check Mods'),True)
+            log(_('This is a report on your currently active/merged mods.'))
             #--Mergeable/NoMerge/Deactivate tagged mods
             shouldMerge = active & modInfos.mergeable
-            shouldDeactivateA = [x for x in active if u'Deactivate' in modInfos[x].getBashTags()]
-            shouldDeactivateB = [x for x in active if u'NoMerge' in modInfos[x].getBashTags() and x in modInfos.mergeable]
-            shouldActivateA = [x for x in imported if u'MustBeActiveIfImported' in modInfos[x].getBashTags() and x not in active]
+            shouldDeactivateA = [x for x in active if 'Deactivate' in modInfos[x].getBashTags()]
+            shouldDeactivateB = [x for x in active if 'NoMerge' in modInfos[x].getBashTags() and x in modInfos.mergeable]
+            shouldActivateA = [x for x in imported if 'MustBeActiveIfImported' in modInfos[x].getBashTags() and x not in active]
             #--Mods with invalid TES4 version
             #invalidVersion = [(x,unicode(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in bush.game.esp.validHeaderVersions]
             invalidVersion = [(x,unicode(round(modInfos[x].header.version,6))) for x in active if round(modInfos[x].header.version,6) not in (1.32,1.33,1.34)]
@@ -12320,84 +12326,84 @@ class ConfigHelpers:
                         scan.append(modInfos[x])
                 if scanDirty:
                     try:
-                        with balt.Progress(_(u'Scanning for Dirty Edits...'),u'\n'+u' '*60,parent=scanDirty,abort=True) as progress:
+                        with balt.Progress(_('Scanning for Dirty Edits...'),'\n'+' '*60,parent=scanDirty,abort=True) as progress:
                             ret = ModCleaner.scan_Many(scan,ModCleaner.ITM|ModCleaner.UDR,progress)
                             for i,mod in enumerate(scan):
                                 udrs,itms,fog = ret[i]
-                                if mod.name == GPath(u'Unofficial Oblivion Patch.esp'): itms.discard((GPath(u'Oblivion.esm'),0x00AA3C))
-                                if mod.header.author in (u'BASHED PATCH',u'BASHED LISTS'): itms = set()
+                                if mod.name == GPath('Unofficial Oblivion Patch.esp'): itms.discard((GPath('Oblivion.esm'),0x00AA3C))
+                                if mod.header.author in ('BASHED PATCH','BASHED LISTS'): itms = set()
                                 if udrs or itms:
                                     cleanMsg = []
                                     if udrs:
-                                        cleanMsg.append(u'UDR(%i)' % len(udrs))
+                                        cleanMsg.append('UDR(%i)' % len(udrs))
                                     if itms:
-                                        cleanMsg.append(u'ITM(%i)' % len(itms))
-                                    cleanMsg = u', '.join(cleanMsg)
+                                        cleanMsg.append('ITM(%i)' % len(itms))
+                                    cleanMsg = ', '.join(cleanMsg)
                                     shouldClean[mod.name] = cleanMsg
                     except bolt.CancelError:
                         pass
-            shouldCleanMaybe = [(x,modInfos[x].getDirtyMessage()[1]) for x in active if not modInfos[x].getDirtyMessage()[0] and modInfos[x].getDirtyMessage()[1] != u'']
+            shouldCleanMaybe = [(x,modInfos[x].getDirtyMessage()[1]) for x in active if not modInfos[x].getDirtyMessage()[0] and modInfos[x].getDirtyMessage()[1] != '']
             for mod in tuple(shouldMerge):
-                if u'NoMerge' in modInfos[mod].getBashTags():
+                if 'NoMerge' in modInfos[mod].getBashTags():
                     shouldMerge.discard(mod)
             if shouldMerge:
-                log.setHeader(u'=== '+_(u'Mergeable'))
-                log(_(u'Following mods are active, but could be merged into the bashed patch.'))
+                log.setHeader('=== '+_('Mergeable'))
+                log(_('Following mods are active, but could be merged into the bashed patch.'))
                 for mod in sorted(shouldMerge):
-                    log(u'* __'+mod.s+u'__')
+                    log('* __'+mod.s+'__')
             if shouldDeactivateB:
-                log.setHeader(u'=== '+_(u'NoMerge Tagged Mods'))
-                log(_(u'Following mods are tagged NoMerge and should be deactivated and imported into the bashed patch but are currently active.'))
+                log.setHeader('=== '+_('NoMerge Tagged Mods'))
+                log(_('Following mods are tagged NoMerge and should be deactivated and imported into the bashed patch but are currently active.'))
                 for mod in sorted(shouldDeactivateB):
-                    log(u'* __'+mod.s+u'__')
+                    log('* __'+mod.s+'__')
             if shouldDeactivateA:
-                log.setHeader(u'=== '+_(u'Deactivate Tagged Mods'))
-                log(_(u'Following mods are tagged Deactivate and should be deactivated and imported into the bashed patch but are currently active.'))
+                log.setHeader('=== '+_('Deactivate Tagged Mods'))
+                log(_('Following mods are tagged Deactivate and should be deactivated and imported into the bashed patch but are currently active.'))
                 for mod in sorted(shouldDeactivateA):
-                    log(u'* __'+mod.s+u'__')
+                    log('* __'+mod.s+'__')
             if shouldActivateA:
-                log.setHeader(u'=== '+_(u'MustBeActiveIfImported Tagged Mods'))
-                log(_(u'Following mods to work correctly have to be active as well as imported into the bashed patch but are currently only imported.'))
+                log.setHeader('=== '+_('MustBeActiveIfImported Tagged Mods'))
+                log(_('Following mods to work correctly have to be active as well as imported into the bashed patch but are currently only imported.'))
                 for mod in sorted(shouldActivateA):
-                    log(u'* __'+mod.s+u'__')
+                    log('* __'+mod.s+'__')
             if shouldClean:
-                log.setHeader(u'=== '+_(u'Mods that need cleaning with TES4Edit'))
-                log(_(u'Following mods have identical to master (ITM) records, deleted records (UDR), or other issues that should be fixed with TES4Edit.  Visit the [[!http://cs.elderscrolls.com/constwiki/index.php/TES4Edit_Cleaning_Guide|TES4Edit Cleaning Guide]] for more information.'))
+                log.setHeader('=== '+_('Mods that need cleaning with TES4Edit'))
+                log(_('Following mods have identical to master (ITM) records, deleted records (UDR), or other issues that should be fixed with TES4Edit.  Visit the [[!http://cs.elderscrolls.com/constwiki/index.php/TES4Edit_Cleaning_Guide|TES4Edit Cleaning Guide]] for more information.'))
                 for mod in sorted(shouldClean.keys()):
-                    log(u'* __'+mod.s+u':__  %s' % shouldClean[mod])
+                    log('* __'+mod.s+':__  %s' % shouldClean[mod])
             if shouldCleanMaybe:
-                log.setHeader(u'=== '+_(u'Mods with special cleaning instructions'))
-                log(_(u'Following mods have special instructions for cleaning with TES4Edit'))
+                log.setHeader('=== '+_('Mods with special cleaning instructions'))
+                log(_('Following mods have special instructions for cleaning with TES4Edit'))
                 for mod in sorted(shouldCleanMaybe):
-                    log(u'* __'+mod[0].s+u':__  '+mod[1])
+                    log('* __'+mod[0].s+':__  '+mod[1])
             elif scanDirty and not shouldClean:
-                log.setHeader(u'=== '+_(u'Mods that need cleaning with TES4Edit'))
-                log(_(u'Congratulations all mods appear clean.'))
+                log.setHeader('=== '+_('Mods that need cleaning with TES4Edit'))
+                log(_('Congratulations all mods appear clean.'))
             if invalidVersion:
-                log.setHeader(u'=== '+_(u'Mods with non standard TES4 versions'))
-                log(_(u"Following mods have a TES4 version that isn't recognized as one of the standard versions (0.8 and 1.0).  It is untested what effect this can have on the game, but presumably Oblivion will refuse to load anything above 1.0"))
+                log.setHeader('=== '+_('Mods with non standard TES4 versions'))
+                log(_("Following mods have a TES4 version that isn't recognized as one of the standard versions (0.8 and 1.0).  It is untested what effect this can have on the game, but presumably Oblivion will refuse to load anything above 1.0"))
                 for mod in sorted(invalidVersion):
-                    log(u'* __'+mod[0].s+u':__  '+mod[1])
+                    log('* __'+mod[0].s+':__  '+mod[1])
             #--Missing/Delinquent Masters
             if showModList:
-                log(u'\n'+modInfos.getModList(showCRC,showVersion,wtxt=True).strip())
+                log('\n'+modInfos.getModList(showCRC,showVersion,wtxt=True).strip())
             else:
-                log.setHeader(warning+_(u'Missing/Delinquent Masters'))
+                log.setHeader(warning+_('Missing/Delinquent Masters'))
                 previousMods = set()
                 for mod in modInfos.ordered:
                     loggedMod = False
                     for master in modInfos[mod].header.masters:
                         if master not in active:
-                            label = _(u'MISSING')
+                            label = _('MISSING')
                         elif master not in previousMods:
-                            label = _(u'DELINQUENT')
+                            label = _('DELINQUENT')
                         else:
-                            label = u''
+                            label = ''
                         if label:
                             if not loggedMod:
-                                log(u'* '+mod.s)
+                                log('* '+mod.s)
                                 loggedMod = True
-                            log(u'  * __%s__ %s' %(label,master.s))
+                            log('  * __%s__ %s' %(label,master.s))
                     previousMods.add(mod)
             #--Rule Sets
             if showRuleSets:
@@ -12405,54 +12411,54 @@ class ConfigHelpers:
                 for fileName in sorted(self.name_ruleSet):
                     ruleSet = self.name_ruleSet[fileName]
                     modRules = ruleSet.modGroups
-                    log.setHeader(u'= ' + fileName.s[:-4],True)
+                    log.setHeader('= ' + fileName.s[:-4],True)
                     if ruleSet.header: log(ruleSet.header)
                     #--One ofs
                     for modSet in ruleSet.onlyones:
                         modSet &= activeMerged
                         if len(modSet) > 1:
-                            log.setHeader(warning+_(u'Only one of these should be active/merged'))
+                            log.setHeader(warning+_('Only one of these should be active/merged'))
                             for mod in sorted(modSet):
-                                log(u'* '+mod.s)
+                                log('* '+mod.s)
                     #--Mod Rules
                     for modGroup in ruleSet.modGroups:
                         if not modGroup.isActive(activeMerged): continue
-                        modList = u' + '.join([x.s for x in modGroup.getActives(activeMerged)])
+                        modList = ' + '.join([x.s for x in modGroup.getActives(activeMerged)])
                         if showNotes and modGroup.notes:
-                            log.setHeader(u'=== '+_(u'NOTES: ') + modList )
+                            log.setHeader('=== '+_('NOTES: ') + modList )
                             log(modGroup.notes)
                         if showConfig:
-                            log.setHeader(u'=== '+_(u'CONFIGURATION: ') + modList )
-                            #    + _(u'\nLegend: x: Active, +: Merged, -: Inactive'))
+                            log.setHeader('=== '+_('CONFIGURATION: ') + modList )
+                            #    + _('\nLegend: x: Active, +: Merged, -: Inactive'))
                             for ruleType,ruleMod,comment in modGroup.config:
-                                if ruleType != u'o': continue
-                                if ruleMod in active: bullet = u'x'
-                                elif ruleMod in merged: bullet = u'+'
-                                elif ruleMod in imported: bullet = u'*'
-                                else: bullet = u'o'
-                                log(u'%s __%s__ -- %s' % (bullet,ruleMod.s,comment))
+                                if ruleType != 'o': continue
+                                if ruleMod in active: bullet = 'x'
+                                elif ruleMod in merged: bullet = '+'
+                                elif ruleMod in imported: bullet = '*'
+                                else: bullet = 'o'
+                                log('%s __%s__ -- %s' % (bullet,ruleMod.s,comment))
                         if showSuggest:
-                            log.setHeader(u'=== '+_(u'SUGGESTIONS: ') + modList)
+                            log.setHeader('=== '+_('SUGGESTIONS: ') + modList)
                             for ruleType,ruleMod,comment in modGroup.suggest:
-                                if ((ruleType == u'x' and ruleMod not in activeMerged) or
-                                    (ruleType == u'+' and (ruleMod in active or ruleMod not in merged)) or
-                                    (ruleType == u'-' and ruleMod in activeMerged) or
-                                    (ruleType == u'-+' and ruleMod in active)
+                                if ((ruleType == 'x' and ruleMod not in activeMerged) or
+                                    (ruleType == '+' and (ruleMod in active or ruleMod not in merged)) or
+                                    (ruleType == '-' and ruleMod in activeMerged) or
+                                    (ruleType == '-+' and ruleMod in active)
                                     ):
-                                    log(u'* __%s__ -- %s' % (ruleMod.s,comment))
-                                elif ruleType == u'e' and not dirs['mods'].join(ruleMod).exists():
-                                    log(u'* '+comment)
+                                    log('* __%s__ -- %s' % (ruleMod.s,comment))
+                                elif ruleType == 'e' and not dirs['mods'].join(ruleMod).exists():
+                                    log('* '+comment)
                         if showWarn:
                             log.setHeader(warning + modList)
                             for ruleType,ruleMod,comment in modGroup.warn:
-                                if ((ruleType == u'x' and ruleMod not in activeMerged) or
-                                    (ruleType == u'+' and (ruleMod in active or ruleMod not in merged)) or
-                                    (ruleType == u'-' and ruleMod in activeMerged) or
-                                    (ruleType == u'-+' and ruleMod in active)
+                                if ((ruleType == 'x' and ruleMod not in activeMerged) or
+                                    (ruleType == '+' and (ruleMod in active or ruleMod not in merged)) or
+                                    (ruleType == '-' and ruleMod in activeMerged) or
+                                    (ruleType == '-+' and ruleMod in active)
                                     ):
-                                    log(u'* __%s__ -- %s' % (ruleMod.s,comment))
-                                elif ruleType == u'e' and not dirs['mods'].join(ruleMod).exists():
-                                    log(u'* '+comment)
+                                    log('* __%s__ -- %s' % (ruleMod.s,comment))
+                                elif ruleType == 'e' and not dirs['mods'].join(ruleMod).exists():
+                                    log('* '+comment)
             return log.out.getvalue()
 
 # TankDatas -------------------------------------------------------------------
@@ -14128,7 +14134,7 @@ class InstallerArchive(Installer):
         bUseUnicode = inisettings['EnableUnicode']
         log = bolt.LogFile(stringBuffer())
         if bUseUnicode:
-            log.setHeader(_(u'Package Structure:'))
+            log.setHeader(_('Package Structure:'))
             log(u'[spoiler][xml]', False)
             reList = re.compile(u'(Solid|Path|Size|CRC|Attributes|Method) = (.*?)(?:\r\n|\n)')
             file = u''
