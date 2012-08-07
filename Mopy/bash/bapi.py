@@ -19,7 +19,7 @@ BAPI = None
 version = None
 
 # Version of BOSS API this Python script is written for.
-PythonAPIVersion = (2,0)
+PythonAPIVersion = (2,1)
 
 DebugLevel = 0
 # DebugLevel
@@ -34,7 +34,7 @@ class BossVersionError(Exception):
     pass
 
 def Init(path):
-    """Called automatically by importing bapi.  Can also be called manaully
+    """Called automatically by importing bapi.  Can also be called manually
        by the user to reload BAPI, pointing to a different path to the dll.
    """
 
@@ -155,9 +155,9 @@ def Init(path):
                  'ERROR_FILE_DELETE_FAIL',
                  'ERROR_FILE_NOT_UTF8',
                  'ERROR_FILE_NOT_FOUND',
-                 'ERROR_MASTER_TIME_READ_FAIL',
-                 'ERROR_MOD_TIME_READ_FAIL',
-                 'ERROR_MOD_TIME_WRITE_FAIL',
+				 'ERROR_FILE_RENAME_FAIL',
+                 'ERROR_TIMESTAMP_READ_FAIL',
+                 'ERROR_TIMESTAMP_WRITE_FAIL',
                  'ERROR_PARSE_FAIL',
                  'ERROR_CONDITION_EVAL_FAIL',
                  'ERROR_NO_MEM',
@@ -186,7 +186,7 @@ def Init(path):
         details = c_uint8_p()
         ret = _CGetLastErrorDetails(byref(details))
         if ret != BOSS_API_OK:
-            raise Exception(u'An error occured while getting the details of a BOSS API error:\nOriginal error: %i\nResulting error: %s' % (return_code, ret))
+            raise Exception(u'An error occurred while getting the details of a BOSS API error: %i' % (ret))
         return unicode(details.value,'utf8')
 
     def RegisterCallback(errorCode,callback):
@@ -337,12 +337,16 @@ def Init(path):
     _CGetDirtyMessage = BAPI.GetDirtyMessage
     _CGetDirtyMessage.restype = BossErrorCheck
     _CGetDirtyMessage.argtypes = [boss_db, c_uint8_p, c_uint8_p_p, c_uint32_p]
+    ## uint32_t DumpMinimal(boss_db db, const uint8_t *file, const bool overwrite)
+    _CDumpMinimal = BAPI.DumpMinimal
+    _CDumpMinimal.restype = BossErrorCheck
+    _CDumpMinimal.argtypes = [boss_db, c_uint8_p, c_bool]
 
     # =========================================================================
     # Class Wrapper
     # =========================================================================
     class BossDb(object):
-        def __init__(self,dataPath,game='Oblivion'):
+        def __init__(self,gamePath,game='Oblivion'):
             """ game can be one of the BOSS_API_GAME_*** codes, or one of the
                 aliases defined above in the 'games' dictionary."""
             if isinstance(game,basestring):
@@ -352,7 +356,7 @@ def Init(path):
                     raise Exception('Game "%s" is not recognized' % game)
             self.tags = {}   # BashTag map
             self._DB = boss_db()
-            _CCreateBossDb(byref(self._DB),game,_enc(dataPath))
+            _CCreateBossDb(byref(self._DB),game,_enc(gamePath))
             # Get Load Order Method
             method = c_uint32()
             _CGetLoadOrderMethod(self._DB,byref(method))
@@ -376,6 +380,7 @@ def Init(path):
         def Load(self, masterlist, userlist=None):
             # Load masterlist/userlist
             _CLoad(self._DB, _enc(masterlist), _enc(userlist) if userlist else None)
+            _CEvalConditionals(self._DB)
             self._GetBashTags()
 
         def EvalConditionals(self):
@@ -446,7 +451,7 @@ def Init(path):
             _CGetLoadOrder(self._DB, byref(plugins), byref(num))
             return [GPath(_uni(plugins[i])) for i in xrange(num.value)]
         def _GetLoadOrder(self):
-            ret = BossDb.LoadOrderList(self.GetLoadOrder())
+            ret = self.LoadOrderList(self.GetLoadOrder())
             ret.SetBossDb(self)
             return ret
         def SetLoadOrder(self, plugins):
@@ -556,7 +561,7 @@ def Init(path):
 
             ## ActivePlugins.count('test.esp')
             def count(self,item):
-                return 1 if x in self else 0
+                return 1 if item in self else 0
 
         def GetActivePlugins(self):
             plugins = c_uint8_p_p()
@@ -571,7 +576,7 @@ def Init(path):
                     raise
             return [GPath(_uni(plugins[i])) for i in xrange(num.value)]
         def _GetActivePlugins(self):
-            ret = BossDb.ActivePluginsList(self.GetActivePlugins())
+            ret = self.ActivePluginsList(self.GetActivePlugins())
             ret.SetBossDb(self)
             return ret
         def SetActivePlugins(self,plugins):
@@ -611,6 +616,9 @@ def Init(path):
             clean = c_uint32()
             _CGetDirtyMessage(self._DB,_enc(plugin),byref(message),byref(clean))
             return (_uni(message.value),clean.value)
+            
+        def DumpMinimal(self,file,overwrite):
+            _CDumpMinimal(self._DB,_enc(file),overwrite)
 
         # ---------------------------------------------------------------------
         # Utility Functions (not added by the API, pure Python)

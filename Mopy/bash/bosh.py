@@ -10181,6 +10181,7 @@ class FileInfos(DataDict):
         fileInfo = self[oldName]
         #--File system
         newPath = self.dir.join(newName)
+        oldIndex = boss.GetPluginLoadOrder(oldName)
         if fileInfo.isGhost: newPath += '.ghost'
         oldPath = fileInfo.getPath()
         oldPath.moveTo(newPath)
@@ -10190,6 +10191,7 @@ class FileInfos(DataDict):
         self[newName] = self[oldName]
         del self[oldName]
         self.table.moveRow(oldName,newName)
+        boss.SetPluginLoadOrder(newName, oldIndex)
         #--Done
         fileInfo.madeBackup = False
 
@@ -11563,11 +11565,7 @@ class ConfigHelpers:
         """Initialialize."""
         #--Boss Master List or if that doesn't exist use the taglist
         # version notes:
-        #  Support for < 1.8 is dropped.  Support is for
-        #  1.8+, additionally, the BOSS API v2.0 is bundled with
-        #  Wrye Bash.  If a higher version of the BOSS API is detected
-        #  as installed, and it's compatibly with Wrye Bash's bapi.py,
-        #  Wrye Bash will use the higher version.
+        #  Support for < 1.8 is dropped. Support is for 1.8+.
 
         # Detect locally installed (into game folder) BOSS
         if dirs['app'].join('BOSS','BOSS.exe').exists():
@@ -11595,25 +11593,16 @@ class ConfigHelpers:
         except ImportError:
             pass
 
-        # Load up the API from the BOSS directory first
-        try:
-            bapi.Init(dirs['boss'].join('API').s)
-            if bapi.BAPI:
-                deprint('Loaded the BOSS API from:',dirs['boss'].join('API').s)
-        except bapi.BossVersionError:
-            deprint(u"The BOSS API found in BOSS's installation directory (%s) is not compatible with Wrye Bash's usage." % dirs['boss'].s)
-        # Load up the API from the compiled directory if that failed
+        
+        bapi.Init(dirs['compiled'].s)
+        # That didn't work - Wrye Bash isn't installed correctly
         if not bapi.BAPI:
-            deprint(u"The BOSS API in BOSS's installation directory (%s) either does not exist, or could not be loaded." % dirs['boss'].s)
-            deprint('Loading the BOSS API shipped with Wrye Bash.')
-            bapi.Init(dirs['compiled'].s)
-            # That didn't work either - Wrye Bash isn't installed correctly
-        if not bapi.BAPI:
-            raise bolt.BoltError('A compatible BOSS API could not be loaded.')
+            raise bolt.BoltError('The BOSS API could not be loaded.')
+            
 
         global boss
         #boss = bapi.BossDb(GPath(dirs['mods'].s).s,bush.game.name)
-        boss = bapi.BossDb(GPath(dirs['mods'].s).s,'Fallout 3')
+        boss = bapi.BossDb(GPath(dirs['app'].s).s,'Fallout 3')
         deprint('Using BOSS API version:', bapi.version)
         bapi.RegisterCallback(bapi.BOSS_API_WARN_LO_MISMATCH,
                               ConfigHelpers.bossLOMismatchCallback)
@@ -11642,7 +11631,8 @@ class ConfigHelpers:
         """Called whenever a mismatched loadorder.txt and plugins.txt is found"""
         # Force a rewrite of both plugins.txt and loadorder.txt
         # In other words, use what's in loadorder.txt to write plugins.txt
-        boss.LoadOrder = boss.LoadOrder
+        modInfos.plugins.loadLoadOrder()
+        modInfos.plugins.saveLoadOrder()
 
     def refresh(self,firstTime=False):
         """Reloads tag info if file dates have changed."""
@@ -11655,7 +11645,7 @@ class ConfigHelpers:
                 try:
                     boss.Load(path.s,userpath.s)
                     self.bossMasterTime = path.mtime
-                    self.bossUserTime = path.mtime
+                    self.bossUserTime = userpath.mtime
                     return
                 except bapi.BossError:
                     deprint('An error occured while using the BOSS API:',traceback=True)
@@ -11668,7 +11658,7 @@ class ConfigHelpers:
             self.tagCache = {}
             boss.Load(taglist.s)
         except bapi.BossError:
-            deprint('An error occure while parsing taglist.txt with the BOSS API.', traceback=True)
+            deprint('An error occured while parsing taglist.txt with the BOSS API.', traceback=True)
             raise bolt.BoltError('An error occured while parsing taglist.txt with the BOSS API.')
 
     def getBashTags(self,modName):
