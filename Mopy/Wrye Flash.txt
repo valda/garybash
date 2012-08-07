@@ -38,6 +38,9 @@ Additionally, Wrye Bash comes packaged with the following programs:
 {{CONTENTS=0}}
 **All versions by Wrye team and or Valda unless otherwise noted.**
 
+=== 15.3 [08/08/2012]
+* Updated BAPI DLLs. Support for BOSS 2.1.
+
 === 15.2 [04/04/2012]
 * Fixed a bug that could not start Mod Checker.
 * Fixed a bug that fails in starting of BOSS in non-unicode mode.

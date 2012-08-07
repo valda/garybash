@@ -1052,9 +1052,9 @@ class Path(object):
             try:
                 return os.path.getsize(self._s)
             except WindowsError, werr:
-                    if werr.winerror != 123: raise
-                    deprint(_("Unable to determine size of %s - probably a unicode error") % self._s)
-                    return 0
+                if werr.winerror != 123: raise
+                deprint(_("Unable to determine size of %s - probably a unicode error") % self._s)
+                return 0
     @property
     def atime(self):
         try:
