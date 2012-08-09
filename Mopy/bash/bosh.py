@@ -34292,7 +34292,7 @@ class RacePatcher(SpecialPatcher,ListPatcher):
                     if race.maleRightEye.modPath != raceData['maleRightEye'].modPath:
                         race.maleRightEye.modPath = raceData['maleRightEye'].modPath
                         raceChanged = True
-            if 'femaleLeftEye' in raceData:
+            if 'maleLeftEye' in raceData:
                 if not race.maleLeftEye: deprint(_('Very odd race %s found - no male left eye assigned') % (race.full))
                 else:
                     if race.maleLeftEye.modPath != raceData['maleLeftEye'].modPath:
