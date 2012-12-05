@@ -38,6 +38,9 @@ Additionally, Wrye Bash comes packaged with the following programs:
 {{CONTENTS=0}}
 **All versions by Wrye team and or Valda unless otherwise noted.**
 
+=== 15.5 [12/05/2012]
+* Fixed a parse error when reading the EVE FNV.esp.
+
 === 15.4 [08/10/2012]
 * Fixed a bug that "KeyError: 'maleLeftEye'" in RacePatcher (Thanks for many reporters).
 * Fixed the subrecord order of weapon record (Thanks moho).

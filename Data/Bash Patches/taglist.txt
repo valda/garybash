@@ -1,588 +1,709 @@
-\ Taglist for Wrye Flash/Flash NV; derived from BOSS Masterlist revision 3255.
-\ % A Bashed Patch suggestion for the mod above.
-
 DeadMoney.esm
-% {{BASH: Deflst}}
+ TAG: {{BASH: Deflst}}
 Community Bugfix Compilation Patch.esm
-% {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts, Invent}}
-Machienzo - NPC Cosmetic Fixes - Ver 1.55.esm
-% {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
-Machienzo - NPC Cosmetic Fixes - Ver 1.57.esm
-% {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
-Machienzo - NPC Cosmetic Fixes.esm
-% {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
-NVCE Main.esm
-% {{BASH: Actors.ACBS, Actors.AIPackages, Invent, NPC.Race, NpcFaces}}
-NVCE Main (Faces Only).esm
-% {{BASH: Actors.ACBS, Deactivate, Filter, NPC.Race, NpcFaces}}
-IWS-Core.esm
-% {{BASH: Delev}}
-Caliber.esm
-% {{BASH: Invent}}
+ TAG: {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts, Invent}}
+IFNOTVAR(NVAMP) MOD: Machienzo - NPC Cosmetic Fixes - Ver 1.55.esm
+ TAG: {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+IFNOTVAR(NVAMP) MOD: Machienzo - NPC Cosmetic Fixes - Ver 1.57.esm
+ TAG: {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+IFNOTVAR(NVAMP) MOD: Machienzo - NPC Cosmetic Fixes.esm
+ TAG: {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+IFNOTVAR(NVAMP) MOD: NVCE Main.esm
+ TAG: {{BASH: Actors.ACBS, Actors.AIPackages, Invent, NPC.Race, NpcFaces}}
+IFNOTVAR(NVAMP) MOD: NVCE Main (Faces Only).esm
+ TAG: {{BASH: Actors.ACBS, Deactivate, Filter, NPC.Race, NpcFaces}}
+IFNOTVAR(NVAMP) MOD: IWS-Core.esm
+ TAG: {{BASH: Delev}}
+IFNOTVAR(NVAMP) MOD: Caliber.esm
+ TAG: {{BASH: Invent, Names}}
+IFNOTVAR(NVAMP) MOD: CaliberXgunrunners.esm
+ TAG: {{BASH: Names}}
 Fiends, With Style.esm
-% {{BASH: Delev}}
-FOOK - New Vegas.esm
-% {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
+ TAG: {{BASH: Delev}}
+IFNOTVAR(NVAMP) MOD: FOOK - New Vegas.esm
+ TAG: {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
 Moddable Unique Weps.esm
-% {{BASH: WeaponMods}}
-AWorldOfPain(Preview).esm
-% {{BASH: Invent, Deflst}}
-MoMod.esm
-% {{BASH: Relev}}
+ TAG: {{BASH: WeaponMods}}
+IFNOTVAR(NVAMP) MOD: AWorldOfPain(Preview).esm
+ TAG: {{BASH: Invent, Deflst}}
+IFNOTVAR(NVAMP) MOD: MoMod.esm
+ TAG: {{BASH: Relev}}
 NSkies - Vanilla Edition.esm
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
 NSkies URWLified.esm
-% {{BASH: C.Climate, C.Light}}
-Project Nevada - Equipment.esm
-% {{BASH: Delev, Invent}}
-Weapon Mod Expansion.esm
-% {{BASH: Names}}
+ TAG: {{BASH: C.Climate, C.Light}}
+IFNOTVAR(NVAMP) MOD: Project Nevada - Equipment.esm
+ TAG: {{BASH: Delev, Invent}}
+IFNOTVAR(NVAMP) MOD: Weapon Mod Expansion.esm
+ TAG: {{BASH: Names}}
+IFVAR(NVAMP) MOD: Machienzo - NPC Cosmetic Fixes - Ver 1.55.esm
+ TAG: {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+IFVAR(NVAMP) MOD: Machienzo - NPC Cosmetic Fixes - Ver 1.57.esm
+ TAG: {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+IFVAR(NVAMP) MOD: Machienzo - NPC Cosmetic Fixes.esm
+ TAG: {{BASH: NpcFaces, Hair, Eyes, Voice-M, Voice-F, Body-M, Body-F, R.Teeth, R.Mouth}}
+IFVAR(NVAMP) MOD: NVCE Main.esm
+ TAG: {{BASH: Actors.ACBS, Actors.AIPackages, Invent, NPC.Race, NpcFaces}}
+IFVAR(NVAMP) MOD: NVCE Main (Faces Only).esm
+ TAG: {{BASH: Actors.ACBS, Deactivate, Filter, NPC.Race, NpcFaces}}
+IFVAR(NVAMP) MOD: IWS-Core.esm
+ TAG: {{BASH: Delev}}
+IFVAR(NVAMP) MOD: Caliber.esm
+ TAG: {{BASH: Invent, Names}}
+IFVAR(NVAMP) MOD: Weapon Mod Expansion.esm
+ TAG: {{BASH: Names}}
+IFVAR(NVAMP) MOD: FOOK - New Vegas.esm
+ TAG: {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
+IFVAR(NVAMP) MOD: HonestHearts-CaliberX.esm
+ TAG: {{BASH: Names}}
+IFVAR(NVAMP) MOD: AWorldOfPain(Preview).esm
+ TAG: {{BASH: Invent, Deflst}}
+IFVAR(NVAMP) MOD: MoMod.esm
+ TAG: {{BASH: Relev}}
+IFVAR(NVAMP) MOD: Project Nevada - Equipment.esm
+ TAG: {{BASH: Delev, Invent}}
 New Vegas Redesigned.esm
-% {{BASH: NpcFaces, Hair, Eyes, Body-M, Body-F}}
+ TAG: {{BASH: NpcFaces, Hair, Eyes, Body-M, Body-F}}
+New Vegas Redesigned II.esm
+ TAG: {{BASH: NpcFaces, Hair, Eyes, Body-M, Body-F}}
 Lings.esm
-% {{BASH: Hair, Eyes}}
+ TAG: {{BASH: Hair, Eyes}}
 MikotoBeauty.esm
-% {{BASH: Hair, Eyes, Graphics}}
+ TAG: {{BASH: Hair, Eyes, Graphics}}
 NV GameStabilizerA8.esm
-% {{BASH: NoMerge}}
-
+ TAG: {{BASH: NoMerge}}
+Mission Mojave - Ultimate Edition.esp
+ TAG: {{BASH: Actors.AIPackages, NoMerge, Sound, Stats, Scripts}}
+MMUE - Deutsch.esp
+ TAG: {{BASH: Actors.AIPackages, NoMerge, Sound, Stats, Scripts}}
 Community Bugfix Compilation Patch.esp
-% {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts, Invent}}
+ TAG: {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts, Invent}}
 Compiled Patch.esp
-% {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts}}
+ TAG: {{BASH: Actors.AIPackages, Delev, Relev, Sound, Stats, Scripts}}
 JacknDianeFix.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 MarcusInvFix.esp
-% {{BASH: Invent}}
-
+ TAG: {{BASH: Invent}}
 BIS - Brumbek's Inventory Sorting.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Dead Money.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Honest Hearts.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
+BIS - Old World Blues.esp
+ TAG: {{BASH: Names}}
+BIS - Lonesome Road.esp
+ TAG: {{BASH: Names}}
+BIS - Gun Runners Arsenal.esp
+ TAG: {{BASH: Names}}
 BIS - Community Bugfix Comp ESM.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - CBC Dead Money Patch ESM.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Community Bugfix Comp ESP.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - CBC Dead Money Patch ESP.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Promo DLC Caravan Pack.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Promo DLC Classic Pack.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Promo DLC Mercenary Pack.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Promo DLC Tribal Pack.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - CFWNV.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - CFWNV-DLC.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Primary Needs HUD.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - More Cactus Water Recipes.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Compiled Patch.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Compiled Patch - DeadMoney.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Compiled Patch - HonestHearts.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Bobblehunt Patch.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 NVORganizedItems.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
 188 Trading Post Revisited.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 A Better Arcade.esp
-% {{BASH: NpcFaces, Invent}}
+ TAG: {{BASH: NpcFaces, Invent}}
 A Better Boone.esp
-% {{BASH: NpcFaces, Invent}}
+ TAG: {{BASH: NpcFaces, Invent}}
 A Better Cass.esp
-% {{BASH: NpcFaces, Invent}}
+ TAG: {{BASH: NpcFaces, Invent}}
+A Better Cass - Rearmed SG.esp
+ TAG: {{BASH: Graphics, Sound, Stats}}
+A Better Cass - Rearmed M1911.esp
+ TAG: {{BASH: Graphics, Sound, Stats}}
 A Better Veronica.esp
-% {{BASH: NpcFaces, Invent}}
+ TAG: {{BASH: NpcFaces, Invent}}
 Bitter Springs Revisited.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
+Cass and Veronica.esp
+ TAG: {{BASH: NpcFaces, Invent}}
 Cuter Boone.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 Cuter Boone NEW.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 Cuter Veronica Felicia Day.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 Cuter Veronica Felicia Day-Essential.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 Hanlon the badass 4.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 Lore version.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 MikotoBPCCArcade.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 MikotoBPCCBoone.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 MikotoBPCCCass.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 MikotoBPWastersOverhaul.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 MikotoBPCCFull.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 Mutant Eyes.esp
-% {{BASH: Eyes}}
+ TAG: {{BASH: Eyes}}
 NiceCass.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 NiceCass - C.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 NPC Project - Aero Office Park.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 Raul - Danny Trejo.esp
-% {{BASH: NpcFaces, NoMerge}}
+ TAG: {{BASH: NpcFaces, NoMerge}}
 ReElijahfied.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 RivensEyescapesNV.esp
-% {{BASH: Eyes}}
+ TAG: {{BASH: Eyes}}
 Mikotos_REyescapesNV.esp
-% {{BASH: Eyes}}
+ TAG: {{BASH: Eyes}}
 Veronica1.0.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 Veronica_nerdy.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 VeronicaOlder.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 Vulpes Inculta.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 VyntageCass02.esp
-% {{BASH: NpcFaces}}
+ TAG: {{BASH: NpcFaces}}
 VyntageVeronica02.esp
-% {{BASH: NpcFaces}}
-
+ TAG: {{BASH: NpcFaces}}
 1st Recon Revised.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
+Doc Mitchell's House Owner.esp
+ TAG: {{BASH: C.Owner}}
 monsterranch.esp
-% {{BASH: Relev}}
+ TAG: {{BASH: Relev}}
+Monster Mod Wasteland Edition.esp
+ TAG: {{BASH: Relev}}
+MMWE-No Oblivion.esp
+ TAG: {{BASH: Delev}}
+MMWE-Claw Beast B Gone.esp
+ TAG: {{BASH: Delev}}
+MMWE-LoreOut.esp
+ TAG: {{BASH: Delev}}
+MMWE-No Werewolves.esp
+ TAG: {{BASH: Delev}}
+MMWE - Rebalanced Leveled Lists.esp
+ TAG: {{BASH: Delev, Relev}}
+MMWE - Vanilla Spawn Chance.esp
+ TAG: {{BASH: Delev, Relev}}
+MMWE-LoreOut-Rebalanced.esp
+ TAG: {{BASH: Delev, Relev}}
+MMWE-LoreOut-VanillaSpawnChance.esp
+ TAG: {{BASH: Delev, Relev}}
 Project13 - Populated Wasteland.esp
-% {{BASH: Actors.AIPackages, Delev, Relev}}
-
+ TAG: {{BASH: Actors.AIPackages, Delev, Relev}}
 NVHarderCore.esp
-% {{BASH: Names, Stats}}
+ TAG: {{BASH: Names, Stats}}
 NVWastelandUnlocked.esp
-% {{BASH: Delev, Names, Relations, Relev, Stats, WeaponMods}}
+ TAG: {{BASH: Delev, Names, Relations, Relev, Stats, WeaponMods}}
 NVWeaponAmmoTweaks.esp
-% {{BASH: Stats, WeaponMods}}
-
-BIS - FOOK - New Vegas.esp
-% {{BASH: Names}}
-BIS - FOOK - New Vegas DLCs.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Stats, WeaponMods}}
 FOOK - New Vegas.esp
-% {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
+ TAG: {{BASH: Deflst, Delev, Graphics, Names, Relev, Sound, Stats, Scripts}}
+BIS - FOOK - New Vegas.esp
+ TAG: {{BASH: Names}}
+BIS - FOOK - New Vegas DLCs.esp
+ TAG: {{BASH: Names}}
 LinkesAuge - Bug fixing compilation.esp
-% {{BASH: Deflst, Names, Scripts, Stats}}
+ TAG: {{BASH: Deflst, Names, Scripts, Stats}}
 LinkesAuge - Retexture edits.esp
-% {{BASH: Graphics}}
-
+ TAG: {{BASH: Graphics}}
 NoWeaponZoom.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 ImprovedBinocs.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 HeadWearShaderFX.esp
-% {{BASH: Scripts, Stats}}
+ TAG: {{BASH: Scripts, Stats}}
 LootOverhaul.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 Food&DrinkDontHeal.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 CompanionsImproved.esp
-% {{BASH: Actors.AIPackages}}
+ TAG: {{BASH: Actors.AIPackages}}
 Npc&CreatureRespawn.esp
-% {{BASH: Relev}}
+ TAG: {{BASH: Relev}}
 M.M.A.T - Companion Module.esp
-% {{BASH: Actors.AIPackages}}
+ TAG: {{BASH: Actors.AIPackages}}
 M.M.A.T - Ingestible Module.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 M.M.A.T - Shader Module.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 M.M.A.T Loot Module.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 M.M.A.T - Loot Module.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 M.M.A.T - Weapon Module.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 M.M.A.T - Spawn Module.esp
-% {{BASH: Relev}}
-
+ TAG: {{BASH: Relev}}
 NEVAX - BEAUTYPACK.esp
-% {{BASH: Body-F, Body-M, NPCFaces}}
+ TAG: {{BASH: Body-F, Body-M, NPCFaces}}
 NEVAX - FUNDE.esp
-% {{BASH: Deflst, Relev}}
+ TAG: {{BASH: Deflst, Relev}}
 NEVAX - ITEMBALANCINGS.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 NEVAX - KAUFINHALTE.esp
-% {{BASH: Deflst, Invent, Relev}}
+ TAG: {{BASH: Deflst, Invent, Relev}}
 NEVAX - MEHR MONSTER.esp
-% {{BASH: Relev, Scripts}}
+ TAG: {{BASH: Relev, Scripts}}
 NEVAX - MONSTER.esp
-% {{BASH: Deflst, Relev}}
+ TAG: {{BASH: Deflst, Relev}}
 NEVAX - NPC BALANCING.esp
-% {{BASH: Deflst, Relev, Scripts}}
+ TAG: {{BASH: Deflst, Relev, Scripts}}
 NEVAX - RAIDER u NPC.esp
-% {{BASH: Deflst, Relev, Scripts}}
+ TAG: {{BASH: Deflst, Relev, Scripts}}
 NEVAX - RUESTUNGEN.esp
-% {{BASH: Deflst, Relev}}
+ TAG: {{BASH: Deflst, Relev}}
 NEVAX - WAFFEN.esp
-% {{BASH: Deflst, Relev}}
-
+ TAG: {{BASH: Deflst, Relev}}
 PMT - XPadjust.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 PMT - Tougher XPadjust.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 PMT - Slower Reloading.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 PMT - Slower Reloading No Visible Perk.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 PMT - Reduced Ammo and Chems.esp
-% {{BASH: Delev, Relev}}
+ TAG: {{BASH: Delev, Relev}}
 PMT - Reduced Caps and Item Value.esp
-% {{BASH: Delev, Relev}}
+ TAG: {{BASH: Delev, Relev}}
 PMT - More Demanding Hardcore.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 PMT - Destructible Ordnance.esp
-% {{BASH: Destructible}}
+ TAG: {{BASH: Destructible}}
 PMT - Deadlier Combat.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 PMT - Deadlier Combat Mk II.esp
-% {{BASH: Stats}}
-
+ TAG: {{BASH: Stats}}
 Reload.esp
-% {{BASH: Delev, Names, Relev}}
+ TAG: {{BASH: Delev, Names, Relev}}
 Rebalance.esp
-% {{BASH: Names, Stats}}
+ TAG: {{BASH: Names, Stats}}
 Rearm.esp
-% {{BASH: Delev, Relev}}
+ TAG: {{BASH: Delev, Relev}}
 RebalanceRearm.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 RearmRebalance.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 ReSort.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
 Superior Firepower - Unique Weaponry.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 Superior Firepower - Factional Changes.esp
-% {{BASH: Delev, Relev}}
-
+ TAG: {{BASH: Delev, Relev}}
 BIS - XFO - 2aa - Armor - DR+DT - revamp low.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - XFO - 2aa - Armor - DR+DT - revamp med.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - XFO - 2aa - Armor - DR+DT - revamp high.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - XFO - 2ba - Armor - DR+DT - simple low.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - XFO - 2ba - Armor - DR+DT - simple med.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - XFO - 2ba - Armor - DR+DT - simple high.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - XFO - 6aa - Epic Skills.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
 Arwen_NV_Realism_Core.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 hardercore_combat.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 hardercore_wealth.esp
-% {{BASH: Delev, Relev}}
+ TAG: {{BASH: Delev, Relev}}
 BIS - Project Nevada - Core.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Project Nevada - Equipment.esp
-% {{BASH: Names, Invent}}
+ TAG: {{BASH: Names, Invent}}
 BIS - Project Nevada - Cyberware.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
+OWB Big Empty Overhaul.esp
+ TAG: {{BASH: Names, Invent, Stats}}
 Improved Sound FX - Weapon Sharing Fix.esp
-% {{BASH: Sound}}
+ TAG: {{BASH: Sound}}
 Improved Sound FX - HH Sharing Fix.esp
-% {{BASH: Sound}}
+ TAG: {{BASH: Sound}}
 Improved Sound FX - OWB Sharing Fix.esp
-% {{BASH: Sound}}
+ TAG: {{BASH: Sound}}
+Improved Sound FX - LR Sharing Fix.esp
+ TAG: {{BASH: Sound}}
+Improved Sound FX - GRA.esp
+ TAG: {{BASH: Sound}}
+Improved Sound FX - Merged Major DLCs.esp
+ TAG: {{BASH: Sound}}
+Improved Sound FX - Project Nevada.esp
+ TAG: {{BASH: Sound}}
 LouderGuns.esp
-% {{BASH: Sound}}
-
+ TAG: {{BASH: Sound}}
 BIS - Sprint Mod.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
 ACS-HonestHearts.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 Better Ammo Crafting.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BetterCraftingSorting.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
 AG Shell Casing Fixes-All Five.esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 AG Shell Casing Fixes Repeater-Service-ThatGun.esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 AG Shell Casing Fixes - OWB.esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 Ahzteks Weapon Overhaul.esp
-% {{BASH: Deflst, Delev, Invent}}
+ TAG: {{BASH: Deflst, Delev, Invent}}
 Ahzteks Pistol and SMG Replacements.esp
-% {{BASH: Names, Graphics, Sound, Stats, WeaponMods}}
+ TAG: {{BASH: Names, Graphics, Sound, Stats, WeaponMods}}
 Assault Carbine mods.esp
-% {{BASH: WeaponMods}}
+ TAG: {{BASH: WeaponMods}}
 BIS - Kobu Better Binoculars Low.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Kobu Better Binoculars Medium.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Kobu Better Binoculars High.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - Kobu Better Binoculars Max.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 better that gun 223.esp
-% {{BASH: Names, Stats}}
+ TAG: {{BASH: Names, Stats}}
 better that gun 44mag.esp
-% {{BASH: Names, Stats}}
+ TAG: {{BASH: Names, Stats}}
+christinecos.esp
+ TAG: {{BASH: Graphics}}
+GRA WRP Compatibility Patch.esp
+ TAG: {{BASH: Graphics}}
 Classic Plasma Grenade.esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 Classic Pulse Grenade (classic sound).esp
-% {{BASH: Graphics, Sounds}}
+ TAG: {{BASH: Graphics, Sounds}}
 Classic Pulse Grenade (vanilla sound).esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 EnergyBoost.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 ImmaSightinMahLazor.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 Moddable Anti-Materiel Rifle.esp
-% {{BASH: WeaponMods}}
+ TAG: {{BASH: WeaponMods}}
 Moddable Anti-Materiel Rifle 2.esp
-% {{BASH: WeaponMods}}
+ TAG: {{BASH: WeaponMods}}
 Moddable Unique Weps.esp
-% {{BASH: WeaponMods}}
+ TAG: {{BASH: WeaponMods}}
 OWB HQ Textures Fix.esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 PlasmaRifleAwesomefied.esp
-% {{BASH: Sound, Stats}}
+ TAG: {{BASH: Sound, Stats}}
 Shotgun Commando.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 Shotgun Commando 1.2 Caravan.esp
-% {{BASH: Stats}}
-
-KDS Wearable Backpacks.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Stats}}
 Armored PA Gloves.esp
-% {{BASH: Deflst}}
+ TAG: {{BASH: Deflst}}
 DragonskinNCRPersonnelWearingOutfits.esp
-% {{BASH: Relev}}
+ TAG: {{BASH: Relev}}
 Hereticus Faction Armors Fading.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 HHType3tribalhands.esp
-% {{BASH:Body-F}}
+ TAG: {{BASH:Body-F}}
 JillBSAA Multicolor.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
+KDS Wearable Backpacks.esp
+ TAG: {{BASH: Invent}}
 Powered Power Armor.esp
-% {{BASH: Deflst}}
+ TAG: {{BASH: Deflst}}
 Seeker Veronica.esp
-% {{BASH: Invent}}
-
+ TAG: {{BASH: Invent}}
+LingsPrettyThings.esp
+ TAG: {{BASH: Eyes, Hair, Invent, Names, NPC.Class, NPC.Race, NpcFaces, R.Attributes-F, R.Attributes-M, R.Description, R.Head, R.Mouth, R.Teeth, Voice-F}}
+NVCE DLC01.esp
+ TAG: {{BASH:Actors.ACBS,NPC.Race,NpcFaces}}
+NVCE DLC02.esp
+ TAG: {{BASH:Actors.ACBS,Invent,NPC.Race,NpcFaces}}
+NVCE DLC03.esp
+ TAG: {{BASH:Actors.ACBS,Body-M,NpcFaces}}
+NVCE DLC04.esp
+ TAG: {{BASH:Actors.ACBS,NpcFaces}}
+NVR- Lore version.esp
+ TAG: {{BASH: Actors.ACBS, NpcFaces}}
+NVR- Recommended.esp
+ TAG: {{BASH: Actors.ACBS, NpcFaces}}
+New Vegas redesigned- Honest Hearts.esp
+ TAG: {{BASH: Actors.ACBS, NpcFaces}}
+Voice dissonance fix.esp
+ TAG: {{BASH: NpcFaces}}
 AWOP-AhztekWeaponPatch.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 AWOPCaliberXAmmoPatch.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 AWOPCaliberXAmmoPatchLOW.esp
-% {{BASH: Invent}}
-
+ TAG: {{BASH: Invent}}
 CompanionLevel30Cap.esp
-% {{BASH: Actors.ACBS}}
+ TAG: {{BASH: Actors.ACBS}}
 EZ_VanillaFollowers.esp
-% {{BASH: Actors.AIPackages, Actors.CombatStyle}}
+ TAG: {{BASH: Actors.AIPackages, Actors.CombatStyle}}
 NVPhalanx.esp
-% {{BASH: Actors.AIPackages, Actors.CombatStyle, C.Owner, Scripts}}
+ TAG: {{BASH: Actors.AIPackages, Actors.CombatStyle, C.Owner, Scripts}}
 RexReplacerEss.esp
-% {{BASH: Graphics}}
-
+ TAG: {{BASH: Graphics}}
 Real Weapon Names.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Real Weapon Names - NPC Compnaion Weapons.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Real Weapon Names - Dead Money.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Real Weapon Names - Honest Hearts.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Real Weapon Names - Project Nevada.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 MiscItemIconsNV.esp
-% {{BASH: Graphics, NoMerge}}
+ TAG: {{BASH: Graphics, NoMerge}}
 T3T_MiscItemIconsNV.esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 BIS - T3T_MiscItemIconsNV 0.7.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - MiscItemIconsNV 0.9.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Combined.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Dead Money.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Combined - T3T Icon Compatch.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Combined - Aid Crafting.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Books.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Magazines.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Combined - Weighted.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Empty Consumables.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Sorter - Empty Consumables - Dead Money.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Inventory Sorter - Moddable Unique Weps.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 DrugsAreBadMKay-IS.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 FeelingIrradiated-IS.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
 BIS - Grenade Hotkey.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Imp's More Complex Needs - JA - SORTED.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 IMCNNV - Sorted.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 LFox Bottle That Water.esp
-% {{BASH: Names, Scripts}}
-BIS - Project Nevada - Rebalance.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names, Scripts}}
+IFNOTFILE("Nevada Skies.esp") MOD: BIS - Project Nevada - Rebalance.esp
+ TAG: {{BASH: Names}}
 Realistic Weight.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
+Realistic Weight Overhaul.esp
+ TAG: {{BASH: Stats}}
 Weight_Balance.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 Weight_Balance_v07.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
 Weight_Balance_v10.esp
-% {{BASH: Stats}}
+ TAG: {{BASH: Stats}}
+Weight_Rebalance_v10.esp.
+ TAG: {{BASH: Stats}}
 BIS - Weight_Balance_v10.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
 WeaponModsExpanded.esp
-% {{BASH: Invent, Delev, WeaponMods}}
+ TAG: {{BASH: Invent, Delev, WeaponMods}}
+Improved Sound FX - WMX - Weapon Sharing Fix.esp
+ TAG: {{BASH: Sound}}
 WMX-AWOP Patch.esp
-% {{BASH: WeaponMods}}
+ TAG: {{BASH: WeaponMods}}
+WMX-AWOP-Overhaul.esp
+ TAG: {{BASH: WeaponMods}}
 Frequency - WMX Patch.esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 Project Nevada - WMX.esp
-% {{BASH: Graphics, Invent, Names, WeaponMods}}
+ TAG: {{BASH: Graphics, Invent, Names, WeaponMods}}
+Frequency - PN+WMX Patch.esp
+ TAG: {{BASH: Graphics}}
 Real Weapon Names - WMX.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 WMX-ModernWeapons.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 ACS-WMXModernWeapons.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 WMX-DeadMoney.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 Real Weapon Names - WMX - Dead Money.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 WMX-HonestHearts.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
 WMX-OldWorldBlues.esp
-% {{BASH: Invent}}
+ TAG: {{BASH: Invent}}
+WMX-LonesomeRoad.esp
+ TAG: {{BASH: Invent}}
+WMX-GunRunnersArsenal.esp
+ TAG: {{BASH: Invent}}
+Improved Sound FX - WMX - Merged Major DLCs.esp
+ TAG: {{BASH: Sound}}
+Improved Sound FX - WMX - GRA Sharing Fix.esp
+ TAG: {{BASH: Sound}}
 WMX-ArenovalisTextures.esp
-% {{BASH: Graphics, NoMerge}}
-
+ TAG: {{BASH: Graphics, NoMerge}}
 RH_IronSights_NV_Vanilla.esp
-% {{BASH: Graphics}}
+ TAG: {{BASH: Graphics}}
 Weapon Mod Expansion.esp
-% {{BASH: Graphics, Names, Stats, WeaponMods}}
+ TAG: {{BASH: Graphics, Names, Stats, WeaponMods}}
 WME - 00 Commando.esp
-% {{BASH: Graphics, Names, Stats, WeaponMods}}
+ TAG: {{BASH: Graphics, Names, Stats, WeaponMods}}
 WME - Arwen Core.esp
-% {{BASH: Graphics, Names, Stats, WeaponMods}}
+ TAG: {{BASH: Graphics, Names, Stats, WeaponMods}}
 WME - RH Ironsights.esp
-% {{BASH: Graphics, WeaponMods}}
+ TAG: {{BASH: Graphics, WeaponMods}}
 WME - FOOK.esp
-% {{BASH: Delev, Graphics, Names, Sound, Stats}}
+ TAG: {{BASH: Delev, Graphics, Names, Sound, Stats}}
 WME Replacer - FOOK.esp
-% {{BASH: Graphics, Names, Stats, WeaponMods}}
+ TAG: {{BASH: Graphics, Names, Stats, WeaponMods}}
 WME - that gun 223.esp
-% {{BASH: Names, Stats, WeaponMods}}
+ TAG: {{BASH: Names, Stats, WeaponMods}}
 WME - that gun 44 mag.esp
-% {{BASH: Names, Stats, WeaponMods}}
+ TAG: {{BASH: Names, Stats, WeaponMods}}
 WME - that gun 556.esp
-% {{BASH: Names, Stats, WeaponMods}}
+ TAG: {{BASH: Names, Stats, WeaponMods}}
 BIS - Weapon Mod Expansion.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Project Nevada - WME.esp
-% {{BASH: Graphics, Invent, Names, WeaponMods}}
+ TAG: {{BASH: Graphics, Invent, Names, WeaponMods}}
 BIS - WME - Dead Money.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - WME - Honest Hearts.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - WME - Dead Money Arenovalis Retex.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 BIS - WME - Honest Hearts Arenovalis Retex.esp
-% {{BASH: Names}}
-
+ TAG: {{BASH: Names}}
+EVE FNV.esp
+ TAG: {{BASH: Graphics, Sound}}
+GRA Overhaul.esp
+ TAG: {{BASH: Names, Stats}}
+GRA Overhaul - EVE.esp
+ TAG: {{BASH: Names, Stats}}
+GRA Overhaul - WMX or WME.esp
+ TAG: {{BASH: Names, Stats}}
 NV Game Stabilizer.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA1.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA2.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA4.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA5.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA5F.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA6.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA7.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA7b.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA8.esp
-% {{BASH: NoMerge}}
+ TAG: {{BASH: NoMerge}}
 NV GameStabilizerA9.esp
-% {{BASH: NoMerge}}
-
+ TAG: {{BASH: NoMerge}}
 LUMENARIUM - Working Sunglasses ONLY.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 ELECTRO-CITY - CompletedWorkorders.esp
-% {{BASH: Names}}
+ TAG: {{BASH: Names}}
 Nevada Skies.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
+ DIRTY: Contains unnecessary landscape edits.
 Nevada Skies - URWLified.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
 Nevada Skies - URWLHH.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
 NSkies URWLifiedOWB.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
 NSkies URWLifiedHH.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
 NSkies URWLifiedDM.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
 Project Westland vision.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
 Project Westland vision-ZionHH.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
 F3NVProjectRealityMkIv3.esp
-% {{BASH: C.Climate, C.Light}}
+ TAG: {{BASH: C.Climate, C.Light}}
+F3NVProjectRealityMkIv4.2.esp
+ TAG: {{BASH: C.Climate, C.Light}}
+ProjectRealityMkIv5HDR.esp
+ TAG: {{BASH: C.Climate, C.Light}}
 Interior Lighting Overhaul.esp
-% {{BASH: C.Light}}
+ TAG: {{BASH: C.Light}}
 Interior Lighting Overhaul-Realistic.esp
-% {{BASH: C.Light}}
+ TAG: {{BASH: C.Light}}
 Interior Lighting Overhaul-Realistic Interiors-Full.esp
-% {{BASH: C.Light}}
+ TAG: {{BASH: C.Light}}
+Interior Lighting Overhaul-Realistic Interiors-Combined.esp
+ TAG: {{BASH: C.Light}}
+Interior Lighting Overhaul - Ultimate Edition.esp
+ TAG: {{BASH: C.Light}}
+Interior Lighting Overhaul - Ultimate Edition - No Lucky38.esp
+ TAG: {{BASH: C.Light}}
 ILO-RI-Original Lucky38 Suite.esp
-% {{BASH: C.Light}}
+ TAG: {{BASH: C.Light}}
 ILO-RI-Dead Money.esp
-% {{BASH: C.Light}}
+ TAG: {{BASH: C.Light}}
 ILO-RI-Honest Hearts.esp
-% {{BASH: C.Light}}
+ TAG: {{BASH: C.Light}}
+ILO-RI-Old World Blues.esp
+ TAG: {{BASH: C.Light}}
+ILO-RI-Lonesome Road.esp
+ TAG: {{BASH: C.Light}}
 ILO-RI-Rust Town.esp
-% {{BASH: C.Light}}
-
+ TAG: {{BASH: C.Light}}
+ILO - NVInteriors Project.esp
+ TAG: {{BASH: C.Light}}
+ILO - NVInteriors Project - AWOP.esp
+ TAG: {{BASH: C.Light}}
+ILO - Project Reality Patch.esp
+ TAG: {{BASH: C.Climate}}
+ILO - A World of Pain.esp
+ TAG: {{BASH: C.Light}}
+IFFILE("Nevada Skies.esp") MOD: BIS - Project Nevada - Rebalance.esp
+ TAG: {{BASH: Names}}
+EwwGhoulyBody.esp
+ TAG: {{BASH: Body-F}}

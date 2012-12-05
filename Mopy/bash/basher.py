@@ -8493,7 +8493,7 @@ class Installer_OpenSearch(InstallerLink):
         """Handle selection."""
         message = _("Open a search for this on Google?")
         if balt.askContinue(self.gTank,message,'bash.installers.opensearch',_('Open a search')):
-            os.startfile('http://www.google.com/search?hl=en&q='+'+'.join(re.split(r'\W+|_+',bosh.reTesNexus.search(self.selected[0].s).group(1))))
+            os.startfile('http://www.google.com/search?hl=en&q='+'+'.join(re.split(r'\W+|_+',bosh.reNewVegasNexus.search(self.selected[0].s).group(1))))
 
 # class Installer_OpenTESA(InstallerLink):
 #     """Open selected file(s)."""

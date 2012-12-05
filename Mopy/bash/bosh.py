@@ -3389,6 +3389,7 @@ class MreLigh(MelRecord):
                   'corner1X','corner1Y','corner1Z'),
         MelModel(),
         MelFid('SCRI','script'),
+        MelDestructible(), ### Rescue unexpected (or out of order) subrecord in EVE FNV.esp
         MelString('FULL','full'),
         MelString('ICON','iconPath'),
         MelLighData('DATA','iI3BsIffIf','duration','radius','red','green','blue',('unused1',null1),
